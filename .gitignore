@@ -41,7 +41,6 @@ docs/Generated
 
 test*
 DatabaseReset.sh
-OpenData_Private/appsettings.Development.json
 
 FileStore/
 FileStorePublished/

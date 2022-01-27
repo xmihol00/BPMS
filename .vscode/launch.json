@@ -13,8 +13,8 @@
             "preLaunchTask": "build",
             "console": "internalConsole",
             "internalConsoleOptions":"neverOpen",
-            "linux": {
-                
+            "env": {
+                "ASPNETCORE_URLS": "https://localhost:5001"
             }
         },
     ]

@@ -18,6 +18,7 @@ namespace BPMS_DAL
         public DbSet<AgendaEntity>? Agendas { get; set; }
         public DbSet<AgendaRoleUserEntity>? AgendaRoles { get; set; }
         public DbSet<BlockDataEntity>? BlockData { get; set; }
+        public DbSet<BlockDataSchemaEntity>? BlockSchemas { get; set; }
         public DbSet<BlockModelEntity>? BlockModel { get; set; }
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
@@ -58,7 +59,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<AgendaRoleUserEntity>().HasKey(x => new { x.UserId, x.RoleId, x.AgendaId });
             modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Role).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
-            modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Agenda).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
+            modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Agenda).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<SolvingRoleEntity>().HasKey(x => x.Id);
 
@@ -82,24 +83,24 @@ namespace BPMS_DAL
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.InBlock).WithMany(x => x.InFlows).HasForeignKey(x => x.InBlockId);
-            modelBuilder.Entity<FlowEntity>().HasOne(x => x.OutBlock).WithMany(x => x.OutFlows).HasForeignKey(x => x.OutBlockId);
+            modelBuilder.Entity<FlowEntity>().HasOne(x => x.OutBlock).WithMany(x => x.OutFlows).HasForeignKey(x => x.OutBlockId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<WorkflowEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Agenda).WithMany(x => x.Workflows).HasForeignKey(x => x.AgendaId);
-            modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Model).WithMany(x => x.Workflows).HasForeignKey(x => x.ModelId);
+            modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Model).WithMany(x => x.Workflows).HasForeignKey(x => x.ModelId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<BlockDataSchemaEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockDataSchemaEntity>().HasOne(x => x.Block).WithMany(x => x.DataSchemas).HasForeignKey(x => x.BlockId);
-            modelBuilder.Entity<BlockDataSchemaEntity>().HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.ParentId);
+            modelBuilder.Entity<BlockDataSchemaEntity>().HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<BlockWorkflowEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.Workflow).WithMany(x => x.Blocks).HasForeignKey(x => x.Id);
+            modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.Workflow).WithMany(x => x.Blocks).HasForeignKey(x => x.WorkflowId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.BlockModel).WithMany(x => x.BlockWorkflows).HasForeignKey(x => x.BlockModelId);
             modelBuilder.Entity<UserTaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Tasks).HasForeignKey(x => x.UserId);
             modelBuilder.Entity<UserTaskWorkflowEntity>().ToTable("UserTasksWorkflow");
 
             modelBuilder.Entity<BlockDataEntity>().HasKey(x => new { x.BlockId, x.SchemaId });
-            modelBuilder.Entity<BlockDataEntity>().HasOne(x => x.Block).WithMany(x => x.BlockData).HasForeignKey(x => x.BlockId);
+            modelBuilder.Entity<BlockDataEntity>().HasOne(x => x.Block).WithMany(x => x.BlockData).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<BlockDataEntity>().HasOne(x => x.Schema).WithMany(x => x.Data).HasForeignKey(x => x.SchemaId);
             modelBuilder.Entity<BoolBlockEntity>().ToTable("BoolBlocks");
             modelBuilder.Entity<NumberBlockEntity>().ToTable("NumberBlocks");
