@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BPMS_Common\BPMS_Common.csproj" />
+    <ProjectReference Include="..\BPMS_DTOs\BPMS_DTOs.csproj" />
   </ItemGroup>
 
 </Project>

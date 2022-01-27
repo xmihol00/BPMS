@@ -76,9 +76,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
-            modelBuilder.Entity<InclusiveGatewayModelEntity>().ToTable("InclusiveGatewaiesModel");
+            modelBuilder.Entity<InclusiveGatewayModelEntity>().ToTable("InclusiveGatewaysModel");
+            modelBuilder.Entity<ExclusiveGatewayModelEntity>().ToTable("ExclusiveGatewaysModel");
             modelBuilder.Entity<SendeEventModelEntity>().ToTable("SendEventsModel");
-            modelBuilder.Entity<InclusiveGatewayModelEntity>().ToTable("InclusiveGatewaiesModel");
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.InBlock).WithMany(x => x.InFlows).HasForeignKey(x => x.InBlockId);
