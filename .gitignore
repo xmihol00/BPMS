@@ -5,9 +5,6 @@ project.lock.json
 *.pyc
 nupkg/
 
-# Visual Studio Code
-.vscode
-
 # Visual Studio
 .vs
 
@@ -43,9 +40,7 @@ appsettings.Development.json
 docs/Generated
 
 test*
-shell_config.sh
 DatabaseReset.sh
-reset_DB.sh
 OpenData_Private/appsettings.Development.json
 
 FileStore/
