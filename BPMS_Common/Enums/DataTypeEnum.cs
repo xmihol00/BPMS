@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BPMS_Common.Enums
 {
-    public enum BlockTypeEnum
+    public enum DataTypeEnum
     {
     }
 }

@@ -9,8 +9,8 @@ namespace BPMS_DAL.Entities
 {
     public class ConditionDataEntity
     {
-        public Guid BlockId { get; set; }
-        public Guid ConditionId { get; set; }
+        public Guid ExclusiveGatewayId { get; set; }
+        public Guid DataSchemaId { get; set; }
         public ExclusiveGatewayModelEntity ExclusiveGateway { get; set; } = new ExclusiveGatewayModelEntity();
         public BlockDataSchemaEntity DataSchema { get; set; } = new BlockDataSchemaEntity();
     }

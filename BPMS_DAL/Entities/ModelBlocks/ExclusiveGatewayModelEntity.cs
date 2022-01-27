@@ -9,6 +9,6 @@ namespace BPMS_DAL.Entities.ModelBlocks
     public class ExclusiveGatewayModelEntity : BlockModelEntity
     {
         public string Condition { get; set; } = string.Empty;
-        public List<BlockDataSchemaEntity> Data { get; set; } = new List<BlockDataSchemaEntity>();
+        public List<ConditionDataEntity> Conditions { get; set; } = new List<ConditionDataEntity>();
     }
 }

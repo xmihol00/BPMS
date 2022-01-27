@@ -9,6 +9,6 @@ namespace BPMS_DAL.Entities.BlockDataTypes
 {
     public class ArrayBlockEntity : BlockDataEntity
     {
-        public BlockTypeEnum Type { get; set; }
+        public DataTypeEnum Type { get; set; }
     }
 }

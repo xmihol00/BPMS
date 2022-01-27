@@ -19,5 +19,6 @@ namespace BPMS_DAL.Entities
         public List<SystemRoleEntity> Roles { get; set; } = new List<SystemRoleEntity>();
         public List<AgendaEntity> Agendas { get; set; } = new List<AgendaEntity>();
         public List<UserTaskWorkflowEntity> Tasks { get; set; } = new List<UserTaskWorkflowEntity>();
+        public List<AgendaRoleUserEntity> UserRoles { get; set; } = new List<AgendaRoleUserEntity>();
     }
 }
