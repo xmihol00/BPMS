@@ -1,0 +1,17 @@
+
+.btn-p {
+    padding: 0.3rem 0.75rem;
+    border-radius: 0px;
+    background-color: dodgerblue;
+    color: white;
+    border: none;
+    outline: none;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(28,160,255,0.66); 
+    box-shadow: 0px 0px 3px 1px rgba(28,160,255,0.66);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.btn-p:hover {
+    transform: scale(1.05);
+    transition: all 0.25s;
+}

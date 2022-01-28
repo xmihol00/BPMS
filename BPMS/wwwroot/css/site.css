@@ -1,3 +1,10 @@
+:root {
+  --footer-height: 50px;
+  --navbar-height: 60px;
+  --color-bg-footer: #fff;
+  --color-bg-navbar: #fff;
+}
+
 html {
   font-size: 14px;
 }
@@ -14,5 +21,115 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: var(--footer-height);
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: var(--footer-height);
+  background-color: var(--color-bg-footer);
+}
+
+.screen-lg {
+  display: none;
+}
+
+.screen-md {
+  display: block;
+}
+
+.menu-btn {
+  color: #000; 
+  font-size: 30px; 
+  cursor: pointer;
+}
+
+.menu-btn:hover{
+  font-size: 32px;
+  transition: all 0.15s;
+}
+
+@media (min-width: 768px) {
+  .screen-md {
+    display: none !important;
+  }
+
+  .screen-lg {
+    display: block !important;
+  }
+
+  .menu-btn {
+    margin-right: 7.5px; 
+    color: #fff; 
+    font-size: 40px; 
+    cursor: pointer;
+  }
+
+  .menu-btn:hover{
+    font-size: 44px;
+    margin-right: 5.5px;
+    transition: all 0.15s;
+  }
+
+  .side-menu-bar {
+    width: 270px; 
+    background-color: rgb(68, 0, 255); 
+    box-shadow: 2px 0px 3px #666;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    z-index: 10000;
+    transition: width 0.75s;
+    padding: 10px 15px;
+  }
+
+  .side-menu-bar-small {
+    width: 80px !important; 
+  }
+
+  .navbar {
+    height: var(--navbar-height);
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-bg-navbar) !important;
+    /*font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;*/
+  }
+
+  .main-content {
+    width: calc(100% - 110px);
+    margin-left: 95px;
+  }
+
+  .main-content-large {
+    width: calc(100% - 110px) !important;
+    margin-left: 95px !important;
+  }
+
+  .footer {
+    width: calc(100% - 80px);
+    margin-left: 80px;
+  }
+
+  .footer-large {
+    width: calc(100% - 80px) !important;
+    margin-left: 80px !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .main-content {
+    width: calc(100% - 300px);
+    margin-left: 285px;
+    transition: all 0.75s;
+  }
+ 
+  .footer {
+    width: calc(100% - 270px);
+    margin-left: 270px;
+    transition: all 0.75s;
+  } 
 }
