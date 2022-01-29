@@ -1,5 +1,7 @@
 
+using BPMS_BL.Facades;
 using BPMS_DAL;
+using BPMS_DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,10 @@ services.AddControllersWithViews()
         .AddRazorRuntimeCompilation();
 
 services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+
+services.AddScoped<AgendaRepository>();
+
+services.AddScoped<AgendaFacade>();
 
 var app = builder.Build();
 

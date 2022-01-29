@@ -62,7 +62,7 @@ body {
   }
 
   .menu-btn {
-    margin-right: 7.5px; 
+    margin-right: 22px; 
     color: #fff; 
     font-size: 40px; 
     cursor: pointer;
@@ -70,20 +70,20 @@ body {
 
   .menu-btn:hover{
     font-size: 44px;
-    margin-right: 5.5px;
+    margin-right: 20px;
     transition: all 0.15s;
   }
 
   .side-menu-bar {
     width: 270px; 
-    background-color: rgb(68, 0, 255); 
+    background-color: rgb(85, 0, 255); 
     box-shadow: 2px 0px 3px #666;
     position: fixed;
     top: 0px;
     bottom: 0px;
     z-index: 10000;
     transition: width 0.75s;
-    padding: 10px 15px;
+    padding: 10px 0px;
   }
 
   .side-menu-bar-small {
@@ -96,7 +96,7 @@ body {
     position: sticky;
     top: 0;
     background-color: var(--color-bg-navbar) !important;
-    /*font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;*/
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   }
 
   .main-content {
@@ -132,4 +132,42 @@ body {
     margin-left: 270px;
     transition: all 0.75s;
   } 
+}
+
+.side-bar-ul {
+  list-style-type: none;
+  font-size: 30px;
+  width: inherit;
+  padding-left: 0;
+}
+
+.side-bar-ul li {
+  width: inherit;
+}
+
+.side-bar-ul a {
+  display: inline-block;
+  text-decoration: none;
+  color: #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  width: inherit;
+  padding-left: 25px;
+}
+
+.side-bar-ul span {
+  padding-left: 17px;
+  font-size: 22px;
+  padding-bottom: 3px;
+}
+
+.side-bar-ul a:hover {
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.25s;
+}
+
+.nav-text {
+  overflow: hidden;
 }
