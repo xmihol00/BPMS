@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BPMS_DAL.Interfaces;
 
 namespace BPMS_DAL.Entities
 {
-    public class BlockModelEntity
+    public class BlockModelEntity : IBlockModelEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

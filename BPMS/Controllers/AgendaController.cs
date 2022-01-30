@@ -13,15 +13,16 @@ namespace BPMS.Controllers
             _agendaFacade = agendaFacade;
         }
 
-        public async Task<IActionResult> Overview(CreateModelDTO dto)
+        [HttpGet]
+        public async Task<IActionResult> Overview()
         {
             return View("AgendaOverview");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Upload(CreateModelDTO dto)
+        [HttpGet]
+        public async Task<IActionResult> Detail()
         {
-            return View();
+            return View("AgendaDetail");
         }
     }
 }

@@ -8,7 +8,7 @@ namespace BPMS_DAL.Entities
 {
     public class PoolEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = new Guid();
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Guid ModelId { get; set; }

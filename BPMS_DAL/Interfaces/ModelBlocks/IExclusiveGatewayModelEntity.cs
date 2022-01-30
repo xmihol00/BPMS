@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BPMS_DAL.Entities;
+
+namespace BPMS_DAL.Interfaces.ModelBlocks
+{
+    public interface IExclusiveGatewayModelEntity : IBlockModelEntity
+    {
+        public string Condition { get; set; }
+        public List<ConditionDataEntity> Conditions { get; set; }
+    }
+}

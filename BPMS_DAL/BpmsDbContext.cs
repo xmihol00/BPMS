@@ -64,12 +64,15 @@ namespace BPMS_DAL
             modelBuilder.Entity<SolvingRoleEntity>().HasKey(x => x.Id);
 
             modelBuilder.Entity<PoolEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<PoolEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<PoolEntity>().HasOne(x => x.Model).WithMany(x => x.Pools).HasForeignKey(x => x.ModelId);
 
             modelBuilder.Entity<ModelEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<ModelEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<ModelEntity>().HasOne(x => x.Agenda).WithMany(x => x.Models).HasForeignKey(x => x.AgendaId);
 
             modelBuilder.Entity<BlockModelEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<BlockModelEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Pool).WithMany(x => x.Blocks).HasForeignKey(x => x.PoolId);
             modelBuilder.Entity<UserTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.UserTasks).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
@@ -79,7 +82,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
             modelBuilder.Entity<InclusiveGatewayModelEntity>().ToTable("InclusiveGatewaysModel");
             modelBuilder.Entity<ExclusiveGatewayModelEntity>().ToTable("ExclusiveGatewaysModel");
-            modelBuilder.Entity<SendeEventModelEntity>().ToTable("SendEventsModel");
+            modelBuilder.Entity<SendEventModelEntity>().ToTable("SendEventsModel");
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.InBlock).WithMany(x => x.InFlows).HasForeignKey(x => x.InBlockId);

@@ -15,6 +15,7 @@ services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Con
 services.AddScoped<AgendaRepository>();
 
 services.AddScoped<AgendaFacade>();
+services.AddScoped<ModelUploadFacade>();
 
 var app = builder.Build();
 

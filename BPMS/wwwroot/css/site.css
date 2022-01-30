@@ -3,6 +3,7 @@
   --navbar-height: 60px;
   --color-bg-footer: #fff;
   --color-bg-navbar: #fff;
+  --color-accent: rgb(85, 0, 255);
 }
 
 html {
@@ -31,6 +32,10 @@ body {
   white-space: nowrap;
   line-height: var(--footer-height);
   background-color: var(--color-bg-footer);
+}
+
+h1, h2 {
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .screen-lg {
@@ -77,11 +82,12 @@ body {
   .side-menu-bar {
     width: 270px; 
     background-color: rgb(85, 0, 255); 
-    box-shadow: 2px 0px 3px #666;
+    -webkit-box-shadow: 0px 0px 10px 2px #888; 
+    box-shadow: 0px 0px 10px 2px #888;
     position: fixed;
     top: 0px;
     bottom: 0px;
-    z-index: 10000;
+    z-index: 99;
     transition: width 0.75s;
     padding: 10px 0px;
   }
@@ -90,13 +96,37 @@ body {
     width: 80px !important; 
   }
 
-  .navbar {
-    height: var(--navbar-height);
+  .page-navbar {
+    max-height: var(--navbar-height);
     position: -webkit-sticky;
     position: sticky;
     top: 0;
     background-color: var(--color-bg-navbar) !important;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    -webkit-box-shadow: 0px 0px 8px 2px #999; 
+    box-shadow: 0px 0px 8px 2px #999;
+    overflow: hidden;
+    transition: all 0.35s;
+    transition-delay: 350ms;
+    margin: 0 1.8em;
+  }
+
+  .page-navbar-content {
+    height: var(--navbar-height);
+    transition: all 0.35s;
+  }
+
+  .page-navbar-modal {
+    max-height: fit-content !important;
+    margin-top: 10vh;
+    margin-left: 25vh;
+    margin-right: 25vh;
+    z-index: 101;
+    -webkit-box-shadow: 0px 0px 8px 2px #444; 
+    box-shadow: 0px 0px 8px 2px #444;
+  }
+
+  .page-navbar-modal .page-navbar-content {
+    margin-top: -60px;
   }
 
   .main-content {
@@ -139,16 +169,18 @@ body {
   font-size: 30px;
   width: inherit;
   padding-left: 0;
+  color: #ccc;
 }
 
 .side-bar-ul li {
   width: inherit;
+  color: inherit;
 }
 
 .side-bar-ul a {
   display: inline-block;
   text-decoration: none;
-  color: #ddd;
+  color: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
@@ -157,9 +189,13 @@ body {
 }
 
 .side-bar-ul span {
-  padding-left: 17px;
+  padding-left: 18px;
   font-size: 22px;
   padding-bottom: 3px;
+}
+
+.active-nav-item a {
+  color: #fff;
 }
 
 .side-bar-ul a:hover {
@@ -170,4 +206,151 @@ body {
 
 .nav-text {
   overflow: hidden;
+}
+
+.active-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 38px;
+  margin-top: 3px;
+  background-color: #fff;
+}
+
+.modal-background {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.01);
+  -webkit-transition: background-color 2s ease-out;
+  -moz-transition: background-color 2s ease-out;
+  -o-transition: background-color 2s ease-out;
+  transition: background-color 2s ease-out;
+}
+
+.modal-background-show {
+  display: block !important;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.shadow-box {
+  -webkit-box-shadow: 0px 0px 3px 1px #aaa; 
+  box-shadow: 0px 0px 3px 1px #aaa;  
+}
+
+.shadow-box-in {
+  -webkit-box-shadow: inset 0px 0px 2px 1px #aaa; 
+  box-shadow: inset 0px 0px 2px 1px #aaa;  
+}
+
+.close-icon {
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 20px;
+}
+
+.close-icon:hover {
+  transform: scale(1.1);
+}
+
+.bg-ddd {
+  background-color: #ddd
+}
+
+.pointer {
+  cursor: pointer !important;
+}
+
+.input {
+  position: relative;
+  width: 100%;
+}
+
+.input-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.2rem 0.2rem;
+  margin: 0.4rem 0.5rem;
+  white-space: nowrap;
+  transform: translate(0, 0);
+  transform-origin: 0 0;
+  transition: transform 120ms ease-in;
+  font-weight: bold;
+  line-height: 1.2;
+  background-color: #fff;
+  color: #555;
+  cursor: text;
+}
+
+.input-label:hover {
+  color: var(--color-accent);
+}
+
+.input-field, .input-file, .input-select {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: none;
+  -webkit-box-shadow: inset 0px 0px 2px 1px #aaa; 
+  box-shadow: inset 0px 0px 2px 1px #aaa;
+  background-color: #fff;
+}
+
+.input-field:focus {
+  outline: none;
+  background-color: #fff;
+}
+
+.input-field:focus + .input-label, .input-field:not(:placeholder-shown) + .input-label, .input-file-chosen {
+  transform: translate(0.25rem, -68%) scale(0.9);
+  color: var(--color-accent);
+}
+
+.input-select {
+  background: none;
+  padding: 0.526rem 0.5rem;
+}
+
+
+.input-select option {
+  padding: 0.2rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0px;
+}
+
+input[type=file] {
+  color: #fff;
+  cursor: pointer;
+}
+
+input[type=file]::file-selector-button, input[type=file]::-webkit-file-upload-button  {
+  display: none;
+}
+
+input[type=file]:focus {
+  -webkit-box-shadow: inset 0px 0px 2px 1px #aaa; 
+  box-shadow: inset 0px 0px 2px 1px #aaa;
+}
+
+input[type=file]::after {
+  content: "Vyberte soubor";
+  color: #000;
+  float: right;
+  background-color: #ccc;
+  margin: -0.4rem -0.5rem -0.4rem -0.5rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.5rem;
+  cursor: pointer;
+}
+
+input[type=file]:hover::after {
+  color: #fff;
+  background-color: var(--color-accent);
 }

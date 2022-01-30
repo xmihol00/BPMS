@@ -2,24 +2,43 @@
 :root {
     --primary-color: rgb(28, 100, 255);
     --primary-shadow-color: rgba(28, 160, 255, 0.66);
+    --success-color: rgb(17, 167, 45);
+    --success-shadow-color: rgba(30, 214, 23, 0.66);
 }
 
-.btn-p {
-    padding: 0.3rem 0.75rem;
+.butn {
+    padding: 0.35rem 0.75rem;
     border-radius: 0px;
-    background-color: var(--primary-color);
     color: white;
     border: none;
     outline: none;
-    -webkit-box-shadow: 0px 0px 3px 2px #ccc;
-    box-shadow: 0px 0px 3px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 4px 1px #ccc;
+    box-shadow: 0px 0px 4px 1px #ccc;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     text-transform: uppercase;
+    font-size: 15px;
+}
+
+.butn:hover {
+    font-size: 15px;
+    transform: scale(1.04);
+    transition: all 0.25s;
+}
+
+.btn-p {
+    background-color: var(--primary-color);
+}
+
+.btn-s {
+    background-color: var(--success-color);
 }
 
 .btn-p:hover {
-    transform: scale(1.05);
-    transition: all 0.25s;
     -webkit-box-shadow: 0px 0px 3px 1px var(--primary-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--primary-shadow-color);
+}
+
+.btn-s:hover {
+    -webkit-box-shadow: 0px 0px 3px 1px var(--success-shadow-color);
+    box-shadow: 0px 0px 3px 1px var(--success-shadow-color);
 }
