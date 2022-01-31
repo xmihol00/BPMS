@@ -12,7 +12,7 @@ namespace BPMS_DAL.Entities
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Guid AdministratorId { get; set; }
-        public UserEntity Administrator { get; set; } = new UserEntity();
+        public UserEntity? Administrator { get; set; }
         public List<AgendaRoleUserEntity> UserRoles { get; set; } = new List<AgendaRoleUserEntity>();
         public List<SystemAgendaEntity> Systems { get; set; } = new List<SystemAgendaEntity>();
         public List<ModelEntity> Models { get; set; } = new List<ModelEntity>();

@@ -9,7 +9,10 @@ namespace BPMS_DAL.Entities.ModelBlocks
 {
     public class RecieveEventModelEntity : BlockModelEntity, IRecieveEventModelEntity
     {
-        public Guid SenderId { get; set; }
-        public SendEventModelEntity Sender { get; set; } = new SendEventModelEntity();
+        public RecieveEventModelEntity() : base() {}
+        public RecieveEventModelEntity(PoolEntity pool) : base(pool) { }
+
+        public Guid? SenderId { get; set; }
+        public SendEventModelEntity? Sender { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace BPMS_DAL.Interfaces.ModelBlocks
 {
     public interface IRecieveEventModelEntity : IBlockModelEntity
     {
-        public Guid SenderId { get; set; }
-        public SendEventModelEntity Sender { get; set; }
+        public Guid? SenderId { get; set; }
+        public SendEventModelEntity? Sender { get; set; }
     }
 }

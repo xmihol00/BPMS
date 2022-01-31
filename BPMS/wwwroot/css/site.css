@@ -311,6 +311,7 @@ h1, h2 {
 .input-field:focus + .input-label, .input-field:not(:placeholder-shown) + .input-label, .input-file-chosen {
   transform: translate(0.25rem, -68%) scale(0.9);
   color: var(--color-accent);
+  padding: 0rem 0.2rem;
 }
 
 .input-select {
@@ -353,4 +354,14 @@ input[type=file]::after {
 input[type=file]:hover::after {
   color: #fff;
   background-color: var(--color-accent);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-transition-delay: 99999s;
+    -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
+    transition-delay: 99999s;
+    transition: color 99999s ease-out, background-color 99999s ease-out;
 }

@@ -12,9 +12,9 @@ namespace BPMS_DAL.Entities
         public bool Active { get; set; }
         public DateTime SolvedDate { get; set; }
         public Guid WorkflowId { get; set; }
-        public WorkflowEntity Workflow { get; set; } = new WorkflowEntity();
+        public WorkflowEntity? Workflow { get; set; }
         public Guid BlockModelId { get; set; }
-        public BlockModelEntity BlockModel { get; set; } = new BlockModelEntity();
+        public BlockModelEntity? BlockModel { get; set; }
         public List<BlockDataEntity> BlockData { get; set; } = new List<BlockDataEntity>();
     }
 }

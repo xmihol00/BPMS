@@ -9,7 +9,7 @@ namespace BPMS_DAL.Entities.WorkflowBlocks
     public class UserTaskWorkflowEntity : BlockWorkflowEntity
     {
         public Guid UserId { get; set; }
-        public UserEntity User { get; set; } = new UserEntity();
+        public UserEntity? User { get; set; }
         public DateTime SolveDate { get; set; }
     }
 }

@@ -13,6 +13,9 @@ services.AddControllersWithViews()
 services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
 
 services.AddScoped<AgendaRepository>();
+services.AddScoped<BlockModelRepository>();
+services.AddScoped<ModelRepository>();
+services.AddScoped<PoolRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

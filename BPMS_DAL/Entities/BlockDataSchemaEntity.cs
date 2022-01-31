@@ -15,10 +15,10 @@ namespace BPMS_DAL.Entities
         public bool Compulsory { get; set; }
         public DataTypeEnum DataType { get; set; }
         public Guid? ParentId { get; set; }
-        public BlockDataSchemaEntity Parent { get; set; } = new BlockDataSchemaEntity();
+        public BlockDataSchemaEntity? Parent { get; set; }
         public List<BlockDataSchemaEntity> Children { get; set; } = new List<BlockDataSchemaEntity>();
         public Guid BlockId { get; set; }
-        public BlockModelEntity Block { get; set; } = new BlockModelEntity();
+        public BlockModelEntity? Block { get; set; }
         public List<ConditionDataEntity> Conditions { get; set; } = new List<ConditionDataEntity>();
         public List<BlockDataEntity> Data { get; set; } = new List<BlockDataEntity>();
     }

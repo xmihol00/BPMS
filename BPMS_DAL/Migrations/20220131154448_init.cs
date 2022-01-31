@@ -148,7 +148,7 @@ namespace BPMS_DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SVG = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AgendaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AgendaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -157,8 +157,7 @@ namespace BPMS_DAL.Migrations
                         name: "FK_Models_Agendas_AgendaId",
                         column: x => x.AgendaId,
                         principalTable: "Agendas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -284,7 +283,7 @@ namespace BPMS_DAL.Migrations
                     Alias = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Compulsory = table.Column<bool>(type: "bit", nullable: false),
                     DataType = table.Column<int>(type: "int", nullable: false),
-                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     BlockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -330,6 +329,22 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EndEventsModel",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EndEventsModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EndEventsModel_BlockModel_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockModel",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ExclusiveGatewaysModel",
                 columns: table => new
                 {
@@ -371,16 +386,16 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InclusiveGatewaysModel",
+                name: "ParallelGatewaysModel",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InclusiveGatewaysModel", x => x.Id);
+                    table.PrimaryKey("PK_ParallelGatewaysModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InclusiveGatewaysModel_BlockModel_Id",
+                        name: "FK_ParallelGatewaysModel_BlockModel_Id",
                         column: x => x.Id,
                         principalTable: "BlockModel",
                         principalColumn: "Id");
@@ -407,7 +422,7 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -421,8 +436,23 @@ namespace BPMS_DAL.Migrations
                         name: "FK_ServiceTasksModel_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StartEventsModel",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StartEventsModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StartEventsModel_BlockModel_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockModel",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -430,7 +460,7 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Span = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
@@ -445,8 +475,7 @@ namespace BPMS_DAL.Migrations
                         name: "FK_UserTasksModel_SolvingRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "SolvingRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -525,7 +554,7 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -539,8 +568,7 @@ namespace BPMS_DAL.Migrations
                         name: "FK_RecieveEventsModel_SendEventsModel_SenderId",
                         column: x => x.SenderId,
                         principalTable: "SendEventsModel",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -795,19 +823,25 @@ namespace BPMS_DAL.Migrations
                 name: "ConditionData");
 
             migrationBuilder.DropTable(
+                name: "EndEventsModel");
+
+            migrationBuilder.DropTable(
                 name: "Flows");
 
             migrationBuilder.DropTable(
-                name: "InclusiveGatewaysModel");
+                name: "NumberBlocks");
 
             migrationBuilder.DropTable(
-                name: "NumberBlocks");
+                name: "ParallelGatewaysModel");
 
             migrationBuilder.DropTable(
                 name: "RecieveEventsModel");
 
             migrationBuilder.DropTable(
                 name: "ServiceTasksModel");
+
+            migrationBuilder.DropTable(
+                name: "StartEventsModel");
 
             migrationBuilder.DropTable(
                 name: "StringBlocks");

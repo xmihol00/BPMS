@@ -10,9 +10,9 @@ namespace BPMS_DAL.Entities
     public class FlowEntity
     {
         public Guid InBlockId { get; set; }
-        public BlockModelEntity InBlock { get; set; } = new BlockModelEntity();
+        public BlockModelEntity? InBlock { get; set; }
         public Guid OutBlockId { get; set; }
-        public BlockModelEntity OutBlock { get; set; } = new BlockModelEntity();
+        public BlockModelEntity? OutBlock { get; set; }
         public FlowTypeEnum Type { get; set; }
     }
 }

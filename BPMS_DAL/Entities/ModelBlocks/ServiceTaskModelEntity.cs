@@ -9,7 +9,10 @@ namespace BPMS_DAL.Entities.ModelBlocks
 {
     public class ServiceTaskModelEntity : BlockModelEntity, IServiceTaskModelEntity
     {
-        public Guid ServiceId { get; set; }
-        public ServiceEntity Service { get; set; } = new ServiceEntity();
+        public ServiceTaskModelEntity() : base() {}
+        public ServiceTaskModelEntity(PoolEntity pool) : base(pool) { }
+
+        public Guid? ServiceId { get; set; }
+        public ServiceEntity? Service { get; set; }
     }
 }

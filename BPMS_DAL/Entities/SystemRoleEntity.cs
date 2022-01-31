@@ -10,7 +10,7 @@ namespace BPMS_DAL.Entities
     public class SystemRoleEntity
     {
         public Guid UserId { get; set; }
-        public UserEntity User { get; set; } = new UserEntity();
+        public UserEntity? User { get; set; }
         public SystemRoleEnum Role { get; set; }
     }
 }

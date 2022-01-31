@@ -9,8 +9,8 @@ namespace BPMS_DAL.Entities
     public class BlockDataEntity
     {
         public Guid BlockId { get; set; }
-        public BlockWorkflowEntity Block { get; set; } = new BlockWorkflowEntity();
+        public BlockWorkflowEntity? Block { get; set; }
         public Guid SchemaId { get; set; }
-        public BlockDataSchemaEntity Schema { get; set; } = new BlockDataSchemaEntity();
+        public BlockDataSchemaEntity? Schema { get; set; }
     }
 }

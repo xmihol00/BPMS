@@ -9,8 +9,8 @@ namespace BPMS_DAL.Interfaces.ModelBlocks
 {
     public interface IUserTaskModelEntity : IBlockModelEntity
     {
-        public Guid RoleId { get; set; }
-        public SolvingRoleEntity Role { get; set; }
+        public Guid? RoleId { get; set; }
+        public SolvingRoleEntity? Role { get; set; }
         public TimeSpan Span { get; set; }
     }
 }

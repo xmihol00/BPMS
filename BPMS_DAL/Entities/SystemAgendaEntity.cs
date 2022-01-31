@@ -10,7 +10,7 @@ namespace BPMS_DAL.Entities
     {
         public Guid AgendaId { get; set; }
         public Guid SystemId { get; set; }
-        public SystemEntity System { get; set; } = new SystemEntity();
-        public AgendaEntity Agenda { get; set; } = new AgendaEntity();
+        public SystemEntity? System { get; set; }
+        public AgendaEntity? Agenda { get; set; }
     }
 }

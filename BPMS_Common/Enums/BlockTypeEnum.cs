@@ -13,7 +13,7 @@ namespace BPMS_Common.Enums
         ServiceTask,
         ReceiveEvent,
         SendEvent,
-        InclusiveGateway,
+        ParallelGateway,
         ExclusiveGateway,
     }
 }

@@ -103,7 +103,6 @@ namespace BPMS_DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ParentId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -118,7 +117,6 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -202,10 +200,9 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.ModelEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AgendaId")
+                    b.Property<Guid?>("AgendaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -226,7 +223,6 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.PoolEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -480,6 +476,13 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("StringBlocks", (string)null);
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.EndEventModelEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
+
+                    b.ToTable("EndEventsModel", (string)null);
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.ExclusiveGatewayModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
@@ -491,18 +494,18 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("ExclusiveGatewaysModel", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.InclusiveGatewayModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.ParallelGatewayModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.ToTable("InclusiveGatewaysModel", (string)null);
+                    b.ToTable("ParallelGatewaysModel", (string)null);
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveEventModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<Guid>("SenderId")
+                    b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasIndex("SenderId");
@@ -510,7 +513,7 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("RecieveEventsModel", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendeEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
@@ -521,7 +524,7 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid?>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasIndex("ServiceId");
@@ -529,11 +532,18 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("ServiceTasksModel", (string)null);
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.StartEventModelEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
+
+                    b.ToTable("StartEventsModel", (string)null);
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<TimeSpan>("Span")
@@ -627,8 +637,7 @@ namespace BPMS_DAL.Migrations
                     b.HasOne("BPMS_DAL.Entities.BlockDataSchemaEntity", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Block");
 
@@ -707,9 +716,7 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasOne("BPMS_DAL.Entities.AgendaEntity", "Agenda")
                         .WithMany("Models")
-                        .HasForeignKey("AgendaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AgendaId");
 
                     b.Navigation("Agenda");
                 });
@@ -829,6 +836,15 @@ namespace BPMS_DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.EndEventModelEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.EndEventModelEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.ExclusiveGatewayModelEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
@@ -838,11 +854,11 @@ namespace BPMS_DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.InclusiveGatewayModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.ParallelGatewayModelEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.InclusiveGatewayModelEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.ParallelGatewayModelEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
@@ -855,20 +871,18 @@ namespace BPMS_DAL.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.SendeEventModelEntity", "Sender")
+                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", "Sender")
                         .WithMany("Recievers")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SenderId");
 
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendeEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.SendeEventModelEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
@@ -883,11 +897,18 @@ namespace BPMS_DAL.Migrations
 
                     b.HasOne("BPMS_DAL.Entities.ServiceEntity", "Service")
                         .WithMany("ServiceTasks")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ServiceId");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.StartEventModelEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.StartEventModelEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", b =>
@@ -900,9 +921,7 @@ namespace BPMS_DAL.Migrations
 
                     b.HasOne("BPMS_DAL.Entities.SolvingRoleEntity", "Role")
                         .WithMany("UserTasks")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });
@@ -1014,7 +1033,7 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Conditions");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendeEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
                 {
                     b.Navigation("Recievers");
                 });

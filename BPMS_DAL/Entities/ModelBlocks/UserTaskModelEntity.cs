@@ -9,8 +9,11 @@ namespace BPMS_DAL.Entities.ModelBlocks
 {
     public class UserTaskModelEntity : BlockModelEntity, IUserTaskModelEntity
     {
-        public Guid RoleId { get; set; }
-        public SolvingRoleEntity Role { get; set; } = new SolvingRoleEntity();
+        public UserTaskModelEntity() : base() {}
+        public UserTaskModelEntity(PoolEntity pool) : base(pool) { }
+
+        public Guid? RoleId { get; set; }
+        public SolvingRoleEntity? Role { get; set; }
         public TimeSpan Span { get; set; }
     }
 }

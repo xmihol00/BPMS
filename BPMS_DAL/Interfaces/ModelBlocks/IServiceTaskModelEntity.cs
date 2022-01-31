@@ -9,7 +9,7 @@ namespace BPMS_DAL.Interfaces.ModelBlocks
 {
     public interface IServiceTaskModelEntity : IBlockModelEntity
     {
-        public Guid ServiceId { get; set; }
-        public ServiceEntity Service { get; set; }
+        public Guid? ServiceId { get; set; }
+        public ServiceEntity? Service { get; set; }
     }
 }
