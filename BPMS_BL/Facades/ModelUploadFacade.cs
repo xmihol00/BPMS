@@ -90,6 +90,11 @@ namespace BPMS_BL.Facades
                         ParseFlow(flow);
                     }
                 }
+
+                foreach (var messageFlow in _messageFlows)
+                {
+                    ParseMessageFlow(messageFlow.source, messageFlow.destination);
+                }
                 
                 CheckExecutability();
             }
@@ -337,6 +342,28 @@ namespace BPMS_BL.Facades
             incomingBlock.InFlows = incomingBlock.InFlows.Append(flowModel).ToList();
         }
 
+        private void ParseMessageFlow(string? source, string? destination)
+        {
+            if (source is not null && destination is not null)    
+            {
+                BlockModelEntity? sourceBlock = _blocksDict[source];
+                BlockModelEntity? destinationBlock = _blocksDict[destination];
+                if (_blocksDict.TryGetValue(source, out sourceBlock) && 
+                    _blocksDict.TryGetValue(destination, out destinationBlock))
+                {
+                    if (sourceBlock is ISendEventModelEntity && destinationBlock is IRecieveEventModelEntity)
+                    {
+                        #pragma warning disable CS8602
+                        (destinationBlock as IRecieveEventModelEntity).SenderId = sourceBlock.Id;
+                        #pragma warning restore CS8602
+                        return;
+                    }
+                }
+            }
+
+            throw new ParsingException("Spojení typu 'Message Flow' může spojovat pouze blok typu 'Intermediate Throw Event' s blokem typu 'Intermediate Catch Event'.");
+        }
+
         private void CheckExecutability()
         {
             foreach (BlockModelEntity branch in _startEvents)
@@ -348,14 +375,14 @@ namespace BPMS_BL.Facades
             }
         }
 
-        private ExecutabilityStateEnum CheckBranchExecutability(BlockModelEntity branch)
+        private ExecutabilityStateEnum CheckBranchExecutability(BlockModelEntity? branch)
         {
-            while (branch.OutFlows.Count == 1)
+            while (branch?.OutFlows.Count == 1)
             {
-                branch = branch.OutFlows[0].InBlock;
+                branch = branch.OutFlows[0].InBlock;   
             }
 
-            if (branch.OutFlows.Count > 1)
+            if (branch?.OutFlows.Count > 1)
             {
                 if (branch is IParallelGatewayModelEntity)
                 {
@@ -392,7 +419,7 @@ namespace BPMS_BL.Facades
             }
 
             ExecutabilityStateEnum result = ExecutabilityStateEnum.NotExecutable;
-            foreach (BlockModelEntity branch in gateway.OutFlows.Select(x => x.InBlock))
+            foreach (BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
             {
                 ExecutabilityStateEnum state = CheckBranchExecutability(branch);
                 if (state == ExecutabilityStateEnum.NotExecutable)
@@ -421,7 +448,7 @@ namespace BPMS_BL.Facades
                 _solvedGateways[gateway.Id] = ExecutabilityStateEnum.Loop;
             }
 
-            foreach (BlockModelEntity branch in gateway.OutFlows.Select(x => x.InBlock))
+            foreach (BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
             {
                 if (CheckBranchExecutability(branch) == ExecutabilityStateEnum.Executable)
                 {

@@ -8,5 +8,7 @@ namespace BPMS_Common.Enums
 {
     public enum SystemRoleEnum
     {
+        Admin,
+        AgendaKeeper,
     }
 }

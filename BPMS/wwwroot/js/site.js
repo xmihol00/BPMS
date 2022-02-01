@@ -28,12 +28,44 @@ function ToggleSideBar()
     }
 }
 
-function ShowModal(contentId)
+function ShowModalElement(contentId, inputValidator = null)
 {
     document.getElementById("ModalBackgroundId").classList.add("modal-background-show");
     document.getElementById(contentId).classList.remove("d-none");
     document.getElementById("PageNavId").classList.add("page-navbar-modal");
     ModalContentId = contentId;
+    if (inputValidator)
+    {
+        document.addEventListener("input", inputValidator);
+    }
+}
+
+function ShowModal(contentId, url = null, targetId = null, inputValidator = null)
+{
+    let target = document.getElementById(targetId);
+    if (url && !target.innerHTML)
+    {
+        $.ajax(
+        {
+            async: true,
+            type: "GET",
+            url: url
+        })
+        .done((result) => 
+        {
+            target.innerHTML = result;
+            ShowModalElement(contentId, inputValidator);
+        })
+        .fail(() => 
+        {
+            // TODO
+            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        });
+    }
+    else
+    {
+        ShowModalElement(contentId, inputValidator);
+    }
 }
 
 function HideModal()

@@ -370,6 +370,23 @@ namespace BPMS_DAL.Migrations
                     b.HasKey("UserId", "Role");
 
                     b.ToTable("SystemRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
+                            Role = 0
+                        },
+                        new
+                        {
+                            UserId = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
+                            Role = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("442c2de7-eb92-44f9-acf1-41d5dade854a"),
+                            Role = 1
+                        });
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.UserEntity", b =>
@@ -405,6 +422,28 @@ namespace BPMS_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
+                            Email = "admin.system@test.cz",
+                            Name = "Admin",
+                            Password = "",
+                            PhoneNumber = "",
+                            Surname = "System",
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("442c2de7-eb92-44f9-acf1-41d5dade854a"),
+                            Email = "spravce.system@test.cz",
+                            Name = "Správce",
+                            Password = "",
+                            PhoneNumber = "",
+                            Surname = "System",
+                            UserName = "spravce"
+                        });
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.WorkflowEntity", b =>

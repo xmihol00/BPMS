@@ -687,6 +687,31 @@ namespace BPMS_DAL.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "UserName" },
+                values: new object[] { new Guid("442c2de7-eb92-44f9-acf1-41d5dade854a"), "spravce.system@test.cz", "Správce", "", "", "System", "spravce" });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "UserName" },
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "", "", "System", "admin" });
+
+            migrationBuilder.InsertData(
+                table: "SystemRoles",
+                columns: new[] { "Role", "UserId" },
+                values: new object[] { 1, new Guid("442c2de7-eb92-44f9-acf1-41d5dade854a") });
+
+            migrationBuilder.InsertData(
+                table: "SystemRoles",
+                columns: new[] { "Role", "UserId" },
+                values: new object[] { 0, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") });
+
+            migrationBuilder.InsertData(
+                table: "SystemRoles",
+                columns: new[] { "Role", "UserId" },
+                values: new object[] { 1, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AgendaRoles_RoleId",
                 table: "AgendaRoles",

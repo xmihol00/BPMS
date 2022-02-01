@@ -16,6 +16,7 @@ services.AddScoped<AgendaRepository>();
 services.AddScoped<BlockModelRepository>();
 services.AddScoped<ModelRepository>();
 services.AddScoped<PoolRepository>();
+services.AddScoped<UserRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

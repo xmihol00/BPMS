@@ -2,6 +2,7 @@
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Entities.WorkflowBlocks;
+using BPMS_DAL.Seeds;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -117,6 +118,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.DataSchema).WithMany(x => x.Conditions);
 
             modelBuilder.Entity<ServiceEntity>().HasKey(x => x.Id);
+
+            modelBuilder.SeedUsers();
+            modelBuilder.SeedSystemRoles();
         }
     }
 

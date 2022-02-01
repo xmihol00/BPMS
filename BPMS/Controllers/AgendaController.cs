@@ -24,5 +24,11 @@ namespace BPMS.Controllers
         {
             return View("AgendaDetail");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateModal()
+        {
+            return PartialView("Partial/_AgendaCreateModal", await _agendaFacade.CreateModal());
+        }
     }
 }
