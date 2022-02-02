@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Agenda
 {
-    public class CreateAgendaModalDTO
+    public class AgendaOverviewDTO
     {
-        public int AgendaId { get; set; }
-        public IFormFile? BPMN { get; set; }
-        public IFormFile? SVG { get; set; }
+        public List<AgendaAllDTO> Agendas { get; set; } = new List<AgendaAllDTO>();
     }
 }

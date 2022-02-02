@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BPMS_DAL.Entities;
+using BPMS_DTOs.Agenda;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace BPMS_BL.Profiles
     {
         public AgendaProfile()
         {
-
+            CreateMap<AgendaCreateDTO, AgendaEntity>();
         }
     }
 }

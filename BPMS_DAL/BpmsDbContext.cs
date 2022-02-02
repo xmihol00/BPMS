@@ -57,7 +57,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<AgendaEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<AgendaEntity>().HasOne(x => x.Administrator).WithMany(x => x.Agendas).HasForeignKey(x => x.AdministratorId);
 
-            modelBuilder.Entity<AgendaRoleUserEntity>().HasKey(x => new { x.UserId, x.RoleId, x.AgendaId });
+            modelBuilder.Entity<AgendaRoleUserEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Role).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Agenda).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId).OnDelete(DeleteBehavior.NoAction);

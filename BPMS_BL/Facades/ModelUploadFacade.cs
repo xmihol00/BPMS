@@ -36,7 +36,7 @@ namespace BPMS_BL.Facades
             _blockModelRepository = blockModelRepository;
         }
 
-        public async Task<(string error, string? svg)?> Upload(CreateModelDTO dto)
+        public async Task<(string error, string? svg)?> Upload(ModelCreateDTO dto)
         {
             XDocument bpmn = new XDocument();
             if (dto.BPMN is not null)

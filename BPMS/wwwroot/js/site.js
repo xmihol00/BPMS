@@ -33,6 +33,7 @@ function ShowModalElement(contentId, inputValidator = null)
     document.getElementById("ModalBackgroundId").classList.add("modal-background-show");
     document.getElementById(contentId).classList.remove("d-none");
     document.getElementById("PageNavId").classList.add("page-navbar-modal");
+    document.getElementById("PageContentId").classList.add("page-content-modal");
     ModalContentId = contentId;
     if (inputValidator)
     {
@@ -71,12 +72,16 @@ function ShowModal(contentId, url = null, targetId = null, inputValidator = null
 function HideModal()
 {
     document.getElementById("PageNavId").classList.remove("page-navbar-modal");
+    document.getElementById("ModalBackgroundId").classList.remove("modal-background-show");
     if (ModalContentId)
     {
-        document.getElementById(ModalContentId).classList.add("d-none");
-        ModalContentId = null;
+        setTimeout(() => 
+        {
+            document.getElementById(ModalContentId).classList.add("d-none");
+            ModalContentId = null;
+        }, 400);
     }
-    document.getElementById("ModalBackgroundId").classList.remove("modal-background-show");
+    setTimeout(() => document.getElementById("PageContentId").classList.remove("page-content-modal"), 700);
 }
 
 function FileSelected(element)

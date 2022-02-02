@@ -1,16 +1,82 @@
+@model AgendaOverviewDTO
 @{
     ViewData["Title"] = "Agendy";
 }
 <script src="~/js/Agenda/AgendaOverview.js"></script>
 
-<div id="PageNavId" class="page-navbar ">
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <i class="fas fa-chevron-circle-left my-auto"></i>
-        <h1 class="mb-0 pt-1">Agendy</h1>
-        <div class="my-auto">
-            <button class="butn btn-p" 
-                    onclick="ShowModal('CreateAgendaId', '/Agenda/CreateModal', 'CreateAgendaId', ValidateAgendaCreate)">Vytvořit</button>
+@if (Model != null)
+{
+    <div id="PageNavId" class="page-navbar">
+        <div class="d-flex justify-content-between px-4 page-navbar-content">
+            <i class="fas fa-chevron-circle-left my-auto"></i>
+            <h1 class="mb-0 pt-1">Agendy</h1>
+            <div class="my-auto">
+                <button class="butn btn-p" 
+                        onclick="ShowModal('CreateAgendaId', '/Agenda/CreateModal', 'CreateAgendaId', ValidateAgendaCreate)">Vytvořit</button>
+            </div>
+        </div>
+        <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" ></form>
+    </div>
+    <div id="PageContentId" class="d-flex pt-3">
+        <div id="DetailDivId" class="d-none detail-div">
+        </div>
+        <div id="OverviewDivId" class="container-lg">
+            <div class="row">
+                @foreach (AgendaAllDTO agenda in Model.Agendas)
+                {
+                    <div id="@agenda.Id" class="col-12 col-md-6 col-lg-4 p-2 pointer" onclick="AgendaDetail(this)">
+                        <div class="shadow-box p-3 my-card bradius-card hover-card">
+                            <h3 class="text-center border-bottom pb-1">@agenda.Name</h3>
+                            <div class="d-flex justify-content-center support-icons">
+                                <div class="vertical-justify-between">
+                                    <div class="d-flex justify-content-end">
+                                        <b>@agenda.ActiveWorkflowsCount 
+                                        <i class="fas fa-pause ml-2 @(agenda.ActiveWorkflowsCount > 0 ? "wf-active" : "")"></i></b>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <b>@agenda.PausedWorkflowsCount 
+                                        <i class="fas fa-play ml-2 @(agenda.PausedWorkflowsCount > 0 ? "wf-paused" : "")"></i></b>
+                                    </div>
+                                </div>
+                                <i class="fas fa-retweet main-icon my-auto"></i>
+                                <div class="vertical-justify-between pt-1px">
+                                    <div>
+                                        <b><i class="fas fa-check-square icon-size-correction mr-2 @(agenda.FinishedWorkflowsCount > 0 ? "wf-finished" : "")"></i> 
+                                        @agenda.FinishedWorkflowsCount</b>
+                                    </div>
+                                    <div>
+                                        <b><i class="fa fa-stop-circle icon-size-correction mr-2 @(agenda.CanceledWorkflowsCount > 0 ? "wf-canceled" : "")"></i> 
+                                        @agenda.CanceledWorkflowsCount</b>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-around mt-3">
+                                <div >
+                                    <i class="fas fa-users secondary-icon"></i> 
+                                    <span class="wf-count">1</span>
+                                </div>
+                                <div >
+                                    <i class="fas fa-user-times secondary-icon"></i>
+                                    <span class="wf-count">45</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-around mt-2">
+                                <div >
+                                    <i class="fas fa-cog secondary-icon"></i>
+                                    <span class="wf-count">20</span>
+                                </div>
+                                <div class="align-middle">
+                                    <i class="fas fa-handshake secondary-icon"></i>
+                                    <span class="wf-count">450</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div id="OverviewNavId" class="overview-nav">
+
         </div>
     </div>
-    <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" ></form>
-</div>
+}

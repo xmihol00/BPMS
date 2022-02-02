@@ -14,7 +14,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload(CreateModelDTO dto)
+        public async Task<IActionResult> Upload(ModelCreateDTO dto)
         {
             await _modelUploadFacade.Upload(dto);
             return View();

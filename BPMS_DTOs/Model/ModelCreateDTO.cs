@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Model
 {
-    public class CreateModelDTO
+    public class ModelCreateDTO
     {
         public Guid AgendaId { get; set; }
         public IFormFile? BPMN { get; set; }

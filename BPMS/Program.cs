@@ -1,5 +1,6 @@
 
 using BPMS_BL.Facades;
+using BPMS_BL.Profiles;
 using BPMS_DAL;
 using BPMS_DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ services.AddScoped<UserRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
+
+services.AddAutoMapper(typeof(AgendaProfile));
 
 var app = builder.Build();
 

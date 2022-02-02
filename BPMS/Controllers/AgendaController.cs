@@ -1,4 +1,5 @@
 ﻿using BPMS_BL.Facades;
+using BPMS_DTOs.Agenda;
 using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> Overview()
         {
-            return View("AgendaOverview");
+            return View("AgendaOverview", await _agendaFacade.Overview());
         }
 
         [HttpGet]
@@ -26,9 +27,22 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> DetailPartial(Guid id)
+        {
+            return PartialView("Partial/_AgendaDetail", await _agendaFacade.Detail(id));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> CreateModal()
         {
             return PartialView("Partial/_AgendaCreateModal", await _agendaFacade.CreateModal());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(AgendaCreateDTO dto)
+        {
+            await _agendaFacade.Create(dto);
+            return Redirect("/Agenda/Overview");
         }
     }
 }

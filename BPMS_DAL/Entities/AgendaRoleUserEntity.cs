@@ -8,6 +8,7 @@ namespace BPMS_DAL.Entities
 {
     public class AgendaRoleUserEntity
     {
+        public Guid Id { get; set; }
         public Guid AgendaId { get; set; }
         public Guid UserId { get; set; }
         public Guid RoleId { get; set; }
