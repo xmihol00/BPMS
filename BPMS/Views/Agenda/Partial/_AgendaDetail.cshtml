@@ -1,2 +1,37 @@
 @model AgendaDetailDTO
-<h1>@Model.Name</h1>
+@{
+    ViewData["Title"] = "Detail agendy";
+}
+
+@if (Model is not null)
+{
+    <div class="row">
+        <h1 class="text-right col-5 vertical-justify-center mb-0 text-font">@Model.Name</h1>
+        <div class="col-2">
+            <div>Správce:</div>
+            <div>Popis:</div>
+        </div>
+        <div class="col-5">
+            <b class="d-inline-block ml-4">@Model.AdministratorName</b>
+        </div>
+    </div>
+    <p>Sed ac dolor sit amet purus malesuada congue. Integer vulputate sem a nibh rutrum consequat. Fusce aliquam vestibulum ipsum. Proin mattis lacinia justo. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? Pellentesque ipsum. Maecenas lorem. Fusce consectetuer risus a nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Nam quis nulla. Aenean fermentum risus id tortor. Mauris dictum facilisis augue.</p>
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <h3 class="text-center text-font">Role a uživatelé</h3>
+        </div>
+        <div class="col-12 col-lg-6">
+            <h3 class="text-center text-font">Modely agendy</h3>
+            @foreach (AllModelDTO modl in Model.Models)
+            {
+                <div class="shadow-box p-3 m-2 my-card bradius-card hover-card pointer" onclick="ShowModelModal(this)">
+                    <h3 class="text-center border-bottom pb-1">@modl.Name</h3>
+                    @Html.Raw(modl.SVG)
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <h3 class="text-center text-font">Aktivní workflow</h3>
+    </div>
+}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Model
 {
-    public class ModelCreateDTO
+    public class AllModelDTO
     {
-        public Guid AgendaId { get; set; }
+        public Guid ModelId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public IFormFile? BPMN { get; set; }
-        public IFormFile? SVG { get; set; }
+        public string SVG { get; set; } = string.Empty;
     }
 }

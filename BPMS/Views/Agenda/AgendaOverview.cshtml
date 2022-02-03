@@ -2,14 +2,14 @@
 @{
     ViewData["Title"] = "Agendy";
 }
-<script src="~/js/Agenda/AgendaOverview.js"></script>
+<script src="~/js/Agenda/Agenda.js"></script>
 
 @if (Model != null)
 {
     <div id="PageNavId" class="page-navbar">
         <div class="d-flex justify-content-between px-4 page-navbar-content">
             <i class="fas fa-chevron-circle-left my-auto"></i>
-            <h1 class="mb-0 pt-1">Agendy</h1>
+            <h1 class="mb-0 pt-1 text-font">Agendy</h1>
             <div class="my-auto">
                 <button class="butn btn-p" 
                         onclick="ShowModal('CreateAgendaId', '/Agenda/CreateModal', 'CreateAgendaId', ValidateAgendaCreate)">Vytvořit</button>
@@ -18,7 +18,10 @@
         <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" ></form>
     </div>
     <div id="PageContentId" class="d-flex pt-3">
-        <div id="DetailDivId" class="d-none detail-div">
+        <div id="DetailDivId" class="d-none detail-div w-0">
+            <div class="d-flex justify-content-between">
+                <img src="~/loading.svg" class="loading-to-detail">
+            </div>
         </div>
         <div id="OverviewDivId" class="container-lg">
             <div class="row">
@@ -53,21 +56,21 @@
                             <div class="d-flex justify-content-around mt-3">
                                 <div >
                                     <i class="fas fa-users secondary-icon"></i> 
-                                    <span class="wf-count">1</span>
+                                    <span class="wf-count">@agenda.UserCount</span>
                                 </div>
                                 <div >
                                     <i class="fas fa-user-times secondary-icon"></i>
-                                    <span class="wf-count">45</span>
+                                    <span class="wf-count">@agenda.MissingRolesCount</span>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-around mt-2">
                                 <div >
                                     <i class="fas fa-cog secondary-icon"></i>
-                                    <span class="wf-count">20</span>
+                                    <span class="wf-count">@agenda.ModelsCount</span>
                                 </div>
                                 <div class="align-middle">
                                     <i class="fas fa-handshake secondary-icon"></i>
-                                    <span class="wf-count">450</span>
+                                    <span class="wf-count">@agenda.SystemsCount</span>
                                 </div>
                             </div>
                         </div>

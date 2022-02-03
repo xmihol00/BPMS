@@ -1,5 +1,6 @@
 ﻿
 var ModalContentId = null;
+var Validator = null;
 
 document.addEventListener("keydown", KeyDownHandler);
 
@@ -28,20 +29,21 @@ function ToggleSideBar()
     }
 }
 
-function ShowModalElement(contentId, inputValidator = null)
+function ShowModalElement(contentId, validator = null)
 {
     document.getElementById("ModalBackgroundId").classList.add("modal-background-show");
     document.getElementById(contentId).classList.remove("d-none");
     document.getElementById("PageNavId").classList.add("page-navbar-modal");
-    document.getElementById("PageContentId").classList.add("page-content-modal");
+    //document.getElementById("PageContentId").classList.add("page-content-modal");
     ModalContentId = contentId;
-    if (inputValidator)
+    if (validator)
     {
-        document.addEventListener("input", inputValidator);
+        document.addEventListener("input", validator);
+        Validator = validator;
     }
 }
 
-function ShowModal(contentId, url = null, targetId = null, inputValidator = null)
+function ShowModal(contentId, url = null, targetId = null, validator = null)
 {
     let target = document.getElementById(targetId);
     if (url && !target.innerHTML)
@@ -55,7 +57,7 @@ function ShowModal(contentId, url = null, targetId = null, inputValidator = null
         .done((result) => 
         {
             target.innerHTML = result;
-            ShowModalElement(contentId, inputValidator);
+            ShowModalElement(contentId, validator);
         })
         .fail(() => 
         {
@@ -65,14 +67,23 @@ function ShowModal(contentId, url = null, targetId = null, inputValidator = null
     }
     else
     {
-        ShowModalElement(contentId, inputValidator);
+        ShowModalElement(contentId, validator);
     }
 }
 
 function HideModal()
 {
-    document.getElementById("PageNavId").classList.remove("page-navbar-modal");
+    let modal = document.getElementById("PageNavId");
+    modal.classList.remove("page-navbar-modal");
+    modal.classList.remove("page-navbar-modal-large");
     document.getElementById("ModalBackgroundId").classList.remove("modal-background-show");
+    
+    if (Validator)
+    {
+        document.removeEventListener("input", Validator);
+        Validator = null;
+    }
+
     if (ModalContentId)
     {
         setTimeout(() => 
@@ -81,19 +92,19 @@ function HideModal()
             ModalContentId = null;
         }, 400);
     }
-    setTimeout(() => document.getElementById("PageContentId").classList.remove("page-content-modal"), 700);
 }
 
 function FileSelected(element)
 {
+    let label = element.parentNode.children[1];
     if (element.files[0])
     {
-        element.parentNode.children[1].classList.add("input-file-chosen");
+        label.classList.add("input-file-chosen");
         element.style.color = "#000";
     }
     else
     {
-        element.parentNode.children[1].classList.remove("input-file-chosen");
+        label.classList.remove("input-file-chosen");
         element.style.color = "#fff";
     }
 }

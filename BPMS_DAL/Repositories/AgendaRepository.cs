@@ -43,9 +43,10 @@ namespace BPMS_DAL.Repositories
                          .Select(x => new AgendaDetailDTO 
                          {
                              AdministratorId = x.AdministratorId,
-                             AdministratorName = x.Administrator.Name,
+                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
                              Id = x.Id,
-                             Name = x.Name
+                             Name = x.Name,
+                             Description = x.Description
                          })
                          .FirstAsync(x => x.Id == id);
             #pragma warning restore CS8602

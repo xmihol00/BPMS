@@ -29,7 +29,13 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            return PartialView("Partial/_AgendaDetail", await _agendaFacade.Detail(id));
+            AgendaDetailDTO dto = await _agendaFacade.Detail(id);
+
+            return Ok(new
+                {
+                    detail = await this.RenderViewAsync("Partial/_AgendaDetail", dto, true),
+                    header = await this.RenderViewAsync("Partial/_AgendaDetailHeader", dto.Id, true),
+                });
         }
 
         [HttpGet]

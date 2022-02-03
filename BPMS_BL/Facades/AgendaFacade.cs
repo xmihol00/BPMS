@@ -18,6 +18,7 @@ namespace BPMS_BL.Facades
     {
         private readonly AgendaRepository _agendaRepository;
         private readonly UserRepository _userRepository;
+        private readonly ModelRepository _modelRepository;
         private readonly IMapper _mapper;
 
         public async Task<AgendaOverviewDTO> Overview()
@@ -28,10 +29,12 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, IMapper mapper)
+        public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
+                            IMapper mapper)
         {
             _agendaRepository = agendaRepository;
             _userRepository = userRepository;
+            _modelRepository = modelRepository;
             _mapper = mapper;
         }
 
@@ -43,9 +46,12 @@ namespace BPMS_BL.Facades
             await _agendaRepository.Save();
         }
 
-        public Task<AgendaDetailDTO> Detail(Guid id)
+        public async Task<AgendaDetailDTO> Detail(Guid id)
         {
-            return _agendaRepository.Detail(id);
+            AgendaDetailDTO detail = await _agendaRepository.Detail(id);
+            detail.Models = await _modelRepository.OfAgenda(id);
+
+            return detail;
         }
     }
 }

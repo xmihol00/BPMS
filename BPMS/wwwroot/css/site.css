@@ -43,16 +43,32 @@ body {
   background-color: var(--color-bg-footer);
 }
 
-h1, h2 {
+.text-font {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .screen-lg {
   display: none;
 }
 
+.loading-to-detail {
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  top: 18vh;
+  left: 27vw;
+}
+
 .screen-md {
   display: block;
+}
+
+.se, .ee, .ut, .st, .ite, .ice, .eg, .pg {
+  cursor: pointer;
 }
 
 .menu-btn {
@@ -116,7 +132,7 @@ h1, h2 {
     overflow: hidden;
     transition: all 0.35s;
     transition-delay: 350ms;
-    margin: 0 1.8em;
+    margin: 0 3em;
     z-index: 101;
   }
 
@@ -134,10 +150,22 @@ h1, h2 {
     box-shadow: 0px 0px 8px 2px #444;
   }
 
+  .page-navbar-modal-large {
+    max-height: fit-content !important;
+    padding-top: var(--navbar-height);
+    margin: 0px -15px;
+    height: calc(100vh - 1rem - var(--footer-height));
+    z-index: 0;
+    -webkit-box-shadow: none; 
+    box-shadow: none;
+  }
+
   .page-content-modal {
     position: fixed;
     top: var(--navbar-height);
+    /*height: calc(100vh - var(--navbar-height) - var(--footer-height));*/
     width: calc(100% - var(--side-bar-width) - 30px);
+    /*overflow: auto;*/
   }
 
   .main-content-large .page-content-modal {
@@ -149,7 +177,12 @@ h1, h2 {
     margin-top: 10vh;
   }
 
-  .page-navbar-modal .page-navbar-content {
+  /*.main-content-large .page-navbar-modal-large {
+    margin: 0px max(calc(50vw - 700px), 1em);
+    margin-top: 10vh;
+  }*/
+
+  .page-navbar-modal .page-navbar-content, .page-navbar-modal-large .page-navbar-content {
     margin-top: -60px;
   }
 
@@ -345,7 +378,6 @@ h1, h2 {
   padding: 0.526rem 0.5rem;
 }
 
-
 .input-select option {
   padding: 0.2rem;
   margin-left: 0.5rem;
@@ -485,6 +517,7 @@ input:-webkit-autofill:active {
 
 .detail-div {
   transition: all 1.0s;
+  display: block;
   overflow: hidden;
 }
 
@@ -493,7 +526,7 @@ input:-webkit-autofill:active {
   margin-left: 10px;
   transition: all 1.0s;
   overflow: hidden;
-  height: 1000px;
+  height: 80vh;
   background-color: chocolate;
 }
 
@@ -502,3 +535,15 @@ input:-webkit-autofill:active {
   margin: 0;
 }
 
+
+.vertical-justify-between {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.vertical-justify-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
