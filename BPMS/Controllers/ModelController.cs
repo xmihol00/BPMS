@@ -18,5 +18,10 @@ namespace BPMS.Controllers
         {
             return PartialView("Partial/_ModelHeader", await _modelFacade.Header(id));
         }
+
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            return View("ModelDetail", await _modelFacade.Detail(id));
+        }
     }
 }

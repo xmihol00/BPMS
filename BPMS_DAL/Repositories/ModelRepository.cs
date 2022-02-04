@@ -27,6 +27,18 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<ModelDetailDTO> Detail(Guid id)
+        {
+            return _dbSet.Select(x => new ModelDetailDTO
+                         {
+                             Id = x.Id,
+                             Description = x.Description,
+                             Name = x.Name,
+                             SVG = x.SVG
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<ModelHeaderDTO> Header(Guid id)
         {
             return _dbSet.Select(x => new ModelHeaderDTO

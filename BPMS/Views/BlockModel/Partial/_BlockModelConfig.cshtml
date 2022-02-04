@@ -2,7 +2,7 @@
 
 @if (Model != null)
 {
-    <div class="row mt-1">
+    <form id="BlockEditFormId" class="row mt-1">
         <div class="col-12">
             <label class="input">
                 <input id="BlockNameId" name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
@@ -22,24 +22,28 @@
                 Blok nemá konfigurovany žádné atributy.
             </p>
         }
-    </div>
-    <div id="NewAttribRowId" class="row d-none">
-        <h5>Konfigurace atributu</h5>
+    </form>
+    <form id="AttribCreateFormId" class="row d-none" method="post" action="/BlockModel/CreateEditSchema" 
+          onsubmit="BlockConfigSubmit(event, 'BlockConfigTargetId')">
+        <input type="hidden" name="Id" value="" />
+        <input type="hidden" name="ParentId" value="null" />
+        <input type="hidden" name="BlockId" value="@Model.Id" />
+        <h5>Atributy bloku</h5>
         <div class="col-4">
             <label class="input">
-                <input id="SchemaNameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
+                <input id="AttribNameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
                 <span class="input-label color-required">Název</span>
             </label>
         </div>
         <div class="col-4">
             <label class="input">
-                <input id="AliasId" name="Name" class="input-field" type="text" placeholder=" " value="" />
+                <input id="AliasId" name="Alias" class="input-field" type="text" placeholder=" " value="" />
                 <span class="input-label">Alias</span>
             </label>
         </div>
         <div class="col-2">
             <label class="input">
-                <select class="input-field input-select" name="AdministratorId"> 
+                <select class="input-field input-select" name="DataType"> 
                     <option value="@DataTypeEnum.Object">Objekt</option>
                     <option value="@DataTypeEnum.String">Řetězec</option>
                     <option value="@DataTypeEnum.Number">Číslo</option>
@@ -50,16 +54,16 @@
             </label>
         </div>  
         <div class="col-2 vertical-justify-center">
-            <div>
-                <span class="d-inline-block label-checkbox pb-2 label-checkbox-checked">Povinnost</span>
-                <input type="checkbox" class="checkbox" checked/>
+            <div class="d-flex">
+                <span class="label-checkbox label-checkbox-checked">Povinnost</span>
+                <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" checked/>
             </div>
         </div>
-    </div>
+    </form>
     <div class="d-flex justify-content-center mt-3">
-        <button type="button" id="NewBlockId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
-        <button type="submit" id="CreateBtnId" class="butn btn-s" disabled>Upravit</button>
-        <button type="button" id="CreateAttId" class="butn btn-s d-none">Vytvořit atribut</button>
-        <button type="button" id="CancelAttId" class="butn btn-d d-none">Zrušit</button>
+        <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
+        <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s" disabled>Upravit</button>
+        <button type="submit" form="AttribCreateFormId" id="CreateAttBtnId" class="butn btn-s d-none" disabled>Vytvořit atribut</button>
+        <button type="button" id="CancelAttBtnId" class="butn btn-d d-none" onclick="CancelAddAttrib()">Zrušit</button>
     </div>
 }

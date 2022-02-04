@@ -2,6 +2,7 @@
 var ModalContentId = null;
 var Validator = null;
 var LoadedElements = [];
+var Callback = null;
 
 document.addEventListener("keydown", KeyDownHandler);
 
@@ -44,7 +45,7 @@ function ShowModalElement(contentId, validator = null)
     }
 }
 
-function ShowModal(contentId, url = null, targetId = null, validator = null, remember = true)
+function ShowModal(contentId, url = null, targetId = null, validator = null, remember = true, callback = null)
 {
     ShowModalElement(contentId, validator);
     if (targetId)
@@ -74,6 +75,8 @@ function ShowModal(contentId, url = null, targetId = null, validator = null, rem
             });
         }
     }
+    
+    Callback = callback;
 }
 
 function HideModal()
@@ -95,7 +98,12 @@ function HideModal()
         {
             document.getElementById(ModalContentId).classList.add("d-none");
             ModalContentId = null;
-        }, 400);
+            if (Callback)
+            {
+                Callback();
+                Callback = null;
+            }
+        }, 350);
     }
 }
 
@@ -112,4 +120,33 @@ function FileSelected(element)
         label.classList.remove("input-file-chosen");
         element.style.color = "#fff";
     }
+}
+
+function AjaxFormSubmit(event, targetId)
+{
+    event.preventDefault();
+    let form = event.target;
+
+    const dto = new FormData(form);
+    console.log(dto, form.getAttribute("action"));
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: form.getAttribute("action"),
+        data: dto,
+        contentType: false,
+        processData: false,
+    })
+    .done((result) => 
+    {
+        document.getElementById(targetId).innerHTML = result;
+        
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+        
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
-using BPMS_DTOs.DataSchema;
+using BPMS_DTOs.BlockDataSchema;
 
 namespace BPMS_DAL.Repositories
 {
@@ -15,10 +15,10 @@ namespace BPMS_DAL.Repositories
     {
         public BlockDataSchemaRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<DataSchemaNodeDTO>> DataSchemas(Guid blockId)
+        public Task<List<BlockDataSchemaNodeDTO>> DataSchemas(Guid blockId)
         {
             return _dbSet.Where(x => x.BlockId == blockId)
-                         .Select(x => new DataSchemaNodeDTO 
+                         .Select(x => new BlockDataSchemaNodeDTO 
                          {
                             Id = x.Id,
                             ParentId = x.ParentId,

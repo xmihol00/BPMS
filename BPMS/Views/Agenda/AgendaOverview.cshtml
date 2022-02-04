@@ -18,7 +18,7 @@
         </div>
         <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" >
             <div class="d-flex justify-content-center">
-                <img src="~/loading.svg" class="loading-modal">
+                @await Html.PartialAsync("_LoadingImage")
             </div>
         </form>
     </div>

@@ -1,9 +1,9 @@
-@model IEnumerable<DataSchemaNodeDTO>
+@model IEnumerable<BlockDataSchemaNodeDTO>
 
 @if (Model != null && Model.Count() > 0)
 {
     <ul>
-        @foreach (DataSchemaNodeDTO node in Model)
+        @foreach (BlockDataSchemaNodeDTO node in Model)
         {
             <li>
                 @node.Name

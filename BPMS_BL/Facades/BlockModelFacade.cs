@@ -11,7 +11,7 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockModel;
-using BPMS_DTOs.DataSchema;
+using BPMS_DTOs.BlockDataSchema;
 using BPMS_DTOs.User;
 
 namespace BPMS_BL.Facades
@@ -28,6 +28,23 @@ namespace BPMS_BL.Facades
             _blockModelRepository = blockModelRepository;
             _blockDataSchemaRepository = blockDataSchemaRepository;
             _mapper = mapper;
+        }
+
+        public async Task<BlockModelConfigDTO> CreateEditSchema(BlockDataSchemaCreateEditDTO dto)
+        {
+            BlockDataSchemaEntity entity = _mapper.Map<BlockDataSchemaEntity>(dto);
+            if (dto.Id == Guid.Empty)
+            {
+                await _blockDataSchemaRepository.Create(entity);
+            }
+            else
+            {
+                _blockDataSchemaRepository.Update(entity);
+            }
+
+            await _blockDataSchemaRepository.Save();
+
+            return await Config(dto.BlockId);
         }
 
         public async Task<BlockModelConfigDTO> Config(Guid id)
@@ -70,10 +87,10 @@ namespace BPMS_BL.Facades
             return dto;
         }
 
-        private IEnumerable<DataSchemaNodeDTO> CreateTree(IEnumerable<DataSchemaNodeDTO> allNodes, Guid? parentId)
+        private IEnumerable<BlockDataSchemaNodeDTO> CreateTree(IEnumerable<BlockDataSchemaNodeDTO> allNodes, Guid? parentId)
         {
-            IEnumerable<DataSchemaNodeDTO> nodes = allNodes.Where(x => x.ParentId == parentId);
-            foreach (DataSchemaNodeDTO node in nodes)
+            IEnumerable<BlockDataSchemaNodeDTO> nodes = allNodes.Where(x => x.ParentId == parentId);
+            foreach (BlockDataSchemaNodeDTO node in nodes)
             {
                 if (node.DataType == DataTypeEnum.Object)
                 {

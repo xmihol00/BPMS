@@ -101,6 +101,7 @@ function AgendaDetail(element)
 
 function ShowModelModal(element)
 {
+    element.children[0].classList.add("h2");
     let content = document.getElementById("ModelModalId");
     content.children[0].children[0].innerHTML = element.innerHTML;
     content.classList.remove("d-none");
@@ -140,7 +141,7 @@ function ShowModelModal(element)
     setTimeout(() => 
     {
         navbar.children[0].innerHTML = "";
-    }, 349);
+    }, 350);
 
     setTimeout(() => 
     {
@@ -155,7 +156,8 @@ function ShowModelModal(element)
         
         for (let ele of document.getElementsByClassName("bpmn-block"))
         {
-            ele.addEventListener("click", () => BlockConfig(ele.id));
+            ele.addEventListener("click", () => ShowModal("BlockConfigId", "/BlockModel/Config/" + ele.id, 
+                                                          "BlockConfigTargetId", null, false, HideModelHeader));
         }
 
     }, 700);

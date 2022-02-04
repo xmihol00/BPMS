@@ -27,6 +27,11 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public Task<ModelDetailDTO> Detail(Guid id)
+        {
+            return _modelRepository.Detail(id);
+        }
+
         public Task<ModelHeaderDTO> Header(Guid id)
         {
             return _modelRepository.Header(id);

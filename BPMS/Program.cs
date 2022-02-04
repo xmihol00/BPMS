@@ -25,6 +25,7 @@ services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
 services.AddScoped<ModelFacade>();
 services.AddScoped<BlockModelFacade>();
+services.AddScoped<BlockDataSchemaFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile));
 

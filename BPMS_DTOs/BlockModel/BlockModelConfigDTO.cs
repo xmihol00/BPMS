@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DTOs.DataSchema;
+using BPMS_DTOs.BlockDataSchema;
 using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel
@@ -12,6 +12,6 @@ namespace BPMS_DTOs.BlockModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public IEnumerable<DataSchemaNodeDTO> RootNodes { get; set; } = new List<DataSchemaNodeDTO>();
+        public IEnumerable<BlockDataSchemaNodeDTO> RootNodes { get; set; } = new List<BlockDataSchemaNodeDTO>();
     }
 }
