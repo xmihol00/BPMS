@@ -8,5 +8,10 @@ namespace BPMS_Common.Enums
 {
     public enum DataTypeEnum
     {
+        Object,
+        String,
+        Number,
+        Bool,
+        Array
     }
 }

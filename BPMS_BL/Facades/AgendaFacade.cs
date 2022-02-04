@@ -21,14 +21,6 @@ namespace BPMS_BL.Facades
         private readonly ModelRepository _modelRepository;
         private readonly IMapper _mapper;
 
-        public async Task<AgendaOverviewDTO> Overview()
-        {
-            return new AgendaOverviewDTO()
-            {
-                Agendas = await _agendaRepository.All()
-            };
-        }
-
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
                             IMapper mapper)
         {
@@ -36,6 +28,14 @@ namespace BPMS_BL.Facades
             _userRepository = userRepository;
             _modelRepository = modelRepository;
             _mapper = mapper;
+        }
+
+        public async Task<AgendaOverviewDTO> Overview()
+        {
+            return new AgendaOverviewDTO()
+            {
+                Agendas = await _agendaRepository.All()
+            };
         }
 
         public Task<List<UserIdNameDTO>> CreateModal() => _userRepository.CreateModal();

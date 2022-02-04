@@ -20,11 +20,22 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Where(x => x.AgendaId == id)
                          .Select(x => new AllModelDTO
                          {
-                             ModelId = x.Id,
+                             Id = x.Id,
                              Name = x.Name,
                              SVG = x.SVG
                          })
                          .ToListAsync();
+        }
+
+        public Task<ModelHeaderDTO> Header(Guid id)
+        {
+            return _dbSet.Select(x => new ModelHeaderDTO
+                         {
+                             Id = x.Id,
+                             Description = x.Description,
+                             Name = x.Name
+                         })
+                         .FirstAsync(x => x.Id == id);
         }
     }
 }

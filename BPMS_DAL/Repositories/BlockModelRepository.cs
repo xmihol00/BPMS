@@ -12,6 +12,14 @@ namespace BPMS_DAL.Repositories
 {
     public class BlockModelRepository : BaseRepository<BlockModelEntity>
     {
-        public BlockModelRepository(BpmsDbContext context) : base(context) {} 
+        public BlockModelRepository(BpmsDbContext context) : base(context) {}
+
+        public Task<BlockModelEntity> Config(Guid id)
+        {
+            return _dbSet.Include(x => x.DataSchemas)
+                         .Include(x => x.InFlows)
+                         .FirstAsync(x => x.Id == id);
+        }
+
     }
 }

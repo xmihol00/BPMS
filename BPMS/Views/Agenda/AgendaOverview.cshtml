@@ -3,6 +3,7 @@
     ViewData["Title"] = "Agendy";
 }
 <script src="~/js/Agenda/Agenda.js"></script>
+<script src="~/js/Model/Model.js"></script>
 
 @if (Model != null)
 {
@@ -15,7 +16,11 @@
                         onclick="ShowModal('CreateAgendaId', '/Agenda/CreateModal', 'CreateAgendaId', ValidateAgendaCreate)">Vytvořit</button>
             </div>
         </div>
-        <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" ></form>
+        <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" >
+            <div class="d-flex justify-content-center">
+                <img src="~/loading.svg" class="loading-modal">
+            </div>
+        </form>
     </div>
     <div id="PageContentId" class="d-flex pt-3">
         <div id="DetailDivId" class="d-none detail-div w-0">

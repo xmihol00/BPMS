@@ -1,6 +1,7 @@
 ﻿
 var ModalContentId = null;
 var Validator = null;
+var LoadedElements = [];
 
 document.addEventListener("keydown", KeyDownHandler);
 
@@ -43,31 +44,35 @@ function ShowModalElement(contentId, validator = null)
     }
 }
 
-function ShowModal(contentId, url = null, targetId = null, validator = null)
+function ShowModal(contentId, url = null, targetId = null, validator = null, remember = true)
 {
-    let target = document.getElementById(targetId);
-    if (url && !target.innerHTML)
+    ShowModalElement(contentId, validator);
+    if (targetId)
     {
-        $.ajax(
+        let target = document.getElementById(targetId);
+
+        if (url && !LoadedElements.includes(targetId))
         {
-            async: true,
-            type: "GET",
-            url: url
-        })
-        .done((result) => 
-        {
-            target.innerHTML = result;
-            ShowModalElement(contentId, validator);
-        })
-        .fail(() => 
-        {
-            // TODO
-            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-        });
-    }
-    else
-    {
-        ShowModalElement(contentId, validator);
+            $.ajax(
+            {
+                async: true,
+                type: "GET",
+                url: url
+            })
+            .done((result) => 
+            {
+                target.innerHTML = result;
+                if (remember)
+                {
+                    LoadedElements.push(targetId);
+                }
+            })
+            .fail(() => 
+            {
+                // TODO
+                //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+            });
+        }
     }
 }
 

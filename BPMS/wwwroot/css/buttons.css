@@ -4,6 +4,8 @@
     --primary-shadow-color: rgba(28, 160, 255, 0.66);
     --success-color: rgb(17, 167, 45);
     --success-shadow-color: rgba(30, 214, 23, 0.66);
+    --danger-color: rgb(156, 3, 3);
+    --danger-shadow-color: rgba(230, 21, 21, 0.66);
 }
 
 .butn {
@@ -17,6 +19,8 @@
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     text-transform: uppercase;
     font-size: 15px;
+    display: inline-block;
+    margin: 0 0.25rem;
 }
 
 .butn:hover {
@@ -33,6 +37,10 @@
     background-color: var(--success-color);
 }
 
+.btn-d {
+    background-color: var(--danger-color);
+}
+
 .btn-p:hover {
     -webkit-box-shadow: 0px 0px 3px 1px var(--primary-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--primary-shadow-color);
@@ -41,6 +49,11 @@
 .btn-s:hover {
     -webkit-box-shadow: 0px 0px 3px 1px var(--success-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--success-shadow-color);
+}
+
+.btn-d:hover {
+    -webkit-box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
+    box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
 }
 
 .butn:disabled, button[disabled] {

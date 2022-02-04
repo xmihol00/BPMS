@@ -10,6 +10,7 @@ namespace BPMS_DAL.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public string SVG { get; set; } = string.Empty;
         public Guid? AgendaId { get; set; }
         public AgendaEntity? Agenda { get; set; }

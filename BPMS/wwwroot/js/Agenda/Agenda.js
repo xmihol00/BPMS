@@ -1,3 +1,5 @@
+var ModalHeaderLoaded = false;
+var ModalHeader = null;
 
 function ValidateAgendaCreate()
 {
@@ -102,16 +104,59 @@ function ShowModelModal(element)
     let content = document.getElementById("ModelModalId");
     content.children[0].children[0].innerHTML = element.innerHTML;
     content.classList.remove("d-none");
+
     let navbar = document.getElementById("PageNavId");
-    navbar.classList.add("page-navbar-modal-large");
+    navbar.classList.add("page-navbar-transition");
+
     let page = document.getElementById("PageContentId");
     page.innerHTML = "";
     page.classList.remove("d-flex");
 
+    $.ajax(
+    {
+        async: true,
+        type: "GET",
+        url: "/Model/Header/" + element.id
+    })
+    .done((result) => 
+    {
+        if (ModalHeaderLoaded)
+        {
+            navbar.innerHTML = result;
+            navbar.classList.remove("page-navbar-transition");
+        }
+        else
+        {
+            ModalHeader = result;
+        }
+        window.history.pushState({}, '', "/Model/Detail/" + element.id);
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+
     setTimeout(() => 
     {
+        navbar.children[0].innerHTML = "";
+    }, 349);
+
+    setTimeout(() => 
+    {
+        ModalHeaderLoaded = true;
+        if (ModalHeader)
+        {
+            navbar.innerHTML = ModalHeader;
+            navbar.classList.remove("page-navbar-transition");
+        }
         page.innerHTML = content.innerHTML;
         content.innerHTML = "";
-        navbar.classList.remove("page-navbar-modal-large");
-    }, 690);
+        
+        for (let ele of document.getElementsByClassName("bpmn-block"))
+        {
+            ele.addEventListener("click", () => BlockConfig(ele.id));
+        }
+
+    }, 700);
 }

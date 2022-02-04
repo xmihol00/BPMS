@@ -1,0 +1,17 @@
+@model IEnumerable<DataSchemaNodeDTO>
+
+@if (Model != null && Model.Count() > 0)
+{
+    <ul>
+        @foreach (DataSchemaNodeDTO node in Model)
+        {
+            <li>
+                @node.Name
+                @if (node.DataType == DataTypeEnum.Object)
+                {
+                    @await Html.PartialAsync("_BlockDataSchema", node.Children)
+                }
+            </li>
+        }
+    </ul>
+}

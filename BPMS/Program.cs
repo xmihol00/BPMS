@@ -18,9 +18,13 @@ services.AddScoped<BlockModelRepository>();
 services.AddScoped<ModelRepository>();
 services.AddScoped<PoolRepository>();
 services.AddScoped<UserRepository>();
+services.AddScoped<BlockModelRepository>();
+services.AddScoped<BlockDataSchemaRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
+services.AddScoped<ModelFacade>();
+services.AddScoped<BlockModelFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile));
 

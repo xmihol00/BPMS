@@ -227,7 +227,6 @@ namespace BPMS_BL.Facades
 
         private void ParseBlock(XElement block)
         {
-            string className = "";
             BlockModelEntity blockModel;
             switch (block.Name.LocalName)
             {
@@ -238,7 +237,6 @@ namespace BPMS_BL.Facades
                     }
                     blockModel = new StartEventModelEntity(_currentPool);
                     _startEvents = _startEvents.Append(blockModel);
-                    className = "se";
                     break;
 
                 case "endEvent":
@@ -247,7 +245,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'End Event' musí mít právě jeden příchozí řídící tok a žadné jiné.");
                     }
                     blockModel = new EndEventModelEntity(_currentPool);
-                    className = "ee";
                     break;
                 
                 case "serviceTask":
@@ -256,7 +253,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'Service Task' musí mít právě jeden příchozí a maximálně jeden odchozí řídící tok.");
                     }
                     blockModel = new ServiceTaskModelEntity(_currentPool);
-                    className = "st";
                     break;
 
                 case "userTask":
@@ -265,7 +261,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'User Task' musí mít právě jeden příchozí a maximálně jeden maximálně jeden odchozí řídící tok.");
                     }
                     blockModel = new UserTaskModelEntity(_currentPool);
-                    className = "ut";
                     break;
                 
                 case "intermediateThrowEvent":
@@ -274,7 +269,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'Intermediate Throw Event' musí mít právě jeden příchozí a maximálně jeden odchozí řídící tok.");
                     }
                     blockModel = new SendEventModelEntity(_currentPool);
-                    className = "ite";
                     break;
 
                 case "intermediateCatchEvent":
@@ -283,7 +277,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'Intermediate Catch Event' musí mít právě jeden příchozí a maximálně jeden odchozí řídící tok.");
                     }
                     blockModel = new RecieveEventModelEntity(_currentPool);
-                    className = "ice";
                     break;
                 
                 case "exclusiveGateway":
@@ -292,7 +285,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'Exclusive Gateway' musí mít alespoň jeden příchozí a odchozí řídící tok.");
                     }
                     blockModel = new ExclusiveGatewayModelEntity(_currentPool);
-                    className = "eg";
                     break;
 
                 case "parallelGateway":
@@ -301,7 +293,6 @@ namespace BPMS_BL.Facades
                         throw new ParsingException("Blok typu 'Parallel Gateway' musí mít alespoň jeden příchozí a odchozí řídící tok.");
                     }
                     blockModel = new ParallelGatewayModelEntity(_currentPool);
-                    className = "pg";
                     break;
 
                 default:
@@ -310,7 +301,7 @@ namespace BPMS_BL.Facades
 
             blockModel.Name = block.Attribute("name")?.Value ?? "";
             string id = block.Attribute("id")?.Value ?? "";
-            ChangeSvgId(id, blockModel.Id, className);
+            ChangeSvgId(id, blockModel.Id, "bpmn-block");
             _blocksDict[id] = blockModel; 
         }
 
