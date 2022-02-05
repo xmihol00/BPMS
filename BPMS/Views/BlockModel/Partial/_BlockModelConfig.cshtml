@@ -5,14 +5,26 @@
     <form id="BlockEditFormId" class="row mt-1">
         <div class="col-12">
             <label class="input">
-                <input id="BlockNameId" name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
-                <span class="input-label">Název</span>
+                <input name="Name" class="input-field" type="text" placeholder=" " data-reqi="BlockNameLabelId" value="@Model.Name" />
+                <span id="BlockNameLabelId" class="input-label">Název</span>
             </label>
         </div>
         <h4 class="mt-3">Data bloku</h4>
         @if (Model.RootNodes.Count() > 0)
-        {
-            <div class="col-12">
+        {   
+            <div class="col-3 text-center text-bold border-end">
+                Název
+            </div>
+            <div class="col-3 text-center text-bold border-start border-end">
+                Alias
+            </div>
+            <div class="col-3 text-center text-bold border-start border-end">
+                Typ
+            </div>
+            <div class="col-2 text-center text-bold border-start">
+                Povinnost
+            </div>
+            <div class="col-12 schema-div mt-2">
                 @await Html.PartialAsync("Partial/_BlockDataSchema", Model.RootNodes)
             </div>
         }
@@ -24,15 +36,15 @@
         }
     </form>
     <form id="AttribCreateFormId" class="row d-none" method="post" action="/BlockModel/CreateEditSchema" 
-          onsubmit="BlockConfigSubmit(event, 'BlockConfigTargetId')">
+          onsubmit="BlockConfigSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
         <input type="hidden" name="Id" value="" />
         <input type="hidden" name="ParentId" value="null" />
         <input type="hidden" name="BlockId" value="@Model.Id" />
         <h5>Atributy bloku</h5>
         <div class="col-4">
             <label class="input">
-                <input id="AttribNameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
-                <span class="input-label color-required">Název</span>
+                <input name="Name" class="input-field" data-reqi="AttribNameLabelId" type="text" placeholder=" " value="" />
+                <span id="AttribNameLabelId" class="input-label color-required">Název</span>
             </label>
         </div>
         <div class="col-4">
@@ -55,8 +67,8 @@
         </div>  
         <div class="col-2 vertical-justify-center">
             <div class="d-flex">
-                <span class="label-checkbox label-checkbox-checked">Povinnost</span>
-                <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" checked/>
+                <span id="CompulsoryLabelId" class="label-checkbox label-checkbox-checked">Povinnost</span>
+                <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" data-ch="CompulsoryLabelId" checked/>
             </div>
         </div>
     </form>

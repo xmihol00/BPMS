@@ -13,7 +13,9 @@ namespace BPMS_BL.Profiles
     {
         public BlockDataSchemaProfile()
         {
-            CreateMap<BlockDataSchemaCreateEditDTO, BlockDataSchemaEntity>();
+            CreateMap<BlockDataSchemaCreateEditDTO, BlockDataSchemaEntity>()
+                .ForMember(dst => dst.Alias, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.Alias) ? "" : src.Alias))
+                .ForMember(dst => dst.Compulsory, opt => opt.MapFrom(src => src.Compulsory != null));
         }
     }
 }

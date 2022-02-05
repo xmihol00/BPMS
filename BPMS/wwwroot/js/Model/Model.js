@@ -36,8 +36,6 @@ function ShowAddAttrib()
 
     document.getElementById("NewAttBtnId").classList.add("d-none");
     document.getElementById("EditBtnId").classList.add("d-none");
-
-    document.addEventListener("input", ValidateAttribute);
 }
 
 function CancelAddAttrib()
@@ -48,8 +46,6 @@ function CancelAddAttrib()
 
     document.getElementById("NewAttBtnId").classList.remove("d-none");
     document.getElementById("EditBtnId").classList.remove("d-none");
-
-    document.removeEventListener("input", ValidateAttribute);
 }
 
 function ValidateAttribute()
@@ -71,7 +67,7 @@ function ValidateAttribute()
 
     if (compusory.checked)
     {
-        compusory.parentNode.children[0].classList.add("label-checkbox-checked");
+        compusory.parentNode.children[0].classList
     }
     else
     {

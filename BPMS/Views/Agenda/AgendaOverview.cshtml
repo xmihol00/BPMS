@@ -13,10 +13,11 @@
             <h1 class="mb-0 pt-1 text-font">Agendy</h1>
             <div class="my-auto">
                 <button class="butn btn-p" 
-                        onclick="ShowModal('CreateAgendaId', '/Agenda/CreateModal', 'CreateAgendaId', ValidateAgendaCreate)">Vytvořit</button>
+                        onclick="ShowModal('CreateAgendaFormId', '/Agenda/CreateModal', 'CreateAgendaFormId')">Vytvořit</button>
             </div>
         </div>
-        <form id="CreateAgendaId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" >
+        <form id="CreateAgendaFormId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create"
+              oninput="InputValidator(this)">
             <div class="d-flex justify-content-center">
                 @await Html.PartialAsync("_LoadingImage")
             </div>

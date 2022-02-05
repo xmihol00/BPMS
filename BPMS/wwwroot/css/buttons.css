@@ -23,10 +23,11 @@
     margin: 0 0.25rem;
 }
 
-.butn:hover {
-    font-size: 15px;
-    transform: scale(1.04);
-    transition: all 0.25s;
+.butn-sm {
+    font-size: 11px;
+    padding: 0.3rem 0.7rem;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
 
 .btn-p {
@@ -54,6 +55,11 @@
 .btn-d:hover {
     -webkit-box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
+}
+
+.butn:hover {
+    transform: scale(1.04);
+    transition: all 0.25s;
 }
 
 .butn:disabled, button[disabled] {

@@ -15,7 +15,7 @@ namespace BPMS_DTOs.BlockDataSchema
         public Guid? ParentId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
-        public bool Compulsory { get; set; }
+        public string? Compulsory { get; set; }
         public DataTypeEnum DataType { get; set; }
     }
 }

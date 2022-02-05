@@ -33,6 +33,7 @@ namespace BPMS_BL.Facades
         public async Task<BlockModelConfigDTO> CreateEditSchema(BlockDataSchemaCreateEditDTO dto)
         {
             BlockDataSchemaEntity entity = _mapper.Map<BlockDataSchemaEntity>(dto);
+            
             if (dto.Id == Guid.Empty)
             {
                 await _blockDataSchemaRepository.Create(entity);

@@ -1,6 +1,5 @@
 ﻿
 var ModalContentId = null;
-var Validator = null;
 var LoadedElements = [];
 var Callback = null;
 
@@ -31,23 +30,17 @@ function ToggleSideBar()
     }
 }
 
-function ShowModalElement(contentId, validator = null)
+function ShowModalElement(contentId)
 {
     document.getElementById("ModalBackgroundId").classList.add("modal-background-show");
     document.getElementById(contentId).classList.remove("d-none");
     document.getElementById("PageNavId").classList.add("page-navbar-modal");
-    //document.getElementById("PageContentId").classList.add("page-content-modal");
     ModalContentId = contentId;
-    if (validator)
-    {
-        document.addEventListener("input", validator);
-        Validator = validator;
-    }
 }
 
-function ShowModal(contentId, url = null, targetId = null, validator = null, remember = true, callback = null)
+function ShowModal(contentId, url = null, targetId = null, remember = true, callback = null)
 {
-    ShowModalElement(contentId, validator);
+    ShowModalElement(contentId);
     if (targetId)
     {
         let target = document.getElementById(targetId);
@@ -86,12 +79,6 @@ function HideModal()
     modal.classList.remove("page-navbar-modal-large");
     document.getElementById("ModalBackgroundId").classList.remove("modal-background-show");
     
-    if (Validator)
-    {
-        document.removeEventListener("input", Validator);
-        Validator = null;
-    }
-
     if (ModalContentId)
     {
         setTimeout(() => 
@@ -122,10 +109,14 @@ function FileSelected(element)
     }
 }
 
-function AjaxFormSubmit(event, targetId)
+function AjaxFormSubmit(event, targetId, callback = null, successCallback = null, failCallback = null)
 {
     event.preventDefault();
     let form = event.target;
+    if (callback)
+    {
+        callback();
+    }
 
     const dto = new FormData(form);
     console.log(dto, form.getAttribute("action"));
@@ -141,12 +132,66 @@ function AjaxFormSubmit(event, targetId)
     .done((result) => 
     {
         document.getElementById(targetId).innerHTML = result;
-        
+        if (successCallback)
+        {
+            successCallback();
+        }
     })
     .fail(() => 
     {
+        if (failCallback)
+        {
+            failCallback();
+        }
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-    });
-        
+    });        
+}
+
+function InputValidator(form)
+{
+    let disabled = false;
+
+    for (let input of form.querySelectorAll("[data-reqi]"))
+    {
+        if (!input.value || !input.value.trim())
+        {
+            disabled = true;
+            document.getElementById(input.getAttribute("data-reqi")).classList.add("color-required");
+        }
+        else
+        {
+            document.getElementById(input.getAttribute("data-reqi")).classList.remove("color-required");
+        }
+    }
+
+    for (let input of form.querySelectorAll("[data-reqf]"))
+    {
+        if (!input.files[0])
+        {
+            disabled = true;
+            document.getElementById(input.getAttribute("data-reqf")).classList.add("color-required");
+        }
+        else
+        {
+            document.getElementById(input.getAttribute("data-reqf")).classList.remove("color-required");
+        }
+    }
+
+    for (let input of form.querySelectorAll("[data-ch]"))
+    {
+        if (input.checked)
+        {
+            document.getElementById(input.getAttribute("data-ch")).classList.add("label-checkbox-checked");
+        }
+        else
+        {
+            document.getElementById(input.getAttribute("data-ch")).classList.remove("label-checkbox-checked");
+        }
+    }
+
+    for (let button of document.querySelectorAll(`[form=${form.id}]`))
+    {
+        button.disabled = disabled;
+    }
 }

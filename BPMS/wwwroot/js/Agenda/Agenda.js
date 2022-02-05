@@ -1,65 +1,6 @@
 var ModalHeaderLoaded = false;
 var ModalHeader = null;
 
-function ValidateAgendaCreate()
-{
-    let value = document.getElementById("AgendaNameId").value;
-    let disabled = false;
-
-    if (!value || !value.trim())
-    {
-        document.getElementById("AgendaNameLabelId").classList.add("color-required");
-        disabled = true;
-    }
-    else
-    {
-        document.getElementById("AgendaNameLabelId").classList.remove("color-required");
-    }
-
-    document.getElementById("CreateBtnId").disabled = disabled;
-}
-
-function ValidateModelUplaod()
-{
-    let disable = false;
-    let name = document.getElementById("ModelNameId");
-    let bpmnFile = document.getElementById("BpmnFileId");
-    let svgFile = document.getElementById("SvgFileId");
-    let btn = document.getElementById("UploadModelBtnId");
-
-    
-    if (!name.value || !name.value.trim())
-    {
-        disable = true;
-        name.parentElement.children[1].classList.add("color-required");
-    }
-    else
-    {
-        name.parentElement.children[1].classList.remove("color-required");
-    }
-
-    if (!bpmnFile.files[0])
-    {
-        disable = true;
-        bpmnFile.parentElement.children[1].classList.add("color-required");
-    }
-    else
-    {
-        bpmnFile.parentElement.children[1].classList.remove("color-required");
-    }
-
-    if (!svgFile.files[0])
-    {
-        disable = true;
-        svgFile.parentElement.children[1].classList.add("color-required");
-    }
-    else
-    {
-        svgFile.parentElement.children[1].classList.remove("color-required");
-    }
-
-    btn.disabled = disable;
-}
 
 function AgendaDetail(element)
 {
