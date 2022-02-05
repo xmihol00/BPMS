@@ -19,15 +19,16 @@ services.AddScoped<ModelRepository>();
 services.AddScoped<PoolRepository>();
 services.AddScoped<UserRepository>();
 services.AddScoped<BlockModelRepository>();
-services.AddScoped<BlockDataSchemaRepository>();
+services.AddScoped<ServiceDataSchemaRepository>();
+services.AddScoped<BlockAttributeRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
 services.AddScoped<ModelFacade>();
 services.AddScoped<BlockModelFacade>();
-services.AddScoped<BlockDataSchemaFacade>();
+services.AddScoped<ServiceFacade>();
 
-services.AddAutoMapper(typeof(AgendaProfile));
+services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceDataSchemaProfile), typeof(BlockAttributeProfile));
 
 var app = builder.Build();
 

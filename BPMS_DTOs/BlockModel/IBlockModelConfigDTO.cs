@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel
 {
-    public class BlockModelConfigDTO
+    public interface IBlockModelConfigDTO
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 }

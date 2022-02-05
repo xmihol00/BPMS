@@ -17,6 +17,5 @@ namespace BPMS_DAL.Interfaces
         public List<FlowEntity> InFlows { get; set; }
         public List<FlowEntity> OutFlows { get; set; }
         public List<BlockWorkflowEntity> BlockWorkflows { get; set; }
-        public List<BlockDataSchemaEntity> DataSchemas { get; set; }
     }
 }

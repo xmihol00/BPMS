@@ -1,7 +1,8 @@
 using BPMS_BL.Facades;
-using BPMS_DTOs.BlockDataSchema;
+using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.BlockModel;
 using Microsoft.AspNetCore.Mvc;
+using BPMS_DTOs.BlockAttribute;
 
 namespace BPMS.Controllers
 {
@@ -21,9 +22,9 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEditSchema(BlockDataSchemaCreateEditDTO dto)
+        public async Task<IActionResult> CreateEditAttribute(AttributeCreateEditDTO dto)
         {
-            return PartialView("Partial/_BlockModelConfig", await _blockModelFacade.CreateEditSchema(dto));
+            return PartialView("Partial/_BlockModelConfig", await _blockModelFacade.CreateEdit(dto));
         }
     }
 }

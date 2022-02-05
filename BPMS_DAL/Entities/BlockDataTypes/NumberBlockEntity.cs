@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities.BlockDataTypes
 {
-    public class NumberBlockEntity : BlockDataEntity
+    public class NumberBlockEntity : TaskDataEntity
     {
         public double? Value { get; set; }
     }

@@ -1,9 +1,9 @@
-@model IEnumerable<BlockDataSchemaNodeDTO>
+@model IEnumerable<ServiceDataSchemaNodeDTO>
 
 @if (Model != null && Model.Count() > 0)
 {
     <ul class="schema">
-        @foreach (BlockDataSchemaNodeDTO node in Model)
+        @foreach (ServiceDataSchemaNodeDTO node in Model)
         {
             <li>
                 <div class="row position-relative">
@@ -35,7 +35,7 @@
                 </div>
                 @if (node.DataType == DataTypeEnum.Object)
                 {
-                    @await Html.PartialAsync("Partial/_BlockDataSchema", node.Children)
+                    @await Html.PartialAsync("Partial/_ServiceDataSchema", node.Children)
                 }
             </li>
         }

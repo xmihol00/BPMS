@@ -18,5 +18,6 @@ namespace BPMS_DAL.Entities
         public HttpMethodEnum HttpMethod { get; set; }
         public string URL { get; set; } = string.Empty;
         public List<ServiceTaskModelEntity> ServiceTasks { get; set; } = new List<ServiceTaskModelEntity>();
+        public List<ServiceDataSchemaEntity> DataSchemas { get; set; } = new List<ServiceDataSchemaEntity>();
     }
 }

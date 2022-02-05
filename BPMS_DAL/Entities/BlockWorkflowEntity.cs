@@ -15,6 +15,6 @@ namespace BPMS_DAL.Entities
         public WorkflowEntity? Workflow { get; set; }
         public Guid BlockModelId { get; set; }
         public BlockModelEntity? BlockModel { get; set; }
-        public List<BlockDataEntity> BlockData { get; set; } = new List<BlockDataEntity>();
+        public List<TaskDataEntity> TaskData { get; set; } = new List<TaskDataEntity>();
     }
 }

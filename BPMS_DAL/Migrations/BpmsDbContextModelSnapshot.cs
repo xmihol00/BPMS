@@ -68,54 +68,46 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("AgendaRoles");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataEntity", b =>
-                {
-                    b.Property<Guid>("BlockId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SchemaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("BlockId", "SchemaId");
-
-                    b.HasIndex("SchemaId");
-
-                    b.ToTable("BlockData");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataSchemaEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("BlockId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Compulsory")
                         .HasColumnType("bit");
 
-                    b.Property<int>("DataType")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ConditionDataSchemaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConditionExclusiveGatewayId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConditionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ParentId")
+                    b.Property<string>("Specification")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TaskId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BlockId");
+                    b.HasIndex("ConditionExclusiveGatewayId", "ConditionDataSchemaId");
 
-                    b.HasIndex("ParentId");
-
-                    b.ToTable("BlockSchemas");
+                    b.ToTable("BlockAttributeEntity");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
@@ -181,6 +173,20 @@ namespace BPMS_DAL.Migrations
                     b.HasIndex("DataSchemaId");
 
                     b.ToTable("ConditionData");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.FileDataEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileDataEntity");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.FlowEntity", b =>
@@ -249,6 +255,41 @@ namespace BPMS_DAL.Migrations
                     b.HasIndex("ModelId");
 
                     b.ToTable("Pools");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ServiceDataSchemaEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Compulsory")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DataType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("BlockSchemas");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceEntity", b =>
@@ -397,6 +438,32 @@ namespace BPMS_DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.TaskDataEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ServiceDataSchemaEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TaskWorkflowEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceDataSchemaEntityId");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("TaskWorkflowEntityId");
+
+                    b.ToTable("BlockData");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -488,17 +555,17 @@ namespace BPMS_DAL.Migrations
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.ArrayBlockEntity", b =>
                 {
-                    b.HasBaseType("BPMS_DAL.Entities.BlockDataEntity");
+                    b.HasBaseType("BPMS_DAL.Entities.TaskDataEntity");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.ToTable("ArraysBlocks", (string)null);
+                    b.ToTable("ArrayBlocks", (string)null);
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.BoolBlockEntity", b =>
                 {
-                    b.HasBaseType("BPMS_DAL.Entities.BlockDataEntity");
+                    b.HasBaseType("BPMS_DAL.Entities.TaskDataEntity");
 
                     b.Property<bool?>("Value")
                         .HasColumnType("bit");
@@ -506,9 +573,29 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("BoolBlocks", (string)null);
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.FileBlockEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.TaskDataEntity");
+
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MIMEType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("FileId");
+
+                    b.ToTable("FileBlocks", (string)null);
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.NumberBlockEntity", b =>
                 {
-                    b.HasBaseType("BPMS_DAL.Entities.BlockDataEntity");
+                    b.HasBaseType("BPMS_DAL.Entities.TaskDataEntity");
 
                     b.Property<double?>("Value")
                         .HasColumnType("float");
@@ -518,7 +605,7 @@ namespace BPMS_DAL.Migrations
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.StringBlockEntity", b =>
                 {
-                    b.HasBaseType("BPMS_DAL.Entities.BlockDataEntity");
+                    b.HasBaseType("BPMS_DAL.Entities.TaskDataEntity");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -604,7 +691,7 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("UserTasksModel", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.UserTaskWorkflowEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockWorkflowEntity");
 
@@ -616,7 +703,7 @@ namespace BPMS_DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserTasksWorkflow", (string)null);
+                    b.ToTable("TasksWorkflow", (string)null);
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.AgendaEntity", b =>
@@ -657,41 +744,21 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.BlockWorkflowEntity", "Block")
-                        .WithMany("BlockData")
-                        .HasForeignKey("BlockId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BPMS_DAL.Entities.BlockDataSchemaEntity", "Schema")
-                        .WithMany("Data")
-                        .HasForeignKey("SchemaId")
+                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", "Task")
+                        .WithMany("Attributes")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Block");
+                    b.HasOne("BPMS_DAL.Entities.ConditionDataEntity", "Condition")
+                        .WithMany()
+                        .HasForeignKey("ConditionExclusiveGatewayId", "ConditionDataSchemaId");
 
-                    b.Navigation("Schema");
-                });
+                    b.Navigation("Condition");
 
-            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataSchemaEntity", b =>
-                {
-                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", "Block")
-                        .WithMany("DataSchemas")
-                        .HasForeignKey("BlockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BPMS_DAL.Entities.BlockDataSchemaEntity", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Block");
-
-                    b.Navigation("Parent");
+                    b.Navigation("Task");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
@@ -726,7 +793,7 @@ namespace BPMS_DAL.Migrations
 
             modelBuilder.Entity("BPMS_DAL.Entities.ConditionDataEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.BlockDataSchemaEntity", "DataSchema")
+                    b.HasOne("BPMS_DAL.Entities.ServiceDataSchemaEntity", "DataSchema")
                         .WithMany("Conditions")
                         .HasForeignKey("DataSchemaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -782,6 +849,24 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Model");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.ServiceDataSchemaEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.ServiceDataSchemaEntity", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("BPMS_DAL.Entities.ServiceEntity", "Service")
+                        .WithMany("DataSchemas")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.SystemAgendaEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.SystemEntity", "System")
@@ -831,6 +916,25 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.TaskDataEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.ServiceDataSchemaEntity", null)
+                        .WithMany("Data")
+                        .HasForeignKey("ServiceDataSchemaEntityId");
+
+                    b.HasOne("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", "Task")
+                        .WithMany("TaskData")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", null)
+                        .WithMany("Data")
+                        .HasForeignKey("TaskWorkflowEntityId");
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.WorkflowEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.AgendaEntity", "Agenda")
@@ -852,36 +956,53 @@ namespace BPMS_DAL.Migrations
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.ArrayBlockEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.BlockDataEntity", null)
+                    b.HasOne("BPMS_DAL.Entities.TaskDataEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.ArrayBlockEntity", "BlockId", "SchemaId")
+                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.ArrayBlockEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.BoolBlockEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.BlockDataEntity", null)
+                    b.HasOne("BPMS_DAL.Entities.TaskDataEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.BoolBlockEntity", "BlockId", "SchemaId")
+                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.BoolBlockEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.FileBlockEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.FileDataEntity", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BPMS_DAL.Entities.TaskDataEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.FileBlockEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.NumberBlockEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.BlockDataEntity", null)
+                    b.HasOne("BPMS_DAL.Entities.TaskDataEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.NumberBlockEntity", "BlockId", "SchemaId")
+                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.NumberBlockEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockDataTypes.StringBlockEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.BlockDataEntity", null)
+                    b.HasOne("BPMS_DAL.Entities.TaskDataEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.StringBlockEntity", "BlockId", "SchemaId")
+                        .HasForeignKey("BPMS_DAL.Entities.BlockDataTypes.StringBlockEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
@@ -976,11 +1097,11 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.UserTaskWorkflowEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockWorkflowEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.UserTaskWorkflowEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
@@ -1004,29 +1125,13 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Workflows");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.BlockDataSchemaEntity", b =>
-                {
-                    b.Navigation("Children");
-
-                    b.Navigation("Conditions");
-
-                    b.Navigation("Data");
-                });
-
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
                 {
                     b.Navigation("BlockWorkflows");
 
-                    b.Navigation("DataSchemas");
-
                     b.Navigation("InFlows");
 
                     b.Navigation("OutFlows");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.BlockWorkflowEntity", b =>
-                {
-                    b.Navigation("BlockData");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelEntity", b =>
@@ -1043,8 +1148,19 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Systems");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.ServiceDataSchemaEntity", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("Conditions");
+
+                    b.Navigation("Data");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceEntity", b =>
                 {
+                    b.Navigation("DataSchemas");
+
                     b.Navigation("ServiceTasks");
                 });
 
@@ -1086,6 +1202,18 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
                 {
                     b.Navigation("Recievers");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", b =>
+                {
+                    b.Navigation("Attributes");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", b =>
+                {
+                    b.Navigation("Data");
+
+                    b.Navigation("TaskData");
                 });
 #pragma warning restore 612, 618
         }

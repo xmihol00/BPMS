@@ -10,8 +10,10 @@ using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
-using BPMS_DTOs.BlockDataSchema;
+using BPMS_DTOs.BlockModel.ConfigTypes;
+using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.User;
 
 namespace BPMS_BL.Facades
@@ -19,87 +21,84 @@ namespace BPMS_BL.Facades
     public class BlockModelFacade
     {
         private readonly BlockModelRepository _blockModelRepository;
-        private readonly BlockDataSchemaRepository _blockDataSchemaRepository;
+        private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly IMapper _mapper;
 
-        public BlockModelFacade(BlockModelRepository blockModelRepository, BlockDataSchemaRepository blockDataSchemaRepository,
+        public BlockModelFacade(BlockModelRepository blockModelRepository, BlockAttributeRepository blockAttributeRepository,
                                 IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
-            _blockDataSchemaRepository = blockDataSchemaRepository;
+            _blockAttributeRepository = blockAttributeRepository;
             _mapper = mapper;
         }
 
-        public async Task<BlockModelConfigDTO> CreateEditSchema(BlockDataSchemaCreateEditDTO dto)
+        public async Task<BlockModelConfigDTO> CreateEdit(AttributeCreateEditDTO dto)
         {
-            BlockDataSchemaEntity entity = _mapper.Map<BlockDataSchemaEntity>(dto);
-            
+            BlockAttributeEntity entity = _mapper.Map<BlockAttributeEntity>(dto);
             if (dto.Id == Guid.Empty)
             {
-                await _blockDataSchemaRepository.Create(entity);
+                await _blockAttributeRepository.Create(entity);
             }
             else
             {
-                _blockDataSchemaRepository.Update(entity);
+                _blockAttributeRepository.Update(entity);
             }
 
-            await _blockDataSchemaRepository.Save();
-
-            return await Config(dto.BlockId);
+            await _blockAttributeRepository.Save();
+            return await Config(dto.TaskId);
         }
 
         public async Task<BlockModelConfigDTO> Config(Guid id)
         {
-            BlockModelConfigDTO dto = new BlockModelConfigDTO();
             BlockModelEntity entity = await _blockModelRepository.Config(id);
 
-            dto.RootNodes = CreateTree(await _blockDataSchemaRepository.DataSchemas(id), null);
-
+            BlockModelConfigDTO dto;
+            #pragma warning disable CS8602, CS8600
             switch (entity)
             {
-                case IUserTaskModelEntity userTask:
+                case ITaskModelEntity userTask:
+                    dto = new UserTaskConfigDTO();
+                    (dto as IUserTaskConfigDTO).Attributes = await _blockAttributeRepository.All(entity.Id);
                     break;
                 
                 case IServiceTaskModelEntity serviceTask:
+                    dto = new BlockModelConfigDTO(); //TODO
                     break;
 
                 case IStartEventModelEntity startEvent:
+                    dto = new BlockModelConfigDTO(); //TODO
                     break;
 
                 case IEndEventModelEntity endEvent:
+                    dto = new BlockModelConfigDTO(); //TODO
                     break;
                 
                 case IExclusiveGatewayModelEntity exclusiveGateway:
+                    dto = new BlockModelConfigDTO(); //TODO
                     break;
 
                 case IParallelGatewayModelEntity parallelGateway:
+                    dto = new BlockModelConfigDTO(); //TODO
                     break;
                 
                 case ISendEventModelEntity sendEvent:
+                    dto = new BlockModelConfigDTO(); //TODO
                     break;
                 
                 case IRecieveEventModelEntity recieveEvent:
+                    dto = new BlockModelConfigDTO(); //TODO
+                    break;
+                
+                default:
+                    dto = new BlockModelConfigDTO();
                     break;
             }
+            #pragma warning restore CS8602, CS8600
 
             dto.Id = entity.Id;
             dto.Name = entity.Name;
 
             return dto;
-        }
-
-        private IEnumerable<BlockDataSchemaNodeDTO> CreateTree(IEnumerable<BlockDataSchemaNodeDTO> allNodes, Guid? parentId)
-        {
-            IEnumerable<BlockDataSchemaNodeDTO> nodes = allNodes.Where(x => x.ParentId == parentId);
-            foreach (BlockDataSchemaNodeDTO node in nodes)
-            {
-                if (node.DataType == DataTypeEnum.Object)
-                {
-                    node.Children = CreateTree(allNodes, node.Id);
-                }
-            }
-
-            return nodes;
         }
     }
 }

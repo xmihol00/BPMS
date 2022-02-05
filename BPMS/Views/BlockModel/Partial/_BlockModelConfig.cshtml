@@ -9,24 +9,10 @@
                 <span id="BlockNameLabelId" class="input-label">Název</span>
             </label>
         </div>
-        <h4 class="mt-3">Data bloku</h4>
-        @if (Model.RootNodes.Count() > 0)
+        <h4 class="mt-3">Atributy bloku</h4>
+        @if (Model is IUserTaskConfigDTO)
         {   
-            <div class="col-3 text-center text-bold border-end">
-                Název
-            </div>
-            <div class="col-3 text-center text-bold border-start border-end">
-                Alias
-            </div>
-            <div class="col-3 text-center text-bold border-start border-end">
-                Typ
-            </div>
-            <div class="col-2 text-center text-bold border-start">
-                Povinnost
-            </div>
-            <div class="col-12 schema-div mt-2">
-                @await Html.PartialAsync("Partial/_BlockDataSchema", Model.RootNodes)
-            </div>
+            @await Html.PartialAsync("Partial/_UserTaskConfig", (Model as IUserTaskConfigDTO)?.Attributes)
         }
         else
         {
@@ -35,13 +21,13 @@
             </p>
         }
     </form>
-    <form id="AttribCreateFormId" class="row d-none" method="post" action="/BlockModel/CreateEditSchema" 
+    <form id="AttribCreateFormId" class="row d-none" method="post" action="/BlockModel/CreateEditAttribute" 
           onsubmit="BlockConfigSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
         <input type="hidden" name="Id" value="" />
         <input type="hidden" name="ParentId" value="null" />
         <input type="hidden" name="BlockId" value="@Model.Id" />
-        <h5>Atributy bloku</h5>
-        <div class="col-4">
+        <h5>Nový atributy bloku</h5>
+        <div class="col-5">
             <label class="input">
                 <input name="Name" class="input-field" data-reqi="AttribNameLabelId" type="text" placeholder=" " value="" />
                 <span id="AttribNameLabelId" class="input-label color-required">Název</span>
@@ -49,27 +35,26 @@
         </div>
         <div class="col-4">
             <label class="input">
-                <input id="AliasId" name="Alias" class="input-field" type="text" placeholder=" " value="" />
-                <span class="input-label">Alias</span>
-            </label>
-        </div>
-        <div class="col-2">
-            <label class="input">
                 <select class="input-field input-select" name="DataType"> 
-                    <option value="@DataTypeEnum.Object">Objekt</option>
-                    <option value="@DataTypeEnum.String">Řetězec</option>
-                    <option value="@DataTypeEnum.Number">Číslo</option>
-                    <option value="@DataTypeEnum.Bool">Bool</option>
-                    <option value="@DataTypeEnum.Array">Pole</option>
+                    @foreach (AttributeTypeEnum enumVal in Enum.GetValues(typeof(AttributeTypeEnum)))
+                    {
+                        <option value="@enumVal">@enumVal.ToLabel()</option>   
+                    }
                 </select>
                 <span class="input-label">Typ</span>
             </label>
         </div>  
-        <div class="col-2 vertical-justify-center">
-            <div class="d-flex">
+        <div class="col-3 vertical-justify-center justify-content-center">
+            <div class="d-flex justify-content-center">
                 <span id="CompulsoryLabelId" class="label-checkbox label-checkbox-checked">Povinnost</span>
                 <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" data-ch="CompulsoryLabelId" checked/>
             </div>
+        </div>
+        <div class="col-12 mt-2">
+            <label class="input">
+                <textarea name="Description" class="input-field" type="text" placeholder=" "></textarea>
+                <span class="input-label">Popis</span>
+            </label>
         </div>
     </form>
     <div class="d-flex justify-content-center mt-3">

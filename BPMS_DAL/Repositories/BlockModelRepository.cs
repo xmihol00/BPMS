@@ -16,7 +16,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<BlockModelEntity> Config(Guid id)
         {
-            return _dbSet.Include(x => x.DataSchemas)
+            return _dbSet.Include(x => x.OutFlows)
                          .Include(x => x.InFlows)
                          .FirstAsync(x => x.Id == id);
         }

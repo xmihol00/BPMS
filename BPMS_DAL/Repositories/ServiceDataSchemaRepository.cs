@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
-using BPMS_DTOs.BlockDataSchema;
+using BPMS_DTOs.ServiceDataSchema;
 
 namespace BPMS_DAL.Repositories
 {
-    public class BlockDataSchemaRepository : BaseRepository<BlockDataSchemaEntity>
+    public class ServiceDataSchemaRepository : BaseRepository<ServiceDataSchemaEntity>
     {
-        public BlockDataSchemaRepository(BpmsDbContext context) : base(context) {}
+        public ServiceDataSchemaRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<BlockDataSchemaNodeDTO>> DataSchemas(Guid blockId)
+        public Task<List<ServiceDataSchemaNodeDTO>> DataSchemas(Guid blockId)
         {
-            return _dbSet.Where(x => x.BlockId == blockId)
-                         .Select(x => new BlockDataSchemaNodeDTO 
+            return _dbSet.Where(x => x.ServiceId == blockId)
+                         .Select(x => new ServiceDataSchemaNodeDTO 
                          {
                             Id = x.Id,
                             ParentId = x.ParentId,

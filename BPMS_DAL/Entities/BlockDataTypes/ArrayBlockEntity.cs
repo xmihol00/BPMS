@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities.BlockDataTypes
 {
-    public class ArrayBlockEntity : BlockDataEntity
+    public class ArrayBlockEntity : TaskDataEntity
     {
         public DataTypeEnum Type { get; set; }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities.BlockDataTypes
 {
-    public class BoolBlockEntity : BlockDataEntity
+    public class BoolBlockEntity : TaskDataEntity
     {
         public bool? Value { get; set; }
     }

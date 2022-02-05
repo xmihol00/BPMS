@@ -1,0 +1,30 @@
+@model List<BlockAttributeDTO>
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="col-5 text-center text-bold border-end">
+        Název
+    </div>
+    <div class="col-4 text-center text-bold border-start border-end">
+        Typ
+    </div>
+    <div class="col-3 text-center text-bold border-start">
+        Povinnost
+    </div>
+    <div class="col-6 text-center text-bold border-start border-end">
+        Popis
+    </div>
+    <div class="col-6 text-center text-bold border-start border-end">
+        Specifikace
+    </div>
+    @foreach (BlockAttributeDTO attrib in Model)
+    {
+        @attrib.Name    
+    }
+}
+else
+{
+    <p class="text-center mb-2">
+        Blok nemá konfigurovany žádné atributy.
+    </p>
+}

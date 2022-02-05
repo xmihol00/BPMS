@@ -6,17 +6,16 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockDataSchema
+namespace BPMS_DTOs.ServiceDataSchema
 {
-    public class BlockDataSchemaNodeDTO
+    public class ServiceDataSchemaCreateEditDTO
     {
-        public BlockDataSchemaNodeDTO? Parent { get; set; }
-        public IEnumerable<BlockDataSchemaNodeDTO>? Children { get; set; }
         public Guid Id { get; set; }
+        public Guid BlockId { get; set; }
         public Guid? ParentId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
-        public bool Compulsory { get; set; }
+        public string? Compulsory { get; set; }
         public DataTypeEnum DataType { get; set; }
     }
 }

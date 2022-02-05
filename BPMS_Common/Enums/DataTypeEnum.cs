@@ -28,7 +28,7 @@ namespace BPMS_Common.Enums
                     return "bool";
                 
                 case DataTypeEnum.Number:
-                    return "číslp";
+                    return "číslo";
                 
                 case DataTypeEnum.String:
                     return "řetězec";

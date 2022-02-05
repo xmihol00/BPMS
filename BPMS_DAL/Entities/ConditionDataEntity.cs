@@ -12,6 +12,6 @@ namespace BPMS_DAL.Entities
         public Guid ExclusiveGatewayId { get; set; }
         public Guid DataSchemaId { get; set; }
         public ExclusiveGatewayModelEntity? ExclusiveGateway { get; set; }
-        public BlockDataSchemaEntity? DataSchema { get; set; }
+        public ServiceDataSchemaEntity? DataSchema { get; set; }
     }
 }
