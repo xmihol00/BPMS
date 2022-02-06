@@ -17,7 +17,7 @@ namespace BPMS.Controllers
         public async Task<IActionResult> Upload(ModelCreateDTO dto)
         {
             await _modelUploadFacade.Upload(dto);
-            return View();
+            return Redirect("/Agenda/Overview"); //TODO
         }
     }
 }

@@ -34,7 +34,7 @@ namespace BPMS_BL.Facades
 
         public async Task<BlockModelConfigDTO> CreateEdit(AttributeCreateEditDTO dto)
         {
-            BlockAttributeEntity entity = _mapper.Map<BlockAttributeEntity>(dto);
+            TaskAttributeEntity entity = _mapper.Map<TaskAttributeEntity>(dto);
             if (dto.Id == Guid.Empty)
             {
                 await _blockAttributeRepository.Create(entity);
@@ -45,6 +45,7 @@ namespace BPMS_BL.Facades
             }
 
             await _blockAttributeRepository.Save();
+            
             return await Config(dto.TaskId);
         }
 

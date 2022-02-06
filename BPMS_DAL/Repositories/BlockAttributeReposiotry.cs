@@ -11,7 +11,7 @@ using BPMS_DTOs.BlockAttribute;
 
 namespace BPMS_DAL.Repositories
 {
-    public class BlockAttributeRepository : BaseRepository<BlockAttributeEntity>
+    public class BlockAttributeRepository : BaseRepository<TaskAttributeEntity>
     {
         public BlockAttributeRepository(BpmsDbContext context) : base(context) {}
 

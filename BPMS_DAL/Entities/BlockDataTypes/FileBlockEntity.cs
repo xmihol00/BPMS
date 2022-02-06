@@ -10,7 +10,5 @@ namespace BPMS_DAL.Entities.BlockDataTypes
     {
         public string Name { get; set; } = string.Empty;
         public string MIMEType { get; set; } = string.Empty;
-        public Guid FileId { get; set; }
-        public FileDataEntity? File { get; set; }
     }
 }

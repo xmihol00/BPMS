@@ -10,18 +10,6 @@ namespace BPMS_DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "FileDataEntity",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FileDataEntity", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Services",
                 columns: table => new
                 {
@@ -86,7 +74,7 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BlockSchemas",
+                name: "ServiceSchemas",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -99,14 +87,14 @@ namespace BPMS_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlockSchemas", x => x.Id);
+                    table.PrimaryKey("PK_ServiceSchemas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlockSchemas_BlockSchemas_ParentId",
+                        name: "FK_ServiceSchemas_ServiceSchemas_ParentId",
                         column: x => x.ParentId,
-                        principalTable: "BlockSchemas",
+                        principalTable: "ServiceSchemas",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_BlockSchemas_Services_ServiceId",
+                        name: "FK_ServiceSchemas_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "Id",
@@ -528,15 +516,15 @@ namespace BPMS_DAL.Migrations
                 {
                     table.PrimaryKey("PK_ConditionData", x => new { x.ExclusiveGatewayId, x.DataSchemaId });
                     table.ForeignKey(
-                        name: "FK_ConditionData_BlockSchemas_DataSchemaId",
-                        column: x => x.DataSchemaId,
-                        principalTable: "BlockSchemas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_ConditionData_ExclusiveGatewaysModel_ExclusiveGatewayId",
                         column: x => x.ExclusiveGatewayId,
                         principalTable: "ExclusiveGatewaysModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConditionData_ServiceSchemas_DataSchemaId",
+                        column: x => x.DataSchemaId,
+                        principalTable: "ServiceSchemas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -564,37 +552,7 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BlockData",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ServiceDataSchemaEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    TaskWorkflowEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BlockData", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BlockData_BlockSchemas_ServiceDataSchemaEntityId",
-                        column: x => x.ServiceDataSchemaEntityId,
-                        principalTable: "BlockSchemas",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_BlockData_TasksWorkflow_TaskId",
-                        column: x => x.TaskId,
-                        principalTable: "TasksWorkflow",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BlockData_TasksWorkflow_TaskWorkflowEntityId",
-                        column: x => x.TaskWorkflowEntityId,
-                        principalTable: "TasksWorkflow",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BlockAttributeEntity",
+                name: "TaskAttributes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -610,18 +568,54 @@ namespace BPMS_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlockAttributeEntity", x => x.Id);
+                    table.PrimaryKey("PK_TaskAttributes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlockAttributeEntity_ConditionData_ConditionExclusiveGatewayId_ConditionDataSchemaId",
+                        name: "FK_TaskAttributes_ConditionData_ConditionExclusiveGatewayId_ConditionDataSchemaId",
                         columns: x => new { x.ConditionExclusiveGatewayId, x.ConditionDataSchemaId },
                         principalTable: "ConditionData",
                         principalColumns: new[] { "ExclusiveGatewayId", "DataSchemaId" });
                     table.ForeignKey(
-                        name: "FK_BlockAttributeEntity_UserTasksModel_Id",
-                        column: x => x.Id,
+                        name: "FK_TaskAttributes_UserTasksModel_TaskId",
+                        column: x => x.TaskId,
                         principalTable: "UserTasksModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TaskData",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttributeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    SchemaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TaskWorkflowEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TaskData_ServiceSchemas_SchemaId",
+                        column: x => x.SchemaId,
+                        principalTable: "ServiceSchemas",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TaskData_TaskAttributes_AttributeId",
+                        column: x => x.AttributeId,
+                        principalTable: "TaskAttributes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TaskData_TasksWorkflow_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "TasksWorkflow",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskData_TasksWorkflow_TaskWorkflowEntityId",
+                        column: x => x.TaskWorkflowEntityId,
+                        principalTable: "TasksWorkflow",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -635,9 +629,9 @@ namespace BPMS_DAL.Migrations
                 {
                     table.PrimaryKey("PK_ArrayBlocks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ArrayBlocks_BlockData_Id",
+                        name: "FK_ArrayBlocks_TaskData_Id",
                         column: x => x.Id,
-                        principalTable: "BlockData",
+                        principalTable: "TaskData",
                         principalColumn: "Id");
                 });
 
@@ -652,9 +646,9 @@ namespace BPMS_DAL.Migrations
                 {
                     table.PrimaryKey("PK_BoolBlocks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BoolBlocks_BlockData_Id",
+                        name: "FK_BoolBlocks_TaskData_Id",
                         column: x => x.Id,
-                        principalTable: "BlockData",
+                        principalTable: "TaskData",
                         principalColumn: "Id");
                 });
 
@@ -664,23 +658,16 @@ namespace BPMS_DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MIMEType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    MIMEType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FileBlocks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FileBlocks_BlockData_Id",
+                        name: "FK_FileBlocks_TaskData_Id",
                         column: x => x.Id,
-                        principalTable: "BlockData",
+                        principalTable: "TaskData",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_FileBlocks_FileDataEntity_FileId",
-                        column: x => x.FileId,
-                        principalTable: "FileDataEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -694,9 +681,9 @@ namespace BPMS_DAL.Migrations
                 {
                     table.PrimaryKey("PK_NumberBlocks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NumberBlocks_BlockData_Id",
+                        name: "FK_NumberBlocks_TaskData_Id",
                         column: x => x.Id,
-                        principalTable: "BlockData",
+                        principalTable: "TaskData",
                         principalColumn: "Id");
                 });
 
@@ -711,9 +698,9 @@ namespace BPMS_DAL.Migrations
                 {
                     table.PrimaryKey("PK_StringBlocks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StringBlocks_BlockData_Id",
+                        name: "FK_StringBlocks_TaskData_Id",
                         column: x => x.Id,
-                        principalTable: "BlockData",
+                        principalTable: "TaskData",
                         principalColumn: "Id");
                 });
 
@@ -753,39 +740,9 @@ namespace BPMS_DAL.Migrations
                 column: "AdministratorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlockAttributeEntity_ConditionExclusiveGatewayId_ConditionDataSchemaId",
-                table: "BlockAttributeEntity",
-                columns: new[] { "ConditionExclusiveGatewayId", "ConditionDataSchemaId" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BlockData_ServiceDataSchemaEntityId",
-                table: "BlockData",
-                column: "ServiceDataSchemaEntityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BlockData_TaskId",
-                table: "BlockData",
-                column: "TaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BlockData_TaskWorkflowEntityId",
-                table: "BlockData",
-                column: "TaskWorkflowEntityId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BlockModel_PoolId",
                 table: "BlockModel",
                 column: "PoolId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BlockSchemas_ParentId",
-                table: "BlockSchemas",
-                column: "ParentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BlockSchemas_ServiceId",
-                table: "BlockSchemas",
-                column: "ServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BlockWorkflows_BlockModelId",
@@ -801,11 +758,6 @@ namespace BPMS_DAL.Migrations
                 name: "IX_ConditionData_DataSchemaId",
                 table: "ConditionData",
                 column: "DataSchemaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FileBlocks_FileId",
-                table: "FileBlocks",
-                column: "FileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Flows_OutBlockId",
@@ -828,6 +780,16 @@ namespace BPMS_DAL.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ServiceSchemas_ParentId",
+                table: "ServiceSchemas",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceSchemas_ServiceId",
+                table: "ServiceSchemas",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ServiceTasksModel_ServiceId",
                 table: "ServiceTasksModel",
                 column: "ServiceId");
@@ -841,6 +803,36 @@ namespace BPMS_DAL.Migrations
                 name: "IX_SystemsPool_SystemId",
                 table: "SystemsPool",
                 column: "SystemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskAttributes_ConditionExclusiveGatewayId_ConditionDataSchemaId",
+                table: "TaskAttributes",
+                columns: new[] { "ConditionExclusiveGatewayId", "ConditionDataSchemaId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskAttributes_TaskId",
+                table: "TaskAttributes",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskData_AttributeId",
+                table: "TaskData",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskData_SchemaId",
+                table: "TaskData",
+                column: "SchemaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskData_TaskId",
+                table: "TaskData",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskData_TaskWorkflowEntityId",
+                table: "TaskData",
+                column: "TaskWorkflowEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TasksWorkflow_UserId",
@@ -870,9 +862,6 @@ namespace BPMS_DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ArrayBlocks");
-
-            migrationBuilder.DropTable(
-                name: "BlockAttributeEntity");
 
             migrationBuilder.DropTable(
                 name: "BoolBlocks");
@@ -914,46 +903,46 @@ namespace BPMS_DAL.Migrations
                 name: "SystemsPool");
 
             migrationBuilder.DropTable(
+                name: "SendEventsModel");
+
+            migrationBuilder.DropTable(
+                name: "TaskData");
+
+            migrationBuilder.DropTable(
+                name: "Systems");
+
+            migrationBuilder.DropTable(
+                name: "TaskAttributes");
+
+            migrationBuilder.DropTable(
+                name: "TasksWorkflow");
+
+            migrationBuilder.DropTable(
                 name: "ConditionData");
 
             migrationBuilder.DropTable(
                 name: "UserTasksModel");
 
             migrationBuilder.DropTable(
-                name: "FileDataEntity");
-
-            migrationBuilder.DropTable(
-                name: "SendEventsModel");
-
-            migrationBuilder.DropTable(
-                name: "BlockData");
-
-            migrationBuilder.DropTable(
-                name: "Systems");
+                name: "BlockWorkflows");
 
             migrationBuilder.DropTable(
                 name: "ExclusiveGatewaysModel");
 
             migrationBuilder.DropTable(
+                name: "ServiceSchemas");
+
+            migrationBuilder.DropTable(
                 name: "SolvingRoles");
 
             migrationBuilder.DropTable(
-                name: "BlockSchemas");
-
-            migrationBuilder.DropTable(
-                name: "TasksWorkflow");
-
-            migrationBuilder.DropTable(
-                name: "Services");
-
-            migrationBuilder.DropTable(
-                name: "BlockWorkflows");
+                name: "Workflows");
 
             migrationBuilder.DropTable(
                 name: "BlockModel");
 
             migrationBuilder.DropTable(
-                name: "Workflows");
+                name: "Services");
 
             migrationBuilder.DropTable(
                 name: "Pools");

@@ -119,7 +119,6 @@ function AjaxFormSubmit(event, targetId, callback = null, successCallback = null
     }
 
     const dto = new FormData(form);
-    console.log(dto, form.getAttribute("action"));
     $.ajax(
     {
         async: true,

@@ -18,8 +18,7 @@ namespace BPMS_DAL
 
         public DbSet<AgendaEntity>? Agendas { get; set; }
         public DbSet<AgendaRoleUserEntity>? AgendaRoles { get; set; }
-        public DbSet<TaskDataEntity>? BlockData { get; set; }
-        public DbSet<ServiceDataSchemaEntity>? BlockSchemas { get; set; }
+        public DbSet<TaskDataEntity>? TaskData { get; set; }
         public DbSet<BlockModelEntity>? BlockModel { get; set; }
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
@@ -27,11 +26,13 @@ namespace BPMS_DAL
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
         public DbSet<ServiceEntity>? Services { get; set; }
+        public DbSet<ServiceDataSchemaEntity>? ServiceSchemas { get; set; }
         public DbSet<SolvingRoleEntity>? SolvingRoles { get; set; }
         public DbSet<SystemAgendaEntity>? SystemAgendas { get; set; }
         public DbSet<SystemEntity>? Systems { get; set; }
         public DbSet<SystemPoolEntity>? SystemsPool { get; set; }
         public DbSet<SystemRoleEntity>? SystemRoles { get; set; }
+        public DbSet<TaskAttributeEntity>? TaskAttributes { get; set; }
         public DbSet<UserEntity>? Users { get; set; }
         public DbSet<WorkflowEntity>? Workflows { get; set; }
 
@@ -87,8 +88,8 @@ namespace BPMS_DAL
             modelBuilder.Entity<StartEventModelEntity>().ToTable("StartEventsModel");
             modelBuilder.Entity<EndEventModelEntity>().ToTable("EndEventsModel");
 
-            modelBuilder.Entity<BlockAttributeEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<BlockAttributeEntity>().HasOne(x => x.Task).WithMany(x => x.Attributes).HasForeignKey(x => x.Id);
+            modelBuilder.Entity<TaskAttributeEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<TaskAttributeEntity>().HasOne(x => x.Task).WithMany(x => x.Attributes).HasForeignKey(x => x.TaskId);
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.InBlock).WithMany(x => x.InFlows).HasForeignKey(x => x.InBlockId);
@@ -110,15 +111,13 @@ namespace BPMS_DAL
 
             modelBuilder.Entity<TaskDataEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Task).WithMany(x => x.TaskData).HasForeignKey(x => x.TaskId);
+            modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Attribute).WithMany(x => x.Data).HasForeignKey(x => x.AttributeId);
+            modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Schema).WithMany(x => x.Data).HasForeignKey(x => x.SchemaId);
             modelBuilder.Entity<BoolBlockEntity>().ToTable("BoolBlocks");
             modelBuilder.Entity<NumberBlockEntity>().ToTable("NumberBlocks");
             modelBuilder.Entity<StringBlockEntity>().ToTable("StringBlocks");
             modelBuilder.Entity<ArrayBlockEntity>().ToTable("ArrayBlocks");
-            modelBuilder.Entity<FileBlockEntity>().ToTable("FileBlocks");
-            modelBuilder.Entity<FileBlockEntity>().HasOne(x => x.File);
-            
-            modelBuilder.Entity<FileDataEntity>().HasKey(x => x.Id);
-
+            modelBuilder.Entity<FileBlockEntity>().ToTable("FileBlocks");            
 
             modelBuilder.Entity<ConditionDataEntity>().HasKey(x => new { x.ExclusiveGatewayId, x.DataSchemaId });
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.ExclusiveGateway).WithMany(x => x.Conditions);

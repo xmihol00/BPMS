@@ -13,6 +13,7 @@ namespace BPMS_Common.Enums
         Text,
         File,
         YesNo,
+        Selection,
     }
 
     public static class AttributeType
@@ -36,6 +37,9 @@ namespace BPMS_Common.Enums
                 case AttributeTypeEnum.YesNo:
                     return "ano/ne";
                 
+                case AttributeTypeEnum.Selection:
+                    return "výběr";
+
                 default:
                     return "";
             }

@@ -15,6 +15,6 @@ namespace BPMS_DAL.Entities.ModelBlocks
         public Guid? RoleId { get; set; }
         public SolvingRoleEntity? Role { get; set; }
         public TimeSpan Span { get; set; }
-        public List<BlockAttributeEntity> Attributes { get; set; } = new List<BlockAttributeEntity>();
+        public List<TaskAttributeEntity> Attributes { get; set; } = new List<TaskAttributeEntity>();
     }
 }
