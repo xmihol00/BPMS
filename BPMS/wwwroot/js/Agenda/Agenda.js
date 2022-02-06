@@ -15,7 +15,6 @@ function AgendaDetail(element)
     topEle.classList.add("side-overview");
     detailDiv.classList.add("container-lg");
     detailDiv.classList.remove("d-none");
-    detailDiv.classList.remove("w-0");
     overviewDiv.classList.add("overview-nav-hide");
     element.children[0].classList.add("selected-card");
 
@@ -101,5 +100,6 @@ function ShowModelModal(element)
                                                           "BlockConfigTargetId", null, false, HideModelHeader));
         }
 
+        LoadingImage = document.getElementById("BlockConfigTargetId").children[0];
     }, 700);
 }

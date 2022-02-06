@@ -12,5 +12,6 @@ namespace BPMS_DTOs.BlockModel.ConfigTypes
     public interface IUserTaskConfigDTO : IBlockModelConfigDTO
     {
         public List<BlockAttributeDTO> Attributes { get; set; }
+        public List<InputBlockAttributeDTO> InputAttributes { get; set; }
     }
 }

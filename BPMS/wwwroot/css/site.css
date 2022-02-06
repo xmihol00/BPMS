@@ -47,6 +47,7 @@ body {
   background-color: var(--color-primary) !important;
 }
 
+
 .text-bold {
   font-weight: bold;
 }
@@ -147,8 +148,8 @@ body {
     -webkit-box-shadow: 0px 0px 6px 3px #cacaca; 
     box-shadow: 0px 0px 6px 3px #cacaca;
     overflow: hidden;
-    transition: all 0.35s;
-    transition-delay: 350ms;
+    transition: all 0.5s;
+    transition-delay: 0.35s;
     margin: 0 3em;
     z-index: 101;
   }
@@ -160,8 +161,10 @@ body {
 
   .page-navbar-modal {
     max-height: 100vh;
+    height: fit-content;
     margin: 0px max(calc(50vw - 700px), 1em);
-    margin-top: 10vh;
+    margin-top: auto;
+    margin-top: auto;
     z-index: 101;
     -webkit-box-shadow: 0px 0px 8px 2px #444; 
     box-shadow: 0px 0px 8px 2px #444;
@@ -181,9 +184,7 @@ body {
   .page-content-modal {
     position: fixed;
     top: var(--navbar-height);
-    /*height: calc(100vh - var(--navbar-height) - var(--footer-height));*/
     width: calc(100% - var(--side-bar-width) - 30px);
-    /*overflow: auto;*/
   }
 
   .main-content-large .page-content-modal {
@@ -192,7 +193,6 @@ body {
 
   .main-content-large .page-navbar-modal {
     margin: 0px max(calc(50vw - 600px), 1em);
-    margin-top: 10vh;
   }
 
   /*.main-content-large .page-navbar-transition {
@@ -523,4 +523,26 @@ body {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.spec-remove {
+  position: absolute;
+  top: 0;
+  right: 2px;
+}
+
+.padr-icon {
+  padding-right: 0.1rem !important;
+}
+
+.padl-icon {
+  padding-left: 0.1rem !important;
+}
+
+.bg-success.bg-su-se-change:hover {
+  background-color: rgb(var(--bs-secondary-rgb)) !important;
+}
+
+.bg-secondary.bg-su-se-change:hover {
+  background-color: rgb(var(--bs-success-rgb)) !important;
 }

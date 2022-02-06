@@ -26,5 +26,20 @@ namespace BPMS.Controllers
         {
             return PartialView("Partial/_BlockModelConfig", await _blockModelFacade.CreateEdit(dto));
         }
+
+        [HttpPost]
+        [Route("/BlockModel/ToggleMap/{blockId}/{attributeId}")]
+        public async Task<IActionResult> ToggleMap(Guid blockId, Guid attributeId)
+        {
+            await _blockModelFacade.ToggleMap(blockId, attributeId);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _blockModelFacade.Remove(id);
+            return Ok();
+        }
     }
 }

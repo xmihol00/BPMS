@@ -24,5 +24,7 @@ namespace BPMS_DAL.Entities
         public List<FlowEntity> InFlows { get; set; } = new List<FlowEntity>();
         public List<FlowEntity> OutFlows { get; set; } = new List<FlowEntity>();
         public List<BlockWorkflowEntity> BlockWorkflows { get; set; } = new List<BlockWorkflowEntity>();
+        public List<BlockAttributeEntity> Attributes { get; set; } = new List<BlockAttributeEntity>();
+        public List<BlockAttributeMapEntity> MappedAttributes { get; set; } = new List<BlockAttributeMapEntity>();
     }
 }

@@ -21,6 +21,7 @@ services.AddScoped<UserRepository>();
 services.AddScoped<BlockModelRepository>();
 services.AddScoped<ServiceDataSchemaRepository>();
 services.AddScoped<BlockAttributeRepository>();
+services.AddScoped<BlockAttributeMapRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

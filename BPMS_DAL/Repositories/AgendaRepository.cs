@@ -51,5 +51,21 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
             #pragma warning restore CS8602
         }
+
+        public Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
+        {
+            #pragma warning disable CS8602
+            return _dbSet.Include(x => x.Administrator)
+                         .Select(x => new AgendaDetailPartialDTO 
+                         {
+                             AdministratorId = x.AdministratorId,
+                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
+                             Id = x.Id,
+                             Name = x.Name,
+                             Description = x.Description
+                         })
+                         .FirstAsync(x => x.Id == id);
+            #pragma warning restore CS8602
+        }
     }
 }

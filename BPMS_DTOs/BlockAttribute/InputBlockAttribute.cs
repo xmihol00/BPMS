@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockAttribute
 {
-    public class AttributeCreateEditDTO
+    public class InputBlockAttributeDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public List<string> Specification { get; set; } = new List<string>();
-        public string? Compulsory { get; set; }
+        public string Specification { get; set; } = string.Empty;
+        public bool Compulsory { get; set; }
         public AttributeTypeEnum Type { get; set; }
-        public Guid BlockId { get; set; }
+        public bool Mapped { get; set; }
     }
 }

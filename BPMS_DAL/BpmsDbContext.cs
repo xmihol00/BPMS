@@ -19,6 +19,8 @@ namespace BPMS_DAL
         public DbSet<AgendaEntity>? Agendas { get; set; }
         public DbSet<AgendaRoleUserEntity>? AgendaRoles { get; set; }
         public DbSet<TaskDataEntity>? TaskData { get; set; }
+        public DbSet<BlockAttributeEntity>? Attributes { get; set; }
+        public DbSet<BlockAttributeMapEntity>? AttributesMap { get; set; }
         public DbSet<BlockModelEntity>? BlockModel { get; set; }
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
@@ -32,7 +34,6 @@ namespace BPMS_DAL
         public DbSet<SystemEntity>? Systems { get; set; }
         public DbSet<SystemPoolEntity>? SystemsPool { get; set; }
         public DbSet<SystemRoleEntity>? SystemRoles { get; set; }
-        public DbSet<TaskAttributeEntity>? TaskAttributes { get; set; }
         public DbSet<UserEntity>? Users { get; set; }
         public DbSet<WorkflowEntity>? Workflows { get; set; }
 
@@ -77,10 +78,10 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockModelEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Pool).WithMany(x => x.Blocks).HasForeignKey(x => x.PoolId);
             modelBuilder.Entity<UserTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.UserTasks).HasForeignKey(x => x.RoleId);
-            modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
             modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.Sender).WithMany(x => x.Recievers).HasForeignKey(x => x.SenderId);
-            modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
+            modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
+            modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
             modelBuilder.Entity<ParallelGatewayModelEntity>().ToTable("ParallelGatewaysModel");
             modelBuilder.Entity<ExclusiveGatewayModelEntity>().ToTable("ExclusiveGatewaysModel");
@@ -88,8 +89,8 @@ namespace BPMS_DAL
             modelBuilder.Entity<StartEventModelEntity>().ToTable("StartEventsModel");
             modelBuilder.Entity<EndEventModelEntity>().ToTable("EndEventsModel");
 
-            modelBuilder.Entity<TaskAttributeEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<TaskAttributeEntity>().HasOne(x => x.Task).WithMany(x => x.Attributes).HasForeignKey(x => x.TaskId);
+            modelBuilder.Entity<BlockAttributeEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<BlockAttributeEntity>().HasOne(x => x.Block).WithMany(x => x.Attributes).HasForeignKey(x => x.BlockId);
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.InBlock).WithMany(x => x.InFlows).HasForeignKey(x => x.InBlockId);
@@ -124,6 +125,10 @@ namespace BPMS_DAL
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.DataSchema).WithMany(x => x.Conditions);
 
             modelBuilder.Entity<ServiceEntity>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<BlockAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
+            modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

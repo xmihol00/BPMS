@@ -22,19 +22,27 @@ namespace BPMS_BL.Facades
     {
         private readonly BlockModelRepository _blockModelRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
+        private readonly BlockAttributeMapRepository _blockAttributeMapRepository;
         private readonly IMapper _mapper;
 
         public BlockModelFacade(BlockModelRepository blockModelRepository, BlockAttributeRepository blockAttributeRepository,
-                                IMapper mapper)
+                                BlockAttributeMapRepository blockAttributeMapRepository, IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
             _blockAttributeRepository = blockAttributeRepository;
+            _blockAttributeMapRepository = blockAttributeMapRepository;
             _mapper = mapper;
+        }
+
+        public async Task Remove(Guid id)
+        {
+            _blockAttributeRepository.Remove(new BlockAttributeEntity { Id = id });
+            await _blockAttributeRepository.Save();
         }
 
         public async Task<BlockModelConfigDTO> CreateEdit(AttributeCreateEditDTO dto)
         {
-            TaskAttributeEntity entity = _mapper.Map<TaskAttributeEntity>(dto);
+            BlockAttributeEntity entity = _mapper.Map<BlockAttributeEntity>(dto);
             if (dto.Id == Guid.Empty)
             {
                 await _blockAttributeRepository.Create(entity);
@@ -46,7 +54,27 @@ namespace BPMS_BL.Facades
 
             await _blockAttributeRepository.Save();
             
-            return await Config(dto.TaskId);
+            return await Config(dto.BlockId);
+        }
+
+        public async Task ToggleMap(Guid blockId, Guid attributeId)
+        {
+            BlockAttributeMapEntity entity = new BlockAttributeMapEntity()
+            {
+                AttributeId = attributeId,
+                BlockId = blockId
+            };
+
+            if (await _blockAttributeMapRepository.Any(blockId, attributeId))
+            {
+                _blockAttributeMapRepository.Remove(entity);
+            }
+            else
+            {   
+                await _blockAttributeMapRepository.Create(entity);
+            }
+
+            await _blockAttributeMapRepository.Save();
         }
 
         public async Task<BlockModelConfigDTO> Config(Guid id)
@@ -57,9 +85,14 @@ namespace BPMS_BL.Facades
             #pragma warning disable CS8602, CS8600
             switch (entity)
             {
-                case ITaskModelEntity userTask:
+                case ITaskModelEntity:
                     dto = new UserTaskConfigDTO();
-                    (dto as IUserTaskConfigDTO).Attributes = await _blockAttributeRepository.All(entity.Id);
+                    IUserTaskConfigDTO userTask = dto as IUserTaskConfigDTO;
+                    userTask.Attributes = await _blockAttributeRepository.All(entity.Id);
+                    if (entity.InFlows.Count > 0)
+                    {
+                        userTask.InputAttributes = await _blockAttributeRepository.Input(entity.Id, entity.InFlows.Select(x => x.OutBlockId).First());
+                    }
                     break;
                 
                 case IServiceTaskModelEntity serviceTask:

@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_Common.Enums;
+using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockAttribute
+namespace BPMS_DTOs.Agenda
 {
-    public class AttributeCreateEditDTO
+    public class AgendaDetailPartialDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public Guid AdministratorId { get; set; }
+        public string AdministratorName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public List<string> Specification { get; set; } = new List<string>();
-        public string? Compulsory { get; set; }
-        public AttributeTypeEnum Type { get; set; }
-        public Guid BlockId { get; set; }
+        public List<AllModelDTO> Models { get; set; } = new List<AllModelDTO>();
     }
 }

@@ -68,6 +68,66 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("AgendaRoles");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BlockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Compulsory")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ConditionDataSchemaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConditionExclusiveGatewayId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConditionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Specification")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlockId");
+
+                    b.HasIndex("ConditionExclusiveGatewayId", "ConditionDataSchemaId");
+
+                    b.ToTable("Attributes");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeMapEntity", b =>
+                {
+                    b.Property<Guid>("AttributeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BlockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AttributeId", "BlockId");
+
+                    b.HasIndex("BlockId");
+
+                    b.ToTable("AttributesMap");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -382,51 +442,6 @@ namespace BPMS_DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.TaskAttributeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Compulsory")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ConditionDataSchemaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ConditionExclusiveGatewayId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ConditionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Specification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.HasIndex("ConditionExclusiveGatewayId", "ConditionDataSchemaId");
-
-                    b.ToTable("TaskAttributes");
-                });
-
             modelBuilder.Entity("BPMS_DAL.Entities.TaskDataEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -733,6 +748,42 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", "Block")
+                        .WithMany("Attributes")
+                        .HasForeignKey("BlockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BPMS_DAL.Entities.ConditionDataEntity", "Condition")
+                        .WithMany()
+                        .HasForeignKey("ConditionExclusiveGatewayId", "ConditionDataSchemaId");
+
+                    b.Navigation("Block");
+
+                    b.Navigation("Condition");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeMapEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockAttributeEntity", "Attribute")
+                        .WithMany("MappedBlocks")
+                        .HasForeignKey("AttributeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", "Block")
+                        .WithMany("MappedAttributes")
+                        .HasForeignKey("BlockId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Attribute");
+
+                    b.Navigation("Block");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.PoolEntity", "Pool")
@@ -888,26 +939,9 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.TaskAttributeEntity", b =>
-                {
-                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", "Task")
-                        .WithMany("Attributes")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BPMS_DAL.Entities.ConditionDataEntity", "Condition")
-                        .WithMany()
-                        .HasForeignKey("ConditionExclusiveGatewayId", "ConditionDataSchemaId");
-
-                    b.Navigation("Condition");
-
-                    b.Navigation("Task");
-                });
-
             modelBuilder.Entity("BPMS_DAL.Entities.TaskDataEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.TaskAttributeEntity", "Attribute")
+                    b.HasOne("BPMS_DAL.Entities.BlockAttributeEntity", "Attribute")
                         .WithMany("Data")
                         .HasForeignKey("AttributeId");
 
@@ -1114,11 +1148,22 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Workflows");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.BlockAttributeEntity", b =>
+                {
+                    b.Navigation("Data");
+
+                    b.Navigation("MappedBlocks");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
                 {
+                    b.Navigation("Attributes");
+
                     b.Navigation("BlockWorkflows");
 
                     b.Navigation("InFlows");
+
+                    b.Navigation("MappedAttributes");
 
                     b.Navigation("OutFlows");
                 });
@@ -1167,11 +1212,6 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Pools");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.TaskAttributeEntity", b =>
-                {
-                    b.Navigation("Data");
-                });
-
             modelBuilder.Entity("BPMS_DAL.Entities.UserEntity", b =>
                 {
                     b.Navigation("Agendas");
@@ -1196,11 +1236,6 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
                 {
                     b.Navigation("Recievers");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", b =>
-                {
-                    b.Navigation("Attributes");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.TaskWorkflowEntity", b =>

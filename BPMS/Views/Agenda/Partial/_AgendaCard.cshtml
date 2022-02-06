@@ -1,0 +1,53 @@
+@model (AgendaAllDTO agenda, bool selected)
+
+@if (Model.agenda != null)
+{
+    <div id="@Model.agenda.Id" class="col-12 col-md-6 col-lg-4 p-2 pointer" onclick="AgendaDetail(this)">
+        <div class="shadow-box p-3 my-card bradius-card hover-card @(Model.selected ? "selected-card" : "")">
+            <h3 class="text-center border-bottom pb-1">@Model.agenda.Name</h3>
+            <div class="d-flex justify-content-center support-icons">
+                <div class="vertical-justify-between">
+                    <div class="d-flex justify-content-end">
+                        <b>@Model.agenda.ActiveWorkflowsCount 
+                        <i class="fas fa-pause ml-2 @(Model.agenda.ActiveWorkflowsCount > 0 ? "wf-active" : "")"></i></b>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <b>@Model.agenda.PausedWorkflowsCount 
+                        <i class="fas fa-play ml-2 @(Model.agenda.PausedWorkflowsCount > 0 ? "wf-paused" : "")"></i></b>
+                    </div>
+                </div>
+                <i class="fas fa-retweet main-icon my-auto"></i>
+                <div class="vertical-justify-between pt-1px">
+                    <div>
+                        <b><i class="fas fa-check-square icon-size-correction mr-2 @(Model.agenda.FinishedWorkflowsCount > 0 ? "wf-finished" : "")"></i> 
+                        @Model.agenda.FinishedWorkflowsCount</b>
+                    </div>
+                    <div>
+                        <b><i class="fa fa-stop-circle icon-size-correction mr-2 @(Model.agenda.CanceledWorkflowsCount > 0 ? "wf-canceled" : "")"></i> 
+                        @Model.agenda.CanceledWorkflowsCount</b>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around mt-3">
+                <div >
+                    <i class="fas fa-users secondary-icon"></i> 
+                    <span class="wf-count">@Model.agenda.UserCount</span>
+                </div>
+                <div >
+                    <i class="fas fa-user-times secondary-icon"></i>
+                    <span class="wf-count">@Model.agenda.MissingRolesCount</span>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around mt-2">
+                <div >
+                    <i class="fas fa-cog secondary-icon"></i>
+                    <span class="wf-count">@Model.agenda.ModelsCount</span>
+                </div>
+                <div class="align-middle">
+                    <i class="fas fa-handshake secondary-icon"></i>
+                    <span class="wf-count">@Model.agenda.SystemsCount</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}

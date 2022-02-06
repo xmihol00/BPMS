@@ -74,9 +74,7 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, call
 
 function HideModal()
 {
-    let modal = document.getElementById("PageNavId");
-    modal.classList.remove("page-navbar-modal");
-    modal.classList.remove("page-navbar-modal-large");
+    document.getElementById("PageNavId").classList.remove("page-navbar-modal");
     document.getElementById("ModalBackgroundId").classList.remove("modal-background-show");
     
     if (ModalContentId)
@@ -90,7 +88,7 @@ function HideModal()
                 Callback();
                 Callback = null;
             }
-        }, 350);
+        }, 850);
     }
 }
 

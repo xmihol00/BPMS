@@ -1,9 +1,9 @@
-@model AgendaDetailDTO
+@model AgendaDetailPartialDTO
 @{
     ViewData["Title"] = "Detail agendy";
 }
 
-@if (Model is not null)
+@if (Model != null)
 {
     <div class="row">
         <h1 class="text-right col-5 vertical-justify-center mb-0 text-font">@Model.Name</h1>

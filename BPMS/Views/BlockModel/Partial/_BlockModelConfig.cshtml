@@ -15,17 +15,10 @@
                 <span class="input-label">Popis</span>
             </label>
         </div>
-        <h4 class="mt-3">Atributy bloku</h4>
-        @if (Model is IUserTaskConfigDTO)
-        {   
-            @await Html.PartialAsync("Partial/_UserTaskConfig", (Model as IUserTaskConfigDTO)?.Attributes)
-        }
-        else
-        {
-            <p class="text-center mb-2">
-                Blok nemá konfigurovany žádné atributy.
-            </p>
-        }
+        <div class="d-flex justify-content-center mt-2">
+            <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
+            <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s" disabled>Upravit</button>
+        </div>
     </form>
     <form id="AttribCreateFormId" class="d-none mt-2 position-relative" method="post" action="/BlockModel/CreateEditAttribute" 
           onsubmit="BlockConfigSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
@@ -34,8 +27,8 @@
             <button type="button" id="CancelAttBtnId" class="butn butn-sm btn-d mt-1" onclick="CancelAddAttrib()"><i class="fas fa-times"></i></button>
         </div>
         <input type="hidden" id="IdId" name="Id" value="" />
-        <input type="hidden" name="TaskId" value="@Model.Id" />
-        <h5 id="HeadlineId">Tvorba atribut</h5>
+        <input type="hidden" name="BlockId" value="@Model.Id" />
+        <h5 id="HeadlineId">Tvorba atributu</h5>
         <div class="row">
             <div class="col-4">
                 <label class="input">
@@ -45,7 +38,7 @@
             </div>
             <div class="col-4">
                 <label class="input">
-                    <select id="TypeId" class="input-field input-select" name="Type"> 
+                    <select id="TypeId" class="input-field input-select" name="Type" oninput="AttribTypeChange(this)"> 
                         @foreach (AttributeTypeEnum enumVal in Enum.GetValues(typeof(AttributeTypeEnum)))
                         {
                             <option value="@enumVal">@enumVal.ToLabel()</option>   
@@ -60,19 +53,27 @@
                     <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" data-ch="CompulsoryLabelId" checked/>
                 </div>
             </div>
-            <div class="col-6 text-center mt-3">
+            <div class="col-6 mt-3">
                 <label class="input">
                     <textarea id="DescrId" name="Description" class="input-field" type="text" placeholder=" "></textarea>
                     <span class="input-label">Popis</span>
                 </label>
             </div>
-            <p class="col-6 vertical-justify-center text-center mt-3">
-                Pro tento typ atributu se nekonfiguruje specifikace.
-            </p>
+            <div id="SpecDivId" class="col-5 mt-3">
+                <div class="vertical-justify-center">
+                    Tento typ atributu nemá specifikaci.
+                </div>
+            </div>
         </div>
     </form>
-    <div class="d-flex justify-content-center mt-3">
-        <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
-        <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s" disabled>Upravit</button>
-    </div>
+    @if (Model is IUserTaskConfigDTO)
+    {   
+        @await Html.PartialAsync("Partial/_UserTaskConfig", Model as IUserTaskConfigDTO)
+    }
+    else
+    {
+        <p class="text-center mb-2">
+            Blok nemá konfigurovany žádné výstupní atributy.
+        </p>
+    }
 }

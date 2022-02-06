@@ -1,42 +1,28 @@
+@model AgendaDetailDTO
 @{
     ViewData["Title"] = "Detail Agendy";
 }
+<script src="~/js/Agenda/Agenda.js"></script>
+<script src="~/js/Model/Model.js"></script>
 
-<div id="PageNavId" class="page-navbar ">
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <i class="fas fa-chevron-circle-left my-auto"></i>
-        <h1 class="mb-0 pt-1">Detail Agendy</h1>
-        <div class="my-auto">
-            <button class="butn btn-p" onclick="ShowModal('UploadModelId')">Nahrát model</button>
-        </div>
+@if (Model != null)
+{
+    <div id="PageNavId" class="page-navbar ">
+        @await Html.PartialAsync("Partial/_AgendaDetailHeader", Model.Id)
     </div>
-    <form id="UploadModelId" class="mx-4 mt-4 mb-3" method="POST" action="/ModelUpload/Upload" enctype="multipart/form-data">
-        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-            <h2 class="mb-0">Nahrání modelu</h2>
-            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
+    <div id="PageContentId" class="d-flex pt-3">
+        <div id="DetailDivId" class="detail-div container-lg">
+            @await Html.PartialAsync("Partial/_AgendaDetail", Model as AgendaDetailPartialDTO)
         </div>
-        <div class="row">
-            <div class="col-12 mt-1">
-                <label class="input">
-                    <input class="input-field" type="text" placeholder=" " name="Name" autocomplete="off" />
-                    <span class="input-label">Název</span>
-                </label>
-            </div>
-            <div class="col-12 col-md-6 mt-3">
-                <label class="input">
-                    <input class="input-file" type="file" onchange="FileSelected(this)" name="BPMN" accept=".bpmn"/>
-                    <span class="input-label pointer">Soubor BPMN</span>
-                </label>
-            </div>
-            <div class="col-12 col-md-6 mt-3">
-                <label class="input">
-                    <input class="input-file" type="file" onchange="FileSelected(this)" name="SVG" accept=".svg"/>
-                    <span class="input-label pointer">Soubor SVG</span>
-                </label>
+        <div id="OverviewDivId" class="container-lg side-overview">
+            <div class="row">
+                @await Html.PartialAsync("Partial/_AgendaCard", (Model.AllAgendas.First(x => x.Id == Model.Id), true))
+                @foreach (AgendaAllDTO agenda in Model.AllAgendas.Where(x => x.Id != Model.Id))
+                {
+                    @await Html.PartialAsync("Partial/_AgendaCard", (agenda, false))
+                }
             </div>
         </div>
-        <div class="d-flex justify-content-center mt-3">
-            <button class="butn btn-s">Nahrát</button>
-        </div>
-    </form>
-</div>
+        <div class="overview-nav overview-nav-hide"></div>
+    </div>
+}

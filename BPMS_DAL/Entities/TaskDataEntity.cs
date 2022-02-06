@@ -13,7 +13,7 @@ namespace BPMS_DAL.Entities
         public Guid TaskId { get; set; }
         public TaskWorkflowEntity? Task { get; set; }
         public Guid? AttributeId { get; set; }
-        public TaskAttributeEntity? Attribute { get; set; }
+        public BlockAttributeEntity? Attribute { get; set; }
         public Guid? SchemaId { get; set; }
         public ServiceDataSchemaEntity? Schema { get; set; }
     }

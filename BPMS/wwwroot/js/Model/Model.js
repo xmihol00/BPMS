@@ -24,6 +24,7 @@ function HideModelHeader()
 
 function BlockConfigSubmit(event, targetId)
 {
+    event.preventDefault();
     document.getElementById(targetId).innerHTML = LoadingImage.innerHTML;
     AjaxFormSubmit(event, targetId);
 }
@@ -43,35 +44,6 @@ function CancelAddAttrib()
     document.getElementById("EditBtnId").classList.remove("d-none");
 }
 
-function ValidateAttribute()
-{
-    let disabled = false;
-    let name = document.getElementById("AttribNameId");
-
-    if (!name.value || !name.value.trim())
-    {
-        disabled = true;
-        name.parentNode.children[1].classList.add("color-required");
-    }
-    else
-    {
-        name.parentNode.children[1].classList.remove("color-required");
-    }
-
-    let compusory = document.getElementById("CompulsoryId");
-
-    if (compusory.checked)
-    {
-        compusory.parentNode.children[0].classList
-    }
-    else
-    {
-        compusory.parentNode.children[0].classList.remove("label-checkbox-checked");
-    }
-
-    document.getElementById("CreateAttBtnId").disabled = disabled;
-}
-
 function EditAttribute(button)
 {
     let oldForm = document.getElementById("AttribEitFormId");
@@ -81,12 +53,12 @@ function EditAttribute(button)
         oldForm.remove();
     }
 
-    let element = button.parentNode;
+    let element = button.parentNode.parentNode;
     let form = document.getElementById("AttribCreateFormId").cloneNode(true);
     form.id = "AttribEitFormId";
 
     form.querySelector("#IdId").value = element.id;
-    form.querySelector("#HeadlineId").innerText = "Editce atributu";
+    form.querySelector("#HeadlineId").remove();
     form.querySelector("#NameId").value = element.children[1].innerText;
     form.querySelector("#AttribNameLabelId").classList.remove("color-required");
     let checked = element.children[3].children[0].classList.contains("bg-primary");
@@ -105,6 +77,14 @@ function EditAttribute(button)
         if (opt.innerText == element.children[2].innerText)
         {
             opt.selected = true;
+            if (opt.innerText == "soubor" || opt.innerText == "výběr")
+            {
+                MakeSpecEditable(opt.innerText == "soubor" ? "File" : "Selection", element.children[5].children[0], form.querySelector("#SpecDivId"));
+            }
+            else
+            {
+                form.querySelector("#SpecDivId").innerHTML = NoSpecInput();
+            }
             break;
         }
         else
@@ -126,6 +106,7 @@ function EditAttribute(button)
     element.classList.add("d-none");
     form.classList.add("border-bottom");
     form.classList.remove("d-none");
+    InputValidator(form);
 }
 
 function CancelEdit(element)
@@ -133,4 +114,148 @@ function CancelEdit(element)
     let form = element.parentNode.parentNode;
     form.nextSibling.classList.remove("d-none");
     form.remove();
+}
+
+function AttribTypeChange(element)
+{
+    let specDiv = element.parentNode.parentNode.parentNode.children[4];
+    if (element.value == "File" || element.value == "Selection")
+    {
+        specDiv.innerHTML = CreateSpecInput(0, element.value) + AddSpecBtn(element.value);
+        specDiv.children[0].children[2].remove();
+    }
+    else
+    {
+        specDiv.innerHTML = NoSpecInput();
+    }
+
+    InputValidator(specDiv.parentNode.parentNode);
+}
+
+function NoSpecInput()
+{
+    return `<div class="vertical-justify-center">
+    Tento typ atributu nemá specifikaci.
+</div>`;
+}
+
+function AddSpecBtn(type)
+{
+    return `<div class="d-flex justify-content-center">
+    <button class="butn btn-p mb-2" type="button" onclick="AddSpecInput(this, '${type}')">Přidat další ${type == "File" ? "typ souboru" : "hodnotu výběru"}</button></div>`
+}
+
+function CreateSpecInput(index, type, value = "")
+{
+    return `<label class="input mb-1">
+        <input name="Specification[${index}]" class="input-field" type="text" data-reqi="S${index}LableId" placeholder=" " value="${value}" oninput="" />
+        <span id="S${index}LableId" class="input-label color-required">${index + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}</span>
+        <button class="btn spec-remove" onclick="RemoveSpec(this, '${type}')" type="button"><i class="fas fa-times"></i></button>
+    </label>`
+}
+
+function AddSpecInput(button, type)
+{
+    let specDiv = button.parentNode.parentNode;
+    let index = specDiv.children.length - 1;
+    let div = document.createElement("div");
+    div.innerHTML = CreateSpecInput(index, type);
+    specDiv.insertBefore(div.children[0], button.parentNode);
+    
+    if (specDiv.children.length - 1 == 2)
+    {
+        div.innerHTML = `<button class="btn spec-remove" onclick="RemoveSpec(this, '${type}')" type="button"><i class="fas fa-times"></i></button>`;
+        specDiv.children[0].appendChild(div.children[0]);
+    }
+
+    InputValidator(specDiv.parentNode.parentNode);
+}
+
+function RemoveSpec(button, type)
+{
+    let specDiv = button.parentNode.parentNode;
+    button.parentNode.remove();
+    for (let i = 0; i < specDiv.children.length - 1; i++)
+    {
+        let inputBlock = specDiv.children[i];
+        inputBlock.children[0].setAttribute("name", `Specification[${i}]`);
+        inputBlock.children[0].setAttribute("data-reqi", `S${i}LableId`);
+        inputBlock.children[1].id = `S${i}LableId`;
+        inputBlock.children[1].innerText = `${i + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}`
+    }
+
+    if (specDiv.children.length - 1 == 1)
+    {
+        specDiv.children[0].children[2].remove();
+    }
+
+    InputValidator(specDiv.parentNode.parentNode);
+}
+
+function MakeSpecEditable(type, list, target)
+{
+    let i = 0;
+    target.innerHTML = "";
+    for (let element of list.querySelectorAll("li"))
+    {
+        target.innerHTML += CreateSpecInput(i++, type, element.children[0].innerText);
+    }
+
+    if (i == 1)
+    {
+        target.children[0].children[2].remove();
+    }
+
+    target.innerHTML += AddSpecBtn(type);
+}
+
+function ToggleMapping(attribId, blockId, button)
+{
+    button.innerHTML = "<i class='fas fa-spinner'></i>"
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/ToggleMap/${blockId}/${attribId}`
+    })
+    .done(() => 
+    {
+        button.innerHTML = "<i class='fas fa-check-circle'></i>"
+        if (button.classList.contains("bg-success"))
+        {
+            button.classList.remove("bg-success");
+            button.classList.add("bg-secondary");
+        }
+        else
+        {
+            button.classList.add("bg-success");
+            button.classList.remove("bg-secondary");
+        }
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function RemoveAttribute(element)
+{
+    element.innerHTML = "<i class='fas fa-spinner'></i>";
+    let attrib = element.parentNode.parentNode;
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Remove/${attrib.id}`
+    })
+    .done(() => 
+    {
+        attrib.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
 }

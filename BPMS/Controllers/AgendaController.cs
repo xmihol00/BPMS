@@ -21,15 +21,15 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Detail()
+        public async Task<IActionResult> Detail(Guid id)
         {
-            return View("AgendaDetail");
+            return View("AgendaDetail", await _agendaFacade.Detail(id));
         }
 
         [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            AgendaDetailDTO dto = await _agendaFacade.Detail(id);
+            AgendaDetailPartialDTO dto = await _agendaFacade.DetailPartial(id);
 
             return Ok(new
                 {

@@ -30,6 +30,14 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public async Task<AgendaDetailDTO> Detail(Guid id)
+        {
+            AgendaDetailDTO dto = await _agendaRepository.Detail(id);
+            dto.Models = await _modelRepository.OfAgenda(id);
+            dto.AllAgendas = await _agendaRepository.All();
+            return dto;
+        }
+
         public async Task<AgendaOverviewDTO> Overview()
         {
             return new AgendaOverviewDTO()
@@ -46,9 +54,9 @@ namespace BPMS_BL.Facades
             await _agendaRepository.Save();
         }
 
-        public async Task<AgendaDetailDTO> Detail(Guid id)
+        public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
-            AgendaDetailDTO detail = await _agendaRepository.Detail(id);
+            AgendaDetailPartialDTO detail = await _agendaRepository.DetailPartial(id);
             detail.Models = await _modelRepository.OfAgenda(id);
 
             return detail;
