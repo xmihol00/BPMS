@@ -16,8 +16,11 @@
             </label>
         </div>
         <div class="d-flex justify-content-center mt-2">
-            <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
-            <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s" disabled>Upravit</button>
+            @if (Model is IAttributesConfigDTO)
+            {
+                <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
+            }
+            <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s">Upravit</button>
         </div>
     </form>
     <form id="AttribCreateFormId" class="d-none mt-2 position-relative" method="post" action="/BlockModel/CreateEditAttribute" 
@@ -66,14 +69,13 @@
             </div>
         </div>
     </form>
-    @if (Model is IUserTaskConfigDTO)
+    @if (Model is IAttributesConfigDTO)
     {   
-        @await Html.PartialAsync("Partial/_UserTaskConfig", Model as IUserTaskConfigDTO)
+        @await Html.PartialAsync("Partial/_AttributesConfig", Model as IAttributesConfigDTO)
     }
-    else
+    
+    @if (Model is IInputAttributesConfigDTO)
     {
-        <p class="text-center mb-2">
-            Blok nemá konfigurovany žádné výstupní atributy.
-        </p>
+        @await Html.PartialAsync("Partial/_InputAttributesConfig", Model as IInputAttributesConfigDTO)
     }
 }

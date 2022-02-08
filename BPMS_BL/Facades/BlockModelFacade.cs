@@ -8,6 +8,7 @@ using AutoMapper;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
+using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockAttribute;
@@ -87,12 +88,8 @@ namespace BPMS_BL.Facades
             {
                 case ITaskModelEntity:
                     dto = new UserTaskConfigDTO();
-                    IUserTaskConfigDTO userTask = dto as IUserTaskConfigDTO;
-                    userTask.Attributes = await _blockAttributeRepository.All(entity.Id);
-                    if (entity.InFlows.Count > 0)
-                    {
-                        userTask.InputAttributes = await _blockAttributeRepository.Input(entity.Id, entity.InFlows.Select(x => x.OutBlockId).First());
-                    }
+                    (dto as IAttributesConfigDTO).Attributes = await _blockAttributeRepository.All(entity.Id);                   
+                    (dto as IInputAttributesConfigDTO).InputAttributes = await InputAttributes(entity.InFlows);
                     break;
                 
                 case IServiceTaskModelEntity serviceTask:
@@ -108,15 +105,16 @@ namespace BPMS_BL.Facades
                     break;
                 
                 case IExclusiveGatewayModelEntity exclusiveGateway:
-                    dto = new BlockModelConfigDTO(); //TODO
+                    dto = new BlockModelConfigDTO();
                     break;
 
                 case IParallelGatewayModelEntity parallelGateway:
-                    dto = new BlockModelConfigDTO(); //TODO
+                    dto = new BlockModelConfigDTO();
                     break;
                 
                 case ISendEventModelEntity sendEvent:
-                    dto = new BlockModelConfigDTO(); //TODO
+                    dto = new SendEventConfigDTO();
+                    (dto as IInputAttributesConfigDTO).InputAttributes = await InputAttributes(entity.InFlows);
                     break;
                 
                 case IRecieveEventModelEntity recieveEvent:
@@ -133,6 +131,43 @@ namespace BPMS_BL.Facades
             dto.Name = entity.Name;
 
             return dto;
+        }
+
+        private async Task<List<IGrouping<string, InputBlockAttributeDTO>>> InputAttributes(List<FlowEntity> flows)
+        {
+            List<IGrouping<string, InputBlockAttributeDTO>> inputAttributes = new List<IGrouping<string, InputBlockAttributeDTO>>();
+            foreach (FlowEntity flow in flows)
+            {
+                FlowEntity? correctFlow = await FirstBlockWithAttributes(flow);
+                if (correctFlow is not null)
+                {
+                    inputAttributes.AddRange(await _blockAttributeRepository.InputAttributes(correctFlow.InBlockId, correctFlow.OutBlockId));
+                }
+            }
+
+            return inputAttributes;
+        }
+
+        private async Task<FlowEntity?> FirstBlockWithAttributes(FlowEntity? flow)
+        {
+            if (flow == null)
+            {
+                return null;
+            }
+
+            BlockModelEntity block = await _blockModelRepository.PreviousBlock(flow.OutBlockId);
+            if (block is IAttributes)
+            {
+                return flow;
+            }
+            else if (block is INoAttributes)
+            {
+                return null;
+            }
+            else
+            {
+                return await FirstBlockWithAttributes(block.InFlows.FirstOrDefault());
+            }
         }
     }
 }

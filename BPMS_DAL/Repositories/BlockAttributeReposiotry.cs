@@ -30,21 +30,27 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<InputBlockAttributeDTO>> Input(Guid outputId, Guid inputId)
+        public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> InputAttributes(Guid inputId, Guid outputId)
         {
-            return _dbSet.Include(x => x.MappedBlocks)
-                         .Where(x => x.BlockId == inputId)
+            #pragma warning disable CS8602
+            return (await _dbSet.Include(x => x.MappedBlocks)
+                         .Include(x => x.Block)
+                         .Where(x => x.BlockId == outputId)
                          .Select(x => new InputBlockAttributeDTO
                          {
                              Compulsory = x.Compulsory,
                              Description = x.Description,
                              Id = x.Id,
                              Name = x.Name,
+                             BlockName = x.Block.Name,
                              Specification = x.Specification,
                              Type = x.Type,
-                             Mapped = x.MappedBlocks.Any(y => y.BlockId == outputId)
+                             Mapped = x.MappedBlocks.Any(y => y.BlockId == inputId)
                          })
-                         .ToListAsync();
+                         .ToListAsync())
+                         .GroupBy(x => x.BlockName)
+                         .ToList();
+            #pragma warning restore CS8602
         }
     }
 }

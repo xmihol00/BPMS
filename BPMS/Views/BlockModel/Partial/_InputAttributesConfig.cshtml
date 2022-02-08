@@ -1,0 +1,93 @@
+@model IInputAttributesConfigDTO
+
+<h4 class="mt-2">Vstupní atributy bloku</h4>
+@if (Model.InputAttributes.Count > 0)
+{
+    <div class="row">
+        <div class="col-4 text-center text-bold">
+            Název
+        </div>
+        <div class="col-4 text-center text-bold">
+            Typ
+        </div>
+        <div class="col-2 text-center text-bold">
+            Povinnost
+        </div>
+        <div class="col-2 text-center text-bold">
+            Mapovat
+        </div>
+        <div class="d-flex-wrap border-bottom-2 mb-1 p-0">
+            <div class="col-5 text-center text-bold">
+                Popis
+            </div>
+            <div class="col-5 text-center text-bold">
+                Specifikace
+            </div>
+        </div>
+
+        @foreach (var group in Model.InputAttributes)
+        {
+            <h6>Atributy bloku: <span class="text-info">@group.Key</span></h6>
+            @foreach (InputBlockAttributeDTO attrib in group)
+            {
+                <div class="d-flex-wrap mb-1 p-0 border-bottom">
+                    <div class="col-4 text-center text-bold">@attrib.Name</div>
+                    <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
+                    <div class="col-2 text-center">
+                        <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+                    </div>
+                    <div class="col-2 text-center">
+                        <span class="badge @(attrib.Mapped ? "bg-success" : "bg-secondary") bg-su-se-change rounded-pill text-1em pointer" 
+                                onclick="ToggleMapping('@attrib.Id', this)">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+                    </div>
+                    <div class="col-5 text-center mt-2 mb-2">
+                        @if (String.IsNullOrEmpty(@attrib.Description))
+                        {
+                            <span class="text-secondary text-italic">Atribut nemá popis.</span>
+                        }
+                        else
+                        {
+                            <text>@attrib.Description</text>
+                        }
+                    </div>
+                    <div class="col-5 d-flex justify-content-center mt-2">
+                        @if (attrib.Type == AttributeTypeEnum.File)
+                        {
+                            <ol class="mb-2">
+                                @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
+                                {
+                                    <li>
+                                        typ souboru: <span class="text-code text-bold">@spec</span>
+                                    </li>
+                                }
+                            </ol>
+                        }
+                        else if (attrib.Type == AttributeTypeEnum.Selection)
+                        {
+                            <ol class="mb-2">
+                                @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
+                                {
+                                    <li>
+                                        hodnota výběru: <span class="text-code text-bold">@spec</span>
+                                    </li>
+                                }
+                            </ol>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="row">
+        <p class="text-center mb-2">
+            Blok nemá žádné vstupní atributy. Konfigurujte výstupní atributy předcházejícího bloku, je-li to možné.
+        </p>
+    </div>
+}

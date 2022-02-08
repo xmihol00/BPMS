@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
+using BPMS_Common.Enums;
 
 namespace BPMS_DAL.Repositories
 {
@@ -21,5 +22,10 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<BlockModelEntity> PreviousBlock(Guid id)
+        {
+            return _dbSet.Include(x => x.InFlows)
+                         .FirstAsync(x => x.Id == id);
+        }
     }
 }

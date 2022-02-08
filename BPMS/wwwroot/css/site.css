@@ -546,3 +546,7 @@ body {
 .bg-secondary.bg-su-se-change:hover {
   background-color: rgb(var(--bs-success-rgb)) !important;
 }
+
+.text-italic {
+  font-style: italic;
+}

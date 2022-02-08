@@ -12,6 +12,7 @@ namespace BPMS_DTOs.BlockAttribute
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string BlockName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Specification { get; set; } = string.Empty;
         public bool Compulsory { get; set; }

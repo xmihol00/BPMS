@@ -1,4 +1,5 @@
 
+var BlockId = "";
 var LoadingImage = null;
 
 window.addEventListener('DOMContentLoaded', () => 
@@ -8,8 +9,11 @@ window.addEventListener('DOMContentLoaded', () =>
         LoadingImage = document.getElementById("BlockConfigTargetId").children[0];
         for (let ele of document.getElementsByClassName("bpmn-block"))
         {
-            ele.addEventListener("click", () => ShowModal("BlockConfigId", "/BlockModel/Config/" + ele.id, 
-                                 "BlockConfigTargetId", null, false, HideModelHeader));
+            ele.addEventListener("click", () => 
+            {
+                ShowModal("BlockConfigId", "/BlockModel/Config/" + ele.id, "BlockConfigTargetId", null, false, HideModelHeader)
+                BlockId = ele.id;
+            });
         }
     }
 });
@@ -209,14 +213,14 @@ function MakeSpecEditable(type, list, target)
     target.innerHTML += AddSpecBtn(type);
 }
 
-function ToggleMapping(attribId, blockId, button)
+function ToggleMapping(attribId, button)
 {
     button.innerHTML = "<i class='fas fa-spinner'></i>"
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ToggleMap/${blockId}/${attribId}`
+        url: `/BlockModel/ToggleMap/${BlockId}/${attribId}`
     })
     .done(() => 
     {
