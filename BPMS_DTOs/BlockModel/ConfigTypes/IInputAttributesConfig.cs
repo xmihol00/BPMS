@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
-    public interface IInputAttributesConfigDTO
+    public interface IInputAttributesConfig
     {
         public List<IGrouping<string, InputBlockAttributeDTO>> InputAttributes { get; set; }
     }

@@ -8,12 +8,13 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Entities.ModelBlocks
 {
-    public class RecieveEventModelEntity : BlockModelEntity, IRecieveEventModelEntity, IAttributes
+    public class RecieveEventModelEntity : BlockModelEntity, IRecieveEventModelEntity
     {
         public RecieveEventModelEntity() : base() {}
         public RecieveEventModelEntity(PoolEntity pool) : base(pool) { }
 
         public Guid? SenderId { get; set; }
         public SendEventModelEntity? Sender { get; set; }
+        public bool Editable { get; set; } = false;
     }
 }

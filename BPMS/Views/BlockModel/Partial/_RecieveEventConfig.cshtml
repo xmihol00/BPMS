@@ -1,17 +1,26 @@
-@model IAttributesConfig
+@model IRecievedMessageConfig
 
-<h4 class="mt-2">Výstupní atributy bloku</h4>
-@if (Model.Attributes.Count > 0)
+<h4 class="mt-2">Příchozí atributy bloku</h4>
+@if (Model.Message.Editable)
+{
+
+}
+else
+{
+
+}
+
+@if (Model.Message.Attributes.Count > 0)
 {
     <div class="row">
-        <div class="col-4 text-center text-bold">
+        <div class="col-5 text-center text-bold">
             Název
         </div>
-        <div class="col-4 text-center text-bold">
+        <div class="col-5 text-center text-bold">
             Typ
         </div>
-        <div class="col-4 text-center text-bold">
-            Povinnost
+        <div class="col-2 text-center text-bold">
+            Vždy vyplněný
         </div>
         <div class="d-flex-wrap border-bottom-2 mb-1 p-0">
             <div class="col-6 text-center text-bold">
@@ -21,21 +30,17 @@
                 Specifikace
             </div>
         </div>
-        @foreach (BlockAttributeDTO attrib in Model.Attributes)
+        @foreach (BlockAttributeDTO attrib in Model.Message.Attributes)
         {
-            <div id="@attrib.Id" class="d-flex-wrap mb-1 pb-1 border-bottom position-relative p-0">
-                <div class="config-buttons">
-                    <button class="btn padr-icon" type="button" onclick="EditAttribute(this)"><i class="fas fa-edit"></i></button>
-                    <button type="button" class="btn padl-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="col-4 text-center text-bold">@attrib.Name</div>
-                <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
-                <div class="col-4 text-center">
+            <div class="d-flex-wrap mb-1 p-0 border-bottom">
+                <div class="col-5 text-center text-bold">@attrib.Name</div>
+                <div class="col-5 text-center text-code">@attrib.Type.ToLabel()</div>
+                <div class="col-2 text-center">
                     <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
                         <i class="fas fa-check-circle"></i>
                     </span>
                 </div>
-                <div class="col-6 text-center mt-2">
+                <div class="col-6 text-center mt-2 mb-2">
                     @if (String.IsNullOrEmpty(@attrib.Description))
                     {
                         <span class="text-secondary text-italic">Atribut nemá popis.</span>
@@ -48,7 +53,7 @@
                 <div class="col-6 d-flex justify-content-center mt-2">
                     @if (attrib.Type == AttributeTypeEnum.File)
                     {
-                        <ol>
+                        <ol class="mb-2">
                             @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
                             {
                                 <li>
@@ -59,7 +64,7 @@
                     }
                     else if (attrib.Type == AttributeTypeEnum.Selection)
                     {
-                        <ol>
+                        <ol class="mb-2">
                             @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
                             {
                                 <li>
@@ -67,6 +72,10 @@
                                 </li>
                             }
                         </ol>
+                    }
+                    else
+                    {
+                        <span class="text-secondary text-italic">Atribut nemá specifikaci.</span>
                     }
                 </div>
             </div>
@@ -77,7 +86,7 @@ else
 {
     <div class="row">
         <p class="text-center mb-2">
-            Blok nemá konfigurovany žádné výstupní atributy.
+            Zpráva nemá žádné příchozí atributy. Konfigurujte odesílatele.
         </p>
     </div>
 }

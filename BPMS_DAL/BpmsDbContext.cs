@@ -32,7 +32,6 @@ namespace BPMS_DAL
         public DbSet<SolvingRoleEntity>? SolvingRoles { get; set; }
         public DbSet<SystemAgendaEntity>? SystemAgendas { get; set; }
         public DbSet<SystemEntity>? Systems { get; set; }
-        public DbSet<SystemPoolEntity>? SystemsPool { get; set; }
         public DbSet<SystemRoleEntity>? SystemRoles { get; set; }
         public DbSet<UserEntity>? Users { get; set; }
         public DbSet<WorkflowEntity>? Workflows { get; set; }
@@ -46,10 +45,6 @@ namespace BPMS_DAL
             modelBuilder.Entity<SystemAgendaEntity>().HasKey(x => new { x.AgendaId, x.SystemId });
             modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.Agenda).WithMany(x => x.Systems).HasForeignKey(x => x.SystemId);
             modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.System).WithMany(x => x.Agendas).HasForeignKey(x => x.AgendaId);
-
-            modelBuilder.Entity<SystemPoolEntity>().HasKey(x => new { x.PoolId, x.SystemId });
-            modelBuilder.Entity<SystemPoolEntity>().HasOne(x => x.System).WithMany(x => x.Pools).HasForeignKey(x => x.SystemId);
-            modelBuilder.Entity<SystemPoolEntity>().HasOne(x => x.Pool).WithMany(x => x.Systems).HasForeignKey(x => x.PoolId);
 
             modelBuilder.Entity<UserEntity>().HasKey(x => x.Id);
 
@@ -69,6 +64,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<PoolEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<PoolEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<PoolEntity>().HasOne(x => x.Model).WithMany(x => x.Pools).HasForeignKey(x => x.ModelId);
+            modelBuilder.Entity<PoolEntity>().HasOne(x => x.System).WithMany(x => x.Pools).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<ModelEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<ModelEntity>().Property(x => x.Id).ValueGeneratedNever();

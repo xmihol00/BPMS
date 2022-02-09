@@ -13,6 +13,19 @@ namespace BPMS.Controllers
             _serviceFacade = serviceFacade;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Overview()
+        {
+            return View("ServiceOverview", await _serviceFacade.Overview());
+        }
+
+        [HttpGet]
+        [Route("/Service/Create")]
+        [Route("/Service/Edit")]
+        public async Task<IActionResult> CreateEdit(Guid id)
+        {
+            return View("ServiceCreateEdit", await _serviceFacade.CreateEdit(id));
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)

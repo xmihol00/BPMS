@@ -12,10 +12,8 @@ namespace BPMS
         {
             controller.ViewData.Model = model;
 
-            #pragma warning disable CS8602, CS8600
             IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
             ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, !partial);
-            #pragma warning restore CS8602, CS8600
 
             if (!viewResult.Success)
             {

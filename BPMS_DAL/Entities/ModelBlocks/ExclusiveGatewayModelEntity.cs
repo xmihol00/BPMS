@@ -8,7 +8,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Entities.ModelBlocks
 {
-    public class ExclusiveGatewayModelEntity : BlockModelEntity, IExclusiveGatewayModelEntity, IAttributes
+    public class ExclusiveGatewayModelEntity : BlockModelEntity, IExclusiveGatewayModelEntity
     {
         public ExclusiveGatewayModelEntity() : base() {}
         public ExclusiveGatewayModelEntity(PoolEntity pool) : base(pool) { }

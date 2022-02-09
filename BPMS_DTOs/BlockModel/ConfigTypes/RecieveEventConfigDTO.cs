@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
-    public interface IAttributesConfigDTO
+    public class RecieveEventConfigDTO : BlockModelConfigDTO, IRecievedMessageConfig
     {
-        public List<BlockAttributeDTO> Attributes { get; set; }
+        public RecievedMessageDTO Message { get; set; } = new RecievedMessageDTO();
     }
 }

@@ -7,10 +7,10 @@ using System.Xml.Linq;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
-using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
+using BPMS_DAL.Entities.ModelBlocks;
 
 namespace BPMS_BL.Facades
 {
@@ -21,11 +21,11 @@ namespace BPMS_BL.Facades
         private readonly BlockModelRepository _blockModelRepository;
 
         private XDocument _svg = new XDocument();
-        private Dictionary<string, BPMS_DAL.Entities.BlockModelEntity> _blocksDict = new Dictionary<string, BPMS_DAL.Entities.BlockModelEntity>();
+        private Dictionary<string, BlockModelEntity> _blocksDict = new Dictionary<string, BlockModelEntity>();
         private Dictionary<string, PoolEntity>? _poolsDict = null;
         private PoolEntity _currentPool = new PoolEntity();
         private IEnumerable<(string? source, string? destination)> _messageFlows = new List<(string?, string?)>();
-        private IEnumerable<BPMS_DAL.Entities.BlockModelEntity> _startEvents = new List<BPMS_DAL.Entities.BlockModelEntity>();
+        private IEnumerable<BlockModelEntity> _startEvents = new List<BlockModelEntity>();
         private Dictionary<Guid, ExecutabilityStateEnum> _solvedGateways = new Dictionary<Guid, ExecutabilityStateEnum>();
         private ModelEntity _model = new ModelEntity();
 
@@ -125,7 +125,7 @@ namespace BPMS_BL.Facades
 
             await _poolRepository.Save();
 
-            foreach (BPMS_DAL.Entities.BlockModelEntity blockModel in _blocksDict.ToArray().Select(x => x.Value))
+            foreach (BlockModelEntity blockModel in _blocksDict.ToArray().Select(x => x.Value))
             {
                 await _blockModelRepository.Create(blockModel);
             }
@@ -333,8 +333,8 @@ namespace BPMS_BL.Facades
         {
             RemoveSvgId(flow.Attribute("id")?.Value ?? "");
 
-            BPMS_DAL.Entities.BlockModelEntity outgoingBlock;
-            BPMS_DAL.Entities.BlockModelEntity incomingBlock;
+            BlockModelEntity outgoingBlock;
+            BlockModelEntity incomingBlock;
             try
             {
                 outgoingBlock = _blocksDict[flow.Attribute("sourceRef")?.Value ?? ""];
@@ -359,16 +359,14 @@ namespace BPMS_BL.Facades
         {
             if (source is not null && destination is not null)    
             {
-                BPMS_DAL.Entities.BlockModelEntity? sourceBlock = _blocksDict[source];
-                BPMS_DAL.Entities.BlockModelEntity? destinationBlock = _blocksDict[destination];
+                BlockModelEntity? sourceBlock = _blocksDict[source];
+                BlockModelEntity? destinationBlock = _blocksDict[destination];
                 if (_blocksDict.TryGetValue(source, out sourceBlock) && 
                     _blocksDict.TryGetValue(destination, out destinationBlock))
                 {
                     if (sourceBlock is ISendEventModelEntity && destinationBlock is IRecieveEventModelEntity)
                     {
-                        #pragma warning disable CS8602
                         (destinationBlock as IRecieveEventModelEntity).SenderId = sourceBlock.Id;
-                        #pragma warning restore CS8602
                         return;
                     }
                 }
@@ -379,7 +377,7 @@ namespace BPMS_BL.Facades
 
         private void CheckExecutability()
         {
-            foreach (BPMS_DAL.Entities.BlockModelEntity branch in _startEvents)
+            foreach (BlockModelEntity branch in _startEvents)
             {
                 if (CheckBranchExecutability(branch) != ExecutabilityStateEnum.Executable)
                 {
@@ -388,7 +386,7 @@ namespace BPMS_BL.Facades
             }
         }
 
-        private ExecutabilityStateEnum CheckBranchExecutability(BPMS_DAL.Entities.BlockModelEntity? branch)
+        private ExecutabilityStateEnum CheckBranchExecutability(BlockModelEntity? branch)
         {
             while (branch?.OutFlows.Count == 1)
             {
@@ -420,7 +418,7 @@ namespace BPMS_BL.Facades
             }
         }
 
-        private ExecutabilityStateEnum CheckExclusiveGatewayExecutability(BPMS_DAL.Entities.BlockModelEntity gateway)
+        private ExecutabilityStateEnum CheckExclusiveGatewayExecutability(BlockModelEntity gateway)
         {
             if (_solvedGateways.ContainsKey(gateway.Id))
             {
@@ -432,7 +430,7 @@ namespace BPMS_BL.Facades
             }
 
             ExecutabilityStateEnum result = ExecutabilityStateEnum.NotExecutable;
-            foreach (BPMS_DAL.Entities.BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
+            foreach (BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
             {
                 ExecutabilityStateEnum state = CheckBranchExecutability(branch);
                 if (state == ExecutabilityStateEnum.NotExecutable)
@@ -450,7 +448,7 @@ namespace BPMS_BL.Facades
             return result;
         }
 
-        private ExecutabilityStateEnum CheckParallelGatewayExecutability(BPMS_DAL.Entities.BlockModelEntity gateway)
+        private ExecutabilityStateEnum CheckParallelGatewayExecutability(BlockModelEntity gateway)
         {
             if (_solvedGateways.ContainsKey(gateway.Id))
             {
@@ -461,7 +459,7 @@ namespace BPMS_BL.Facades
                 _solvedGateways[gateway.Id] = ExecutabilityStateEnum.Loop;
             }
 
-            foreach (BPMS_DAL.Entities.BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
+            foreach (BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
             {
                 if (CheckBranchExecutability(branch) == ExecutabilityStateEnum.Executable)
                 {

@@ -96,8 +96,7 @@ function ShowModelModal(element)
         
         for (let ele of document.getElementsByClassName("bpmn-block"))
         {
-            ele.addEventListener("click", () => ShowModal("BlockConfigId", "/BlockModel/Config/" + ele.id, 
-                                                          "BlockConfigTargetId", null, false, HideModelHeader));
+            ele.addEventListener("click", () => ShowBlockDetail(ele.id));
         }
 
         LoadingImage = document.getElementById("BlockConfigTargetId").children[0];

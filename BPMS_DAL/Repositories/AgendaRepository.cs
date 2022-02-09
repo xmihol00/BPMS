@@ -38,7 +38,6 @@ namespace BPMS_DAL.Repositories
 
         public Task<AgendaDetailDTO> Detail(Guid id)
         {
-            #pragma warning disable CS8602
             return _dbSet.Include(x => x.Administrator)
                          .Select(x => new AgendaDetailDTO 
                          {
@@ -49,12 +48,10 @@ namespace BPMS_DAL.Repositories
                              Description = x.Description
                          })
                          .FirstAsync(x => x.Id == id);
-            #pragma warning restore CS8602
         }
 
         public Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
-            #pragma warning disable CS8602
             return _dbSet.Include(x => x.Administrator)
                          .Select(x => new AgendaDetailPartialDTO 
                          {
@@ -65,7 +62,6 @@ namespace BPMS_DAL.Repositories
                              Description = x.Description
                          })
                          .FirstAsync(x => x.Id == id);
-            #pragma warning restore CS8602
         }
     }
 }

@@ -16,7 +16,7 @@ namespace BPMS_DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ServiceType = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     Serialization = table.Column<int>(type: "int", nullable: false),
                     HttpMethod = table.Column<int>(type: "int", nullable: false),
                     URL = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -80,8 +80,11 @@ namespace BPMS_DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Alias = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StaticData = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Order = table.Column<long>(type: "bigint", nullable: false),
                     Compulsory = table.Column<bool>(type: "bit", nullable: false),
-                    DataType = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Direction = table.Column<int>(type: "int", nullable: false),
                     ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -221,7 +224,8 @@ namespace BPMS_DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -232,6 +236,11 @@ namespace BPMS_DAL.Migrations
                         principalTable: "Models",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Pools_Systems_SystemId",
+                        column: x => x.SystemId,
+                        principalTable: "Systems",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -277,30 +286,6 @@ namespace BPMS_DAL.Migrations
                         name: "FK_BlockModel_Pools_PoolId",
                         column: x => x.PoolId,
                         principalTable: "Pools",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SystemsPool",
-                columns: table => new
-                {
-                    SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SystemsPool", x => new { x.PoolId, x.SystemId });
-                    table.ForeignKey(
-                        name: "FK_SystemsPool_Pools_PoolId",
-                        column: x => x.PoolId,
-                        principalTable: "Pools",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SystemsPool_Systems_SystemId",
-                        column: x => x.SystemId,
-                        principalTable: "Systems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -369,8 +354,7 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     InBlockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OutBlockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false)
+                    OutBlockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -534,7 +518,8 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Editable = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -812,6 +797,11 @@ namespace BPMS_DAL.Migrations
                 column: "ModelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Pools_SystemId",
+                table: "Pools",
+                column: "SystemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecieveEventsModel_SenderId",
                 table: "RecieveEventsModel",
                 column: "SenderId");
@@ -834,11 +824,6 @@ namespace BPMS_DAL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_SystemAgendas_SystemId",
                 table: "SystemAgendas",
-                column: "SystemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SystemsPool_SystemId",
-                table: "SystemsPool",
                 column: "SystemId");
 
             migrationBuilder.CreateIndex(
@@ -930,9 +915,6 @@ namespace BPMS_DAL.Migrations
                 name: "SystemRoles");
 
             migrationBuilder.DropTable(
-                name: "SystemsPool");
-
-            migrationBuilder.DropTable(
                 name: "UserTasksModel");
 
             migrationBuilder.DropTable(
@@ -940,9 +922,6 @@ namespace BPMS_DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskData");
-
-            migrationBuilder.DropTable(
-                name: "Systems");
 
             migrationBuilder.DropTable(
                 name: "SolvingRoles");
@@ -979,6 +958,9 @@ namespace BPMS_DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Models");
+
+            migrationBuilder.DropTable(
+                name: "Systems");
 
             migrationBuilder.DropTable(
                 name: "Agendas");

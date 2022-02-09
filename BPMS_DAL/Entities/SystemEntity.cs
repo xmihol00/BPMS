@@ -16,6 +16,6 @@ namespace BPMS_DAL.Entities
         public string ObtainedName { get; set; } = string.Empty;
         public string ObtainedKey { get; set; } = string.Empty;
         public List<SystemAgendaEntity> Agendas { get; set; } = new List<SystemAgendaEntity>();
-        public List<SystemPoolEntity> Pools { get; set; } = new List<SystemPoolEntity>();
+        public List<PoolEntity> Pools { get; set; } = new List<PoolEntity>();
     }
 }

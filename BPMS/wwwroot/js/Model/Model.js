@@ -9,14 +9,16 @@ window.addEventListener('DOMContentLoaded', () =>
         LoadingImage = document.getElementById("BlockConfigTargetId").children[0];
         for (let ele of document.getElementsByClassName("bpmn-block"))
         {
-            ele.addEventListener("click", () => 
-            {
-                ShowModal("BlockConfigId", "/BlockModel/Config/" + ele.id, "BlockConfigTargetId", null, false, HideModelHeader)
-                BlockId = ele.id;
-            });
+            ele.addEventListener("click", () => ShowBlockDetail(ele.id));
         }
     }
 });
+
+function ShowBlockDetail(blockId)
+{
+    ShowModal("BlockConfigId", "/BlockModel/Config/" + blockId, "BlockConfigTargetId", null, false, HideModelHeader)
+    BlockId = blockId;
+}
 
 function HideModelHeader()
 {
@@ -24,13 +26,6 @@ function HideModelHeader()
     {
         document.getElementById("BlockConfigTargetId").innerHTML = LoadingImage.innerHTML;
     }, 350);
-}
-
-function BlockConfigSubmit(event, targetId)
-{
-    event.preventDefault();
-    document.getElementById(targetId).innerHTML = LoadingImage.innerHTML;
-    AjaxFormSubmit(event, targetId);
 }
 
 function ShowAddAttrib()

@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
-    public class SendEventConfigDTO : BlockModelConfigDTO, IInputAttributesConfig
+    public interface IAttributesConfig
     {
-        public List<IGrouping<string, InputBlockAttributeDTO>> InputAttributes { get; set; } = new List<IGrouping<string, InputBlockAttributeDTO>>();
+        public List<BlockAttributeDTO> Attributes { get; set; }
     }
 }

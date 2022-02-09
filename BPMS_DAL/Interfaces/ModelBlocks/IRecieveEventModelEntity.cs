@@ -11,5 +11,6 @@ namespace BPMS_DAL.Interfaces.ModelBlocks
     {
         public Guid? SenderId { get; set; }
         public SendEventModelEntity? Sender { get; set; }
+        public bool Editable { get; set; }
     }
 }

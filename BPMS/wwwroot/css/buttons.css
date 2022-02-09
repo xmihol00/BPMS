@@ -57,17 +57,6 @@
     box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
 }
 
-.butn:hover {
-    transform: scale(1.02);
-    transition: all 0.25s;
-}
-
-.butn-sm:hover {
-    transform: none;
-    transition: none;
-}
-
-
 .butn:disabled, button[disabled] {
     opacity: 0.8;
 }
@@ -86,4 +75,12 @@
 
 .btn:focus {
     box-shadow: none !important;
+}
+
+a.butn {
+    text-decoration: none;
+}
+
+a.butn:hover {
+    color: #fff;
 }

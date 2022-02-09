@@ -5,6 +5,19 @@ var Callback = null;
 
 document.addEventListener("keydown", KeyDownHandler);
 
+window.addEventListener('DOMContentLoaded', () => 
+{
+    for (let icon of document.getElementsByClassName("fa-chevron-circle-left"))
+    {
+        icon.parentNode.addEventListener("click", HistoryBack);
+    }
+});
+
+function HistoryBack()
+{
+    history.back();
+}
+
 function KeyDownHandler(event)
 {
     if (event.key == "Escape")

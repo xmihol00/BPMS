@@ -1,0 +1,40 @@
+
+
+<form id="AttribServiceFormId" class="row d-none" method="post" action="/Service/CreateEditSchema" 
+        onsubmit="DataSchemaSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
+    <input type="hidden" name="Id" value="" />
+    <input type="hidden" name="ParentId" value="null" />
+    <input type="hidden" name="ServiceId" value="" />
+    <h4 id="HeadlineId">Schéma služby</h4>
+    <div class="col-4">
+        <label class="input">
+            <input name="Name" class="input-field" data-reqi="AttribNameLabelId" type="text" placeholder=" " value="" />
+            <span id="AttribNameLabelId" class="input-label color-required">Název</span>
+        </label>
+    </div>
+    <div class="col-4">
+        <label class="input">
+            <input id="AliasId" name="Alias" class="input-field" type="text" placeholder=" " value="" />
+            <span class="input-label">Alias</span>
+        </label>
+    </div>
+    <div class="col-2">
+        <label class="input">
+            <select class="input-field input-select" name="DataType"> 
+                @foreach (DataTypeEnum value in Enum.GetValues(typeof(DataTypeEnum)))
+                {
+                    <option value="@value">@value.ToLabel()</option>
+                }
+            </select>
+            <span class="input-label">Typ</span>
+        </label>
+    </div>  
+    <div class="col-2 vertical-justify-center">
+        <div class="d-flex">
+            <span id="CompulsoryLabelId" class="label-checkbox label-checkbox-checked">Povinnost</span>
+            <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" data-ch="CompulsoryLabelId" checked/>
+        </div>
+    </div>
+    
+</form>
+    

@@ -1,0 +1,122 @@
+@model ServiceCreateEditDTO
+@{
+    if (Model.Id == Guid.Empty)
+    {
+        ViewData["Title"] = "Tvorba webové služby";
+    }
+    else
+    {
+        ViewData["Title"] = "Editace webové služby";
+    }
+}
+<script src="~/js/Service/Service.js"></script>
+
+<div id="PageNavId" class="page-navbar">
+    <div class="d-flex justify-content-between px-4 page-navbar-content">
+        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+        <h1 class="mb-0 pt-1 text-font">@ViewData["Title"]</h1>
+        <div class="my-auto">
+            <input type="submit" form="CreateFormId" class="butn btn-s" value="@(Model.Id == Guid.Empty ? "Vytvořit" : "Uložit")" />
+        </div>
+    </div>
+</div>
+<div id="PageContentId" class="d-flex pt-3">
+    <div id="OverviewDivId" class="container-lg">
+        <form id="CreateFormId" class="row" method="post" action="Service/Create/">
+            <h3 class="col-12">Informace o službě</h3>
+            <div class="col-12 mb-3">
+                <label class="input">
+                    <input name="URL" class="input-field" type="text" data-reqi="URLLabelId" placeholder=" " value="@Model.URL"/>
+                    <span id="URLLabelId" class="input-label color-required">URL služby</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <input name="Name" class="input-field" type="text" data-reqi="NameLabelId" placeholder=" " value="@Model.Name" />
+                    <span id="NameLabelId" class="input-label color-required">Název</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <select class="input-field input-select" name="Type"> 
+                        @foreach (ServiceTypeEnum type in Enum.GetValues(typeof(ServiceTypeEnum)))
+                        {
+                            if (type == Model.Type)
+                            {
+                                <option value="@type" selected>@type</option>
+                            }
+                            else
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        }
+                    </select>
+                    <span class="input-label">Typ služby</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <select class="input-field input-select" name="HttpMethod"> 
+                        @foreach (HttpMethodEnum method in Enum.GetValues(typeof(HttpMethodEnum)))
+                        {
+                            if (method == Model.HttpMethod)
+                            {
+                                <option value="@method" selected>@method</option>
+                            }
+                            else
+                            {
+                                <option value="@method">@method</option>
+                            }
+                        }
+                    </select>
+                    <span class="input-label">HTTP metoda</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <select class="input-field input-select" name="Serialization"> 
+                        @foreach (SerializationEnum serialization in Enum.GetValues(typeof(SerializationEnum)))
+                        {
+                            if (serialization == Model.Serialization)
+                            {
+                                <option value="@serialization" selected>@serialization.ToLabel()</option>
+                            }
+                            else
+                            {
+                                <option value="@serialization">@serialization.ToLabel()</option>
+                            }
+                        }
+                    </select>
+                    <span class="input-label">Serializace dat</span>
+                </label>
+            </div>
+            <div class="col-12 mb-2 pb-1">
+                <label class="input">
+                    <textarea name="Description" class="input-field" type="text" placeholder=" ">@Model.Description</textarea>
+                    <span class="input-label">Popis</span>
+                </label>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-12 col-lg-6 border-right">
+                <div class="d-flex justify-content-between">
+                    <h4 class="mt-1 mb-0">Konfigurace vstupních atributů</h4>
+                    <button type="button" class="butn btn-p" onclick="InputAttribAdd()">Přidat atribut</button>
+                </div>
+                @await Html.PartialAsync("Partial/_ServiceAttribCreateEdit")
+                <div class="row">
+                    @await Html.PartialAsync("Partial/_ServiceDataSchema", Model.OutputAttributes)
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 border-left">
+                <div class="d-flex justify-content-between">
+                    <h4 class="mt-1 mb-0" >Konfigurace výtupních atributů</h4>
+                    <button type="button" class="butn btn-p" onclick="OutputAttribAdd()">Přidat atribut</button>
+                </div>
+                <div class="row">
+                    @await Html.PartialAsync("Partial/_ServiceDataSchema", Model.OutputAttributes)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

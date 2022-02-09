@@ -20,7 +20,8 @@ namespace BPMS_DAL.Entities
         public string Description { get; set; } = string.Empty;
         public Guid ModelId { get; set; }
         public ModelEntity? Model { get; set; }
-        public List<SystemPoolEntity> Systems { get; set; } = new List<SystemPoolEntity>();
+        public Guid? SystemId { get; set; }
+        public SystemEntity? System { get; set; }
         public List<BlockModelEntity> Blocks { get; set; } = new List<BlockModelEntity>();
     }
 }

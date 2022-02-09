@@ -12,8 +12,11 @@ namespace BPMS_DAL.Entities
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
+        public string? StaticData { get; set; } = string.Empty;
+        public uint Order { get; set; } 
         public bool Compulsory { get; set; }
-        public DataTypeEnum DataType { get; set; }
+        public DataTypeEnum Type { get; set; }
+        public DirectionEnum Direction { get; set; }
         public Guid? ParentId { get; set; }
         public ServiceDataSchemaEntity? Parent { get; set; }
         public List<ServiceDataSchemaEntity> Children { get; set; } = new List<ServiceDataSchemaEntity>();

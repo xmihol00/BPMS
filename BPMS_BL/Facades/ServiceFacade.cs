@@ -10,6 +10,7 @@ using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockModel;
+using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.User;
 
@@ -18,14 +19,40 @@ namespace BPMS_BL.Facades
     public class ServiceFacade
     {
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly ServiceRepository _serviceRepository;
+
         private readonly IMapper _mapper;
 
-        public ServiceFacade(ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
+        public ServiceFacade(ServiceDataSchemaRepository serviceDataSchemaRepository, ServiceRepository serviceRepository, 
+                             IMapper mapper)
         {
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _serviceRepository = serviceRepository;
             _mapper = mapper;
         }
 
+        public async Task<ServiceCreateEditDTO> CreateEdit(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return new ServiceCreateEditDTO();
+            }
+            else
+            {
+                ServiceCreateEditDTO dto = await _serviceRepository.Edit(id);
+                dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input), null);
+                dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output), null);
+                return dto;
+            }
+        }
+
+        public async Task<ServiceOverviewDTO> Overview()
+        {
+            return new ServiceOverviewDTO()
+            {
+                Services = await _serviceRepository.All()
+            };
+        }
 
         public async Task<BlockModelConfigDTO> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
         {
@@ -51,7 +78,7 @@ namespace BPMS_BL.Facades
             IEnumerable<ServiceDataSchemaNodeDTO> nodes = allNodes.Where(x => x.ParentId == parentId);
             foreach (ServiceDataSchemaNodeDTO node in nodes)
             {
-                if (node.DataType == DataTypeEnum.Object)
+                if (node.Type == DataTypeEnum.Object)
                 {
                     node.Children = CreateTree(allNodes, node.Id);
                 }

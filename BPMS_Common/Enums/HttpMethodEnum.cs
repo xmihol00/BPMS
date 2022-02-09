@@ -8,5 +8,8 @@ namespace BPMS_Common.Enums
 {
     public enum HttpMethodEnum
     {
+        GET,
+        POST,
+        PUT,
     }
 }

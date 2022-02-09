@@ -1,0 +1,32 @@
+@model ServiceOverviewDTO
+@{
+    ViewData["Title"] = "Webové služby";
+}
+
+<div id="PageNavId" class="page-navbar">
+    <div class="d-flex justify-content-between px-4 page-navbar-content">
+        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+        <h1 class="mb-0 pt-1 text-font">@ViewData["Title"]</h1>
+        <div class="my-auto">
+            <a class="butn btn-p" href="/Service/Create">Vytvořit</a>
+        </div>
+    </div>
+</div>
+<div id="PageContentId" class="d-flex pt-3">
+    <div id="DetailDivId" class="d-none detail-div">
+        <div class="d-flex justify-content-between">
+            <img src="~/loading.svg" class="loading-to-detail">
+        </div>
+    </div>
+    <div id="OverviewDivId" class="container-lg">
+        <div class="row">
+            @foreach (ServiceAllDTO service in Model.Services)
+            {
+                @await Html.PartialAsync("Partial/_AgendaCard", (service, false))
+            }
+        </div>
+    </div>
+    <div id="OverviewNavId" class="overview-nav">
+
+    </div>
+</div>

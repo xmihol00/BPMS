@@ -6,34 +6,20 @@
         @foreach (ServiceDataSchemaNodeDTO node in Model)
         {
             <li>
-                <div class="row position-relative">
-                    <div class="col-3">
-                        @node.Name
+                <div class="d-flex justify-content-between">
+                    <div>
+                        @node.Name @(String.IsNullOrEmpty(node.Alias) ? "" : $"({node.Alias})")
                     </div>
-                    <div class="col-3">
-                        @node.Alias
-                    </div>
-                    <div class="col-3 text-code d-flex justify-content-between">
-                        @node.DataType.ToLabel()
-                        @if (node.DataType == DataTypeEnum.Object)
+                    <div>
+                        @if (node.Type == DataTypeEnum.Object)
                         {
                             <button type="button" class="butn butn-sm btn-p" onclick="ShowNestedAttCreate()">
                                 <i class="fas fa-plus"></i>
                             </button>
                         }
                     </div>
-                    <div class="col-2 text-center">
-                        <span class="badge @(node.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
-                            <i class="fas fa-check-circle"></i>
-                        </span>
-                    </div>
-                    <div class="col-1 d-flex justify-content-center">
-                        <button type="button" class="butn butn-sm btn-p">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
                 </div>
-                @if (node.DataType == DataTypeEnum.Object)
+                @if (node.Type == DataTypeEnum.Object)
                 {
                     @await Html.PartialAsync("Partial/_ServiceDataSchema", node.Children)
                 }

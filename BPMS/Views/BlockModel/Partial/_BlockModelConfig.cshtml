@@ -16,7 +16,7 @@
             </label>
         </div>
         <div class="d-flex justify-content-center mt-2">
-            @if (Model is IAttributesConfigDTO)
+            @if (Model is IAttributesConfig)
             {
                 <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
             }
@@ -69,13 +69,18 @@
             </div>
         </div>
     </form>
-    @if (Model is IAttributesConfigDTO)
+    @if (Model is IAttributesConfig)
     {   
-        @await Html.PartialAsync("Partial/_AttributesConfig", Model as IAttributesConfigDTO)
+        @await Html.PartialAsync("Partial/_AttributesConfig", Model)
     }
     
-    @if (Model is IInputAttributesConfigDTO)
+    @if (Model is IInputAttributesConfig)
     {
-        @await Html.PartialAsync("Partial/_InputAttributesConfig", Model as IInputAttributesConfigDTO)
+        @await Html.PartialAsync("Partial/_InputAttributesConfig", Model)
+    }
+
+    @if (Model is IRecievedMessageConfig)
+    {
+        @await Html.PartialAsync("Partial/_RecieveEventConfig", Model)
     }
 }

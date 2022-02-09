@@ -201,9 +201,6 @@ namespace BPMS_DAL.Migrations
                     b.Property<Guid>("OutBlockId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.HasKey("InBlockId", "OutBlockId");
 
                     b.HasIndex("OutBlockId");
@@ -254,9 +251,14 @@ namespace BPMS_DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SystemId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ModelId");
+
+                    b.HasIndex("SystemId");
 
                     b.ToTable("Pools");
                 });
@@ -274,18 +276,27 @@ namespace BPMS_DAL.Migrations
                     b.Property<bool>("Compulsory")
                         .HasColumnType("bit");
 
-                    b.Property<int>("DataType")
+                    b.Property<int>("Direction")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("Order")
+                        .HasColumnType("bigint");
+
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StaticData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -316,7 +327,7 @@ namespace BPMS_DAL.Migrations
                     b.Property<int>("Serialization")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceType")
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<string>("URL")
@@ -395,21 +406,6 @@ namespace BPMS_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Systems");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.SystemPoolEntity", b =>
-                {
-                    b.Property<Guid>("PoolId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SystemId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PoolId", "SystemId");
-
-                    b.HasIndex("SystemId");
-
-                    b.ToTable("SystemsPool");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.SystemRoleEntity", b =>
@@ -646,6 +642,9 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
+                    b.Property<bool>("Editable")
+                        .HasColumnType("bit");
+
                     b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -869,7 +868,13 @@ namespace BPMS_DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BPMS_DAL.Entities.SystemEntity", "System")
+                        .WithMany("Pools")
+                        .HasForeignKey("SystemId");
+
                     b.Navigation("Model");
+
+                    b.Navigation("System");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceDataSchemaEntity", b =>
@@ -905,25 +910,6 @@ namespace BPMS_DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Agenda");
-
-                    b.Navigation("System");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.SystemPoolEntity", b =>
-                {
-                    b.HasOne("BPMS_DAL.Entities.PoolEntity", "Pool")
-                        .WithMany("Systems")
-                        .HasForeignKey("PoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BPMS_DAL.Entities.SystemEntity", "System")
-                        .WithMany("Pools")
-                        .HasForeignKey("SystemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pool");
 
                     b.Navigation("System");
                 });
@@ -1178,8 +1164,6 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.PoolEntity", b =>
                 {
                     b.Navigation("Blocks");
-
-                    b.Navigation("Systems");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceDataSchemaEntity", b =>

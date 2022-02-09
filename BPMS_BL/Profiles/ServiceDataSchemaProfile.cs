@@ -16,6 +16,8 @@ namespace BPMS_BL.Profiles
             CreateMap<ServiceDataSchemaCreateEditDTO, ServiceDataSchemaEntity>()
                 .ForMember(dst => dst.Alias, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.Alias) ? "" : src.Alias))
                 .ForMember(dst => dst.Compulsory, opt => opt.MapFrom(src => src.Compulsory != null));
+            
+            CreateMap<ServiceDataSchemaCreateEditDTO, ServiceDataSchemaNodeDTO>();
         }
     }
 }
