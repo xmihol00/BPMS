@@ -1,0 +1,18 @@
+@model (IEnumerable<ServiceDataSchemaNodeDTO> nodes, DirectionEnum direction, Guid id)
+
+<div class="col-12 col-xl-6">
+    <div class="d-flex justify-content-between mb-2">
+        <h4 class="mt-1 mb-0" >Konfigurace @(Model.direction == DirectionEnum.Input ? "vstupních" : "výtupních") atributů</h4>
+        @if (Model.id == Guid.Empty)
+        {
+            <button type="button" class="butn btn-p" title="Nejdříve je nutné vytvořit službu" disabled>Přidat atribut</button>
+        }
+        else
+        {
+            <button id="Add@(Model.direction)BtnId" type="button" class="butn btn-p" onclick="@(Model.direction)AttribAdd(this)">Přidat atribut</button>
+        }
+    </div>
+    <div id="OutputSchemaId">
+        @await Html.PartialAsync("Partial/_ServiceDataSchema", (Model.nodes, Model.direction))
+    </div>
+</div>

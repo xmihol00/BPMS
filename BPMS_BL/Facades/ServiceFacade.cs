@@ -31,19 +31,35 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public async Task<ServiceCreateEditDTO> CreateEdit(Guid id)
+        public async Task<ServiceEditPageDTO> CreateEdit(Guid id)
         {
             if (id == Guid.Empty)
             {
-                return new ServiceCreateEditDTO();
+                return new ServiceEditPageDTO();
             }
             else
             {
-                ServiceCreateEditDTO dto = await _serviceRepository.Edit(id);
+                ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
                 dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input), null);
                 dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output), null);
                 return dto;
             }
+        }
+
+        public async Task<Guid> CreateEdit(ServiceCreateEditDTO dto)
+        {
+            ServiceEntity entity = _mapper.Map<ServiceEntity>(dto);
+            if (dto.Id == Guid.Empty)
+            {
+                await _serviceRepository.Create(entity);
+            }
+            else
+            {
+                _serviceRepository.Update(entity);
+            }
+
+            await _serviceRepository.Save();
+            return entity.Id;
         }
 
         public async Task<ServiceOverviewDTO> Overview()
@@ -54,7 +70,7 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public async Task<BlockModelConfigDTO> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
+        public async Task<IEnumerable<ServiceDataSchemaNodeDTO>> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
         {
             ServiceDataSchemaEntity entity = _mapper.Map<ServiceDataSchemaEntity>(dto);
             
@@ -69,8 +85,7 @@ namespace BPMS_BL.Facades
 
             await _serviceDataSchemaRepository.Save();
 
-            //return await Config(dto.BlockId);
-            throw new NotImplementedException(); //TODO
+            return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Input), null);
         }
 
         private IEnumerable<ServiceDataSchemaNodeDTO> CreateTree(IEnumerable<ServiceDataSchemaNodeDTO> allNodes, Guid? parentId)

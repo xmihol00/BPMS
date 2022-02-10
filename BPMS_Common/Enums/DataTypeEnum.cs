@@ -25,7 +25,7 @@ namespace BPMS_Common.Enums
                     return "objekt";
                 
                 case DataTypeEnum.Bool:
-                    return "bool";
+                    return "booleovská hodnota";
                 
                 case DataTypeEnum.Number:
                     return "číslo";

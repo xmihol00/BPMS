@@ -1,27 +1,27 @@
-@model IEnumerable<ServiceDataSchemaNodeDTO>
+@model (IEnumerable<ServiceDataSchemaNodeDTO> nodes, DirectionEnum direction)
 
-@if (Model != null && Model.Count() > 0)
+@if (Model.nodes.Count() > 0)
 {
-    <ul class="schema">
-        @foreach (ServiceDataSchemaNodeDTO node in Model)
+    <ul class="schema" data-direction="@Model.direction">
+        @foreach (ServiceDataSchemaNodeDTO node in Model.nodes)
         {
             <li>
                 <div class="d-flex justify-content-between">
                     <div>
-                        @node.Name @(String.IsNullOrEmpty(node.Alias) ? "" : $"({node.Alias})")
+                        <b>@node.Name</b> @(String.IsNullOrEmpty(node.Alias) ? "" : $"({node.Alias})") <span class="text-code ps-4">@node.Type.ToLabel()</span>
                     </div>
-                    <div>
+                    <div id="@node.Id" class="pe-1">
                         @if (node.Type == DataTypeEnum.Object)
                         {
-                            <button type="button" class="butn butn-sm btn-p" onclick="ShowNestedAttCreate()">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                            <button type="button" class="btn btn-sm p-icon" onclick="CreateNestedAtt(this)"><i class="fas fa-plus"></i></button>
                         }
+                        <button type="button" class="btn btn-sm btn p-icon" onclick="EditAttribute(this)"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-sm p-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
                 @if (node.Type == DataTypeEnum.Object)
                 {
-                    @await Html.PartialAsync("Partial/_ServiceDataSchema", node.Children)
+                    @await Html.PartialAsync("Partial/_ServiceDataSchema", (node.Children, Model.direction))
                 }
             </li>
         }

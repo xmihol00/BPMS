@@ -420,7 +420,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
 }
 
 .pt-1px {
@@ -488,23 +487,19 @@ body {
 .schema {
   border-left: 2px solid var(--color-primary);
   padding-left: 7px;
-  margin-left: 1em;
+  margin-left: 0.2em;
 }
 
 .schema li {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
-  padding-left: 0.8em;
+  padding-left: 0.6em;
 }
 
 .schema li::marker {
   content: "−";
   color: var(--color-primary);
   font-weight: bold;
-}
-
-.schema-div {
-  margin-left: -0.5em;
 }
 
 .text-code {
@@ -580,15 +575,7 @@ body {
   display: none;
 }
 
-/*@media print {
-  .print-only {
-    display: block;
-    padding: 2em;
-  }
-  
-  .no-print {
-    display: none;
-  }
-
-  @page { size: auto;  margin: 0mm; }
-}*/
+.p-icon {
+  padding-right: 3px;
+  padding-left: 3px;
+}

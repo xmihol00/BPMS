@@ -9,14 +9,16 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Service
 {
-    public class ServiceCreateEditDTO
+    public class ServiceEditPageDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public ServiceTypeEnum Type { get; set; }
         public SerializationEnum Serialization { get; set; }
         public HttpMethodEnum HttpMethod { get; set; }
         public string URL { get; set; } = string.Empty;
+        public IEnumerable<ServiceDataSchemaNodeDTO>? InputAttributes { get; set; }
+        public IEnumerable<ServiceDataSchemaNodeDTO>? OutputAttributes { get; set; }
     }
 }

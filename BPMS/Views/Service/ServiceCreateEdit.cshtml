@@ -1,4 +1,4 @@
-@model ServiceCreateEditDTO
+@model ServiceEditPageDTO
 @{
     if (Model.Id == Guid.Empty)
     {
@@ -16,24 +16,24 @@
         <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
         <h1 class="mb-0 pt-1 text-font">@ViewData["Title"]</h1>
         <div class="my-auto">
-            <input type="submit" form="CreateFormId" class="butn btn-s" value="@(Model.Id == Guid.Empty ? "Vytvořit" : "Uložit")" />
+            <input type="submit" form="CreateFormId" class="butn btn-s" @Html.Raw(Model.Id == Guid.Empty ? "value='Vytvořit' disabled" : "value='Uložit'") />
         </div>
     </div>
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="OverviewDivId" class="container-lg">
-        <form id="CreateFormId" class="row" method="post" action="Service/Create/">
+        <form id="CreateFormId" class="row" method="post" action="/Service/CreateEdit/" oninput="InputValidator(this)">
             <h3 class="col-12">Informace o službě</h3>
             <div class="col-12 mb-3">
                 <label class="input">
                     <input name="URL" class="input-field" type="text" data-reqi="URLLabelId" placeholder=" " value="@Model.URL"/>
-                    <span id="URLLabelId" class="input-label color-required">URL služby</span>
+                    <span id="URLLabelId" class="input-label @(String.IsNullOrEmpty(Model.URL) ? "color-required" : "")">URL služby</span>
                 </label>
             </div>
             <div class="col-12 col-md-6 mb-3">
                 <label class="input">
                     <input name="Name" class="input-field" type="text" data-reqi="NameLabelId" placeholder=" " value="@Model.Name" />
-                    <span id="NameLabelId" class="input-label color-required">Název</span>
+                    <span id="NameLabelId" class="input-label @(String.IsNullOrEmpty(Model.Name) ? "color-required" : "")">Název</span>
                 </label>
             </div>
             <div class="col-12 col-md-6 mb-3">
@@ -97,26 +97,26 @@
                 </label>
             </div>
         </form>
+        @await Html.PartialAsync("Partial/_ServiceAttribCreateEdit", Model.Id)
         <div class="row">
-            <div class="col-12 col-lg-6 border-right">
-                <div class="d-flex justify-content-between">
+            @*<div class="col-12 col-xl-6 border-right">
+                <div class="d-flex justify-content-between mb-2">
                     <h4 class="mt-1 mb-0">Konfigurace vstupních atributů</h4>
-                    <button type="button" class="butn btn-p" onclick="InputAttribAdd()">Přidat atribut</button>
+                    @if (Model.Id == Guid.Empty)
+                    {
+                        <button type="button" class="butn btn-p" title="Nejdříve je nutné vytvořit službu" disabled>Přidat atribut</button>
+                    }
+                    else
+                    {
+                        <button id="AddInAttribBtnId" type="button" class="butn btn-p" onclick="InputAttribAdd(this)">Přidat atribut</button>
+                    }
                 </div>
-                @await Html.PartialAsync("Partial/_ServiceAttribCreateEdit")
-                <div class="row">
-                    @await Html.PartialAsync("Partial/_ServiceDataSchema", Model.OutputAttributes)
+                <div id="InputSchemaId">
+                    @await Html.PartialAsync("Partial/_ServiceDataSchema", (Model.InputAttributes, DirectionEnum.Input))
                 </div>
-            </div>
-            <div class="col-12 col-lg-6 border-left">
-                <div class="d-flex justify-content-between">
-                    <h4 class="mt-1 mb-0" >Konfigurace výtupních atributů</h4>
-                    <button type="button" class="butn btn-p" onclick="OutputAttribAdd()">Přidat atribut</button>
-                </div>
-                <div class="row">
-                    @await Html.PartialAsync("Partial/_ServiceDataSchema", Model.OutputAttributes)
-                </div>
-            </div>
+            </div>*@
+            @await Html.PartialAsync("Partial/_ServiceDataSchemaConfig", (Model.InputAttributes, DirectionEnum.Input, Model.Id))
+            @await Html.PartialAsync("Partial/_ServiceDataSchemaConfig", (Model.OutputAttributes, DirectionEnum.Output, Model.Id))
         </div>
     </div>
 </div>

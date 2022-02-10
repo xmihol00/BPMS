@@ -1,4 +1,5 @@
 using BPMS_BL.Facades;
+using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,16 +22,22 @@ namespace BPMS.Controllers
 
         [HttpGet]
         [Route("/Service/Create")]
-        [Route("/Service/Edit")]
+        [Route("/Service/Edit/{id}")]
         public async Task<IActionResult> CreateEdit(Guid id)
         {
             return View("ServiceCreateEdit", await _serviceFacade.CreateEdit(id));
         }
 
         [HttpPost]
+        public async Task<IActionResult> CreateEdit(ServiceCreateEditDTO dto)
+        {
+            return Redirect($"/Service/Edit/{await _serviceFacade.CreateEdit(dto)}");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
         {
-            return PartialView("Partial/_BlockModelConfig", await _serviceFacade.CreateEditSchema(dto));
+            return PartialView("Partial/_ServiceDataSchema", (await _serviceFacade.CreateEditSchema(dto), dto.Direction));
         }
     }
 }
