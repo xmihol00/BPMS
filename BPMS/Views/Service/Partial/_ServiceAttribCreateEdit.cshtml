@@ -2,14 +2,14 @@
 
 <form id="AttribServiceFormId" class="row d-none" method="post" action="/Service/CreateEditSchema" 
       oninput="InputValidator(this)">
-    <input type="hidden" name="Id" value="" />
+    <input id="IdId" type="hidden" name="Id" value="" />
     <input id="ParentId" type="hidden" name="ParentId" value="" />
     <input type="hidden" name="ServiceId" value="@Model" />
     <input id="DirectionId" type="hidden" name="Direction" value="" />
     <h5 id="HeadlineId" class="text-center col-12"></h5>
     <div class="col-6 mb-3">
         <label class="input">
-            <input name="Name" class="input-field" data-reqi="AttribNameLabelId" type="text" placeholder=" " value="" />
+            <input id="NameId" name="Name" class="input-field" data-reqi="AttribNameLabelId" type="text" placeholder=" " value="" />
             <span id="AttribNameLabelId" class="input-label color-required">Název</span>
         </label>
     </div>
@@ -33,13 +33,13 @@
     <div class="col-3 vertical-justify-center mb-3">
         <label class="d-flex justify-content-center">
             <span id="CompulsoryLabelId" class="label-checkbox label-checkbox-checked">Povinný</span>
-            <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" data-ch="CompulsoryLabelId" checked/>
+            <input id="CompulsoryId" type="checkbox" name="Compulsory" class="checkbox" data-ch="CompulsoryLabelId" checked/>
         </label>
     </div>
     <div class="col-3 vertical-justify-center mb-3">
         <label class="d-flex justify-content-center">
             <span id="DataLabelId" class="label-checkbox">Data</span>
-            <input name="DataToggle" type="checkbox" class="checkbox" data-ch="DataLabelId" onchange="ToggleStaticData(this)"/>
+            <input id="DataChId" name="DataToggle" type="checkbox" class="checkbox" data-ch="DataLabelId" onchange="ToggleStaticData(this)"/>
         </label>
     </div>
     <div class="col-12">
@@ -49,7 +49,7 @@
         </label>
     </div>
     <div class="col-12 d-flex justify-content-center">
-        <input form="AttribServiceFormId" type="submit" class="butn btn-s" value="Vytvořit" />
+        <input id="CrateEditBtnId" form="AttribServiceFormId" type="submit" class="butn btn-s" value="Vytvořit" />
         <button type="button" class="butn btn-d" onclick="AttribCancel()">Zrušit</button>
     </div>
 </form>

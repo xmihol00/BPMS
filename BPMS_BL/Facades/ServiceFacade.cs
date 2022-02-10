@@ -46,6 +46,22 @@ namespace BPMS_BL.Facades
             }
         }
 
+        public async Task RemoveSchema(Guid id)
+        {
+            List<Guid?> removedIds = new List<Guid?> () { id };
+            foreach (ServiceDataSchemaEntity schema in await _serviceDataSchemaRepository.SchemasForRemoval(id))
+            {
+                if (removedIds.Contains(schema.ParentId))
+                {
+                    removedIds.Add(schema.ParentId);
+                    _serviceDataSchemaRepository.Remove(schema);
+                }
+            }
+            _serviceDataSchemaRepository.Remove(new ServiceDataSchemaEntity() { Id = id });
+
+            await _serviceDataSchemaRepository.Save();
+        }
+
         public async Task<Guid> CreateEdit(ServiceCreateEditDTO dto)
         {
             ServiceEntity entity = _mapper.Map<ServiceEntity>(dto);

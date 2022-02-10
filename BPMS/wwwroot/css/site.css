@@ -579,3 +579,7 @@ body {
   padding-right: 3px;
   padding-left: 3px;
 }
+
+.badge + span.p-icon {
+  margin-left: 3.45em;
+}

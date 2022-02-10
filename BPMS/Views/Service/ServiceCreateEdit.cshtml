@@ -99,22 +99,6 @@
         </form>
         @await Html.PartialAsync("Partial/_ServiceAttribCreateEdit", Model.Id)
         <div class="row">
-            @*<div class="col-12 col-xl-6 border-right">
-                <div class="d-flex justify-content-between mb-2">
-                    <h4 class="mt-1 mb-0">Konfigurace vstupních atributů</h4>
-                    @if (Model.Id == Guid.Empty)
-                    {
-                        <button type="button" class="butn btn-p" title="Nejdříve je nutné vytvořit službu" disabled>Přidat atribut</button>
-                    }
-                    else
-                    {
-                        <button id="AddInAttribBtnId" type="button" class="butn btn-p" onclick="InputAttribAdd(this)">Přidat atribut</button>
-                    }
-                </div>
-                <div id="InputSchemaId">
-                    @await Html.PartialAsync("Partial/_ServiceDataSchema", (Model.InputAttributes, DirectionEnum.Input))
-                </div>
-            </div>*@
             @await Html.PartialAsync("Partial/_ServiceDataSchemaConfig", (Model.InputAttributes, DirectionEnum.Input, Model.Id))
             @await Html.PartialAsync("Partial/_ServiceDataSchemaConfig", (Model.OutputAttributes, DirectionEnum.Output, Model.Id))
         </div>

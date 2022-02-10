@@ -12,7 +12,7 @@
             <button id="Add@(Model.direction)BtnId" type="button" class="butn btn-p" onclick="@(Model.direction)AttribAdd(this)">Přidat atribut</button>
         }
     </div>
-    <div id="OutputSchemaId">
+    <div id="@(Model.direction)SchemaId">
         @await Html.PartialAsync("Partial/_ServiceDataSchema", (Model.nodes, Model.direction))
     </div>
 </div>

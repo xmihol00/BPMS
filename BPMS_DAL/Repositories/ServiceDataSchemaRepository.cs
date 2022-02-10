@@ -43,7 +43,19 @@ namespace BPMS_DAL.Repositories
                             Alias = x.Alias,
                             Name = x.Name,
                             Type = x.Type,
+                            Compulsory = x.Compulsory,
+                            StaticData = x.StaticData
                          })
+                         .ToListAsync();
+        }
+
+        public Task<List<ServiceDataSchemaEntity>> SchemasForRemoval(Guid id)
+        {
+            return _dbSet.AsNoTracking()
+                         .Include(x => x.Service)
+                            .ThenInclude(x => x.DataSchemas)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Service.DataSchemas)
                          .ToListAsync();
         }
     }

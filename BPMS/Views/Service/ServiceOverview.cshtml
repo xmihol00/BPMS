@@ -22,7 +22,7 @@
         <div class="row">
             @foreach (ServiceAllDTO service in Model.Services)
             {
-                @await Html.PartialAsync("Partial/_AgendaCard", (service, false))
+                <a href="/Service/Edit/@service.Id"><h2>@service.Name</h2></a>
             }
         </div>
     </div>

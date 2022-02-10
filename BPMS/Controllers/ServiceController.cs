@@ -39,5 +39,12 @@ namespace BPMS.Controllers
         {
             return PartialView("Partial/_ServiceDataSchema", (await _serviceFacade.CreateEditSchema(dto), dto.Direction));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveSchema(Guid id)
+        {
+            await _serviceFacade.RemoveSchema(id);
+            return Ok();
+        }
     }
 }
