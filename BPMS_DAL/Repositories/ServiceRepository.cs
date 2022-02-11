@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Service;
+using Microsoft.Extensions.Primitives;
 
 namespace BPMS_DAL.Repositories
 {
@@ -37,6 +38,11 @@ namespace BPMS_DAL.Repositories
                             URL = x.URL,
                          })
                          .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<ServiceEntity> Detail(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
     }
 }

@@ -21,7 +21,8 @@ function ResetForm(form, direction, btn, parentId = "")
     {
         select.options[0].selected = true;
     }
-    
+
+    form.classList.remove("mb-2");
     document.getElementById("ParentId").value = parentId;
     document.getElementById("DirectionId").value = direction;
     document.getElementById("IdId").value = "";
@@ -43,13 +44,13 @@ function ResetForm(form, direction, btn, parentId = "")
 function InputAttribAdd(btn)
 {
     let form = document.getElementById("AttribServiceFormId");
-    ResetForm(form, "Input", btn);
+    ResetForm(form, "Input", btn.parentNode);
+    form.classList.add("mb-2");
 }
 
 function AttribCancel()
 {
     document.getElementById("AddInputBtnId").classList.remove("d-none");
-    document.getElementById("AddOutputBtnId").classList.remove("d-none");
     document.getElementById("AttribServiceFormId").classList.add("d-none");
     if (HiddenButtons)
     {
@@ -71,7 +72,6 @@ function DataSchemaSubmit(event, targetId)
 {
     event.preventDefault();
     document.getElementById("AddOutputBtnId").classList.remove("d-none");
-    document.getElementById("AddInputBtnId").classList.remove("d-none");
     if (HiddenButtons)
     {
         HiddenButtons.classList.remove("d-none");
@@ -184,4 +184,25 @@ function RemoveAttribute(btn)
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     }); 
+}
+
+function SetFormAction(input, action)
+{
+    document.getElementById(input.getAttribute("form")).setAttribute("action", action);
+}
+
+function TestService(btn, id)
+{
+    HiddenButtons = btn.parentNode;
+    HiddenButtons.classList.add("d-none");
+    GetAjaxRequest(`/Service/Test/${id}`, 'TestInputId');
+}
+
+function CancelServiceTest()
+{
+    if (HiddenButtons)
+    {
+        HiddenButtons.classList.remove("d-none");
+        document.getElementById("TestInputId").innerHTML = "";
+    }
 }

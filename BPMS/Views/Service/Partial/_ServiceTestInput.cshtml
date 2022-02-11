@@ -1,0 +1,50 @@
+@model ServiceDataSchemaTestDTO
+
+@if (Model != null)
+{
+    <h4 class="mb-3">Zadejte testovací data</h4>
+    <form id="ServiceTestFormId" method="post" action="/Service/Test" oninput="InputValidator(this)" onsubmit="AjaxFormSubmit(event, 'OutputInputId')">
+        <input type="hidden" name="ServiceId" value="@Model.ServiceId" /> 
+        @foreach (ServiceDataSchemaAllDTO schema in Model.Schemas)
+        {
+            switch (schema.Type)
+            {
+                case DataTypeEnum.Number:
+                case DataTypeEnum.String:
+                    @if (schema.Compulsory)
+                    {
+                        <label class="input mb-3">
+                            <input name="@schema.Id" class="input-field" data-reqi="@(schema.Id)Id" type="@schema.Type.ToHtmlType()" 
+                                   placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
+                            <span id="@(schema.Id)Id" class="input-label @(schema.StaticData == null ? "color-required" : "")">
+                                @schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")
+                            </span>
+                        </label>
+                    }
+                    else
+                    {
+                        <label class="input mb-3">
+                            <input name="@schema.Id" class="input-field" type="@schema.Type.ToHtmlType()" placeholder=" "
+                                   placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
+                            <span class="input-label">
+                                @schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")
+                            </span>
+                        </label>
+                    }
+                    break;
+                
+                case DataTypeEnum.Bool:
+                    <label class="d-flex justify-content-center mb-3">
+                        <input name="@schema.Id" type="checkbox" class="checkbox" checked/>
+                        <span class="label-checkbox">@schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")</span>
+                    </label>
+                    break;
+            }
+        }
+        <div class="d-flex justify-content-center">
+            <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Generovat dotaz" onclick="SetFormAction(this, '/Service/Generate')" disabled/>
+            <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Volat službu" onclick="SetFormAction(this, '/Service/Test')" disabled/>
+            <button type="button" class="butn btn-d" onclick="CancelServiceTest()">Zrušit</button>
+        </div>
+    </form>
+}

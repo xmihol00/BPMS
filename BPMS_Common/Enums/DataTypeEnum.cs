@@ -40,5 +40,20 @@ namespace BPMS_Common.Enums
                     return "";
             }
         }
+
+        public static string ToHtmlType(this DataTypeEnum value)
+        {
+            switch (value)
+            {
+                case DataTypeEnum.Number:
+                    return "number";
+                
+                case DataTypeEnum.String:
+                    return "text";
+                
+                default:
+                    return "";
+            }
+        }
     }
 }

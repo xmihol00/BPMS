@@ -188,15 +188,17 @@ function InputValidator(form)
         }
     }
 
-    for (let input of form.querySelectorAll("[data-ch]"))
+    for (let input of form.querySelectorAll("[data-url]"))
     {
-        if (input.checked)
+        try 
         {
-            document.getElementById(input.getAttribute("data-ch")).classList.add("label-checkbox-checked");
+            new URL(input.value);
+            document.getElementById(input.getAttribute("data-url")).classList.remove("color-required");  
         }
-        else
+        catch (_) 
         {
-            document.getElementById(input.getAttribute("data-ch")).classList.remove("label-checkbox-checked");
+            disabled = true;
+            document.getElementById(input.getAttribute("data-url")).classList.add("color-required");
         }
     }
 
@@ -204,4 +206,23 @@ function InputValidator(form)
     {
         button.disabled = disabled;
     }
+}
+
+function GetAjaxRequest(url, targetId)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "GET",
+        url: url
+    })
+    .done((result) => 
+    {
+        document.getElementById(targetId).innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    }); 
 }

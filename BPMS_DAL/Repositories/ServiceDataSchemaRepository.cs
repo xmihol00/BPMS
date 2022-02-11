@@ -49,6 +49,21 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<List<ServiceDataSchemaDataDTO>> DataSchemasTest(Guid serviceId)
+        {
+            return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input)
+                         .Select(x => new ServiceDataSchemaDataDTO 
+                         {
+                            Id = x.Id,
+                            ParentId = x.ParentId,
+                            Alias = x.Alias,
+                            Name = x.Name,
+                            Type = x.Type,
+                            StaticData = x.StaticData
+                         })
+                         .ToListAsync();
+        }
+
         public Task<List<ServiceDataSchemaEntity>> SchemasForRemoval(Guid id)
         {
             return _dbSet.AsNoTracking()
@@ -56,6 +71,21 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.DataSchemas)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.Service.DataSchemas)
+                         .ToListAsync();
+        }
+
+        public Task<List<ServiceDataSchemaAllDTO>> Test(Guid serviceId)
+        {
+            return _dbSet.Where(x => x.ServiceId == serviceId)
+                         .Select(x => new ServiceDataSchemaAllDTO 
+                         {
+                             Alias = x.Alias,
+                             Compulsory = x.Compulsory,
+                             Id = x.Id,
+                             Name = x.Name,
+                             StaticData = x.StaticData,
+                             Type = x.Type
+                         })
                          .ToListAsync();
         }
     }

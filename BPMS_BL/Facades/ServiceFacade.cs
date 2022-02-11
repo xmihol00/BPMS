@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
+using BPMS_BL.Helpers;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
@@ -13,6 +14,7 @@ using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.User;
+using Microsoft.AspNetCore.Http;
 
 namespace BPMS_BL.Facades
 {
@@ -62,6 +64,33 @@ namespace BPMS_BL.Facades
             await _serviceDataSchemaRepository.Save();
         }
 
+        public async Task<string> SendRequest(IFormCollection data)
+        {
+            ServiceEntity service = await _serviceRepository.Detail(Guid.Parse(data["ServiceId"].First()));
+            IEnumerable<ServiceDataSchemaDataDTO> nodes = await CreateRequestTree(service.Id, data);
+            Uri url = new Uri(service.URL);
+
+            return await new HttpRequestHelper(nodes, service.Serialization, url, service.HttpMethod).SendRequest();
+        }
+
+        public async Task<string> GenerateRequest(IFormCollection data)
+        {
+            ServiceEntity service = await _serviceRepository.Detail(Guid.Parse(data["ServiceId"].First()));
+            IEnumerable<ServiceDataSchemaDataDTO> nodes = await CreateRequestTree(service.Id, data);
+            Uri url = new Uri(service.URL);
+
+            return new HttpRequestHelper(nodes, service.Serialization, url, service.HttpMethod).GenerateRequest();
+        }
+
+        public async Task<ServiceDataSchemaTestDTO> Test(Guid id)
+        {
+            return new ServiceDataSchemaTestDTO()
+            {
+                ServiceId = id,
+                Schemas = await _serviceDataSchemaRepository.Test(id)
+            };
+        }
+
         public async Task<Guid> CreateEdit(ServiceCreateEditDTO dto)
         {
             ServiceEntity entity = _mapper.Map<ServiceEntity>(dto);
@@ -104,14 +133,32 @@ namespace BPMS_BL.Facades
             return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Input), null);
         }
 
-        private IEnumerable<ServiceDataSchemaNodeDTO> CreateTree(IEnumerable<ServiceDataSchemaNodeDTO> allNodes, Guid? parentId)
+        private IEnumerable<T> CreateTree<T>(IEnumerable<T> allNodes, Guid? parentId = null) where T : ServiceDataSchemaNode
         {
-            IEnumerable<ServiceDataSchemaNodeDTO> nodes = allNodes.Where(x => x.ParentId == parentId);
-            foreach (ServiceDataSchemaNodeDTO node in nodes)
+            IEnumerable<T> nodes = allNodes.Where(x => x.ParentId == parentId);
+            foreach (T node in nodes)
             {
                 if (node.Type == DataTypeEnum.Object)
                 {
                     node.Children = CreateTree(allNodes, node.Id);
+                }
+            }
+
+            return nodes;
+        }
+
+        private async Task<IEnumerable<ServiceDataSchemaDataDTO>> CreateRequestTree(Guid serviceId, IFormCollection data)
+        {
+            IEnumerable<ServiceDataSchemaDataDTO> nodes = CreateTree(await _serviceDataSchemaRepository.DataSchemasTest(serviceId));
+            foreach (ServiceDataSchemaDataDTO node in nodes)
+            {
+                if (node.StaticData == null)
+                {
+                    node.Data = data[$"{node.Id}"].FirstOrDefault();    
+                }
+                else
+                {
+                    node.Data = node.StaticData;
                 }
             }
 

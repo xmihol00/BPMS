@@ -23,10 +23,11 @@
 <div id="PageContentId" class="d-flex pt-3">
     <div id="OverviewDivId" class="container-lg">
         <form id="CreateFormId" class="row" method="post" action="/Service/CreateEdit/" oninput="InputValidator(this)">
+            <input type="hidden" name="Id" value="@Model.Id" />
             <h3 class="col-12">Informace o službě</h3>
             <div class="col-12 mb-3">
                 <label class="input">
-                    <input name="URL" class="input-field" type="text" data-reqi="URLLabelId" placeholder=" " value="@Model.URL"/>
+                    <input name="URL" class="input-field" type="text" data-url="URLLabelId" placeholder=" " value="@Model.URL"/>
                     <span id="URLLabelId" class="input-label @(String.IsNullOrEmpty(Model.URL) ? "color-required" : "")">URL služby</span>
                 </label>
             </div>
@@ -101,6 +102,9 @@
         <div class="row">
             @await Html.PartialAsync("Partial/_ServiceDataSchemaConfig", (Model.InputAttributes, DirectionEnum.Input, Model.Id))
             @await Html.PartialAsync("Partial/_ServiceDataSchemaConfig", (Model.OutputAttributes, DirectionEnum.Output, Model.Id))
+            <hr>
+            <div id="TestInputId" class="col-12 col-lg-6"></div>
+            <div id="OutputInputId" class="col-12 col-lg-6"></div>
         </div>
     </div>
 </div>

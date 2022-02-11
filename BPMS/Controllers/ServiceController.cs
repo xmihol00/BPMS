@@ -2,6 +2,7 @@ using BPMS_BL.Facades;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace BPMS.Controllers
 {
@@ -45,6 +46,24 @@ namespace BPMS.Controllers
         {
             await _serviceFacade.RemoveSchema(id);
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Test(IFormCollection data)
+        {
+            return PartialView("Partial/_ServiceSendRequest", await _serviceFacade.SendRequest(data));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Generate(IFormCollection data)
+        {
+            return PartialView("Partial/_ServiceGeneratedRequest", await _serviceFacade.GenerateRequest(data));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Test(Guid id)
+        {
+            return PartialView("Partial/_ServiceTestInput", await _serviceFacade.Test(id));
         }
     }
 }

@@ -583,3 +583,13 @@ body {
 .badge + span.p-icon {
   margin-left: 3.45em;
 }
+
+.verbatim {
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-weight: 500;
+}
+
+.text-break {
+  overflow-wrap: break-word;
+}

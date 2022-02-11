@@ -22,7 +22,8 @@ namespace BPMS_BL.Profiles
             CreateMap<ServiceDataSchemaCreateEditDTO, ServiceDataSchemaNodeDTO>();
 
             CreateMap<ServiceCreateEditDTO, ServiceEntity>()
-                .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description == null ? "" : src.Description));
+                .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description == null ? "" : src.Description))
+                .ForMember(dst => dst.URL, opt => opt.MapFrom(src => src.URL.ToString()));
         }
     }
 }

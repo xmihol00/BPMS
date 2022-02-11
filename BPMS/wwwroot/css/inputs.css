@@ -11,7 +11,7 @@
   display: inline-block;
   height: 1.1em;
   width: 1.1em;
-  margin: 0.21rem 0rem 0rem 0.5rem;
+  margin: 0.21rem 0.5rem 0rem 0.0rem;
   display: block;
 }
 
@@ -123,4 +123,6 @@ input:-webkit-autofill:active {
   color: var(--color-required) !important;  
 }
 
-  
+.checkbox:checked + .label-checkbox {
+  color: var(--color-primary);
+}
