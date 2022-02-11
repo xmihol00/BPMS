@@ -1,9 +1,9 @@
-@model (IEnumerable<ServiceDataSchemaNodeDTO> nodes, DirectionEnum direction)
+@model IEnumerable<IServiceDataSchemaNode>
 
-@if (Model.nodes != null && Model.nodes.Count() > 0)
+@if (Model != null && Model.Count() > 0)
 {
-    <ul class="schema" data-direction="@Model.direction">
-        @foreach (ServiceDataSchemaNodeDTO node in Model.nodes)
+    <ul class="schema">
+        @foreach (IServiceDataSchemaNode node in Model)
         {
             <li>
                 <div class="d-flex justify-content-between">
@@ -24,13 +24,13 @@
                                 <i class="fas fa-check-circle"></i>
                             </span>
                         }
-                        <span id="@node.ParentId" class="btn btn-sm p-icon" onclick="EditAttribute(this)" data-data="@node.StaticData"><i class="fas fa-edit"></i></span>
+                        <span id="@node.ParentId" class="btn btn-sm p-icon" onclick="EditInputAttribute(this)" data-data="@node.StaticData"><i class="fas fa-edit"></i></span>
                         <button type="button" class="btn btn-sm p-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
                 @if (node.Type == DataTypeEnum.Object)
                 {
-                    @await Html.PartialAsync("Partial/_ServiceDataSchema", (node.Children, Model.direction))
+                    @await Html.PartialAsync("Partial/_InputServiceDataSchema", node.Children as IEnumerable<IServiceDataSchemaNode>)
                 }
             </li>
         }

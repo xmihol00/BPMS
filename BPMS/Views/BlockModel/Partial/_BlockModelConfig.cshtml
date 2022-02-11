@@ -41,7 +41,7 @@
             </div>
             <div class="col-4">
                 <label class="input">
-                    <select id="TypeId" class="input-field input-select" name="Type" oninput="AttribTypeChange(this)"> 
+                    <select id="TypeId" class="input-select" name="Type" oninput="AttribTypeChange(this)"> 
                         @foreach (AttributeTypeEnum enumVal in Enum.GetValues(typeof(AttributeTypeEnum)))
                         {
                             <option value="@enumVal">@enumVal.ToLabel()</option>   

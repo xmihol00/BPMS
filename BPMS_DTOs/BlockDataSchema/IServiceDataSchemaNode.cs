@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.ServiceDataSchema
 {
-    public class ServiceDataSchemaNode
+    public interface IServiceDataSchemaNode : IServiceDataSchema
     {
-        public IEnumerable<ServiceDataSchemaNode>? Children { get; set; }
-        public Guid? ParentId { get; set; }
-        public Guid Id { get; set; }
-        public DataTypeEnum Type { get; set; }
+        public string Name { get; set; }
+        public string Alias { get; set; }
+        public string? StaticData { get; set; }
+        public bool Compulsory { get; set; }
     }
 }

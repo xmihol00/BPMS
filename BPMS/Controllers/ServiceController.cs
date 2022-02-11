@@ -38,7 +38,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
         {
-            return PartialView("Partial/_ServiceDataSchema", (await _serviceFacade.CreateEditSchema(dto), dto.Direction));
+            return PartialView($"Partial/_{dto.Direction}ServiceDataSchema", await _serviceFacade.CreateEditSchema(dto));
         }
 
         [HttpPost]
@@ -51,7 +51,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Test(IFormCollection data)
         {
-            return PartialView("Partial/_ServiceSendRequest", await _serviceFacade.SendRequest(data));
+            return PartialView("Partial/_ServiceSentRequest", await _serviceFacade.SendRequest(data));
         }
 
         [HttpPost]
@@ -64,6 +64,12 @@ namespace BPMS.Controllers
         public async Task<IActionResult> Test(Guid id)
         {
             return PartialView("Partial/_ServiceTestInput", await _serviceFacade.Test(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateAttributes(ServiceTestResultDTO dto)
+        {
+            return PartialView("Partial/_OutputServiceDataSchema", await _serviceFacade.GenerateAttributes(dto)); 
         }
     }
 }

@@ -20,17 +20,24 @@ function ResetForm(form, direction, btn, parentId = "")
     for (let select of form.getElementsByTagName("select")) 
     {
         select.options[0].selected = true;
+        select.disabled = false;
     }
 
     form.classList.remove("mb-2");
     document.getElementById("ParentId").value = parentId;
     document.getElementById("DirectionId").value = direction;
     document.getElementById("IdId").value = "";
-    document.getElementById("CompulsoryId").checked = true;
     document.getElementById("NameId").value = "";
-    document.getElementById("AliasId").value = "";
+    let alias = document.getElementById("AliasId");
+    alias.value = "";
+    alias.readOnly = false;
     document.getElementById("StaticDataId").classList.add("d-none");
-    document.getElementById("DataChId").checked = false;
+    let compulsory = document.getElementById("CompulsoryId");
+    compulsory.disabled = false;
+    compulsory.checked = true;
+    let dataCh = document.getElementById("DataChId");
+    dataCh.checked = false;
+    dataCh.disabled = false;
     document.getElementById("CrateEditBtnId").value = "Vytvořit";
 
     btn.parentNode.after(form);
@@ -71,7 +78,6 @@ function OutputAttribAdd(btn)
 function DataSchemaSubmit(event, targetId)
 {
     event.preventDefault();
-    document.getElementById("AddOutputBtnId").classList.remove("d-none");
     if (HiddenButtons)
     {
         HiddenButtons.classList.remove("d-none");
@@ -103,31 +109,19 @@ function CreateNestedAtt(btn)
     ResetForm(form, direction, btnParent, btnParent.id);
 }
 
-function EditAttribute(btn)
+function EditAtrribute(form, btn, disabled)
 {
     if (HiddenButtons)
     {
         HiddenButtons.classList.remove("d-none");
     }
-
-    let form = document.getElementById("AttribServiceFormId");
+    
     let btnParent = btn.parentNode;
-    let direction = btnParent.parentNode.parentNode.parentNode.getAttribute("data-direction");
     let type = btnParent.parentNode.getElementsByClassName("text-code")[0].innerText;
     let staticData = btn.getAttribute("data-data");
-    
     document.getElementById("IdId").value = btnParent.id;
-    document.getElementById("ParentId").value = btn.id;
-    
-    document.getElementById("DirectionId").value = direction;
-    if (direction == "Input")
-    {
-        document.getElementById("HeadlineId").innerText = "Editace vstupního atributu";
-    }
-    else
-    {
-        document.getElementById("HeadlineId").innerText = "Editace výstupního atributu";
-    }
+    document.getElementById("ParentId").value = btn.id;    
+
     for (let select of form.getElementsByTagName("select"))
     {
         for (let i = 0; i < select.options.length; i++)
@@ -135,36 +129,60 @@ function EditAttribute(btn)
             if (select.options[i].innerText == type)
             {
                 select.options[i].selected = true;
+                select.disabled = disabled;
                 break;
             }
         }
     }
     
     let indputDiv = document.getElementById("StaticDataId");
+    let dataCh = document.getElementById("DataChId");
+    dataCh.disabled = disabled;
     if (staticData)
     {
         indputDiv.classList.remove("d-none");
         indputDiv.children[0].value = staticData;
-        document.getElementById("DataChId").checked = true;
+        dataCh.checked = true;
     }
     else
     {
         indputDiv.classList.add("d-none");
-        document.getElementById("DataChId").checked = false;
+        dataCh.checked = false;
     }
     
-    document.getElementById("CompulsoryId").checked = btnParent.children[0].classList.contains("bg-primary");
+    let compulsory = document.getElementById("CompulsoryId");
+    compulsory.disabled = disabled;
+    compulsory.checked = btnParent.children[0].classList.contains("bg-primary");
     let idAlias = btnParent.parentNode.children[0];
     document.getElementById("NameId").value = idAlias.children[0].innerText;
-    document.getElementById("AliasId").value = idAlias.children[1].innerText.replace(/^\(|\)$/g, '');
+    let alias = document.getElementById("AliasId");
+    alias.value = idAlias.children[1].innerText.replace(/^\(|\)$/g, '');
+    alias.readOnly = disabled;
     document.getElementById("CrateEditBtnId").value = "Uložit";
     
     btnParent.parentNode.after(form);
-    form.onsubmit = (event) => DataSchemaSubmit(event, `${direction}SchemaId`);
     form.classList.remove("d-none");
     btnParent.classList.add("d-none");
     HiddenButtons = btnParent;
     InputValidator(form);
+}
+
+function EditInputAttribute(btn)
+{
+    let form = document.getElementById("AttribServiceFormId");
+    EditAtrribute(form, btn, false);
+    document.getElementById("DirectionId").value = "Input";
+    document.getElementById("HeadlineId").innerText = "Editace vstupního atributu";
+    form.onsubmit = (event) => DataSchemaSubmit(event, 'InputSchemaId');
+}
+
+function EditOutputAttribute(btn)
+{
+    let form = document.getElementById("AttribServiceFormId");
+    EditAtrribute(form, btn, true);
+    document.getElementById("DirectionId").value = "Output";
+    document.getElementById("HeadlineId").innerText = "Editace výtupního atributu";
+    form.onsubmit = (event) => DataSchemaSubmit(event, 'OutputSchemaId');
 }
 
 function RemoveAttribute(btn)
@@ -205,4 +223,28 @@ function CancelServiceTest()
         HiddenButtons.classList.remove("d-none");
         document.getElementById("TestInputId").innerHTML = "";
     }
+}
+
+function GenerateOutAttributes(btn)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: "/Service/GenerateAttributes/",
+        data: { 
+                RecievedData: document.getElementById("ResponseTextId").innerText,
+                ServiceId: btn.getAttribute("data-id"),
+                Serialization: btn.getAttribute("data-type")
+             }
+    })
+    .done((result) => 
+    {
+        document.getElementById("OutputSchemaId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });    
 }

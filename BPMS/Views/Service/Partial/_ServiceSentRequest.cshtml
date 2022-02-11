@@ -1,0 +1,8 @@
+@model ServiceTestResultDTO
+
+<h4>Odpověď na odeslaný HTTP dotaz</h4>
+<div id="ResponseTextId" class="text-code text-break mb-2">@Model.RecievedData</div>
+<div class="d-flex justify-content-center">
+    <button data-id="@Model.ServiceId" data-type="@Model.Serialization" class="butn btn-p"
+            onclick="GenerateOutAttributes(this)">Vygenerovat výstupní atributy</button>
+</div>

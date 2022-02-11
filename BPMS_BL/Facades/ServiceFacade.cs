@@ -15,6 +15,9 @@ using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.User;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Facades
 {
@@ -22,6 +25,7 @@ namespace BPMS_BL.Facades
     {
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly ServiceRepository _serviceRepository;
+        private Guid _serviceId;
 
         private readonly IMapper _mapper;
 
@@ -42,8 +46,8 @@ namespace BPMS_BL.Facades
             else
             {
                 ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
-                dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input), null);
-                dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output), null);
+                dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
+                dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
                 return dto;
             }
         }
@@ -64,13 +68,27 @@ namespace BPMS_BL.Facades
             await _serviceDataSchemaRepository.Save();
         }
 
-        public async Task<string> SendRequest(IFormCollection data)
+        public async Task<ServiceTestResultDTO> SendRequest(IFormCollection data)
         {
             ServiceEntity service = await _serviceRepository.Detail(Guid.Parse(data["ServiceId"].First()));
             IEnumerable<ServiceDataSchemaDataDTO> nodes = await CreateRequestTree(service.Id, data);
             Uri url = new Uri(service.URL);
+            ServiceTestResultDTO result = await new HttpRequestHelper(nodes, service.Serialization, url, service.HttpMethod).SendRequest();
+            result.ServiceId = service.Id;
+            
+            return result;
+        }
 
-            return await new HttpRequestHelper(nodes, service.Serialization, url, service.HttpMethod).SendRequest();
+        public async Task<IEnumerable<IServiceDataSchemaNode>> GenerateAttributes(ServiceTestResultDTO dto)
+        {
+            _serviceId = dto.ServiceId;
+
+            IDbContextTransaction transaction = await _serviceDataSchemaRepository.CreateTransaction();
+            
+            await ParseJObject(JObject.Parse(dto.RecievedData));
+            await transaction.CommitAsync();
+
+            return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Output));
         }
 
         public async Task<string> GenerateRequest(IFormCollection data)
@@ -118,6 +136,10 @@ namespace BPMS_BL.Facades
         public async Task<IEnumerable<ServiceDataSchemaNodeDTO>> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
         {
             ServiceDataSchemaEntity entity = _mapper.Map<ServiceDataSchemaEntity>(dto);
+            if (entity.Direction == DirectionEnum.Output)
+            {
+                entity.Compulsory = true;
+            }
             
             if (dto.Id == Guid.Empty)
             {
@@ -130,10 +152,10 @@ namespace BPMS_BL.Facades
 
             await _serviceDataSchemaRepository.Save();
 
-            return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Input), null);
+            return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, dto.Direction));
         }
 
-        private IEnumerable<T> CreateTree<T>(IEnumerable<T> allNodes, Guid? parentId = null) where T : ServiceDataSchemaNode
+        private IEnumerable<T> CreateTree<T>(IEnumerable<T> allNodes, Guid? parentId = null) where T : ServiceDataSchema
         {
             IEnumerable<T> nodes = allNodes.Where(x => x.ParentId == parentId);
             foreach (T node in nodes)
@@ -145,6 +167,31 @@ namespace BPMS_BL.Facades
             }
 
             return nodes;
+        }
+
+        private async Task<Guid> CreateOutputDataSchema(string name, DataTypeEnum type, Guid? parentId)
+        {
+            ServiceDataSchemaEntity? current = await _serviceDataSchemaRepository.Find(_serviceId, name, parentId, DirectionEnum.Output);
+            
+            if (current != null)
+            {
+                return current.Id;
+            }
+            
+            ServiceDataSchemaEntity dataSchema = new ServiceDataSchemaEntity()
+            {
+                Alias = name,
+                Name = name,
+                Compulsory = true,
+                Direction = DirectionEnum.Output,
+                ParentId = parentId,
+                ServiceId = _serviceId,
+                Type = type,
+            };
+
+            await _serviceDataSchemaRepository.Create(dataSchema);
+            await _serviceDataSchemaRepository.Save();
+            return dataSchema.Id;
         }
 
         private async Task<IEnumerable<ServiceDataSchemaDataDTO>> CreateRequestTree(Guid serviceId, IFormCollection data)
@@ -163,6 +210,34 @@ namespace BPMS_BL.Facades
             }
 
             return nodes;
+        }
+
+        private async Task ParseJObject(IEnumerable<JToken> tokens, Guid? parentId = null)
+        {
+            foreach (JProperty property in tokens)
+            {
+                string name = property.Name;
+                switch (property.Value.Type)
+                {
+                    case JTokenType.Object:
+                        await ParseJObject(property.Value.Children(), await CreateOutputDataSchema(name, DataTypeEnum.Object, parentId));
+                        break;
+                    
+                    case JTokenType.String:
+                        await CreateOutputDataSchema(name, DataTypeEnum.String, parentId);
+                        break;
+                    
+                    case JTokenType.Float:
+                    case JTokenType.Integer:
+                        await CreateOutputDataSchema(name, DataTypeEnum.Number, parentId);
+                        break;
+                    
+                    case JTokenType.Array:
+                        // TODO
+                        //await ParseJObject(property.Descendants(), await CreateOutputDataSchema(name, DataTypeEnum.Array, parentId));
+                        break;
+                }
+            }
         }
     }
 }

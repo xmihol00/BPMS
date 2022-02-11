@@ -76,7 +76,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<ServiceDataSchemaAllDTO>> Test(Guid serviceId)
         {
-            return _dbSet.Where(x => x.ServiceId == serviceId)
+            return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input)
                          .Select(x => new ServiceDataSchemaAllDTO 
                          {
                              Alias = x.Alias,
@@ -87,6 +87,12 @@ namespace BPMS_DAL.Repositories
                              Type = x.Type
                          })
                          .ToListAsync();
+        }
+
+        public Task<ServiceDataSchemaEntity?> Find(Guid serviceId, string alias, Guid? parentId, DirectionEnum direction)
+        {
+            return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && 
+                                                   x.ParentId == parentId && x.Direction == direction);
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.ServiceDataSchema
 {
-    public class ServiceDataSchemaDataDTO : ServiceDataSchemaNode
+    public class ServiceDataSchemaDataDTO : ServiceDataSchema
     {
         public string? Data { get; set; }
         public string Name { get; set; } = string.Empty;

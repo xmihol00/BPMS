@@ -17,7 +17,7 @@
 
 .label-checkbox {
   font-weight: bold;
-  color: #555;
+  color: var(--color-inactive);
   font-size: 1.07em;
   display: block;
 }
@@ -39,7 +39,7 @@
   font-weight: bold;
   line-height: 1.2;
   background-color: #fff;
-  color: #555;
+  color: var(--color-inactive);
   cursor: text;
 }
 
@@ -62,7 +62,7 @@
   background-color: #fff;
 }
 
-.input-field:focus + .input-label, .input-field:not(:placeholder-shown) + .input-label, .input-file-chosen {
+.input-field:focus + .input-label, .input-select:not(:placeholder-shown) + .input-label, .input-field:not(:placeholder-shown) + .input-label, .input-file-chosen {
   transform: translate(0.25rem, -82%) scale(0.95);
   color: var(--color-primary);
   padding: 0rem 0.2rem;
@@ -103,7 +103,7 @@ input[type=file]::after {
   padding: 0.4rem 0.5rem 0.4rem 0.5rem;
   cursor: pointer;
 }
-  
+
 input[type=file]:hover::after {
   color: #fff;
   background-color: var(--color-primary);
@@ -118,11 +118,23 @@ input:-webkit-autofill:active {
   transition-delay: 99999s;
   transition: color 99999s ease-out, background-color 99999s ease-out;
 }
-  
+
 .color-required {
   color: var(--color-required) !important;  
 }
 
 .checkbox:checked + .label-checkbox {
   color: var(--color-primary);
+}
+
+.checkbox:disabled + .label-checkbox {
+  color: var(--color-disabled);
+}
+
+.input-field:read-only, .input-select:disabled, .input-file:read-only {
+  color: var(--color-disabled);
+}
+
+.input-field:read-only + .input-label, .input-select:disabled + .input-label {
+  color: var(--color-disabled);
 }

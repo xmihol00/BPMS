@@ -12,7 +12,7 @@
     </div>
     <div class="col-12 col-md-6">
         <label class="input">
-            <select class="input-field input-select" name="AdministratorId"> 
+            <select class="input-select" name="AdministratorId"> 
                 @foreach (UserIdNameDTO item in Model ?? new List<UserIdNameDTO>())
                 {
                     <option value="@item.Id">@item.FullName</option>

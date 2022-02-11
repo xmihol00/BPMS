@@ -21,7 +21,7 @@
     </div>
     <div class="col-6 mb-3">
         <label class="input">
-            <select class="input-field input-select" name="Type"> 
+            <select class="input-select" name="Type"> 
                 @foreach (DataTypeEnum value in Enum.GetValues(typeof(DataTypeEnum)))
                 {
                     <option value="@value">@value.ToLabel()</option>
@@ -32,7 +32,7 @@
     </div>  
     <div class="col-3 vertical-justify-center mb-3">
         <label class="d-flex justify-content-center">
-            <input id="CompulsoryId" type="checkbox" name="Compulsory" class="checkbox" checked/>
+            <input id="CompulsoryId" type="checkbox" name="Compulsory" class="checkbox" checked disabled/>
             <span class="label-checkbox">Povinný</span>
         </label>
     </div>
@@ -44,7 +44,7 @@
     </div>
     <div class="col-12">
         <label id="StaticDataId" class="input d-none mb-3">
-            <input name="StaticData" class="input-field" type="text" placeholder=" " value="" />
+            <input name="StaticData" class="input-field" type="text" placeholder=" " value="" disabled/>
             <span class="input-label">Statická data</span>
         </label>
     </div>

@@ -10,6 +10,7 @@ using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 
 namespace BPMS_BL.Helpers
@@ -42,7 +43,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public async Task<string> SendRequest()
+        public async Task<ServiceTestResultDTO> SendRequest()
         {
             switch (_method)
             {
@@ -50,7 +51,7 @@ namespace BPMS_BL.Helpers
                     return await SendGetRequest();
 
                 default:
-                    return "";
+                    throw new NotImplementedException();
             }
         }
 
@@ -65,14 +66,30 @@ namespace BPMS_BL.Helpers
             return _builder.ToString();
         }
 
-        private async Task<string> SendGetRequest()
+        private async Task<ServiceTestResultDTO> SendGetRequest()
         {
             SerilizeData();
             using HttpClient client = new HttpClient();
             string url = _url.ToString() + _builder.ToString();
             HttpResponseMessage response = await client.GetAsync(url);
+            string? mediaType = response.Content.Headers?.ContentType?.MediaType;
+            ServiceTestResultDTO result = new ServiceTestResultDTO();
+            result.RecievedData = await response.Content.ReadAsStringAsync();
+
+            if (mediaType == "application/json")
+            {
+                result.Serialization = SerializationEnum.JSON;
+            }
+            else if (mediaType == "text/xml" || mediaType == "application/xml")
+            {
+                result.Serialization = SerializationEnum.XML;
+            }
+            else
+            {
+                throw new FormatException();
+            }
             
-            return await response.Content.ReadAsStringAsync();
+            return result;
         }
 
         private void SerilizeData()
