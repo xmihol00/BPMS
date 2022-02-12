@@ -32,5 +32,23 @@ namespace BPMS_Common.Enums
                     return "";
             }
         }
+
+        public static string ToMIME(this SerializationEnum value)
+        {
+            switch (value)
+            {
+                case SerializationEnum.JSON:
+                    return "application/json";
+                
+                case SerializationEnum.XML:
+                    return "text/xml";
+                
+                case SerializationEnum.URL:
+                    return "application/x-www-form-urlencoded";
+                
+                default:
+                    return "";
+            }
+        }
     }
 }

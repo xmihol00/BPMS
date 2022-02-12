@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,6 +11,7 @@ using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.Header;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using Newtonsoft.Json;
@@ -20,10 +22,11 @@ namespace BPMS_BL.Helpers
     public class HttpRequestHelper
     {
         private readonly StringBuilder _builder = new StringBuilder();
-        private readonly IEnumerable<DataSchemaDataDTO> _data;
+        private readonly IEnumerable<IDataSchemaData> _data;
         private readonly SerializationEnum _serialization;
         private readonly Uri _url;
         private readonly HttpMethodEnum _method;
+        private readonly List<HeaderRequestDTO> _headers;
 
         public HttpRequestHelper(ServiceRequestDTO service)
         {
@@ -31,14 +34,16 @@ namespace BPMS_BL.Helpers
             _serialization = service.Serialization;
             _url = new Uri(service.URL);
             _method = service.HttpMethod;
+            _headers = service.Headers;
         }
 
-        public HttpRequestHelper(IEnumerable<DataSchemaDataDTO> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
+        public HttpRequestHelper(IEnumerable<IDataSchemaData> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
         {
             _data = data;
             _serialization = serialization;
             _url = url;
             _method = method;
+            _headers = new List<HeaderRequestDTO>();
         }
 
         public string GenerateRequest()
@@ -47,6 +52,9 @@ namespace BPMS_BL.Helpers
             {
                 case HttpMethodEnum.GET:
                     return CreateGetRequest();
+                
+                case HttpMethodEnum.POST:
+                    return CreatePostRequest();
 
                 default:
                     return "";
@@ -60,6 +68,9 @@ namespace BPMS_BL.Helpers
                 case HttpMethodEnum.GET:
                     return await SendGetRequest();
 
+                case HttpMethodEnum.POST:
+                    return await SendPostRequest();
+
                 default:
                     throw new NotImplementedException();
             }
@@ -72,33 +83,120 @@ namespace BPMS_BL.Helpers
             SerilizeData();
             _builder.Append(" HTTP/1.1\r\nHost: ");
             _builder.Append(_url.DnsSafeHost);
+            _builder.Append("\r\nContent-Type: ");
+            _builder.Append(_serialization.ToMIME());
+            GenerateHeaders();
             _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n");
             return _builder.ToString();
+        }
+
+        private string CreatePostRequest()
+        {
+            _builder.Append("POST ");
+            _builder.Append(_url.AbsolutePath);
+            _builder.Append(" HTTP/1.1\r\nHost: ");
+            _builder.Append(_url.DnsSafeHost);
+            _builder.Append("\r\nContent-Type: ");
+            _builder.Append(_serialization.ToMIME());
+            GenerateHeaders();
+            _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
+            string header = _builder.ToString();
+            _builder.Clear();
+            SerilizeData();
+
+            return header + JToken.Parse(_builder.ToString()).ToString();
+        }
+
+        private void GenerateHeaders()
+        {
+            foreach(HeaderRequestDTO header in _headers)
+            {
+                _builder.Append("\r\n");
+                _builder.Append(header.Name);
+                _builder.Append(": ");
+                _builder.Append(header.Value);
+            }
+        }
+
+        private void GenerateHeaders(HttpRequestHeaders headers)
+        {
+            headers.Add("Accept", "application/json, text/xml, application/xml");
+            foreach(HeaderRequestDTO header in _headers)
+            {
+                headers.Add(header.Name, header.Value);
+            }
         }
 
         private async Task<ServiceTestResultDTO> SendGetRequest()
         {
             SerilizeData();
             using HttpClient client = new HttpClient();
-            string url = _url.ToString() + _builder.ToString();
-            HttpResponseMessage response = await client.GetAsync(url);
+            HttpRequestMessage request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(_url.ToString() + _builder.ToString()), 
+            };
+            GenerateHeaders(request.Headers);
+
+            return await CreateResult(await client.SendAsync(request));
+        }
+
+        private async Task<ServiceTestResultDTO> SendPostRequest()
+        {
+            SerilizeData();
+            using HttpClient client = new HttpClient();
+            HttpRequestMessage request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = _url, 
+                Content = new StringContent(_builder.ToString())
+                {
+                    Headers = { 
+                        ContentType = new MediaTypeHeaderValue(_serialization.ToMIME())
+                    }
+                }
+            };
+
+            GenerateHeaders(request.Headers);
+
+            return await CreateResult(await client.SendAsync(request));
+        }
+
+
+        private async Task<ServiceTestResultDTO> CreateResult(HttpResponseMessage response)
+        {
+            string content = await response.Content.ReadAsStringAsync();
             string? mediaType = response.Content.Headers?.ContentType?.MediaType;
             ServiceTestResultDTO result = new ServiceTestResultDTO();
-            result.RecievedData = JObject.Parse(await response.Content.ReadAsStringAsync()).ToString(Formatting.Indented);
 
-            if (mediaType == "application/json")
+            if (mediaType == "text/xml" || mediaType == "application/xml")
             {
-                result.Serialization = SerializationEnum.JSON;
-            }
-            else if (mediaType == "text/xml" || mediaType == "application/xml")
-            {
+                result.RecievedData = await response.Content.ReadAsStringAsync();
                 result.Serialization = SerializationEnum.XML;
             }
             else
             {
-                throw new FormatException();
+                try
+                {
+                    result.RecievedData = JObject.Parse(content).ToString(Formatting.Indented);
+                    result.Serialization = SerializationEnum.JSON;
+                }
+                catch
+                {
+                    try
+                    {
+                        result.RecievedData = JObject.Parse("{\"data\":" + content + "}").ToString(Formatting.Indented);
+                        result.Serialization = SerializationEnum.JSON;
+                    }
+                    catch
+                    {
+                        result.RecievedData = content;
+                        result.Serialization = null;
+                    }
+                }
             }
-            
+
+            response.Dispose();
             return result;
         }
 
@@ -107,7 +205,9 @@ namespace BPMS_BL.Helpers
             switch (_serialization)
             {
                 case SerializationEnum.JSON:
-                    SerilizeJSON();
+                    _builder.Append("{");
+                    SerilizeJSON(_data);
+                    _builder.Append("}");
                     break;
                 
                 case SerializationEnum.URL:
@@ -144,9 +244,43 @@ namespace BPMS_BL.Helpers
             _builder.Length = _builder.Length - 1;
         }
 
-        private void SerilizeJSON()
+        private void SerilizeJSON(IEnumerable<IDataSchemaData> data)
         {
-            return;
+            foreach (DataSchemaDataDTO schema in data)
+            {
+                _builder.Append("\"");
+                _builder.Append(String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias);
+                _builder.Append("\":");
+
+                switch (schema.Type)
+                {
+                    case DataTypeEnum.Object:
+                        _builder.Append("{");
+                        SerilizeJSON(schema.Children as IEnumerable<IDataSchemaData>);
+                        _builder.Append("},");
+                        break;
+
+                    case DataTypeEnum.String:
+                        _builder.Append("\"");
+                        _builder.Append(schema.Data);
+                        _builder.Append("\",");
+                        break;
+                    
+                    case DataTypeEnum.Number:
+                    case DataTypeEnum.Bool:
+                        _builder.Append(schema.Data);
+                        _builder.Append(",");
+                        break;
+                    
+                    case DataTypeEnum.Array:
+                        throw new NotImplementedException();
+                }
+            }
+
+            if (data.Count() > 0)
+            {
+                _builder.Length = _builder.Length - 1;
+            }
         }
     }
 }

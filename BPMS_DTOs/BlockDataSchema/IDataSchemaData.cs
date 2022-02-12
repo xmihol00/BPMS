@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.ServiceDataSchema
 {
-    public class DataSchemaDataDTO : DataSchema, IDataSchemaData
+    public interface IDataSchemaData : IDataSchema
     {
         public string? Data { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Alias { get; set; } = string.Empty;
-        public string? StaticData { get; set; } = string.Empty;
+        public string Name { get; set; }
+        public string Alias { get; set; }
+        public string? StaticData { get; set; }
     }
 }

@@ -101,7 +101,14 @@ namespace BPMS_BL.Facades
 
             IDbContextTransaction transaction = await _serviceDataSchemaRepository.CreateTransaction();
             
-            await ParseJObject(JObject.Parse(dto.RecievedData));
+            if (dto.Serialization == SerializationEnum.JSON)
+            {
+                await ParseJObject(JObject.Parse(dto.RecievedData));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
             await transaction.CommitAsync();
 
             return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Output));
@@ -223,7 +230,7 @@ namespace BPMS_BL.Facades
 
         private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, IFormCollection data)
         {
-            IEnumerable<DataSchemaDataDTO> nodes = CreateTree(await _serviceDataSchemaRepository.DataSchemasTest(serviceId));
+            IEnumerable<DataSchemaDataDTO> nodes = await _serviceDataSchemaRepository.DataSchemasTest(serviceId);
             foreach (DataSchemaDataDTO node in nodes)
             {
                 if (node.StaticData == null)
@@ -235,6 +242,8 @@ namespace BPMS_BL.Facades
                     node.Data = node.StaticData;
                 }
             }
+
+            nodes = CreateTree<DataSchemaDataDTO>(nodes);
 
             return nodes;
         }

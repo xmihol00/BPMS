@@ -1,4 +1,7 @@
 @model DataSchemaTestDTO
+@{
+    bool disabled = false;
+}
 
 @if (Model != null)
 {
@@ -13,6 +16,7 @@
                 case DataTypeEnum.String:
                     @if (schema.Compulsory)
                     {
+                        disabled = true;
                         <label class="input mb-3">
                             <input name="@schema.Id" class="input-field" data-reqi="@(schema.Id)Id" type="@schema.Type.ToHtmlType()" 
                                    placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
@@ -42,8 +46,8 @@
             }
         }
         <div class="d-flex justify-content-center">
-            <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Generovat dotaz" onclick="SetFormAction(this, '/Service/Generate')" disabled/>
-            <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Volat službu" onclick="SetFormAction(this, '/Service/Test')" disabled/>
+            <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Generovat dotaz" onclick="SetFormAction(this, '/Service/Generate')" disabled="@disabled" />
+            <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Volat službu" onclick="SetFormAction(this, '/Service/Test')" disabled="@disabled" />
             <button type="button" class="butn btn-d" onclick="CancelServiceTest()">Zrušit</button>
         </div>
     </form>

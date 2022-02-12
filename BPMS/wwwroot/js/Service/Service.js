@@ -104,9 +104,8 @@ function CreateNestedAtt(btn)
 {
     let form = document.getElementById("AttribServiceFormId");
     let btnParent = btn.parentNode;
-    let direction = btnParent.parentNode.parentNode.parentNode.getAttribute("data-direction");
 
-    ResetForm(form, direction, btnParent, btnParent.id);
+    ResetForm(form, "Input", btnParent, btnParent.id);
 }
 
 function EditAtrribute(form, btn, disabled)

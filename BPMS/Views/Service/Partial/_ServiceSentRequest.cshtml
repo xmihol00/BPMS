@@ -1,8 +1,17 @@
 @model ServiceTestResultDTO
 
 <h4>Odpověď na odeslaný dotaz</h4>
-<div id="ResponseTextId" class="verbatim mb-2">@Model.RecievedData</div>
-<div class="d-flex justify-content-center">
-    <button data-id="@Model.ServiceId" data-type="@Model.Serialization" class="butn btn-p"
-            onclick="GenerateOutAttributes(this)">Vygenerovat výstupní atributy</button>
-</div>
+@if (Model.Serialization != null)
+{
+    <div id="ResponseTextId" class="verbatim mb-2">@Model.RecievedData</div>
+    <div class="d-flex justify-content-center">
+        <button data-id="@Model.ServiceId" data-type="@Model.Serialization" class="butn btn-p"
+                onclick="GenerateOutAttributes(this)">Vygenerovat výstupní atributy</button>
+    </div>
+}
+else
+{
+    <div class="text-danger text-italic mb-2">Nepodařilo se formátovat odpověď</div>
+    <h5>Neformátovaná data</h5>
+    <div class="verbatim mb-2 text-break">@Model.RecievedData</div>
+}

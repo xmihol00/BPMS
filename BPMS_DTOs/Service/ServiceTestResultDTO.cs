@@ -12,6 +12,6 @@ namespace BPMS_DTOs.Service
     {
         public Guid ServiceId { get; set; }
         public string RecievedData { get; set; } = string.Empty;
-        public SerializationEnum Serialization { get; set; }
+        public SerializationEnum? Serialization { get; set; }
     }
 }
