@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.ServiceDataSchema
 {
-    public class ServiceDataSchemaTestDTO
+    public class DataSchemaTestDTO
     {
         public Guid ServiceId { get; set; }
-        public List<ServiceDataSchemaAllDTO> Schemas { get; set; } = new List<ServiceDataSchemaAllDTO>();
+        public List<DataSchemaAllDTO> Schemas { get; set; } = new List<DataSchemaAllDTO>();
     }
 }

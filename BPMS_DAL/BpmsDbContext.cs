@@ -28,6 +28,7 @@ namespace BPMS_DAL
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
         public DbSet<ServiceEntity>? Services { get; set; }
+        public DbSet<ServiceHeaderEntity>? Headers { get; set; }
         public DbSet<ServiceDataSchemaEntity>? ServiceSchemas { get; set; }
         public DbSet<SolvingRoleEntity>? SolvingRoles { get; set; }
         public DbSet<SystemAgendaEntity>? SystemAgendas { get; set; }
@@ -121,6 +122,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.DataSchema).WithMany(x => x.Conditions);
 
             modelBuilder.Entity<ServiceEntity>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<ServiceHeaderEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<ServiceHeaderEntity>().HasOne(x => x.Service).WithMany(x => x.Headers).HasForeignKey(x => x.ServiceId);
 
             modelBuilder.Entity<BlockAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
             modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.NoAction);

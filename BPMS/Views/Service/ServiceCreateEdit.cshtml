@@ -13,18 +13,52 @@
 
 <div id="PageNavId" class="page-navbar">
     <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto @(Model.Id == Guid.Empty ? "" : "mr-100")"></i></button>
         <h1 class="mb-0 pt-1 text-font">@ViewData["Title"]</h1>
         <div class="my-auto">
-            <input type="submit" form="CreateFormId" class="butn btn-s" @Html.Raw(Model.Id == Guid.Empty ? "value='Vytvořit' disabled" : "value='Uložit'") />
+            @if (Model.Id == Guid.Empty)
+            {
+                <input type="submit" form="CreateFormId" class="butn btn-s" value="Vytvořit" disabled />
+            }
+            else
+            {
+                <button type="button" class="butn btn-p" onclick="ShowCreateHeaderModal('HeaderModalId')">Nová hlavička</button>
+                <input type="submit" form="CreateFormId" class="butn btn-s" value="Uložit" />
+            }
         </div>
     </div>
+    <form id="HeaderModalId" class="mx-4 mt-4 mb-3 d-none" action="/Service/CreateEditHeader"
+          onsubmit="AjaxFormSubmit(event, 'ServiceHeadersId', null, HideModal)" oninput="InputValidator(this)">
+        <input type="hidden" name="ServiceId" value="@Model.Id">
+        <input type="hidden" name="Id" value="">
+        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+            <h2 class="mb-0">Tvorba hlavičky webové služby</h2>
+            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label class="input">
+                    <input class="input-field" type="text" placeholder=" " name="Name" data-reqi="HeaderNameLabelId" autocomplete="off" />
+                    <span id="HeaderNameLabelId" class="input-label color-required">Název</span>
+                </label>
+            </div>
+            <div class="col-6">
+                <label class="input">
+                    <input class="input-field" type="text" placeholder=" " name="Value" data-reqi="HeaderValueLabelId" autocomplete="off" />
+                    <span id="HeaderValueLabelId" class="input-label color-required">Hodnota</span>
+                </label>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <button form="HeaderModalId" type="submit" class="butn btn-s" disabled>Nahrát</button>
+        </div>
+    </form>
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="OverviewDivId" class="container-lg">
-        <form id="CreateFormId" class="row" method="post" action="/Service/CreateEdit/" oninput="InputValidator(this)">
+        <form id="CreateFormId" class="row" method="POST" action="/Service/CreateEdit/" oninput="InputValidator(this)">
             <input type="hidden" name="Id" value="@Model.Id" />
-            <h3 class="col-12">Informace o službě</h3>
+            <h2 class="col-12">Informace o službě</h2>
             <div class="col-12 mb-3">
                 <label class="input">
                     <input name="URL" class="input-field" type="text" data-url="URLLabelId" placeholder=" " value="@Model.URL"/>
@@ -91,14 +125,18 @@
                     <span class="input-label">Serializace dat</span>
                 </label>
             </div>
-            <div class="col-12 mb-2 pb-1">
+            <div class="col-12 mb-2">
                 <label class="input">
                     <textarea name="Description" class="input-field" type="text" placeholder=" ">@Model.Description</textarea>
                     <span class="input-label">Popis</span>
                 </label>
             </div>
         </form>
-        @await Html.PartialAsync("Partial/_ServiceAttribCreateEdit", Model.Id)
+        <h3>Hlavičky služby</h3>
+        <div id="ServiceHeadersId" class="mb-3">
+            @await Html.PartialAsync("Partial/_HeaderAll", Model.Headers)
+        </div>
+        @await Html.PartialAsync("Partial/_DataSchemaCreateEdit", Model.Id)
         <div class="row">
             <div class="col-12 col-xl-6">
                 <div class="d-flex justify-content-between mb-2">
@@ -117,8 +155,8 @@
                     </div>
                 </div>
                 <div id="InputSchemaId">
-                    @await Html.PartialAsync("Partial/_InputServiceDataSchema", 
-                           (Model.InputAttributes as IEnumerable<IServiceDataSchemaNode>))
+                    @await Html.PartialAsync("Partial/_InputDataSchema", 
+                           (Model.InputAttributes as IEnumerable<IDataSchemaNode>))
                 </div>
             </div>
             <div class="col-12 col-xl-6">
@@ -126,8 +164,8 @@
                     <h4 class="mt-1 mb-0" >Výstupní atributy</h4>
                 </div>
                 <div id="OutputSchemaId">
-                    @await Html.PartialAsync("Partial/_OutputServiceDataSchema", 
-                           (Model.OutputAttributes as IEnumerable<IServiceDataSchemaNode>))
+                    @await Html.PartialAsync("Partial/_OutputDataSchema", 
+                           (Model.OutputAttributes as IEnumerable<IDataSchemaNode>))
                 </div>
             </div>
             <hr>

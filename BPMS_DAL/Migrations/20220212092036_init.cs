@@ -74,6 +74,26 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Headers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Headers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Headers_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ServiceSchemas",
                 columns: table => new
                 {
@@ -787,6 +807,11 @@ namespace BPMS_DAL.Migrations
                 column: "OutBlockId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Headers_ServiceId",
+                table: "Headers",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Models_AgendaId",
                 table: "Models",
                 column: "AgendaId");
@@ -889,6 +914,9 @@ namespace BPMS_DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Flows");
+
+            migrationBuilder.DropTable(
+                name: "Headers");
 
             migrationBuilder.DropTable(
                 name: "NumberBlocks");

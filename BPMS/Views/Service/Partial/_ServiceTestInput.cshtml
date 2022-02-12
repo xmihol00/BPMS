@@ -1,11 +1,11 @@
-@model ServiceDataSchemaTestDTO
+@model DataSchemaTestDTO
 
 @if (Model != null)
 {
     <h4 class="mb-3">Zadejte testovací data</h4>
     <form id="ServiceTestFormId" method="post" action="/Service/Test" oninput="InputValidator(this)" onsubmit="AjaxFormSubmit(event, 'OutputInputId')">
         <input type="hidden" name="ServiceId" value="@Model.ServiceId" /> 
-        @foreach (ServiceDataSchemaAllDTO schema in Model.Schemas)
+        @foreach (DataSchemaAllDTO schema in Model.Schemas)
         {
             switch (schema.Type)
             {

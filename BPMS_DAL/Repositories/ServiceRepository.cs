@@ -40,9 +40,17 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<ServiceEntity> Detail(Guid id)
+        public Task<ServiceRequestDTO> ForRequest(Guid id)
         {
-            return _dbSet.FirstAsync(x => x.Id == id);
+            return _dbSet.Select(x => new ServiceRequestDTO 
+                         {
+                             Id = x.Id,
+                             HttpMethod = x.HttpMethod,
+                             Type = x.Type,
+                             Serialization = x.Serialization,
+                             URL = x.URL
+                         })
+                         .FirstAsync(x => x.Id == id);
         }
     }
 }

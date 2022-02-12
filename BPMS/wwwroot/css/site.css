@@ -582,6 +582,10 @@ body {
   padding-left: 3px;
 }
 
+.table-icon {
+  padding: 0px 3px;
+}
+
 .badge + span.p-icon {
   margin-left: 3.45em;
 }
@@ -594,4 +598,15 @@ body {
 
 .text-break {
   overflow-wrap: break-word;
+}
+
+.mr-100 {
+  margin-right: 100px;
+}
+
+.table-pad th, .table-pad td {
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
 }

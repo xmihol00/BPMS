@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    [Migration("20220209220325_init")]
+    [Migration("20220212092036_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -339,6 +339,30 @@ namespace BPMS_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ServiceHeaderEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Headers");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.SolvingRoleEntity", b =>
@@ -897,6 +921,17 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.ServiceHeaderEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.ServiceEntity", "Service")
+                        .WithMany("Headers")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.SystemAgendaEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.SystemEntity", "System")
@@ -1180,6 +1215,8 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceEntity", b =>
                 {
                     b.Navigation("DataSchemas");
+
+                    b.Navigation("Headers");
 
                     b.Navigation("ServiceTasks");
                 });

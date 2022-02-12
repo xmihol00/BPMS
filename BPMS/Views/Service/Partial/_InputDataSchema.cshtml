@@ -1,9 +1,9 @@
-@model IEnumerable<IServiceDataSchemaNode>
+@model IEnumerable<IDataSchemaNode>
 
 @if (Model != null && Model.Count() > 0)
 {
     <ul class="schema">
-        @foreach (IServiceDataSchemaNode node in Model)
+        @foreach (IDataSchemaNode node in Model)
         {
             <li>
                 <div class="d-flex justify-content-between">
@@ -30,7 +30,7 @@
                 </div>
                 @if (node.Type == DataTypeEnum.Object)
                 {
-                    @await Html.PartialAsync("Partial/_InputServiceDataSchema", node.Children as IEnumerable<IServiceDataSchemaNode>)
+                    @await Html.PartialAsync("Partial/_InputDataSchema", node.Children as IEnumerable<IDataSchemaNode>)
                 }
             </li>
         }

@@ -248,3 +248,33 @@ function GenerateOutAttributes(btn)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });    
 }
+
+function ShowCreateHeaderModal()
+{
+    let form = document.getElementById("HeaderModalId");
+    for (let input of form.getElementsByClassName("input-field"))
+    {
+        input.value = "";
+    }
+    InputValidator(form);
+    ShowModal("HeaderModalId");
+}
+
+function RemoveHeader(btn)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: "/Service/RemoveHeader/" + btn.parentNode.id,
+    })
+    .done(() => 
+    {
+        btn.parentNode.parentNode.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    }); 
+}

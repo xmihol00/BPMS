@@ -16,9 +16,9 @@ namespace BPMS_DAL.Repositories
     {
         public ServiceDataSchemaRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<ServiceDataSchemaDetailDTO> Detail(Guid id)
+        public Task<DataSchemaDetailDTO> Detail(Guid id)
         {
-            return _dbSet.Select(x => new ServiceDataSchemaDetailDTO 
+            return _dbSet.Select(x => new DataSchemaDetailDTO 
                          {
                             Id = x.Id,
                             ParentId = x.ParentId,
@@ -33,10 +33,10 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<ServiceDataSchemaNodeDTO>> DataSchemas(Guid serviceId, DirectionEnum direction)
+        public Task<List<DataSchemaNodeDTO>> DataSchemas(Guid serviceId, DirectionEnum direction)
         {
             return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == direction)
-                         .Select(x => new ServiceDataSchemaNodeDTO 
+                         .Select(x => new DataSchemaNodeDTO 
                          {
                             Id = x.Id,
                             ParentId = x.ParentId,
@@ -49,10 +49,10 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<ServiceDataSchemaDataDTO>> DataSchemasTest(Guid serviceId)
+        public Task<List<DataSchemaDataDTO>> DataSchemasTest(Guid serviceId)
         {
             return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input)
-                         .Select(x => new ServiceDataSchemaDataDTO 
+                         .Select(x => new DataSchemaDataDTO 
                          {
                             Id = x.Id,
                             ParentId = x.ParentId,
@@ -74,10 +74,10 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<ServiceDataSchemaAllDTO>> Test(Guid serviceId)
+        public Task<List<DataSchemaAllDTO>> Test(Guid serviceId)
         {
             return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input)
-                         .Select(x => new ServiceDataSchemaAllDTO 
+                         .Select(x => new DataSchemaAllDTO 
                          {
                              Alias = x.Alias,
                              Compulsory = x.Compulsory,

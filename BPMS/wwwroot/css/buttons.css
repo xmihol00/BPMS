@@ -4,7 +4,7 @@
     --primary-shadow-color: rgba(28, 160, 255, 0.66);
     --success-color: rgb(17, 167, 45);
     --success-shadow-color: rgba(30, 214, 23, 0.66);
-    --danger-color: rgb(156, 3, 3);
+    --danger-color: rgb(189, 7, 7);
     --danger-shadow-color: rgba(230, 21, 21, 0.66);
 }
 
@@ -42,17 +42,17 @@
     background-color: var(--danger-color);
 }
 
-.btn-p:hover {
+.btn-p:hover, .btn-p:focus {
     -webkit-box-shadow: 0px 0px 3px 1px var(--primary-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--primary-shadow-color);
 }
 
-.btn-s:hover {
+.btn-s:hover, .btn-s:focus {
     -webkit-box-shadow: 0px 0px 3px 1px var(--success-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--success-shadow-color);
 }
 
-.btn-d:hover {
+.btn-d:hover, .btn-d:focus {
     -webkit-box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
     box-shadow: 0px 0px 3px 1px var(--danger-shadow-color);
 }

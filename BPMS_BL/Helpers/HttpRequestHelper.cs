@@ -12,18 +12,28 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Helpers
 {
     public class HttpRequestHelper
     {
         private readonly StringBuilder _builder = new StringBuilder();
-        private readonly IEnumerable<ServiceDataSchemaDataDTO> _data;
+        private readonly IEnumerable<DataSchemaDataDTO> _data;
         private readonly SerializationEnum _serialization;
         private readonly Uri _url;
         private readonly HttpMethodEnum _method;
 
-        public HttpRequestHelper(IEnumerable<ServiceDataSchemaDataDTO> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
+        public HttpRequestHelper(ServiceRequestDTO service)
+        {
+            _data = service.Nodes;
+            _serialization = service.Serialization;
+            _url = new Uri(service.URL);
+            _method = service.HttpMethod;
+        }
+
+        public HttpRequestHelper(IEnumerable<DataSchemaDataDTO> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
         {
             _data = data;
             _serialization = serialization;
@@ -74,7 +84,7 @@ namespace BPMS_BL.Helpers
             HttpResponseMessage response = await client.GetAsync(url);
             string? mediaType = response.Content.Headers?.ContentType?.MediaType;
             ServiceTestResultDTO result = new ServiceTestResultDTO();
-            result.RecievedData = await response.Content.ReadAsStringAsync();
+            result.RecievedData = JObject.Parse(await response.Content.ReadAsStringAsync()).ToString(Formatting.Indented);
 
             if (mediaType == "application/json")
             {
@@ -121,7 +131,7 @@ namespace BPMS_BL.Helpers
         private void SerilizeURL()
         {
             _builder.Append("?");
-            foreach (ServiceDataSchemaDataDTO schema in _data)
+            foreach (DataSchemaDataDTO schema in _data)
             {
                 if (schema.Type != DataTypeEnum.Object && schema.Type != DataTypeEnum.Array)
                 {

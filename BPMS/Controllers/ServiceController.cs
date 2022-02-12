@@ -1,4 +1,5 @@
 using BPMS_BL.Facades;
+using BPMS_DTOs.Header;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Mvc;
@@ -36,9 +37,9 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEditSchema(ServiceDataSchemaCreateEditDTO dto)
+        public async Task<IActionResult> CreateEditSchema(DataSchemaCreateEditDTO dto)
         {
-            return PartialView($"Partial/_{dto.Direction}ServiceDataSchema", await _serviceFacade.CreateEditSchema(dto));
+            return PartialView($"Partial/_{dto.Direction}DataSchema", await _serviceFacade.CreateEditSchema(dto));
         }
 
         [HttpPost]
@@ -69,7 +70,20 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> GenerateAttributes(ServiceTestResultDTO dto)
         {
-            return PartialView("Partial/_OutputServiceDataSchema", await _serviceFacade.GenerateAttributes(dto)); 
+            return PartialView("Partial/_OutputDataSchema", await _serviceFacade.GenerateAttributes(dto)); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEditHeader(HeaderCreateEditDTO dto)
+        {
+            return PartialView("Partial/_HeaderAll", await _serviceFacade.CreateEditHeader(dto));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveHeader(Guid id)
+        {
+            await _serviceFacade.RemoveHeader(id);
+            return Ok();
         }
     }
 }

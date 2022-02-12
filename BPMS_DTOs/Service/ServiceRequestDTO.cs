@@ -10,17 +10,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Service
 {
-    public class ServiceEditPageDTO
+    public class ServiceRequestDTO
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
         public ServiceTypeEnum Type { get; set; }
         public SerializationEnum Serialization { get; set; }
         public HttpMethodEnum HttpMethod { get; set; }
         public string URL { get; set; } = string.Empty;
-        public IEnumerable<DataSchemaNodeDTO>? InputAttributes { get; set; }
-        public IEnumerable<DataSchemaNodeDTO>? OutputAttributes { get; set; }
-        public List<HeaderAllDTO> Headers { get; set; } = new List<HeaderAllDTO>();
+        public IEnumerable<DataSchemaDataDTO> Nodes { get; set; } = new List<DataSchemaDataDTO>();
+        public List<HeaderRequestDTO> Headers { get; set; } = new List<HeaderRequestDTO>();
     }
 }

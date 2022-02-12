@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.ServiceDataSchema
 {
-    public class ServiceDataSchema
+    public interface IDataSchema
     {
-        public IEnumerable<ServiceDataSchema>? Children { get; set; }
+        public IEnumerable<DataSchema>? Children { get; set; }
         public Guid? ParentId { get; set; }
         public Guid Id { get; set; }
         public DataTypeEnum Type { get; set; }
