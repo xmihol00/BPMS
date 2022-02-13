@@ -15,6 +15,7 @@ using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
+using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
 using BPMS_DTOs.User;
@@ -28,6 +29,8 @@ namespace BPMS_BL.Facades
         private readonly BlockAttributeMapRepository _blockAttributeMapRepository;
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
+        private readonly ServiceRepository _serviceRepository;
+        private readonly ServiceDataSchemaRepository _dataSchemaRepository;
         private readonly IMapper _mapper;
         private Guid _blockId;
         private bool _deepAttributeSearch = false;
@@ -35,14 +38,31 @@ namespace BPMS_BL.Facades
 
         public BlockModelFacade(BlockModelRepository blockModelRepository, BlockAttributeRepository blockAttributeRepository,
                                 BlockAttributeMapRepository blockAttributeMapRepository, PoolRepository poolRepository,
-                                SystemRepository systemRepository, IMapper mapper)
+                                SystemRepository systemRepository, ServiceRepository serviceRepository, 
+                                ServiceDataSchemaRepository dataSchemaRepository, IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
             _blockAttributeRepository = blockAttributeRepository;
             _blockAttributeMapRepository = blockAttributeMapRepository;
             _poolRepository = poolRepository;
             _systemRepository = systemRepository;
+            _serviceRepository = serviceRepository;
+            _dataSchemaRepository = dataSchemaRepository;
             _mapper = mapper;
+        }
+
+        public async Task Edit(BlockModelEditDTO dto)
+        {
+            BlockModelEntity block = await _blockModelRepository.Detail(dto.Id);
+            block.Name = dto.Name;
+            block.Description = dto.Description;
+
+            if (block is IServiceTaskModelEntity)
+            {
+                (block as IServiceTaskModelEntity).ServiceId = dto.ServiceId;
+            }
+
+            await _blockModelRepository.Save();
         }
 
         public async Task Remove(Guid id)
@@ -105,14 +125,12 @@ namespace BPMS_BL.Facades
             BlockModelConfigDTO dto;
             switch (entity)
             {
-                case ITaskModelEntity:
-                    dto = new UserTaskConfigDTO();
-                    (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.All(entity.Id);                   
-                    (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(entity.InFlows);
+                case IUserTaskModelEntity userTask:
+                    dto = await UserTaskConfig(userTask);
                     break;
-                
+
                 case IServiceTaskModelEntity serviceTask:
-                    dto = new BlockModelConfigDTO(); //TODO
+                    dto = await ServiceTaskConfig(serviceTask);
                     break;
 
                 case IStartEventModelEntity startEvent:
@@ -130,18 +148,15 @@ namespace BPMS_BL.Facades
                 case IParallelGatewayModelEntity parallelGateway:
                     dto = new BlockModelConfigDTO();
                     break;
-                
+
                 case ISendEventModelEntity sendEvent:
-                    dto = new SendEventConfigDTO();
-                    _deepAttributeSearch = true;
-                    (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(entity.InFlows);
+                    dto = await SendEventConfig(sendEvent);
                     break;
-                
+
                 case IRecieveEventModelEntity recieveEvent:
-                    dto = new RecieveEventConfigDTO();
-                    (dto as IRecievedMessageConfig).Message = await RecievedMessage(recieveEvent);
+                    dto = await RecieveEventConfig(recieveEvent);
                     break;
-                
+
                 default:
                     dto = new BlockModelConfigDTO();
                     break;
@@ -149,7 +164,64 @@ namespace BPMS_BL.Facades
 
             dto.Id = entity.Id;
             dto.Name = entity.Name;
+            dto.Description = entity.Description;
 
+            return dto;
+        }
+
+        private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
+        {
+            BlockModelConfigDTO dto = new RecieveEventConfigDTO();
+            (dto as IRecievedMessageConfig).Message = await RecievedMessage(recieveEvent);
+            return dto;
+        }
+
+        private async Task<BlockModelConfigDTO> SendEventConfig(ISendEventModelEntity sendEvent)
+        {
+            BlockModelConfigDTO dto = new SendEventConfigDTO();
+            _deepAttributeSearch = true;
+            (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(sendEvent.InFlows);
+            return dto;
+        }
+
+        private async Task<BlockModelConfigDTO> UserTaskConfig(IUserTaskModelEntity userTask)
+        {
+            BlockModelConfigDTO dto = new UserTaskConfigDTO();
+            (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.All(userTask.Id);
+            (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(userTask.InFlows);
+            
+            foreach (FlowEntity flow in userTask.InFlows)
+            {
+                if (flow.OutBlock is IServiceTaskModelEntity)
+                {
+                    (dto as IServiceOutputAttributes).ServiceOutputAttributes = 
+                        await _dataSchemaRepository.AsAttributes((flow.OutBlock as IServiceTaskModelEntity).ServiceId, DirectionEnum.Output);
+                }
+            }
+
+            foreach (FlowEntity flow in userTask.OutFlows)
+            {
+                if (flow.InBlock is IServiceTaskModelEntity)
+                {
+                    (dto as IServiceInputAttributes).ServiceInputAttributes = 
+                        await _dataSchemaRepository.AsAttributes((flow.InBlock as IServiceTaskModelEntity).ServiceId, DirectionEnum.Input);
+                }
+            }
+
+            return dto;
+        }
+
+        private async Task<BlockModelConfigDTO> ServiceTaskConfig(IServiceTaskModelEntity serviceTask)
+        {
+            BlockModelConfigDTO dto = new ServiceTaskConfigDTO();
+            IServiceConfig service = dto as IServiceConfig;
+            service.Current = serviceTask.ServiceId ?? Guid.Empty;
+            service.Services = await _serviceRepository.AllIdNames();
+            service.Services.Add(new ServiceIdNameDTO
+            {
+                Id = Guid.Empty,
+                Name = "Nevybrána"
+            });
             return dto;
         }
 

@@ -610,3 +610,7 @@ body {
   padding-left: 0.75rem !important;
   padding-right: 0.75rem !important;
 }
+
+.pt-05 {
+  padding-top: 0.125rem !important;
+}

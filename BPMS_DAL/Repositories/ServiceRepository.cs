@@ -52,5 +52,15 @@ namespace BPMS_DAL.Repositories
                          })
                          .FirstAsync(x => x.Id == id);
         }
+
+        public Task<List<ServiceIdNameDTO>> AllIdNames()
+        {
+            return _dbSet.Select(x => new ServiceIdNameDTO 
+                         {
+                             Id = x.Id,
+                             Name = x.Name
+                         })
+                         .ToListAsync();
+        }
     }
 }

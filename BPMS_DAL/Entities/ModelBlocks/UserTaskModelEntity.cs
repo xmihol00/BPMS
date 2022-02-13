@@ -8,7 +8,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Entities.ModelBlocks
 {
-    public class UserTaskModelEntity : BlockModelEntity, ITaskModelEntity, IAttributes
+    public class UserTaskModelEntity : BlockModelEntity, IUserTaskModelEntity, IAttributes
     {
         public UserTaskModelEntity() : base() {}
         public UserTaskModelEntity(PoolEntity pool) : base(pool) { }

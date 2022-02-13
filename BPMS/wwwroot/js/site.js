@@ -11,7 +11,32 @@ window.addEventListener('DOMContentLoaded', () =>
     {
         icon.parentNode.addEventListener("click", HistoryBack);
     }
+
+    ResizeTextAreas(document);
 });
+
+function ResizeTextAreas(element, modal = false)
+{
+    for (let textarea of element.getElementsByTagName("textarea"))
+    {
+        ResizeTextArea(textarea, modal);
+        textarea.addEventListener("input", ResizeTextArea);
+    }
+}
+
+function ResizeTextArea(event, modal = false)
+{
+    let aditional = modal ? 26 : 0;
+    let textarea = event.target || event;
+    if (textarea.scrollHeight < 60)
+    {
+        textarea.style.height = "60px";
+    }
+    else
+    {
+        textarea.style.height = `${textarea.scrollHeight + aditional}px`;
+    }
+}
 
 function HistoryBack()
 {
@@ -46,7 +71,9 @@ function ToggleSideBar()
 function ShowModalElement(contentId)
 {
     document.getElementById("ModalBackgroundId").classList.add("modal-background-show");
-    document.getElementById(contentId).classList.remove("d-none");
+    let modal = document.getElementById(contentId);
+    modal.classList.remove("d-none");
+    ResizeTextAreas(modal, true);
     document.getElementById("PageNavId").classList.add("page-navbar-modal");
     ModalContentId = contentId;
 }
@@ -69,6 +96,7 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, call
             .done((result) => 
             {
                 target.innerHTML = result;
+                ResizeTextAreas(target, true);
                 if (remember)
                 {
                     LoadedElements.push(targetId);
@@ -120,7 +148,7 @@ function FileSelected(element)
     }
 }
 
-function AjaxFormSubmit(event, targetId, callback = null, successCallback = null, failCallback = null)
+function AjaxFormSubmit(event, targetId = null, callback = null, successCallback = null, failCallback = null, hide = false)
 {
     event.preventDefault();
     let form = event.target;
@@ -141,7 +169,18 @@ function AjaxFormSubmit(event, targetId, callback = null, successCallback = null
     })
     .done((result) => 
     {
-        document.getElementById(targetId).innerHTML = result;
+        if (result && targetId)
+        {
+            let target = document.getElementById(targetId)
+            target.innerHTML = result;
+            ResizeTextAreas(target);
+        }
+
+        if (hide)
+        {
+            HideModal();
+        }
+
         if (successCallback)
         {
             successCallback();
@@ -218,7 +257,9 @@ function GetAjaxRequest(url, targetId)
     })
     .done((result) => 
     {
-        document.getElementById(targetId).innerHTML = result;
+        let target = document.getElementById(targetId);
+        target.innerHTML = result;
+        ResizeTextAreas(target);
     })
     .fail(() => 
     {

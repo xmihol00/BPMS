@@ -20,7 +20,9 @@ namespace BPMS_DAL.Repositories
         public Task<BlockModelEntity> Config(Guid id)
         {
             return _dbSet.Include(x => x.OutFlows)
+                             .ThenInclude(x => x.InBlock)
                          .Include(x => x.InFlows)
+                             .ThenInclude(x => x.OutBlock)
                          .FirstAsync(x => x.Id == id);
         }
 
@@ -71,6 +73,11 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync())
                          .GroupBy(x => x.BlockName)
                          .ToList();
+        }
+
+        public Task<BlockModelEntity> Detail(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
 
         public Task<BlockTypePoolIdDTO> BlockTypePoolId(Guid blockId)

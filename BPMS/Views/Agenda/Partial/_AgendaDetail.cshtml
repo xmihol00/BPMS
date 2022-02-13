@@ -5,23 +5,24 @@
 
 @if (Model != null)
 {
-    <div class="row">
-        <h1 class="text-right col-5 vertical-justify-center mb-0 text-font">@Model.Name</h1>
-        <div class="col-2">
-            <div>Správce:</div>
-            <div>Popis:</div>
-        </div>
-        <div class="col-5">
-            <b class="d-inline-block ml-4">@Model.AdministratorName</b>
-        </div>
+    <div id="AgendaInfoId" class="border-bottom pb-1 mb-2">
+        @await Html.PartialAsync("Partial/_AgendaInfo", Model)        
     </div>
-    <p>Sed ac dolor sit amet purus malesuada congue. Integer vulputate sem a nibh rutrum consequat. Fusce aliquam vestibulum ipsum. Proin mattis lacinia justo. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? Pellentesque ipsum. Maecenas lorem. Fusce consectetuer risus a nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Nam quis nulla. Aenean fermentum risus id tortor. Mauris dictum facilisis augue.</p>
     <div class="row">
         <div class="col-12 col-lg-6">
-            <h3 class="text-center text-font">Role a uživatelé</h3>
+            <div class="d-flex justify-content-around">
+                <h3 class="text-center text-font mb-0">Role a uživatelé</h3>
+                <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
+            </div>
+            <div id="AgendaRolesId" class="row">
+
+            </div>
         </div>
         <div class="col-12 col-lg-6">
-            <h3 class="text-center text-font">Modely agendy</h3>
+            <div class="d-flex justify-content-around">
+                <h3 class="text-center text-font mb-0">Modely agendy</h3>
+                <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
+            </div>
             @foreach (AllModelDTO modl in Model.Models)
             {
                 <div id="@modl.Id" class="shadow-box p-3 m-3 my-card bradius-card hover-card pointer" onclick="ShowModelModal(this)">

@@ -25,6 +25,8 @@ services.AddScoped<BlockAttributeMapRepository>();
 services.AddScoped<SystemRepository>();
 services.AddScoped<ServiceRepository>();
 services.AddScoped<ServiceHeaderRepository>();
+services.AddScoped<SolvingRoleRepository>();
+services.AddScoped<AgendaRoleUserRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

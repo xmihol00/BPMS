@@ -1,0 +1,18 @@
+@model IServiceConfig
+
+<label class="input">
+    <select class="input-select" name="ServiceId"> 
+        @foreach (ServiceIdNameDTO item in Model.Services)
+        {
+            if (item.Id == Model.Current)
+            {
+                <option value="@item.Id" selected>@item.Name</option>
+            }
+            else
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        }
+    </select>
+    <span class="input-label">Webová služba</span>
+</label>

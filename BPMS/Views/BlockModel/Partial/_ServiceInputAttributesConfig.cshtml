@@ -1,0 +1,39 @@
+@model IServiceInputAttributes
+
+@if (Model.ServiceInputAttributes != null)
+{
+    <h4 class="mt-2">Atributy volané webové služby</h4>
+    @if (Model.ServiceInputAttributes.Count > 0)
+    {
+        <div class="row border-bottom-2">
+            <div class="col-4 text-center text-bold">
+                Název
+            </div>
+            <div class="col-4 text-center text-bold">
+                Typ
+            </div>
+            <div class="col-2 text-center text-bold">
+                Povinný
+            </div>
+        </div>
+            
+        @foreach (DataSchemaAttributeDTO attrib in Model.ServiceInputAttributes)
+        {
+            <div class="row border-bottom pt-1 pb-1">
+                <div class="col-4 text-center text-bold">@attrib.Name</div>
+                <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
+                <div class="col-2 text-center">
+                    <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                </div>    
+            </div>
+        }
+    }
+    else
+    {
+        <div class="mb-2 text-center text-secondary text-italic">
+            Webová služba nemá žádné vstupní atributy.
+        </div>  
+    }
+}

@@ -1,0 +1,28 @@
+@model AgendaDetailPartialDTO
+<h1 class="text-center text-font">@Model.Name</h1>
+<div class="row">
+    <div class="col-5">
+        <h4 class="text-center text-font">Správce</h4>
+        <div class="d-flex justify-content-center">
+            <div class="me-2">
+                Jméno:<br>
+                Email:
+            </div>
+            <b class="d-block ms-2">
+                @Model.AdministratorName<br>
+                @Model.AdministratorEmail
+            </b>
+        </div>
+    </div>
+    <div class="col-7">
+        <h4 class="text-center text-font">Popis</h4>
+        @if (String.IsNullOrEmpty(Model.Description))
+        {
+            <span class="text-secondary text-italic text-center">Agenda nemá popis.</span>
+        }
+        else
+        {
+            @Model.Description
+        }
+    </div>
+</div>

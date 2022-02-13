@@ -36,6 +36,13 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Edit(BlockModelEditDTO dto)
+        {
+            await _blockModelFacade.Edit(dto);
+            return Ok();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _blockModelFacade.Remove(id);

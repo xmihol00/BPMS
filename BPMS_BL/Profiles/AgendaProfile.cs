@@ -14,6 +14,10 @@ namespace BPMS_BL.Profiles
         public AgendaProfile()
         {
             CreateMap<AgendaCreateDTO, AgendaEntity>();
+
+            CreateMap<AgendaEntity, AgendaDetailPartialDTO>()
+                .ForMember(dst => dst.AdministratorName, opt => opt.MapFrom(src => $"{src.Administrator.Name} {src.Administrator.Surname}"))
+                .ForMember(dst => dst.AdministratorEmail, opt => opt.MapFrom(src => src.Administrator.Email));
         }
     }
 }

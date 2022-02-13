@@ -4,6 +4,7 @@ using BPMS_DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    partial class BpmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220213220830_edit1")]
+    partial class edit1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,11 +65,7 @@ namespace BPMS_DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AgendaId");
-
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("AgendaRoles");
                 });
@@ -752,7 +750,7 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasOne("BPMS_DAL.Entities.AgendaEntity", "Agenda")
                         .WithMany("UserRoles")
-                        .HasForeignKey("AgendaId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("BPMS_DAL.Entities.SolvingRoleEntity", "Role")
@@ -761,7 +759,7 @@ namespace BPMS_DAL.Migrations
 
                     b.HasOne("BPMS_DAL.Entities.UserEntity", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Agenda");
 

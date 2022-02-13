@@ -221,6 +221,7 @@ namespace BPMS_BL.Facades
                 ParentId = parentId,
                 ServiceId = _serviceId,
                 Type = type,
+                StaticData = null
             };
 
             await _serviceDataSchemaRepository.Create(dataSchema);

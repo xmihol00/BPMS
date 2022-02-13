@@ -41,7 +41,13 @@ function AgendaDetail(element)
 
 function ShowModelModal(element)
 {
-    element.children[0].classList.add("h2");
+    let h1 = document.createElement("h1");
+    h1.classList.add("border-bottom");
+    h1.classList.add("text-center");
+    h1.classList.add("text-font");
+    h1.innerText = element.children[0].innerText;
+    element.children[0].remove();
+    element.prepend(h1);
     let content = document.getElementById("ModelModalId");
     content.children[0].children[0].innerHTML = element.innerHTML;
     content.classList.remove("d-none");
@@ -101,4 +107,27 @@ function ShowModelModal(element)
 
         LoadingImage = document.getElementById("BlockConfigTargetId").children[0];
     }, 700);
+}
+
+function RoleChanged(select)
+{
+    let addBtn = document.getElementById("AddRoleBtnId");
+    let createBtn = document.getElementById("CreateRoleBtnId");
+    let nameDiv = document.getElementById("NewRoleNameId");
+    let descrDiv = document.getElementById("NewRoleDescId");
+    
+    if (select.value == "Nevybrána")
+    {
+        addBtn.classList.add("d-none");
+        createBtn.classList.remove("d-none");
+        nameDiv.classList.remove("d-none");
+        descrDiv.classList.remove("d-none");
+    }
+    else
+    {
+        addBtn.classList.remove("d-none");
+        createBtn.classList.add("d-none");
+        nameDiv.classList.add("d-none");
+        descrDiv.classList.add("d-none");
+    }
 }

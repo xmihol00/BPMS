@@ -94,5 +94,18 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && 
                                                    x.ParentId == parentId && x.Direction == direction);
         }
+
+        public Task<List<DataSchemaAttributeDTO>> AsAttributes(Guid? serviceId, DirectionEnum direction)
+        {
+            return _dbSet.Where(x => x.ServiceId == serviceId && x.Type != DataTypeEnum.Object && 
+                                x.Direction == direction && x.StaticData == null)
+                         .Select(x => new DataSchemaAttributeDTO
+                         {
+                             Compulsory = x.Compulsory,
+                             Name = x.Name,
+                             Type = x.Type
+                         })
+                         .ToListAsync();
+        }
     }
 }

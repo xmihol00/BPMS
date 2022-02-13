@@ -62,14 +62,6 @@ function EditAttribute(button)
     form.querySelector("#AttribNameLabelId").classList.remove("color-required");
     let checked = element.children[3].children[0].classList.contains("bg-primary");
     form.querySelector("#CompulsoryId").checked = checked;
-    if (checked)
-    {
-        form.querySelector("#CompulsoryLabelId").classList.add("label-checkbox-checked");
-    }
-    else
-    {
-        form.querySelector("#CompulsoryLabelId").classList.remove("label-checkbox-checked");
-    }
     form.querySelector("#DescrId").value = element.children[4].innerText;
     for (let opt of form.querySelector("#TypeId").options)
     {
@@ -103,6 +95,7 @@ function EditAttribute(button)
 
     element.parentNode.insertBefore(form, element);
     element.classList.add("d-none");
+    form.addEventListener("submit", (event) => AjaxFormSubmit(event, 'BlockConfigTargetId'));
     form.classList.add("border-bottom");
     form.classList.remove("d-none");
     InputValidator(form);

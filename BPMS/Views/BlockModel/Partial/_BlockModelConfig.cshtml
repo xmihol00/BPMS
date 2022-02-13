@@ -2,20 +2,27 @@
 
 @if (Model != null)
 {
-    <form id="BlockEditFormId" class="row mt-1">
-        <div class="col-12">
+    <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, null, null, null, true)">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <div class="col-12 mb-3">
             <label class="input">
                 <input name="Name" class="input-field" type="text" placeholder=" " data-reqi="BlockNameLabelId" value="@Model.Name" />
                 <span id="BlockNameLabelId" class="input-label">Název</span>
             </label>
         </div>
-        <div class="col-12 mt-2">
-            <label class="input">
-                <textarea name="Description" class="input-field" placeholder=" " value="@Model.Description"></textarea>
+        <div class="col-12 mb-2">
+            <label class="input mb-2">
+                <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
                 <span class="input-label">Popis</span>
             </label>
         </div>
-        <div class="d-flex justify-content-center mt-2">
+        @if (Model is IServiceConfig)
+        {
+            <div class="col-12 mb-3">
+                @await Html.PartialAsync("Partial/_ServiceConfig", Model)
+            </div>
+        }
+        <div class="d-flex justify-content-center mb-2">
             @if (Model is IAttributesConfig)
             {
                 <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
@@ -24,7 +31,7 @@
         </div>
     </form>
     <form id="AttribCreateFormId" class="d-none mt-2 position-relative" method="post" action="/BlockModel/CreateEditAttribute" 
-          onsubmit="BlockConfigSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
+          onsubmit="AjaxFormSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
         <div class="vertical-justify-center config-buttons">
             <button type="submit" form="AttribCreateFormId" id="CreateAttBtnId" class="butn butn-sm btn-s mb-1" disabled><i class="fas fa-check"></i></button>
             <button type="button" id="CancelAttBtnId" class="butn butn-sm btn-d mt-1" onclick="CancelAddAttrib()"><i class="fas fa-times"></i></button>
@@ -73,10 +80,20 @@
     {   
         @await Html.PartialAsync("Partial/_AttributesConfig", Model)
     }
+
+    @if (Model is IServiceInputAttributes)
+    {
+        @await Html.PartialAsync("Partial/_ServiceInputAttributesConfig", Model)
+    }
     
     @if (Model is IInputAttributesConfig)
     {
         @await Html.PartialAsync("Partial/_InputAttributesConfig", Model)
+    }
+
+    @if (Model is IServiceOutputAttributes)
+    {
+        @await Html.PartialAsync("Partial/_ServiceOutputAttributesConfig", Model)
     }
 
     @if (Model is IRecievedMessageConfig)

@@ -43,10 +43,17 @@ namespace BPMS_DAL.Repositories
                          {
                              AdministratorId = x.AdministratorId,
                              AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
+                             AdministratorEmail = x.Administrator.Email,
                              Id = x.Id,
                              Name = x.Name,
                              Description = x.Description
                          })
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<AgendaEntity> DetailBase(Guid id)
+        {
+            return _dbSet.Include(x => x.Administrator)
                          .FirstAsync(x => x.Id == id);
         }
 
@@ -57,6 +64,7 @@ namespace BPMS_DAL.Repositories
                          {
                              AdministratorId = x.AdministratorId,
                              AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
+                             AdministratorEmail = x.Administrator.Email,
                              Id = x.Id,
                              Name = x.Name,
                              Description = x.Description
