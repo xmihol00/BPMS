@@ -43,6 +43,7 @@ namespace BPMS_BL.Facades
             AgendaDetailDTO dto = await _agendaRepository.Detail(id);
             dto.Models = await _modelRepository.OfAgenda(id);
             dto.AllAgendas = await _agendaRepository.All();
+            dto.Roles = await _solvingRoleRepository.Roles(id);
             return dto;
         }
 
@@ -72,10 +73,37 @@ namespace BPMS_BL.Facades
             return _mapper.Map<AgendaDetailPartialDTO>(agenda);
         }
 
+        public async Task AddUserRole(Guid userId, Guid agendaId, Guid roleId)
+        {
+            await _agendaRoleUserRepository.Create(new AgendaRoleUserEntity
+            {
+                AgendaId = agendaId,
+                RoleId = roleId,
+                UserId = userId
+            });
+
+            await _agendaRoleUserRepository.Save();
+        }
+
+        public async Task RemoveRole(Guid agendaId, Guid roleId)
+        {
+            foreach (AgendaRoleUserEntity role in await _agendaRoleUserRepository.ForRemoval(agendaId, roleId))
+            {
+                _agendaRoleUserRepository.Remove(role);
+            }
+            await _agendaRoleUserRepository.Save();
+        }
+
+        public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
+        {
+            return _userRepository.MissingInRole(agendaId, roleId);
+        }
+
         public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
             AgendaDetailPartialDTO detail = await _agendaRepository.DetailPartial(id);
             detail.Models = await _modelRepository.OfAgenda(id);
+            detail.Roles = await _solvingRoleRepository.Roles(id);
 
             return detail;
         }

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Role;
 using BPMS_Common.Enums;
+using BPMS_DTOs.User;
 
 namespace BPMS_DAL.Repositories
 {
@@ -23,7 +24,29 @@ namespace BPMS_DAL.Repositories
                          .Select(x => new RoleAllDTO
                          {
                              Id = x.Id,
-                             Name = x.Name
+                             Name = x.Name,
+                             Description = x.Description
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<List<RoleDetailDTO>> Roles(Guid agendaId)
+        {
+            return _dbSet.Include(x => x.UserRoles)
+                            .ThenInclude(x => x.User)
+                         .Where(x => x.UserRoles.Any(y => y.AgendaId == agendaId))
+                         .Select(x => new RoleDetailDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                             Users = x.UserRoles.Where(y => y.UserId != null)
+                                                .Select(y => new UserIdNameDTO
+                                                {
+                                                    Id = y.Id,
+                                                    FullName = $"{y.User.Name} {y.User.Surname}",
+                                                })
+                                                .ToList()
                          })
                          .ToListAsync();
         }

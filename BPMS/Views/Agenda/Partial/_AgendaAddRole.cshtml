@@ -1,6 +1,6 @@
 @model List<RoleAllDTO>
 
-<div class="col-12 mt-1 mb-2">
+<div class="col-12 mt-1">
     <label class="input">
         <select class="input-select" name="Id" oninput="RoleChanged(this)"> 
             @foreach (RoleAllDTO role in Model)
@@ -11,23 +11,23 @@
                 }
                 else
                 {
-                    <option value="@role.Id">@role.Name</option>
+                    <option value="@role.Id" data-desc="@role.Description">@role.Name</option>
                 }
             }
         </select>
         <span class="input-label">Existující role</span>
     </label>
 </div>
-<div id="NewRoleNameId" class="col-12 mt-2">
+<div id="NewRoleNameId" class="col-12 mt-3">
     <label class="input">
         <input class="input-field" type="text" placeholder=" " name="Name" data-reqi="RoleLabelId" 
                 autocomplete="off" value="" />
         <span id="RoleLabelId" class="input-label color-required">Název</span>
     </label>
 </div>
-<div id="NewRoleDescId" class="col-12 mt-3">
+<div class="col-12 mt-3">
     <label class="input mb-1">
-        <textarea name="Description" class="input-field" placeholder=" "></textarea>
+        <textarea id="RoleDescId" name="Description" class="input-field" placeholder=" "></textarea>
         <span class="input-label">Popis</span>
     </label>
 </div>

@@ -84,3 +84,21 @@ a.butn {
 a.butn:hover {
     color: #fff;
 }
+
+.btn-role-edit {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 100;
+}
+
+.btn-role-remove {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+}
+
+.btn-role-remove:hover {
+    color: red;
+}

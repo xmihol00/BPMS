@@ -18,16 +18,12 @@
         </div>
         <form id="CreateAgendaFormId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create"
               oninput="InputValidator(this)">
-            <div class="d-flex justify-content-center">
-                @await Html.PartialAsync("_LoadingImage")
-            </div>
+            <div class="loading-content"></div>
         </form>
     </div>
     <div id="PageContentId" class="d-flex pt-3">
         <div id="DetailDivId" class="d-none detail-div">
-            <div class="d-flex justify-content-between">
-                <img src="~/loading.svg" class="loading-to-detail">
-            </div>
+            <div class="loading-content"></div>
         </div>
         <div id="OverviewDivId" class="container-lg">
             <div class="row">

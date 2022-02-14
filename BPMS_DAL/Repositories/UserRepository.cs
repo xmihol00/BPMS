@@ -27,5 +27,17 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
+        {
+            return _dbSet.Include(x => x.UserRoles)
+                         .Where(x => x.UserRoles.All(y => y.RoleId != roleId || y.AgendaId != agendaId))
+                         .Select(x => new UserIdNameDTO
+                         {
+                             FullName = $"{x.Name} {x.Surname}",
+                             Id = x.Id
+                         })
+                         .ToListAsync();
+        }
     }
 }

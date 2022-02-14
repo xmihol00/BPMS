@@ -104,8 +104,6 @@ function ShowModelModal(element)
         {
             ele.addEventListener("click", () => ShowBlockDetail(ele.id));
         }
-
-        LoadingImage = document.getElementById("BlockConfigTargetId").children[0];
     }, 700);
 }
 
@@ -114,20 +112,125 @@ function RoleChanged(select)
     let addBtn = document.getElementById("AddRoleBtnId");
     let createBtn = document.getElementById("CreateRoleBtnId");
     let nameDiv = document.getElementById("NewRoleNameId");
-    let descrDiv = document.getElementById("NewRoleDescId");
+    let descrArea = document.getElementById("RoleDescId");
+    let option = select.options[select.selectedIndex];
     
-    if (select.value == "Nevybrána")
+    if (!option.getAttribute("value"))
     {
         addBtn.classList.add("d-none");
         createBtn.classList.remove("d-none");
         nameDiv.classList.remove("d-none");
-        descrDiv.classList.remove("d-none");
+        descrArea.value = "";
+        descrArea.readOnly = false;
+        ResizeTextArea(descrArea);
     }
     else
     {
         addBtn.classList.remove("d-none");
         createBtn.classList.add("d-none");
         nameDiv.classList.add("d-none");
-        descrDiv.classList.add("d-none");
+        descrArea.value = option.getAttribute("data-desc");
+        descrArea.readOnly = true;
+        ResizeTextArea(descrArea);
     }
+}
+
+function EditRole(btn)
+{
+    let agendaId = document.getElementById("AgendaIdId").value;
+    let target = btn.parentNode;
+    let roleId = target.id;
+
+    if (btn.classList.contains("text-prim"))
+    {
+        btn.classList.remove("text-prim");
+        target.lastChild.remove();
+        for (let ele of target.getElementsByClassName("role-remove-btn"))
+        {
+            ele.classList.add("d-none");
+        }
+        target.children[1].classList.add("d-none");
+    }
+    else
+    {
+        btn.classList.add("text-prim");
+        $.ajax(
+        {
+            async: true,
+            type: "GET",
+            url: `/Agenda/MissingInRole/${agendaId}/${roleId}`
+        })
+        .done((result) => 
+        {
+            let div = document.createElement("div");
+            div.innerHTML = result;
+            target.appendChild(div);
+        })
+        .fail(() => 
+        {
+            // TODO
+            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        });
+    
+        for (let ele of target.getElementsByClassName("role-remove-btn"))
+        {
+            ele.classList.remove("d-none");
+        }
+        target.children[1].classList.remove("d-none");
+    }
+}
+
+function AddUserToRole(btn)
+{
+    let parent = btn.parentNode.parentNode;
+    let select = parent.getElementsByTagName("select")[0]
+    let userId = select.value;
+    parent = parent.parentNode;
+    let roleId = parent.parentNode.id;
+    let agendaId = document.getElementById("AgendaIdId").value;
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Agenda/AddUserRole/${userId}/${agendaId}/${roleId}`
+    })
+    .done(() => 
+    {
+        let div = document.createElement("div");
+        div.classList.add("d-flex");
+        div.classList.add("justify-content-between");
+        div.innerHTML = `<b>${select.options[select.selectedIndex].innerText}</b><button id="${userId}" type="button" class="btn btn-sm role-remove-btn" onclick="RemoveUser(this)"><i class="fas fa-times"></i></button>`
+        parent.before(div);
+        select.options[select.selectedIndex].remove();
+        if (!select.options.length)
+        {
+            btn.disabled = true;
+        }
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function RemoveRole(btn)
+{
+    let agendaId = document.getElementById("AgendaIdId").value;
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Agenda/RemoveRole/${agendaId}/${btn.parentNode.id}`
+    })
+    .done(() => 
+    {
+        btn.parentNode.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });    
 }

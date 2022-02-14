@@ -120,15 +120,17 @@ function HideModal()
     
     if (ModalContentId)
     {
+        if (Callback)
+        {
+            console.log("calling");
+            Callback();
+            Callback = null;
+        }
+
         setTimeout(() => 
         {
             document.getElementById(ModalContentId).classList.add("d-none");
             ModalContentId = null;
-            if (Callback)
-            {
-                Callback();
-                Callback = null;
-            }
         }, 850);
     }
 }
@@ -266,4 +268,9 @@ function GetAjaxRequest(url, targetId)
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     }); 
+}
+
+function LoadingImageHtml()
+{
+    return "<div class='loading-content'></div>"
 }

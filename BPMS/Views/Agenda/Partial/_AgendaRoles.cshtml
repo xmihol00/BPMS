@@ -1,0 +1,24 @@
+@model List<RoleDetailDTO>
+
+@if (Model != null)
+{
+    @foreach (RoleDetailDTO role in Model)
+    {
+        <div class="col-12 col-md-6 mb-3">
+            <div id="@role.Id" class="shadow-box p-3 my-card bradius-card position-relative">
+                <button class="btn btn-role-edit text-prim-edit" type="button" onclick="EditRole(this)"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-role-remove d-none" type="button" onclick="RemoveRole(this)"><i class="fas fa-times"></i></button>
+                <h5 @Html.Raw((String.IsNullOrEmpty(role.Description) ? "" : $"data-title='{role.Description}'"))
+                    class="text-center border-bottom">@role.Name</h5>
+                @foreach (UserIdNameDTO user in role.Users)
+                {
+                    <div class="d-flex justify-content-between">
+                        <b>@user.FullName</b>
+                        <button id="@user.Id" type="button" class="btn btn-sm role-remove-btn d-none" onclick="RemoveUser(this)"><i class="fas fa-times"></i></button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+} 
+    

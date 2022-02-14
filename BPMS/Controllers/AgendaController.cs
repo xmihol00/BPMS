@@ -70,5 +70,28 @@ namespace BPMS.Controllers
             await _agendaFacade.AddRole(dto);
             return Ok(); // TODO
         }
+
+        [HttpGet]
+        [Route("/Agenda/MissingInRole/{agendaId}/{roleId}")]
+        public async Task<IActionResult> MissingInRole(Guid agendaId, Guid roleId)
+        {
+            return PartialView("Partial/_AgendaRoleNewUser", await _agendaFacade.MissingInRole(agendaId, roleId));
+        }
+
+        [HttpPost]
+        [Route("/Agenda/AddUserRole/{userId}/{agendaId}/{roleId}")]
+        public async Task<IActionResult> AddUserRole(Guid userId, Guid agendaId, Guid roleId)
+        {
+            await _agendaFacade.AddUserRole(userId, agendaId, roleId);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("/Agenda/RemoveRole/{agendaId}/{roleId}")]
+        public async Task<IActionResult> RemoveRole(Guid agendaId, Guid roleId)
+        {
+            await _agendaFacade.RemoveRole(agendaId, roleId);
+            return Ok();
+        }
     }
 }

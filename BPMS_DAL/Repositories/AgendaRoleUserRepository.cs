@@ -15,5 +15,10 @@ namespace BPMS_DAL.Repositories
     public class AgendaRoleUserRepository : BaseRepository<AgendaRoleUserEntity>
     {
         public AgendaRoleUserRepository(BpmsDbContext context) : base(context) {}
+
+        public Task<IEnumerable<AgendaRoleUserEntity>> ForRemoval(Guid agendaId, Guid roleId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

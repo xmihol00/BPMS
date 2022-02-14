@@ -1,0 +1,20 @@
+@model List<UserIdNameDTO>
+
+@if (Model != null)
+{
+    <div>
+        <label class="input mt-2 mb-2">
+            <select class="input-select"> 
+                @foreach (UserIdNameDTO user in Model)
+                {
+
+                    <option value="@user.Id">@user.FullName</option>
+                }
+            </select>
+            <span class="input-label">Nový uživatel</span>
+        </label>
+        <div class="d-flex justify-content-center">
+            <button type="button" class="butn btn-s" onclick="AddUserToRole(this)" @(Model.Count == 0 ? "disabled" : "")>Přidat uživatele</button>
+        </div>
+    </div>
+}

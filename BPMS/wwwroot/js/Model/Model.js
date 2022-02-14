@@ -1,12 +1,10 @@
 
 var BlockId = "";
-var LoadingImage = null;
 
 window.addEventListener('DOMContentLoaded', () => 
 {
     if (window.location.pathname.startsWith("/Model/Detail"))
     {
-        LoadingImage = document.getElementById("BlockConfigTargetId").children[0];
         for (let ele of document.getElementsByClassName("bpmn-block"))
         {
             ele.addEventListener("click", () => ShowBlockDetail(ele.id));
@@ -16,7 +14,7 @@ window.addEventListener('DOMContentLoaded', () =>
 
 function ShowBlockDetail(blockId)
 {
-    ShowModal("BlockConfigId", "/BlockModel/Config/" + blockId, "BlockConfigTargetId", null, false, HideModelHeader)
+    ShowModal("BlockConfigId", "/BlockModel/Config/" + blockId, "BlockConfigTargetId", false, HideModelHeader)
     BlockId = blockId;
 }
 
@@ -24,8 +22,8 @@ function HideModelHeader()
 {
     setTimeout(() => 
     {
-        document.getElementById("BlockConfigTargetId").innerHTML = LoadingImage.innerHTML;
-    }, 350);
+        document.getElementById("BlockConfigTargetId").innerHTML = LoadingImageHtml();
+    }, 850);
 }
 
 function ShowAddAttrib()
