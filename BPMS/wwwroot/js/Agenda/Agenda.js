@@ -41,13 +41,9 @@ function AgendaDetail(element)
 
 function ShowModelModal(element)
 {
-    let h1 = document.createElement("h1");
-    h1.classList.add("border-bottom");
-    h1.classList.add("text-center");
-    h1.classList.add("text-font");
-    h1.innerText = element.children[0].innerText;
-    element.children[0].remove();
-    element.prepend(h1);
+    let text = element.children[0].children[0].innerText;
+    element.children[0].innerHTML = `<h1 class="border-bottom text-center text-font">${text}</h1>`
+    element.children[0].id = "ModelNameId";
     let content = document.getElementById("ModelModalId");
     content.children[0].children[0].innerHTML = element.innerHTML;
     content.classList.remove("d-none");
@@ -226,11 +222,45 @@ function RemoveRole(btn)
     })
     .done(() => 
     {
+        btn.parentNode.parentNode.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+
+function RemoveUser(btn)
+{
+    let parent = btn.parentNode.parentNode;
+    let select = parent.getElementsByTagName("select")[0]
+    let userId = btn.id;
+    let roleId = parent.id;
+    let agendaId = document.getElementById("AgendaIdId").value;
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Agenda/RemoveUserRole/${userId}/${agendaId}/${roleId}`
+    })
+    .done(() => 
+    {
+        option = document.createElement("option");
+        option.value = userId;
+        option.innerText = btn.parentNode.children[0].innerText;
+        select.appendChild(option);
+        for (let butn of select.parentNode.parentNode.getElementsByTagName("button"))
+        {
+            butn.disabled = false;
+        }
         btn.parentNode.remove();
     })
     .fail(() => 
     {
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-    });    
+    });
 }

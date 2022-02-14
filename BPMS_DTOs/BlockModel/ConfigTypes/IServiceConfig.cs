@@ -13,6 +13,6 @@ namespace BPMS_DTOs.BlockModel.ConfigTypes
     public interface IServiceConfig
     {
         public List<ServiceIdNameDTO> Services { get; set; }
-        public Guid Current { get; set; }
+        public Guid? CurrentService { get; set; }
     }
 }

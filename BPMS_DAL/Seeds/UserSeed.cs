@@ -27,6 +27,22 @@ namespace BPMS_DAL.Seeds
                 Name = "Správce",
                 Surname = "System",
                 UserName = "spravce",
+            },
+            new UserEntity()
+            {
+                Id = Guid.Parse("6e250b64-ea22-4880-86d2-94d547b2e1b5"),
+                Email = "karel@test.cz",
+                Name = "Karel",
+                Surname = "Stavitel",
+                UserName = "kaja",
+            },
+            new UserEntity()
+            {
+                Id = Guid.Parse("342c2de7-eb92-44f9-acf1-41d5dade854b"),
+                Email = "pavel@test.cz",
+                Name = "Pavel",
+                Surname = "Svoboda",
+                UserName = "paja",
             }
         };
 

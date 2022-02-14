@@ -15,5 +15,7 @@ namespace BPMS_DAL.Entities.ModelBlocks
 
         public Guid? ServiceId { get; set; }
         public ServiceEntity? Service { get; set; }
+        public Guid? RoleId { get; set; }
+        public SolvingRoleEntity? Role { get; set; }
     }
 }

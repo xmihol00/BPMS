@@ -24,17 +24,19 @@ namespace BPMS_BL.Facades
         private readonly ModelRepository _modelRepository;
         private readonly SolvingRoleRepository _solvingRoleRepository;
         private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
+        private readonly BlockModelRepository _blockModelRepository;
         private readonly IMapper _mapper;
 
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
                             SolvingRoleRepository solvingRoleRepository, AgendaRoleUserRepository agendaRoleUserRepository, 
-                            IMapper mapper)
+                            BlockModelRepository blockModelRepository, IMapper mapper)
         {
             _agendaRepository = agendaRepository;
             _userRepository = userRepository;
             _modelRepository = modelRepository;
             _solvingRoleRepository = solvingRoleRepository;
             _agendaRoleUserRepository = agendaRoleUserRepository;
+            _blockModelRepository = blockModelRepository;
             _mapper = mapper;
         }
 
@@ -85,12 +87,30 @@ namespace BPMS_BL.Facades
             await _agendaRoleUserRepository.Save();
         }
 
+        public async Task RemoveUserRole(Guid userId, Guid agendaId, Guid roleId)
+        {
+            _agendaRoleUserRepository.Remove(await _agendaRoleUserRepository.RoleForRemoval(userId, agendaId, roleId));
+
+            await _agendaRoleUserRepository.Save();
+        }
+
         public async Task RemoveRole(Guid agendaId, Guid roleId)
         {
             foreach (AgendaRoleUserEntity role in await _agendaRoleUserRepository.ForRemoval(agendaId, roleId))
             {
                 _agendaRoleUserRepository.Remove(role);
             }
+
+            foreach (UserTaskModelEntity task in await _blockModelRepository.RolesForRemovalUserTaks(roleId, agendaId))
+            {
+                task.RoleId = null;
+            }
+
+            foreach (ServiceTaskModelEntity task in await _blockModelRepository.RolesForRemovalServiceTaks(roleId, agendaId))
+            {
+                task.RoleId = null;
+            }
+
             await _agendaRoleUserRepository.Save();
         }
 
@@ -110,17 +130,19 @@ namespace BPMS_BL.Facades
 
         public async Task<List<RoleAllDTO>> AddRole(Guid agendaId)
         {
-            List<RoleAllDTO> roles = await _solvingRoleRepository.AllNotInAgenda(agendaId);
-            roles.Add(new RoleAllDTO
-            {
-                Id = null,
-                Name = "Nevybrána"
-            });
+            List<RoleAllDTO> roles = new List<RoleAllDTO>{
+                new RoleAllDTO
+                {
+                    Id = null,
+                    Name = "Nevybrána"
+                }
+            };
+            roles.AddRange(await _solvingRoleRepository.AllNotInAgenda(agendaId));
 
             return roles;
         }
 
-        public async Task AddRole(RoleAddDTO dto)
+        public async Task<List<RoleDetailDTO>> AddRole(RoleAddDTO dto)
         {
             IDbContextTransaction transaction = await _agendaRepository.CreateTransaction();
             if (dto.Id == null)
@@ -144,6 +166,8 @@ namespace BPMS_BL.Facades
 
             await _agendaRoleUserRepository.Save();
             await transaction.CommitAsync();
+
+            return await _solvingRoleRepository.Roles(dto.AgendaId);
         }
     }
 }

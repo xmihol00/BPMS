@@ -15,10 +15,10 @@ namespace BPMS_DAL.Repositories
     {
         public ModelRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<AllModelDTO>> OfAgenda(Guid id)
+        public Task<List<ModelAllDTO>> OfAgenda(Guid id)
         {
             return _dbSet.Where(x => x.AgendaId == id)
-                         .Select(x => new AllModelDTO
+                         .Select(x => new ModelAllDTO
                          {
                              Id = x.Id,
                              Name = x.Name,

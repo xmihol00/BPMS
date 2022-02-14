@@ -1,10 +1,10 @@
 @model IServiceConfig
 
 <label class="input">
-    <select class="input-select" name="ServiceId"> 
+    <select required class="input-select" name="ServiceId"> 
         @foreach (ServiceIdNameDTO item in Model.Services)
         {
-            if (item.Id == Model.Current)
+            if (item.Id == Model.CurrentService)
             {
                 <option value="@item.Id" selected>@item.Name</option>
             }

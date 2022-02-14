@@ -43,7 +43,7 @@ namespace BPMS_DAL.Repositories
                              Users = x.UserRoles.Where(y => y.UserId != null)
                                                 .Select(y => new UserIdNameDTO
                                                 {
-                                                    Id = y.Id,
+                                                    Id = y.UserId,
                                                     FullName = $"{y.User.Name} {y.User.Surname}",
                                                 })
                                                 .ToList()

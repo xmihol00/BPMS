@@ -77,6 +77,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<UserTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.UserTasks).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.Sender).WithMany(x => x.Recievers).HasForeignKey(x => x.SenderId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
+            modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.ServiceTask).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
             modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");

@@ -15,6 +15,7 @@ using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
+using BPMS_DTOs.Role;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
@@ -55,11 +56,16 @@ namespace BPMS_BL.Facades
         {
             BlockModelEntity block = await _blockModelRepository.Detail(dto.Id);
             block.Name = dto.Name;
-            block.Description = dto.Description;
+            block.Description = dto.Description ?? "";
 
             if (block is IServiceTaskModelEntity)
             {
                 (block as IServiceTaskModelEntity).ServiceId = dto.ServiceId;
+                (block as IServiceTaskModelEntity).RoleId = dto.RoleId;
+            }
+            else if (block is IUserTaskModelEntity)
+            {
+                (block as IUserTaskModelEntity).RoleId = dto.RoleId;
             }
 
             await _blockModelRepository.Save();
@@ -189,7 +195,15 @@ namespace BPMS_BL.Facades
             BlockModelConfigDTO dto = new UserTaskConfigDTO();
             (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.All(userTask.Id);
             (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(userTask.InFlows);
-            
+            IRoleConfig roleConfig = dto as IRoleConfig;
+            roleConfig.CurrentRole = userTask.RoleId;
+            roleConfig.Roles.Add(new RoleAllDTO 
+            {
+                Id = null,
+                Name = "Nevybrána",
+            });
+            roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(userTask.PoolId));
+
             foreach (FlowEntity flow in userTask.InFlows)
             {
                 if (flow.OutBlock is IServiceTaskModelEntity)
@@ -215,13 +229,23 @@ namespace BPMS_BL.Facades
         {
             BlockModelConfigDTO dto = new ServiceTaskConfigDTO();
             IServiceConfig service = dto as IServiceConfig;
-            service.Current = serviceTask.ServiceId ?? Guid.Empty;
-            service.Services = await _serviceRepository.AllIdNames();
+            service.CurrentService = serviceTask.ServiceId;
             service.Services.Add(new ServiceIdNameDTO
             {
-                Id = Guid.Empty,
+                Id = null,
                 Name = "Nevybrána"
             });
+            service.Services.AddRange(await _serviceRepository.AllIdNames());
+
+            IRoleConfig roleConfig = dto as IRoleConfig;
+            roleConfig.CurrentRole = serviceTask.RoleId;
+            roleConfig.Roles.Add(new RoleAllDTO 
+            {
+                Id = null,
+                Name = "Nevybrána",
+            });
+            roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(serviceTask.PoolId));
+
             return dto;
         }
 

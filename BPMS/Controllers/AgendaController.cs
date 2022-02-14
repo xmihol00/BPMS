@@ -67,8 +67,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRole(RoleAddDTO dto)
         {
-            await _agendaFacade.AddRole(dto);
-            return Ok(); // TODO
+            return PartialView("Partial/_AgendaRoles", await _agendaFacade.AddRole(dto));
         }
 
         [HttpGet]
@@ -91,6 +90,14 @@ namespace BPMS.Controllers
         public async Task<IActionResult> RemoveRole(Guid agendaId, Guid roleId)
         {
             await _agendaFacade.RemoveRole(agendaId, roleId);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("/Agenda/RemoveUserRole/{userId}/{agendaId}/{roleId}")]
+        public async Task<IActionResult> RemoveUserRole(Guid userId, Guid agendaId, Guid roleId)
+        {
+            await _agendaFacade.RemoveUserRole(userId, agendaId, roleId);
             return Ok();
         }
     }

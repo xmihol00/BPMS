@@ -122,7 +122,6 @@ function HideModal()
     {
         if (Callback)
         {
-            console.log("calling");
             Callback();
             Callback = null;
         }

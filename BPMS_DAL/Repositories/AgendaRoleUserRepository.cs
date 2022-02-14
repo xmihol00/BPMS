@@ -16,9 +16,21 @@ namespace BPMS_DAL.Repositories
     {
         public AgendaRoleUserRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<IEnumerable<AgendaRoleUserEntity>> ForRemoval(Guid agendaId, Guid roleId)
+        public Task<List<AgendaRoleUserEntity>> ForRemoval(Guid agendaId, Guid roleId)
         {
-            throw new NotImplementedException();
+            return _dbSet.Where(x => x.RoleId == roleId && x.AgendaId == agendaId)
+                         .ToListAsync();
+        }
+
+        public Task<AgendaRoleUserEntity> RoleForRemoval(Guid userId, Guid agendaId, Guid roleId)
+        {
+            return _dbSet.Where(x => x.UserId == userId && x.RoleId == roleId && x.AgendaId == agendaId)
+                         .FirstAsync();
+        }
+
+        public Task<AgendaRoleUserEntity> Detail(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace BPMS_DTOs.User
 {
     public class UserIdNameDTO
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string FullName { get; set; } = string.Empty;
     }
 }

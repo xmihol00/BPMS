@@ -35,10 +35,19 @@
                         <a asp-area="" asp-controller="Task" asp-action="Overview"><i class="fas fa-tasks"></i> <span>Úkoly</span></a>
                     </li>
                     <li>
+                        <a asp-area="" asp-controller="Workflow" asp-action="Overview"><i class="fas fa-retweet workflow-icon"></i> <span>Workflow</span></a>
+                    </li>
+                    <li>
                         <a asp-area="" asp-controller="Agenda" asp-action="Overview"><i class="fas fa-list-alt"></i> <span>Agendy</span></a>
                     </li>
                     <li>
-                        <a asp-area="" asp-controller="Service" asp-action="Overview"><i class="fas fa-network-wired ml-service-icon"></i> <span>Webové služby</span></a>
+                        <a asp-area="" asp-controller="Service" asp-action="Overview"><i class="fas fa-satellite-dish"></i> <span>Webové služby</span></a>
+                    </li>
+                    <li>
+                        <a asp-area="" asp-controller="User" asp-action="Overview"><i class="fas fa-user-cog user-icon"></i> <span>Uživatelé</span></a>
+                    </li>
+                    <li>
+                        <a asp-area="" asp-controller="System" asp-action="Overview"><i class="fas fa-network-wired system-icon"></i> <span>Systémy</span></a>
                     </li>
                 </ul>
             </div>
@@ -54,8 +63,6 @@
         </div>
     </footer>
     @await RenderSectionAsync("Scripts", required: false)
-    <div id="ModalBackgroundId" class="modal-background" onclick="HideModal()">
-
-    </div>
+    <div id="ModalBackgroundId" class="modal-background" onclick="HideModal()"></div>
 </body>
 </html>

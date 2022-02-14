@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockModel
+namespace BPMS_DTOs.Model
 {
-    public class BlockModelEditDTO
+    public class ModelEditDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public Guid? ServiceId { get; set; }
-        public Guid? RoleId { get; set; }
+        public string SVG { get; set; } = string.Empty;
     }
 }

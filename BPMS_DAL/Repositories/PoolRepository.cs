@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.System;
+using BPMS_DTOs.Role;
 
 namespace BPMS_DAL.Repositories
 {
@@ -36,6 +37,24 @@ namespace BPMS_DAL.Repositories
                              SystemId = x.SystemId
                          })
                          .FirstAsync();
+        }
+
+        public Task<List<RoleAllDTO>> RolesOfAgenda(Guid poolId)
+        {
+            return _dbSet.Include(x => x.Model)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.UserRoles)
+                                    .ThenInclude(x => x.Role)
+                         .Where(x => x.Id == poolId)
+                         .SelectMany(x => x.Model.Agenda.UserRoles)
+                         .Select(x => x.Role)
+                         .Select(x => new RoleAllDTO
+                         {
+                            Id = x.Id,
+                            Name = x.Name
+                         })
+                         .Distinct()
+                         .ToListAsync();
         }
     }
 }

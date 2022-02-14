@@ -2,7 +2,7 @@
 
 @if (Model != null)
 {
-    <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, null, null, null, true)">
+    <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, null, null, null, true)" novalidate>
         <input type="hidden" name="Id" value="@Model.Id" />
         <div class="col-12 mb-3">
             <label class="input">
@@ -20,6 +20,12 @@
         {
             <div class="col-12 mb-3">
                 @await Html.PartialAsync("Partial/_ServiceConfig", Model)
+            </div>
+        }
+        @if (Model is IRoleConfig)
+        {
+            <div class="col-12 mb-3">
+                @await Html.PartialAsync("Partial/_RoleConfig", Model)
             </div>
         }
         <div class="d-flex justify-content-center mb-2">

@@ -1,0 +1,18 @@
+@model IRoleConfig
+
+<label class="input">
+    <select required class="input-select" name="RoleId"> 
+        @foreach (RoleAllDTO role in Model.Roles)
+        {
+            @if (role.Id == Model.CurrentRole)
+            {
+                <option value="@role.Id" selected>@role.Name</option>
+            }
+            else
+            {
+                <option value="@role.Id">@role.Name</option>
+            }
+        }
+    </select>
+    <span class="input-label">Řešitelská role</span>
+</label>

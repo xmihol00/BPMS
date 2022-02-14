@@ -4,6 +4,7 @@ using BPMS_DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    partial class BpmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220214201333_edit3")]
+    partial class edit3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -551,26 +553,6 @@ namespace BPMS_DAL.Migrations
                             PhoneNumber = "",
                             Surname = "System",
                             UserName = "spravce"
-                        },
-                        new
-                        {
-                            Id = new Guid("6e250b64-ea22-4880-86d2-94d547b2e1b5"),
-                            Email = "karel@test.cz",
-                            Name = "Karel",
-                            Password = "",
-                            PhoneNumber = "",
-                            Surname = "Stavitel",
-                            UserName = "kaja"
-                        },
-                        new
-                        {
-                            Id = new Guid("342c2de7-eb92-44f9-acf1-41d5dade854b"),
-                            Email = "pavel@test.cz",
-                            Name = "Pavel",
-                            Password = "",
-                            PhoneNumber = "",
-                            Surname = "Svoboda",
-                            UserName = "paja"
                         });
                 });
 

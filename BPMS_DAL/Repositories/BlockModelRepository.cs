@@ -10,6 +10,7 @@ using BPMS_DAL.Entities;
 using BPMS_Common.Enums;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
+using BPMS_DAL.Entities.ModelBlocks;
 
 namespace BPMS_DAL.Repositories
 {
@@ -89,6 +90,24 @@ namespace BPMS_DAL.Repositories
                             Type = x.GetType()
                         })
                         .FirstAsync();
+        }
+
+        public Task<List<UserTaskModelEntity>> RolesForRemovalUserTaks(Guid roleId, Guid agendaId)
+        {
+            return _context.Set<UserTaskModelEntity>()
+                           .Include(x => x.Pool)
+                               .ThenInclude(x => x.Model)
+                           .Where(x => x.RoleId == roleId && x.Pool.Model.AgendaId == agendaId)
+                           .ToListAsync();
+        }
+
+        public Task<List<ServiceTaskModelEntity>> RolesForRemovalServiceTaks(Guid roleId, Guid agendaId)
+        {
+            return _context.Set<ServiceTaskModelEntity>()
+                           .Include(x => x.Pool)
+                               .ThenInclude(x => x.Model)
+                           .Where(x => x.RoleId == roleId && x.Pool.Model.AgendaId == agendaId)
+                           .ToListAsync();
         }
     }
 }

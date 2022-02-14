@@ -32,6 +32,11 @@ namespace BPMS_BL.Facades
             return _modelRepository.Detail(id);
         }
 
+        public Task<object?> Edit(ModelEditDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<ModelHeaderDTO> Header(Guid id)
         {
             return _modelRepository.Header(id);

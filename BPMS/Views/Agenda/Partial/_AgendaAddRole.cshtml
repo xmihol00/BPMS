@@ -2,12 +2,12 @@
 
 <div class="col-12 mt-1">
     <label class="input">
-        <select class="input-select" name="Id" oninput="RoleChanged(this)"> 
+        <select required class="input-select" name="Id" oninput="RoleChanged(this)"> 
             @foreach (RoleAllDTO role in Model)
             {
                 if (role.Id == null)
                 {
-                    <option class="text-secondary text-italic" selected>@role.Name</option>
+                    <option value="" class="text-secondary text-italic" selected>@role.Name</option>
                 }
                 else
                 {
