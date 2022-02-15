@@ -47,3 +47,7 @@ FileStorePublished/
 
 mono_crash.*
 
+Migrations/
+
+SystemSeed.cs
+Migrations/

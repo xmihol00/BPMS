@@ -51,7 +51,7 @@ namespace BPMS_DAL.Seeds
             }
         };
 
-        public static void SeedSystems(this ModelBuilder modelBuilder)
+        private static void SeedSystems(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SystemEntity>(entity => entity.HasData(_systemSeeds));
         }
