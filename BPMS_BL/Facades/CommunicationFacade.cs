@@ -22,7 +22,7 @@ namespace BPMS_BL.Facades
         private readonly ModelRepository _modelRepository;
         private readonly UserRepository _userRepository;
 
-        public async Task<string> ShareImport(ModelShareDTO dto, string auth)
+        public async Task<string> ShareImport(string data, string auth)
         {
             return "";
         }
