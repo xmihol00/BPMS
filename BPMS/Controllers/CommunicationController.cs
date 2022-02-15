@@ -15,12 +15,12 @@ namespace BPMS.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ShareImport([FromBody] string data)
+        public async Task<IActionResult> ShareImport()
         {
-            Request.Body.Position = 0;
             using var reader = new StreamReader(Request.Body);
             string body = reader.ReadToEnd();
-            
+            string data = "";
+
             return Ok(await _communicationFacade.ShareImport(data, HttpContext.Request.Headers.Authorization));
         }
     }
