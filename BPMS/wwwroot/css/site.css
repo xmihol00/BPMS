@@ -112,7 +112,15 @@ body {
   display: block;
 }
 
-.bpmn-block {
+.bpmn-pool {
+  cursor: pointer;
+}
+
+.bpmn-not-config .bpmn-block {
+  cursor: default;
+}
+
+.bpmn-this-sys, .bpmn-block {
   cursor: pointer;
 }
 
@@ -658,7 +666,9 @@ body {
   visibility: hidden;
   font-size: 1rem;
   width: 100%;
+  max-width: max-content;
   cursor: text;
+  text-align: initial;
 }
 
 select[required]:invalid {

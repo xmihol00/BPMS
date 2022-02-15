@@ -13,7 +13,7 @@
         <div class="d-flex">
             <div class="container-lg">
                 <div id="ModelNameId">
-                    <h1 class="text-center border-bottom text-font">@Model.Name</h1>
+                    @await Html.PartialAsync("Partial/_ModelInfo", Model)
                 </div>
                 @Html.Raw(Model.SVG)
             </div>

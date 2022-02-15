@@ -100,14 +100,14 @@ namespace BPMS_BL.Facades
             }
             catch (ParsingException e)
             {
-                return (e.Message, _svg.ToString());
+                return (e.Message, _svg.ToString(SaveOptions.DisableFormatting));
             }
 
             _svg.Root?.Attribute("width")?.Remove();
             _svg.Root?.Attribute("height")?.Remove();
 
             _model.Name = dto.Name;
-            _model.SVG = _svg.ToString();
+            _model.SVG = _svg.ToString(SaveOptions.DisableFormatting);
             _model.AgendaId = dto.AgendaId;
             await _modelRepository.Create(_model);
 
@@ -134,7 +134,7 @@ namespace BPMS_BL.Facades
             return null;
         }
 
-        private void ChangeSvgId(string elementId, Guid newId, string? className = null)
+        private void ChangeSvg(string elementId, Guid newId, string? className = null)
         {
             if (elementId == "")
             {
@@ -201,7 +201,7 @@ namespace BPMS_BL.Facades
             {
                 PoolEntity pool = new PoolEntity(_model);
                 pool.Name = element.Attribute("name")?.Value ?? "";
-                ChangeSvgId(element.Attribute("id")?.Value ?? "", pool.Id);
+                ChangeSvg(element.Attribute("id")?.Value ?? "", pool.Id, "bpmn-pool bpmn-not-config");
                 _poolsDict[element.Attribute("processRef")?.Value ?? ""] = pool;
             }
 
@@ -301,7 +301,7 @@ namespace BPMS_BL.Facades
 
             blockModel.Name = block.Attribute("name")?.Value ?? "";
             string id = block.Attribute("id")?.Value ?? "";
-            ChangeSvgId(id, blockModel.Id, "bpmn-block");
+            ChangeSvg(id, blockModel.Id, "bpmn-block");
             _blocksDict[id] = blockModel; 
         }
 

@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.Model
+namespace BPMS_DTOs.System
 {
-    public class ModelEditDTO
+    public class SystemIdNameDTO
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
     }
 }

@@ -39,6 +39,11 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<ModelEntity> DetailRaw(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
         public Task<ModelHeaderDTO> Header(Guid id)
         {
             return _dbSet.Select(x => new ModelHeaderDTO

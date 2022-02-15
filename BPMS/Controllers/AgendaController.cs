@@ -33,10 +33,10 @@ namespace BPMS.Controllers
             AgendaDetailPartialDTO dto = await _agendaFacade.DetailPartial(id);
 
             return Ok(new
-                {
-                    detail = await this.RenderViewAsync("Partial/_AgendaDetail", dto, true),
-                    header = await this.RenderViewAsync("Partial/_AgendaDetailHeader", dto, true),
-                });
+            {
+                detail = await this.RenderViewAsync("Partial/_AgendaDetail", dto, true),
+                header = await this.RenderViewAsync("Partial/_AgendaDetailHeader", dto, true),
+            });
         }
 
         [HttpGet]

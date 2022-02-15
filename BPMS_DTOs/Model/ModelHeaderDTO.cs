@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Model
 {
-    public class ModelHeaderDTO
+    public class ModelHeaderDTO : ModelInfoDTO
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
     }
 }

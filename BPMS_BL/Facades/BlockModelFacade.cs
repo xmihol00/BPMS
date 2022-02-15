@@ -27,6 +27,12 @@ namespace BPMS_BL.Facades
     {
         private readonly BlockModelRepository _blockModelRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
+
+        public Task<object?> PoolConfig(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         private readonly BlockAttributeMapRepository _blockAttributeMapRepository;
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;

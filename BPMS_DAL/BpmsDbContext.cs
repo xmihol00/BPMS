@@ -133,7 +133,7 @@ namespace BPMS_DAL
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();
+            modelBuilder.SeedSystems();
         }
     }
-
 }

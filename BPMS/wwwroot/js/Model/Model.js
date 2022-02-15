@@ -1,5 +1,6 @@
 
 var BlockId = "";
+var PoolId = "";
 
 window.addEventListener('DOMContentLoaded', () => 
 {
@@ -9,6 +10,11 @@ window.addEventListener('DOMContentLoaded', () =>
         {
             ele.addEventListener("click", () => ShowBlockDetail(ele.id));
         }
+
+        for (let ele of document.getElementsByClassName("bpmn-pool"))
+        {
+            ele.addEventListener("click", () => ShowPoolDetail(ele.id));
+        }
     }
 });
 
@@ -16,6 +22,12 @@ function ShowBlockDetail(blockId)
 {
     ShowModal("BlockConfigId", "/BlockModel/Config/" + blockId, "BlockConfigTargetId", false, HideModelHeader)
     BlockId = blockId;
+}
+
+function ShowPoolDetail(poolId)
+{
+    ShowModal("PoolConfigId", "/Pool/Config/" + poolId, "PoolConfigTargetId", false, HideModelHeader)
+    PoolId = poolId;
 }
 
 function HideModelHeader()

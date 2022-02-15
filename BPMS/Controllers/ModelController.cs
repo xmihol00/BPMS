@@ -14,9 +14,14 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Header(Guid id)
+        public async Task<IActionResult> Transition(Guid id)
         {
-            return PartialView("Partial/_ModelHeader", await _modelFacade.Header(id));
+            ModelHeaderDTO header = await _modelFacade.Header(id);
+            return Ok(new
+            {
+                header = await this.RenderViewAsync("Partial/_ModelHeader", header, true),
+                info = await this.RenderViewAsync("Partial/_ModelInfo", header, true),
+            });
         }
 
         [HttpGet]
@@ -28,7 +33,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(ModelEditDTO dto)
         {
-            return View("ModelDetail", await _modelFacade.Edit(dto));
+            return PartialView("Partial/_ModelInfo", await _modelFacade.Edit(dto));
         }
     }
 }

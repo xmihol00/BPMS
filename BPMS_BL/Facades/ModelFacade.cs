@@ -32,9 +32,18 @@ namespace BPMS_BL.Facades
             return _modelRepository.Detail(id);
         }
 
-        public Task<object?> Edit(ModelEditDTO dto)
+        public async Task<ModelInfoDTO> Edit(ModelEditDTO dto)
         {
-            throw new NotImplementedException();
+            ModelEntity entity = await _modelRepository.DetailRaw(dto.Id);
+            entity.Name = dto.Name;
+            entity.Description = dto.Description ?? "";
+
+            await _modelRepository.Save();
+            return new ModelInfoDTO 
+            {
+                Description = entity.Description,
+                Name = entity.Name
+            };
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

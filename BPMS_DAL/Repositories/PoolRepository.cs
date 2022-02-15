@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.System;
 using BPMS_DTOs.Role;
+using BPMS_DTOs.Pool;
 
 namespace BPMS_DAL.Repositories
 {
@@ -25,6 +26,24 @@ namespace BPMS_DAL.Repositories
                             SystemId = x.System.Id
                          })
                          .FirstOrDefaultAsync(x => x.SystemId == id);
+        }
+
+        public Task<PoolEntity> Detail(Guid id)
+        {
+            return _dbSet.Include(x => x.Model)
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<PoolConfigDTO> Config(Guid id)
+        {
+            return _dbSet.Select(x => new PoolConfigDTO
+                         {
+                             SystemId = x.SystemId,
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                         })
+                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<SystemIdAgendaIdDTO> CurrentSystemIdAgendaId(Guid id)

@@ -4,6 +4,7 @@ using BPMS_DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    partial class BpmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220215085106_edit5")]
+    partial class edit5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -434,48 +436,6 @@ namespace BPMS_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Systems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Key = "",
-                            Name = "Tento systém",
-                            ObtainedKey = "",
-                            ObtainedName = "",
-                            URL = "",
-                            UniqueName = ""
-                        },
-                        new
-                        {
-                            Id = new Guid("90074a51-95a3-48a9-be3a-93b8ad3109d6"),
-                            Key = "ABCD789456",
-                            Name = "Test systém 1",
-                            ObtainedKey = "EFGH123456",
-                            ObtainedName = "sys1",
-                            URL = "https://localhost:5010/",
-                            UniqueName = "system1"
-                        },
-                        new
-                        {
-                            Id = new Guid("ac0706e2-c282-49e0-99c7-5322e3235e62"),
-                            Key = "789456ABCD",
-                            Name = "Test systém 2",
-                            ObtainedKey = "123456EFGH",
-                            ObtainedName = "sys2",
-                            URL = "https://localhost:5011/",
-                            UniqueName = "system2"
-                        },
-                        new
-                        {
-                            Id = new Guid("87e156a0-6762-42b1-b67e-af105ed9a811"),
-                            Key = "ABCD123456",
-                            Name = "Test systém 3",
-                            ObtainedKey = "EFGH789456",
-                            ObtainedName = "sys3",
-                            URL = "https://localhost:5012/",
-                            UniqueName = "system3"
-                        });
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.SystemRoleEntity", b =>

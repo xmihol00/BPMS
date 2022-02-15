@@ -21,6 +21,12 @@ namespace BPMS.Controllers
             return PartialView("Partial/_BlockModelConfig", await _blockModelFacade.Config(id));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> PoolConfig(Guid id)
+        {
+            return PartialView("Partial/_PoolConfig", await _blockModelFacade.PoolConfig(id));
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateEditAttribute(AttributeCreateEditDTO dto)
         {

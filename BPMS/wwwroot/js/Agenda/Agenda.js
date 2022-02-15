@@ -41,8 +41,6 @@ function AgendaDetail(element)
 
 function ShowModelModal(element)
 {
-    let text = element.children[0].children[0].innerText;
-    element.children[0].innerHTML = `<h1 class="border-bottom text-center text-font">${text}</h1>`
     element.children[0].id = "ModelNameId";
     let content = document.getElementById("ModelModalId");
     content.children[0].children[0].innerHTML = element.innerHTML;
@@ -59,19 +57,20 @@ function ShowModelModal(element)
     {
         async: true,
         type: "GET",
-        url: "/Model/Header/" + element.id
+        url: "/Model/Transition/" + element.id
     })
     .done((result) => 
     {
         if (ModalHeaderLoaded)
         {
-            navbar.innerHTML = result;
+            navbar.innerHTML = result.header;
             navbar.classList.remove("page-navbar-transition");
         }
         else
         {
-            ModalHeader = result;
+            ModalHeader = result.header;
         }
+        document.getElementById("ModelNameId").innerHTML = result.info;
         window.history.pushState({}, '', "/Model/Detail/" + element.id);
     })
     .fail(() => 
@@ -100,6 +99,12 @@ function ShowModelModal(element)
         {
             ele.addEventListener("click", () => ShowBlockDetail(ele.id));
         }
+        
+        for (let ele of document.getElementsByClassName("bpmn-pool"))
+        {
+            ele.addEventListener("click", () => ShowPoolDetail(ele.id));
+        }
+
     }, 700);
 }
 

@@ -27,12 +27,14 @@ services.AddScoped<ServiceRepository>();
 services.AddScoped<ServiceHeaderRepository>();
 services.AddScoped<SolvingRoleRepository>();
 services.AddScoped<AgendaRoleUserRepository>();
+services.AddScoped<PoolRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
 services.AddScoped<ModelFacade>();
 services.AddScoped<BlockModelFacade>();
 services.AddScoped<ServiceFacade>();
+services.AddScoped<PoolFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile));
 
