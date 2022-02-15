@@ -13,6 +13,7 @@ namespace BPMS_DTOs.Pool
 {
     public class PoolAddressDTO
     {
+        [JsonProperty]
         public static string URL { get; } = StaticData.ThisSystemURL;
         public string Key { get; set; } = string.Empty;
     }

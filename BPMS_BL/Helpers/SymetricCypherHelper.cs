@@ -15,13 +15,18 @@ namespace BPMS_BL.Helpers
             aes.IV = StaticData.IV;
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
-            using MemoryStream memoryStream = new MemoryStream();
-            using CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
-            using StreamWriter streamWriter = new StreamWriter(cryptoStream);
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                using (CryptoStream cryptoStream = new CryptoStream(memStream, encryptor, CryptoStreamMode.Write))
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
+                    {
+                        streamWriter.Write(JsonConvert.SerializeObject(data));
+                    }
 
-            streamWriter.Write(JsonConvert.SerializeObject(data)); 
-
-            return Convert.ToBase64String(memoryStream.ToArray());
+                    return Convert.ToBase64String(memStream.ToArray());
+                }
+            }
         }
 
         public static T? JsonDecrypt<T>(string cipherText) where T : class

@@ -53,9 +53,9 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public async Task<List<BlockModelShareDTO>> ShareBlocks(Guid modelId)
+        public Task<List<BlockModelShareDTO>> ShareBlocks(Guid modelId)
         {
-            return (await _dbSet.Include(x => x.Pool)
+            return _dbSet.Include(x => x.Pool)
                          .Where(x => x.Pool.ModelId == modelId)
                          .Select(x => new BlockModelShareDTO
                          {
@@ -63,11 +63,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              PoolId = x.PoolId,
-                             Type = x.GetType()
                          })
-                         .ToArrayAsync())
-                         .Where(x => x.Type != typeof(RecieveEventModelEntity))
-                         .ToList();
+                         .ToListAsync();
         }
 
         public Task<List<RecieveEventShareDTO>> ShareRecieveEvents(Guid modelId)
@@ -81,7 +78,6 @@ namespace BPMS_DAL.Repositories
                                Id = x.Id,
                                Name = x.Name,
                                PoolId = x.PoolId,
-                               Type = x.GetType(),
                                Editable = x.Editable,
                                SenderId = x.SenderId
                            })

@@ -25,14 +25,7 @@ namespace BPMS_BL.Facades
 
         public async Task<string> ShareImport(JsonElement json, string auth)
         {
-            try
-            {
-                ModelShareDTO dto = json.Deserialize<ModelShareDTO>();
-            }
-            catch (Exception e)
-            {
-
-            }
+            ModelShareDTO dto = json.Deserialize<ModelShareDTO>();
             return "";
         }
 

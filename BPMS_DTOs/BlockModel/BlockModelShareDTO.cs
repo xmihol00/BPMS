@@ -14,6 +14,5 @@ namespace BPMS_DTOs.BlockModel
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Guid PoolId { get; set; }
-        public Type? Type { get; set; }
     }
 }
