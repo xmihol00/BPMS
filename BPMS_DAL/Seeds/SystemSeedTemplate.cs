@@ -25,8 +25,6 @@ namespace BPMS_DAL.Seeds
                 Name = "Test systém 1",
                 Key = "ABCD789456",
                 ObtainedKey = "EFGH123456",
-                ObtainedName = "sys1",
-                UniqueName = "system1",
                 URL = "https://localhost:5010/"
             },
             new SystemEntity()
@@ -35,8 +33,6 @@ namespace BPMS_DAL.Seeds
                 Name = "Test systém 2",
                 Key = "789456ABCD",
                 ObtainedKey = "123456EFGH",
-                ObtainedName = "sys2",
-                UniqueName = "system2",
                 URL = "https://localhost:5011/"
             },
             new SystemEntity()
@@ -45,8 +41,6 @@ namespace BPMS_DAL.Seeds
                 Name = "Test systém 3",
                 Key = "ABCD123456",
                 ObtainedKey = "EFGH789456",
-                ObtainedName = "sys3",
-                UniqueName = "system3",
                 URL = "https://localhost:5012/"
             }
         };

@@ -119,7 +119,7 @@ namespace BPMS_BL.Facades
             ServiceRequestDTO service = await _serviceRepository.ForRequest(Guid.Parse(data["ServiceId"].First()));
             service.Nodes = await CreateRequestTree(service.Id, data);
             service.Headers = await _serviceHeaderRepository.ForRequest(service.Id);
-            ServiceTestResultDTO result = await new HttpRequestHelper(service).SendRequest();
+            ServiceTestResultDTO result = await new WebServiceHelper(service).SendRequest();
             result.ServiceId = service.Id;
             
             return result;
@@ -131,7 +131,7 @@ namespace BPMS_BL.Facades
             service.Nodes = await CreateRequestTree(service.Id, data);
             service.Headers = await _serviceHeaderRepository.ForRequest(service.Id);
 
-            return new HttpRequestHelper(service).GenerateRequest();
+            return new WebServiceHelper(service).GenerateRequest();
         }
 
         public async Task<DataSchemaTestDTO> Test(Guid id)

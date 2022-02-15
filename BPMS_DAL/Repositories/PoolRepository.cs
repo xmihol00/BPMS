@@ -10,6 +10,7 @@ using BPMS_DAL.Entities;
 using BPMS_DTOs.System;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.Pool;
+using BPMS_Common;
 
 namespace BPMS_DAL.Repositories
 {
@@ -70,6 +71,19 @@ namespace BPMS_DAL.Repositories
                              ModelId = x.ModelId,
                              Name = x.Name,
                              SystemURL = x.System.URL
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<List<PoolDstAddressDTO>> Addresses(Guid modelId)
+        {
+            return _dbSet.Include(x => x.System)
+                         .Where(x => x.Id != StaticData.ThisSystemId && x.ModelId == modelId)
+                         .Select(x => new PoolDstAddressDTO
+                         {
+                             Key = x.System.ObtainedKey,
+                             PoolId = x.Id,
+                             DestinationURL = x.System.URL
                          })
                          .ToListAsync();
         }

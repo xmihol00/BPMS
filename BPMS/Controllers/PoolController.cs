@@ -18,6 +18,7 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> Config(Guid id)
         {
+            
             return PartialView("Partial/_PoolConfig", await _PoolFacade.Config(id));
         }
 

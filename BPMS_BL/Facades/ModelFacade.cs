@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
+using BPMS_BL.Helpers;
+using BPMS_Common;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
+using BPMS_DTOs.Pool;
 using BPMS_DTOs.User;
 using Newtonsoft.Json;
 
@@ -61,7 +64,18 @@ namespace BPMS_BL.Facades
             dto.Blocks = await _blockModelRepository.ShareBlocks(id);
             dto.Blocks.AddRange(await _blockModelRepository.ShareRecieveEvents(id));
 
-            return JsonConvert.SerializeObject(dto);
+            string model = JsonConvert.SerializeObject(dto);
+            //XDocument svg = XDocument.Parse(dto.SVG);
+            //XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == StaticData.ThisSystemId.ToString());
+            //element.Attribute("class").SetValue("djs-group bpmn-pool");
+
+            bool shared = true;
+            foreach (PoolDstAddressDTO pool in await _poolRepository.Addresses(id))
+            {
+                shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, SymetricCypherHelper.JsonEncrypt(pool), model);
+            }
+
+            return model;
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

@@ -51,3 +51,4 @@ Migrations/
 
 SystemSeed.cs
 Migrations/
+.vscode/

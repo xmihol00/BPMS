@@ -19,7 +19,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Helpers
 {
-    public class HttpRequestHelper
+    public class WebServiceHelper
     {
         private readonly StringBuilder _builder = new StringBuilder();
         private readonly IEnumerable<IDataSchemaData> _data;
@@ -28,7 +28,7 @@ namespace BPMS_BL.Helpers
         private readonly HttpMethodEnum _method;
         private readonly List<HeaderRequestDTO> _headers;
 
-        public HttpRequestHelper(ServiceRequestDTO service)
+        public WebServiceHelper(ServiceRequestDTO service)
         {
             _data = service.Nodes;
             _serialization = service.Serialization;
@@ -37,7 +37,7 @@ namespace BPMS_BL.Helpers
             _headers = service.Headers;
         }
 
-        public HttpRequestHelper(IEnumerable<IDataSchemaData> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
+        public WebServiceHelper(IEnumerable<IDataSchemaData> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
         {
             _data = data;
             _serialization = serialization;
@@ -145,7 +145,7 @@ namespace BPMS_BL.Helpers
         {
             SerilizeData();
             using HttpClient client = new HttpClient();
-            HttpRequestMessage request = new HttpRequestMessage
+            using HttpRequestMessage request = new HttpRequestMessage // TODO
             {
                 Method = HttpMethod.Post,
                 RequestUri = _url, 
