@@ -2,6 +2,7 @@
 var ModalContentId = null;
 var LoadedElements = [];
 var Callback = null;
+var HideDelay = 850;
 
 document.addEventListener("keydown", KeyDownHandler);
 
@@ -129,7 +130,7 @@ function HideModal()
         {
             document.getElementById(ModalContentId).classList.add("d-none");
             ModalContentId = null;
-        }, 850);
+        }, HideDelay);
     }
 }
 
@@ -148,7 +149,7 @@ function FileSelected(element)
     }
 }
 
-function AjaxFormSubmit(event, targetId = null, callback = null, successCallback = null, failCallback = null, hide = false)
+function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, callback = null, successCallback = null, failCallback = null)
 {
     event.preventDefault();
     let form = event.target;
@@ -169,22 +170,23 @@ function AjaxFormSubmit(event, targetId = null, callback = null, successCallback
     })
     .done((result) => 
     {
-        if (result && targetId)
-        {
-            let target = document.getElementById(targetId)
-            target.innerHTML = result;
-            ResizeTextAreas(target);
-        }
-
         if (hide)
         {
             HideModal();
         }
-
-        if (successCallback)
+        
+        if (result && targetId)
         {
-            successCallback();
+            if (delay)
+            {
+                setTimeout(() => DisplayResult(targetId, result, successCallback), HideDelay);
+            }
+            else
+            {
+                DisplayResult(targetId, result, successCallback);
+            }
         }
+        
     })
     .fail(() => 
     {
@@ -195,6 +197,17 @@ function AjaxFormSubmit(event, targetId = null, callback = null, successCallback
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });        
+}
+
+function DisplayResult(targetId, result, successCallback)
+{
+    let target = document.getElementById(targetId)
+    target.innerHTML = result;
+    ResizeTextAreas(target);
+    if (successCallback)
+    {
+        successCallback();
+    }
 }
 
 function InputValidator(form)

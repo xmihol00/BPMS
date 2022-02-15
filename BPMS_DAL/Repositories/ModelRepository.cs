@@ -34,7 +34,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Description = x.Description,
                              Name = x.Name,
-                             SVG = x.SVG
+                             SVG = x.SVG,
+                             State = x.State
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -50,7 +51,8 @@ namespace BPMS_DAL.Repositories
                          {
                              Id = x.Id,
                              Description = x.Description,
-                             Name = x.Name
+                             Name = x.Name,
+                             State = x.State
                          })
                          .FirstAsync(x => x.Id == id);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BPMS_Common.Enums;
 
 namespace BPMS_DAL.Entities
 {
@@ -12,6 +13,7 @@ namespace BPMS_DAL.Entities
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string SVG { get; set; } = string.Empty;
+        public ModelStateEnum State { get; set; }
         public Guid? AgendaId { get; set; }
         public AgendaEntity? Agenda { get; set; }
         public List<PoolEntity> Pools { get; set; } = new List<PoolEntity>();

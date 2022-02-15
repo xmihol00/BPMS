@@ -1,5 +1,5 @@
 @model PoolConfigDTO
-<form id="PoolEditFormId" class="row mt-1" action="/Pool/Edit" onsubmit="AjaxFormSubmit(event, null, null, null, null, true)" novalidate>
+<form id="PoolEditFormId" class="row mt-1" action="/Pool/Edit" onsubmit="AjaxFormSubmit(event, 'Main', true, true, null, ModelAddEventListeners)" novalidate>
     <input type="hidden" name="Id" value="@Model.Id" />
     <div class="col-12 col-md-6 mb-3">
         <label class="input">
@@ -9,7 +9,7 @@
     </div>
     <div class="col-12 col-md-6 mb-3">
         <label class="input">
-            <select required class="input-select" name="SystemId" oninput="RoleChanged(this)"> 
+            <select required class="input-select" name="SystemId"> 
                 @foreach (SystemIdNameDTO system in Model.Systems)
                 {
                     if (system.Id == Model.SystemId)

@@ -27,13 +27,20 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(Guid id)
         {
-            return View("ModelDetail", await _modelFacade.Detail(id));
+            return View("ModelDetail", (await _modelFacade.Detail(id), ""));
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(ModelEditDTO dto)
         {
             return PartialView("Partial/_ModelInfo", await _modelFacade.Edit(dto));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Share(Guid id)
+        {
+            await _modelFacade.Share(id);
+            return Ok();
         }
     }
 }

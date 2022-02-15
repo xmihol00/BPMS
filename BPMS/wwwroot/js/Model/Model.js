@@ -51,7 +51,7 @@ function HideModelHeader()
     setTimeout(() => 
     {
         document.getElementById("BlockConfigTargetId").innerHTML = LoadingImageHtml();
-    }, 850);
+    }, HideDelay);
 }
 
 function ShowAddAttrib()
@@ -276,4 +276,25 @@ function RemoveAttribute(element)
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });
+}
+
+function ShareModel(btn)
+{
+    let modelId = document.getElementById("ModelIdId").id;
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Model/Share/${modelId}`
+    })
+    .done(() => 
+    {
+        btn.innerText = "Spustit";        
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });    
 }

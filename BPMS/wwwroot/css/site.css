@@ -116,6 +116,10 @@ body {
   cursor: pointer;
 }
 
+.bpmn-block {
+  cursor: default;
+}
+
 .bpmn-not-config .bpmn-block {
   cursor: default;
 }

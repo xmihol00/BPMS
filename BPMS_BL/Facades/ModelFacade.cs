@@ -46,6 +46,11 @@ namespace BPMS_BL.Facades
             };
         }
 
+        public Task Share(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<ModelHeaderDTO> Header(Guid id)
         {
             return _modelRepository.Header(id);

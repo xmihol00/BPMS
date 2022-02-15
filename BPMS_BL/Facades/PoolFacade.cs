@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
 using BPMS_Common;
+using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
 using BPMS_DTOs.User;
@@ -19,18 +21,21 @@ namespace BPMS_BL.Facades
     {
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
+        private readonly ModelRepository _modelRepository;
         private readonly IMapper _mapper;
 
-        public PoolFacade(PoolRepository PoolRepository, SystemRepository systemRepository, IMapper mapper)
+        public PoolFacade(PoolRepository PoolRepository, SystemRepository systemRepository, ModelRepository modelRepository,
+                          IMapper mapper)
         {
             _poolRepository = PoolRepository;
             _systemRepository = systemRepository;
+            _modelRepository = modelRepository;
             _mapper = mapper;
         }
 
-        public async Task Edit(PoolEditDTO dto)
+        public async Task<ModelDetailDTO> Edit(PoolEditDTO dto)
         {
-            PoolEntity entity = await _poolRepository.Detail(dto.Id);
+            PoolEntity entity = await _poolRepository.DetailForEdit(dto.Id);
             entity.Name = dto.Name;
             entity.Description = dto.Description ?? "";
 
@@ -51,8 +56,17 @@ namespace BPMS_BL.Facades
             }
 
             entity.SystemId = dto.SystemId;
+            entity.Model.State = ModelStateEnum.Sharable;
+            foreach (PoolEntity pool in entity.Model.Pools)
+            {
+                if (pool.SystemId == null)
+                {
+                    entity.Model.State = ModelStateEnum.New;
+                }
+            }
 
             await _poolRepository.Save();
+            return await _modelRepository.Detail(entity.ModelId);
         }
 
         public async Task<PoolConfigDTO> Config(Guid id)

@@ -28,9 +28,10 @@ namespace BPMS_DAL.Repositories
                          .FirstOrDefaultAsync(x => x.SystemId == id);
         }
 
-        public Task<PoolEntity> Detail(Guid id)
+        public Task<PoolEntity> DetailForEdit(Guid id)
         {
             return _dbSet.Include(x => x.Model)
+                            .ThenInclude(x => x.Pools)
                          .FirstAsync(x => x.Id == id);
         }
 

@@ -2,7 +2,7 @@
 
 @if (Model != null)
 {
-    <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, null, null, null, true)" novalidate>
+    <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
         <input type="hidden" name="Id" value="@Model.Id" />
         <div class="col-12 mb-3">
             <label class="input">

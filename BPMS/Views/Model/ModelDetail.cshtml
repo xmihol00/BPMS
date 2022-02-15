@@ -1,21 +1,21 @@
-@model ModelDetailDTO
+@model (ModelDetailDTO data, string path)
 @{
     ViewData["Title"] = "Konfigurace Model";
 }
 <script src="~/js/Model/Model.js"></script>
 
-@if (Model != null)
+@if (Model.data != null)
 {
     <div id="PageNavId" class="page-navbar">
-        @await Html.PartialAsync("Partial/_ModelHeader", Model as ModelHeaderDTO)
+        @await Html.PartialAsync($"{Model.path}Partial/_ModelHeader", Model.data)
     </div>
     <div id="PageContentId" class="pt-3">
         <div class="d-flex">
             <div class="container-lg">
                 <div id="ModelNameId">
-                    @await Html.PartialAsync("Partial/_ModelInfo", Model)
+                    @await Html.PartialAsync($"{Model.path}Partial/_ModelInfo", Model.data)
                 </div>
-                @Html.Raw(Model.SVG)
+                @Html.Raw(Model.data.SVG)
             </div>
             <div class="overview-nav">
 
