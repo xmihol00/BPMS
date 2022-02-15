@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
@@ -22,8 +23,16 @@ namespace BPMS_BL.Facades
         private readonly ModelRepository _modelRepository;
         private readonly UserRepository _userRepository;
 
-        public async Task<string> ShareImport(string data, string auth)
+        public async Task<string> ShareImport(JsonElement json, string auth)
         {
+            try
+            {
+                ModelShareDTO dto = json.Deserialize<ModelShareDTO>();
+            }
+            catch (Exception e)
+            {
+
+            }
             return "";
         }
 
