@@ -134,7 +134,7 @@ namespace BPMS_BL.Facades
             return null;
         }
 
-        private void ChangeSvg(string elementId, Guid newId, string? className = null)
+        private void ChangeSvg(string elementId, Guid newId, string? className = null, bool assignParent = false)
         {
             if (elementId == "")
             {
@@ -145,6 +145,10 @@ namespace BPMS_BL.Facades
             {
                 XElement svgElement = _svg.Descendants().First(x => x.Attribute("data-element-id")?.Value == elementId);
                 svgElement.Attribute("data-element-id")?.Remove();
+                if (assignParent)
+                {
+                    svgElement = svgElement.Parent;
+                }
                 svgElement.SetAttributeValue("id", newId);
 
                 if (className != null)
@@ -201,7 +205,7 @@ namespace BPMS_BL.Facades
             {
                 PoolEntity pool = new PoolEntity(_model);
                 pool.Name = element.Attribute("name")?.Value ?? "";
-                ChangeSvg(element.Attribute("id")?.Value ?? "", pool.Id, "bpmn-pool bpmn-not-config");
+                ChangeSvg(element.Attribute("id")?.Value ?? "", pool.Id, "bpmn-pool bpmn-not-config", true);
                 _poolsDict[element.Attribute("processRef")?.Value ?? ""] = pool;
             }
 

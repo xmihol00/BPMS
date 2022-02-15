@@ -94,17 +94,9 @@ function ShowModelModal(element)
         }
         page.innerHTML = content.innerHTML;
         content.innerHTML = "";
-        
-        for (let ele of document.getElementsByClassName("bpmn-block"))
-        {
-            ele.addEventListener("click", () => ShowBlockDetail(ele.id));
-        }
-        
-        for (let ele of document.getElementsByClassName("bpmn-pool"))
-        {
-            ele.addEventListener("click", () => ShowPoolDetail(ele.id));
-        }
 
+        ModelAddEventListeners();
+        
     }, 700);
 }
 

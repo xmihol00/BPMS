@@ -123,7 +123,6 @@ function HideModal()
         if (Callback)
         {
             Callback();
-            Callback = null;
         }
 
         setTimeout(() => 

@@ -36,16 +36,16 @@ namespace BPMS_BL.Facades
 
             if (dto.SystemId != entity.SystemId)
             {
-                XDocument svg = new XDocument(entity.Model.SVG);
+                XDocument svg = XDocument.Parse(entity.Model.SVG);
                 XElement svgPool = svg.Descendants().First(x => x.Attribute("id")?.Value == dto.Id.ToString());
                 XAttribute attribute = svgPool.Attribute("class");
                 if (dto.SystemId == StaticData.ThisSystemId)
                 {
-                    attribute.SetValue("djs-element djs-shape bpmn-this-sys");
+                    attribute.SetValue("djs-group bpmn-pool bpmn-this-sys");
                 }
                 else
                 {
-                    attribute.SetValue("djs-element djs-shape");
+                    attribute.SetValue("djs-group bpmn-pool");
                 }
                 entity.Model.SVG = svg.ToString();
             }

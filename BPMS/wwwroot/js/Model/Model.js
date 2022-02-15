@@ -6,20 +6,36 @@ window.addEventListener('DOMContentLoaded', () =>
 {
     if (window.location.pathname.startsWith("/Model/Detail"))
     {
-        for (let ele of document.getElementsByClassName("bpmn-block"))
-        {
-            ele.addEventListener("click", () => ShowBlockDetail(ele.id));
-        }
-
-        for (let ele of document.getElementsByClassName("bpmn-pool"))
-        {
-            ele.addEventListener("click", () => ShowPoolDetail(ele.id));
-        }
+        ModelAddEventListeners();
     }
 });
 
-function ShowBlockDetail(blockId)
+function ModelAddEventListeners()
 {
+    for (let pool of document.getElementsByClassName("bpmn-pool"))
+    {
+        if (pool.classList.contains("bpmn-this-sys"))
+        {
+            for (let block of pool.getElementsByClassName("bpmn-block"))
+            {
+                block.addEventListener("click", (event) => ShowBlockDetail(event, block.id));
+            }
+        }
+        else
+        {
+            for (let block of pool.getElementsByClassName("bpmn-block"))
+            {
+                block.addEventListener("click", (event) => event.stopPropagation());
+            }
+        }
+
+        pool.addEventListener("click", () => ShowPoolDetail(pool.id));
+    }
+}
+
+function ShowBlockDetail(event, blockId)
+{
+    event.stopPropagation();
     ShowModal("BlockConfigId", "/BlockModel/Config/" + blockId, "BlockConfigTargetId", false, HideModelHeader)
     BlockId = blockId;
 }
