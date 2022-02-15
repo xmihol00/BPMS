@@ -10,7 +10,7 @@ using System.Text;
 
 namespace BPMS_DAL.Seeds
 {
-    public static class SystemSeed
+    public static class SystemSeedTemplate
     {
         private static readonly List<SystemEntity> _systemSeeds = new List<SystemEntity>()
         {
@@ -51,7 +51,7 @@ namespace BPMS_DAL.Seeds
             }
         };
 
-        private static void SeedSystems(this ModelBuilder modelBuilder)
+        private static void SeedSystemsTemplate(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SystemEntity>(entity => entity.HasData(_systemSeeds));
         }
