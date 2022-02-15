@@ -24,7 +24,7 @@ namespace BPMS_BL.Facades
 
         public async Task<string> ShareImport(ModelShareDTO dto, string auth)
         {
-            throw new NotImplementedException();
+            return "";
         }
 
         private readonly FlowRepository _flowRepository;

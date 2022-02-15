@@ -52,3 +52,6 @@ Migrations/
 SystemSeed.cs
 Migrations/
 .vscode/
+DB_reset.sql
+reset_DB.sh
+shell_config.sh
