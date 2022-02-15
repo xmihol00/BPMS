@@ -10,7 +10,11 @@
             @switch (Model.State)
             {  
                 case ModelStateEnum.New:
-                    <button class="butn btn-s" title="Nejdříve musíte přiřadit systémy bazénům." disabled>Sdílet</button>
+                    <button class="butn btn-s" title="Nejdříve je nutné přiřadit systémy bazénům modelu." disabled>Sdílet</button>
+                    break;
+                
+                case ModelStateEnum.Incorrect:
+                    <button class="butn btn-s" title="Právě jeden bazén modelu musí být přiřazen tomuto systému." disabled>Sdílet</button>
                     break;
                 
                 case ModelStateEnum.Sharable:

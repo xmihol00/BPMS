@@ -59,6 +59,21 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
+        public Task<List<PoolShareDTO>> Share(Guid modelId)
+        {
+            return _dbSet.Where(x => x.ModelId == modelId)
+                            .Include(x => x.System)
+                         .Select(x => new PoolShareDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             ModelId = x.ModelId,
+                             Name = x.Name,
+                             SystemURL = x.System.URL
+                         })
+                         .ToListAsync();
+        }
+
         public Task<List<RoleAllDTO>> RolesOfAgenda(Guid poolId)
         {
             return _dbSet.Include(x => x.Model)

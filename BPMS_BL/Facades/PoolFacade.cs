@@ -57,13 +57,29 @@ namespace BPMS_BL.Facades
 
             entity.SystemId = dto.SystemId;
             entity.Model.State = ModelStateEnum.Sharable;
+            ModelStateEnum state = ModelStateEnum.New;
             foreach (PoolEntity pool in entity.Model.Pools)
             {
                 if (pool.SystemId == null)
                 {
                     entity.Model.State = ModelStateEnum.New;
                 }
+
+                if (pool.SystemId == StaticData.ThisSystemId)
+                {
+                    if (state == ModelStateEnum.Sharable)
+                    {
+                        state = ModelStateEnum.Incorrect;
+                        break;
+                    }
+                    else
+                    {
+                        state = ModelStateEnum.Sharable;
+                    }
+                }
             }
+
+            entity.Model.State = state == ModelStateEnum.Sharable ? entity.Model.State : state;
 
             await _poolRepository.Save();
             return await _modelRepository.Detail(entity.ModelId);

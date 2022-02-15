@@ -11,6 +11,7 @@ using BPMS_Common.Enums;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DAL.Entities.ModelBlocks;
+using BPMS_DTOs.BlockModel.ShareTypes;
 
 namespace BPMS_DAL.Repositories
 {
@@ -50,6 +51,41 @@ namespace BPMS_DAL.Repositories
                              Type = x.Type,
                          })
                          .ToListAsync();
+        }
+
+        public async Task<List<BlockModelShareDTO>> ShareBlocks(Guid modelId)
+        {
+            return (await _dbSet.Include(x => x.Pool)
+                         .Where(x => x.Pool.ModelId == modelId)
+                         .Select(x => new BlockModelShareDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                             PoolId = x.PoolId,
+                             Type = x.GetType()
+                         })
+                         .ToArrayAsync())
+                         .Where(x => x.Type != typeof(RecieveEventModelEntity))
+                         .ToList();
+        }
+
+        public Task<List<RecieveEventShareDTO>> ShareRecieveEvents(Guid modelId)
+        {
+            return _context.Set<RecieveEventModelEntity>()
+                           .Include(x => x.Pool)
+                           .Where(x => x.Pool.ModelId == modelId)
+                           .Select(x => new RecieveEventShareDTO
+                           {
+                               Description = x.Description,
+                               Id = x.Id,
+                               Name = x.Name,
+                               PoolId = x.PoolId,
+                               Type = x.GetType(),
+                               Editable = x.Editable,
+                               SenderId = x.SenderId
+                           })
+                           .ToListAsync();
         }
 
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> MappedInputAttributes(Guid blockId, Guid? id, string blockName, bool compulsoryAttributes)

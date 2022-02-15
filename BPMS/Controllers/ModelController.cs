@@ -39,8 +39,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Share(Guid id)
         {
-            await _modelFacade.Share(id);
-            return Ok();
+            return Ok(await _modelFacade.Share(id));
         }
     }
 }

@@ -9,6 +9,8 @@ namespace BPMS_Common.Enums
     public enum ModelStateEnum
     {
         New,
+        Shared,
+        Incorrect,
         Sharable,
         Executable,
         Waiting,

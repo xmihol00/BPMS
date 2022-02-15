@@ -10,6 +10,7 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.User;
+using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
 {
@@ -17,13 +18,19 @@ namespace BPMS_BL.Facades
     {
         private readonly ModelRepository _modelRepository;
         private readonly UserRepository _userRepository;
-
+        private readonly FlowRepository _flowRepository;
+        private readonly BlockModelRepository _blockModelRepository;
+        private readonly PoolRepository _poolRepository;
         private readonly IMapper _mapper;
 
-        public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, IMapper mapper)
+        public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
+                           BlockModelRepository blockModelRepository, PoolRepository poolRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
+            _flowRepository = flowRepository;
+            _blockModelRepository = blockModelRepository;
+            _poolRepository = poolRepository;
             _mapper = mapper;
         }
 
@@ -46,9 +53,15 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public Task Share(Guid id)
+        public async Task<string> Share(Guid id)
         {
-            throw new NotImplementedException();
+            ModelShareDTO dto = await _modelRepository.Share(id);
+            dto.Pools = await _poolRepository.Share(id);
+            dto.Flows = await _flowRepository.Share(id);
+            dto.Blocks = await _blockModelRepository.ShareBlocks(id);
+            dto.Blocks.AddRange(await _blockModelRepository.ShareRecieveEvents(id));
+
+            return JsonConvert.SerializeObject(dto);
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Model;
+using BPMS_DTOs.Pool;
 
 namespace BPMS_DAL.Repositories
 {
@@ -43,6 +44,19 @@ namespace BPMS_DAL.Repositories
         public Task<ModelEntity> DetailRaw(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<ModelShareDTO> Share(Guid id)
+        {
+            return _dbSet.Select(x => new ModelShareDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                             State = x.State,
+                             SVG = x.SVG
+                         })
+                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

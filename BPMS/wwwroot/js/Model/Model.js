@@ -280,7 +280,7 @@ function RemoveAttribute(element)
 
 function ShareModel(btn)
 {
-    let modelId = document.getElementById("ModelIdId").id;
+    let modelId = document.getElementById("ModelIdId").value;
 
     $.ajax(
     {
@@ -288,8 +288,9 @@ function ShareModel(btn)
         type: "POST",
         url: `/Model/Share/${modelId}`
     })
-    .done(() => 
+    .done((result) => 
     {
+        console.log(result);
         btn.innerText = "Spustit";        
     })
     .fail(() => 
