@@ -15,10 +15,10 @@ namespace BPMS.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ShareImport()
+        public async Task<IActionResult> ShareImport([FromBody] ModelShareDTO dto)
         {
-            using var reader = new StreamReader(Request.Body);
-            string body = reader.ReadToEnd();
+            //using var reader = new StreamReader(Request.Body);
+            //string body = reader.ReadToEnd();
             string data = "";
 
             return Ok(await _communicationFacade.ShareImport(data, HttpContext.Request.Headers.Authorization));
