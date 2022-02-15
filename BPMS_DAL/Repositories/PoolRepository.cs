@@ -78,7 +78,7 @@ namespace BPMS_DAL.Repositories
         public Task<List<PoolDstAddressDTO>> Addresses(Guid modelId)
         {
             return _dbSet.Include(x => x.System)
-                         .Where(x => x.Id != StaticData.ThisSystemId && x.ModelId == modelId)
+                         .Where(x => x.System.Id != StaticData.ThisSystemId && x.ModelId == modelId)
                          .Select(x => new PoolDstAddressDTO
                          {
                              Key = x.System.ObtainedKey,

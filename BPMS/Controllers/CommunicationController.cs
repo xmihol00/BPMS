@@ -17,7 +17,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> ShareImport(ModelShareDTO dto)
         {
-            return Ok(await _communicationFacade.ShareImport(dto, HttpContext.Request.Headers.Authorization.First()));
+            return Ok(await _communicationFacade.ShareImport(dto, HttpContext.Request.Headers.Authorization));
         }
     }
 }

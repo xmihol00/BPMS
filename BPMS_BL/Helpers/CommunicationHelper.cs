@@ -10,11 +10,14 @@ namespace BPMS_BL.Helpers
     {
         public static async Task<bool> ShareModel(string url, string auth, string payload)
         {
-            using HttpClient client = new HttpClient();
+            using HttpClientHandler httpClientHandler = new HttpClientHandler();
+            httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+
+            using HttpClient client = new HttpClient(httpClientHandler);
             using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(url + "/Model/ShareImport"), 
+                RequestUri = new Uri(url + "Communication/ShareImport"), 
                 Content = new StringContent(payload)
                 {
                     Headers = { 
