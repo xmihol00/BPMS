@@ -58,11 +58,11 @@ namespace BPMS_BL.Facades
 
         public async Task<string> Share(Guid id)
         {
-            ModelShareDTO dto = await _modelRepository.Share(id);
-            dto.Pools = await _poolRepository.Share(id);
-            dto.Flows = await _flowRepository.Share(id);
-            dto.Blocks = await _blockModelRepository.ShareBlocks(id);
-            dto.Blocks.AddRange(await _blockModelRepository.ShareRecieveEvents(id));
+            ModelEntity dto = await _modelRepository.Share(id);
+            //dto.Pools = await _poolRepository.Share(id);
+            //dto.Flows = await _flowRepository.Share(id);
+            //dto.Blocks = await _blockModelRepository.ShareBlocks(id);
+            //dto.Blocks.AddRange(await _blockModelRepository.ShareRecieveEvents(id));
 
             string model = JsonConvert.SerializeObject(dto);
             //XDocument svg = XDocument.Parse(dto.SVG);

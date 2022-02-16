@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BPMS_BL.Facades;
+using BPMS_DAL.Entities;
 using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace BPMS.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ShareImport(ModelShareDTO dto)
+        public async Task<IActionResult> ShareImport(ModelEntity dto)
         {
             return Ok(await _communicationFacade.ShareImport(dto, Request.Headers.Authorization));
         }
