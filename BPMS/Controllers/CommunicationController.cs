@@ -16,9 +16,9 @@ namespace BPMS.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ShareImport([FromBody] JsonElement json)
+        public async Task<IActionResult> ShareImport(ModelShareDTO dto)
         {
-            return Ok(await _communicationFacade.ShareImport(json, Request.Headers.Authorization));
+            return Ok(await _communicationFacade.ShareImport(dto, Request.Headers.Authorization));
         }
     }
 }
