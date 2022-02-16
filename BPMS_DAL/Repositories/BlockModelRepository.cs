@@ -141,5 +141,11 @@ namespace BPMS_DAL.Repositories
                            .Where(x => x.RoleId == roleId && x.Pool.Model.AgendaId == agendaId)
                            .ToListAsync();
         }
+
+        public Task<List<BlockModelEntity>> OfType(Type type)
+        {
+            return _dbSet.Where(x => x.GetType() == type)
+                         .ToListAsync();
+        }
     }
 }

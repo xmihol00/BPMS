@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -9,6 +10,7 @@ using BPMS_BL.Helpers;
 using BPMS_Common;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
+using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
@@ -58,13 +60,23 @@ namespace BPMS_BL.Facades
 
         public async Task<string> Share(Guid id)
         {
-            ModelEntity dto = await _modelRepository.Share(id);
+            ModelShareDTO dto = await _modelRepository.Share(id);
             //dto.Pools = await _poolRepository.Share(id);
-            //dto.Flows = await _flowRepository.Share(id);
+            dto.Flows = await _flowRepository.Share(id);
             //dto.Blocks = await _blockModelRepository.ShareBlocks(id);
             //dto.Blocks.AddRange(await _blockModelRepository.ShareRecieveEvents(id));
+            var name = typeof(ModelShareDTO).GetProperties()
+                                               .Where(x => x.PropertyType.IsGenericType)
+                                               .First(x => x.PropertyType.GetGenericArguments().First() == typeof(PoolShareDTO))
+                                               .Name;
+            
+
+            dto.GetType().GetProperty(name).SetValue(dto, await _poolRepository.Share(id));
+
+            var test = await _blockModelRepository.OfType(typeof(UserTaskModelEntity));
 
             string model = JsonConvert.SerializeObject(dto);
+
             //XDocument svg = XDocument.Parse(dto.SVG);
             //XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == StaticData.ThisSystemId.ToString());
             //element.Attribute("class").SetValue("djs-group bpmn-pool");

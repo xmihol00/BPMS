@@ -46,20 +46,16 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
-        public Task<ModelEntity> Share(Guid id)
+        public Task<ModelShareDTO> Share(Guid id)
         {
-            //return _dbSet.Select(x => new ModelShareDTO
-            //             {
-            //                 Description = x.Description,
-            //                 Id = x.Id,
-            //                 Name = x.Name,
-            //                 State = x.State,
-            //                 SVG = x.SVG
-            //             })
-            //             .FirstAsync(x => x.Id == id);
-            return _dbSet.Include(x => x.Pools)
-                            .ThenInclude(x => x.Blocks)
-                                .ThenInclude(x => x.InFlows)
+            return _dbSet.Select(x => new ModelShareDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                             State = x.State,
+                             SVG = x.SVG
+                         })
                          .FirstAsync(x => x.Id == id);
         }
 

@@ -19,7 +19,6 @@ namespace BPMS_DTOs.Model
         public string SVG { get; set; } = string.Empty;
         public ModelStateEnum State { get; set; }
         public List<PoolShareDTO> Pools { get; set; } = new List<PoolShareDTO>();
-        public List<BlockModelShareDTO> Blocks { get; set; } = new List<BlockModelShareDTO>();
         public List<FlowShareDTO> Flows  { get; set; } = new List<FlowShareDTO>();
     }
 }
