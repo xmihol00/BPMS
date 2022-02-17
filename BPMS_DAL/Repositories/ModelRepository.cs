@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
+using BPMS_DAL.Sharing;
 
 namespace BPMS_DAL.Repositories
 {
@@ -46,9 +47,9 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
-        public Task<ModelShareDTO> Share(Guid id)
+        public Task<ModelDetailShare> Share(Guid id)
         {
-            return _dbSet.Select(x => new ModelShareDTO
+            return _dbSet.Select(x => new ModelDetailShare
                          {
                              Description = x.Description,
                              Id = x.Id,

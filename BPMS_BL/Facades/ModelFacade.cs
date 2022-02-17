@@ -16,6 +16,7 @@ using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.User;
 using Newtonsoft.Json;
+using BPMS_DAL.Sharing;
 
 namespace BPMS_BL.Facades
 {
@@ -60,22 +61,23 @@ namespace BPMS_BL.Facades
 
         public async Task<string> Share(Guid id)
         {
-            ModelShareDTO dto = await _modelRepository.Share(id);
-            //dto.Pools = await _poolRepository.Share(id);
-            dto.Flows = await _flowRepository.Share(id);
-            //dto.Blocks = await _blockModelRepository.ShareBlocks(id);
-            //dto.Blocks.AddRange(await _blockModelRepository.ShareRecieveEvents(id));
-            var name = typeof(ModelShareDTO).GetProperties()
-                                               .Where(x => x.PropertyType.IsGenericType)
-                                               .First(x => x.PropertyType.GetGenericArguments().First() == typeof(PoolShareDTO))
-                                               .Name;
+            ModelDetailShare model = await _modelRepository.Share(id);
+            model.Pools = await _poolRepository.Share(id);
+            IEnumerable<IGrouping<Type, BlockModelEntity>> allBlocks = await _blockModelRepository.ShareBlocks(id);
+
+            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.BaseType == typeof(BlockModelEntity)))
+            {
+                string name = typeof(ModelDetailShare).GetProperties()
+                                                      .Where(x => x.PropertyType.IsGenericType)
+                                                      .Select(x => x.PropertyType.GetGenericArguments().First())
+                                                      .First(x => x == type)
+                                                      .Name;
+                
+                typeof(ModelDetailShare).GetProperty(name).SetValue(model, allBlocks.Where(x => x.Key == type));
+                //dynamic value = typeof(ModelDetailShare).GetProperty(name).GetValue(model);
+                //await _blockModelRepository.Create(value);
+            }
             
-
-            dto.GetType().GetProperty(name).SetValue(dto, await _poolRepository.Share(id));
-
-            var test = await _blockModelRepository.OfType(typeof(UserTaskModelEntity));
-
-            string model = JsonConvert.SerializeObject(dto);
 
             //XDocument svg = XDocument.Parse(dto.SVG);
             //XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == StaticData.ThisSystemId.ToString());
@@ -84,10 +86,10 @@ namespace BPMS_BL.Facades
             bool shared = true;
             foreach (PoolDstAddressDTO pool in await _poolRepository.Addresses(id))
             {
-                shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, SymetricCypherHelper.JsonEncrypt(pool), model);
+                shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, SymetricCypherHelper.JsonEncrypt(pool), "");
             }
 
-            return model;
+            return "";
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

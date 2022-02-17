@@ -53,18 +53,12 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<BlockModelShareDTO>> ShareBlocks(Guid modelId)
+        public async Task<IEnumerable<IGrouping<Type, BlockModelEntity>>> ShareBlocks(Guid modelId)
         {
-            return _dbSet.Include(x => x.Pool)
-                         .Where(x => x.Pool.ModelId == modelId)
-                         .Select(x => new BlockModelShareDTO
-                         {
-                             Description = x.Description,
-                             Id = x.Id,
-                             Name = x.Name,
-                             PoolId = x.PoolId,
-                         })
-                         .ToListAsync();
+            return (await _dbSet.Include(x => x.Pool)
+                                .Where(x => x.Pool.ModelId == modelId)
+                                .ToListAsync())
+                                .GroupBy(x => x.GetType());
         }
 
         public Task<List<RecieveEventShareDTO>> ShareRecieveEvents(Guid modelId)
