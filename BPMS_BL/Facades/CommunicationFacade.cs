@@ -16,6 +16,7 @@ using BPMS_DAL.Sharing;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.User;
+using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
@@ -45,6 +46,7 @@ namespace BPMS_BL.Facades
 
         public async Task<string> ShareImport(ModelDetailShare dto, string auth)
         {
+            //IDbContextTransaction transaction = await _modelRepository.CreateTransaction();
             await _modelRepository.Create(_mapper.Map<ModelEntity>(dto));
 
             foreach (PoolShareDTO poolDTO in dto.Pools)
@@ -73,7 +75,10 @@ namespace BPMS_BL.Facades
             await _blockModelRepository.CreateRange(dto.SendEvents);
             await _blockModelRepository.CreateRange(dto.RecieveEvents);
 
+            await _flowRepository.CreateRange(dto.Flows);
+           
             await _modelRepository.Save();
+
             return "";
         }
     }
