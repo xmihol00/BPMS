@@ -24,7 +24,11 @@ namespace BPMS_DAL.Entities
 
         [JsonIgnore]
         public PoolEntity? Pool { get; set; }
+
+        [JsonIgnore]
         public List<FlowEntity> InFlows { get; set; } = new List<FlowEntity>();
+        
+        [JsonIgnore]
         public List<FlowEntity> OutFlows { get; set; } = new List<FlowEntity>();
 
         [JsonIgnore]
