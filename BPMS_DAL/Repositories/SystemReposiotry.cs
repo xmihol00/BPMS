@@ -36,5 +36,12 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<Guid> IdFromUrl(string systemURL)
+        {
+            return _dbSet.Where(x => x.URL == systemURL)
+                         .Select(x => x.Id)
+                         .FirstOrDefaultAsync();
+        }
     }
 }

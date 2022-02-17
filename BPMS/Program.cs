@@ -38,7 +38,7 @@ services.AddScoped<ServiceFacade>();
 services.AddScoped<PoolFacade>();
 services.AddScoped<CommunicationFacade>();
 
-services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile));
+services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile));
 
 var app = builder.Build();
 
