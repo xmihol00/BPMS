@@ -99,7 +99,7 @@ namespace BPMS_BL.Facades
 
         private IEnumerable<T> GetCorrectBlocks<T>(IEnumerable<IGrouping<Type, BlockModelEntity>> allBlocks) where T: BlockModelEntity
         {
-            return allBlocks.Where(x => x.Key == typeof(T)).Select(x => x.First()).Cast<T>();
+            return allBlocks.Where(x => x.Key == typeof(T)).SelectMany(x => x).Cast<T>();
         }
     }
 }
