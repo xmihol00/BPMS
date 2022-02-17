@@ -24,7 +24,7 @@ namespace BPMS_DAL.Sharing
         public IEnumerable<StartEventModelEntity>? StartEvents { get; set; }
         public IEnumerable<EndEventModelEntity>? EndEvents { get; set; }
         public IEnumerable<SendEventModelEntity>? SendEvents { get; set; }
-        public IEnumerable<RecieveEventModelEntity>? RecieveEventModelEntities { get; set; }
+        public IEnumerable<RecieveEventModelEntity>? RecieveEvents { get; set; }
         public IEnumerable<ParallelGatewayModelEntity>? ParallelGateways { get; set; }
         public IEnumerable<ExclusiveGatewayModelEntity>? ExclusiveGateways { get; set; }
         public IEnumerable<FlowEntity> Flows { get; set; } = new List<FlowEntity>();

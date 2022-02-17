@@ -64,17 +64,14 @@ namespace BPMS_BL.Facades
                 }
             }
 
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.BaseType == typeof(BlockModelEntity)))
-            {
-                string name = typeof(ModelDetailShare).GetProperties()
-                                                      .Where(x => x.PropertyType.IsGenericType)
-                                                      .Select(x => x.PropertyType.GetGenericArguments().First())
-                                                      .First(x => x == type)
-                                                      .Name;
-                
-                dynamic value = typeof(ModelDetailShare).GetProperty(name).GetValue(dto);
-                await _blockModelRepository.CreateRange(value);
-            }
+            await _blockModelRepository.CreateRange(dto.EndEvents);
+            await _blockModelRepository.CreateRange(dto.StartEvents);
+            await _blockModelRepository.CreateRange(dto.UserTasks);
+            await _blockModelRepository.CreateRange(dto.ServiceTasks);
+            await _blockModelRepository.CreateRange(dto.ParallelGateways);
+            await _blockModelRepository.CreateRange(dto.ExclusiveGateways);
+            await _blockModelRepository.CreateRange(dto.SendEvents);
+            await _blockModelRepository.CreateRange(dto.RecieveEvents);
 
             await _modelRepository.Save();
             return "";

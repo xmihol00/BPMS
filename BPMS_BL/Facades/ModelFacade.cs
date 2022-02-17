@@ -74,7 +74,7 @@ namespace BPMS_BL.Facades
             model.ParallelGateways = GetCorrectBlocks<ParallelGatewayModelEntity>(allBlocks);
             model.ExclusiveGateways = GetCorrectBlocks<ExclusiveGatewayModelEntity>(allBlocks);
             model.SendEvents = GetCorrectBlocks<SendEventModelEntity>(allBlocks);
-            model.RecieveEventModelEntities = GetCorrectBlocks<RecieveEventModelEntity>(allBlocks);
+            model.RecieveEvents = GetCorrectBlocks<RecieveEventModelEntity>(allBlocks);
 
             string serilizedModel = JsonConvert.SerializeObject(model);
             //XDocument svg = XDocument.Parse(dto.SVG);
