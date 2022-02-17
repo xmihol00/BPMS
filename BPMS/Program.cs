@@ -57,7 +57,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Agenda}/{action=Overview}/{id?}");
 
 using var scope = app.Services.CreateScope();
 using var context = scope.ServiceProvider.GetService<BpmsDbContext>();

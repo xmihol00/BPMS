@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
+using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DTOs.Pool;
 
 namespace BPMS_DAL.Sharing
@@ -18,14 +19,14 @@ namespace BPMS_DAL.Sharing
         public string SVG { get; set; } = string.Empty;
         public ModelStateEnum State { get; set; }
         public IEnumerable<PoolShareDTO> Pools { get; set; } = new List<PoolShareDTO>();
-        public IEnumerable<UserTaskModelEntity> UserTasks { get; set; } = new List<UserTaskModelEntity>();
-        public IEnumerable<ServiceTaskModelEntity> ServiceTasks { get; set; } = new List<ServiceTaskModelEntity>();
-        public IEnumerable<StartEventModelEntity> StartEvents { get; set; } = new List<StartEventModelEntity>();
-        public IEnumerable<EndEventModelEntity> EndEvents { get; set; } = new List<EndEventModelEntity>();
-        public IEnumerable<SendEventModelEntity> SendEvents { get; set; } = new List<SendEventModelEntity>();
-        public IEnumerable<RecieveEventModelEntity> RecieveEventModelEntities { get; set; } = new List<RecieveEventModelEntity>();
-        public IEnumerable<ParallelGatewayModelEntity> ParallelGateways { get; set; } = new List<ParallelGatewayModelEntity>();
-        public IEnumerable<ExclusiveGatewayModelEntity> ExclusiveGateways { get; set; } = new List<ExclusiveGatewayModelEntity>();
+        public IEnumerable<UserTaskModelEntity>? UserTasks { get; set; }
+        public IEnumerable<ServiceTaskModelEntity>? ServiceTasks { get; set; }
+        public IEnumerable<StartEventModelEntity>? StartEvents { get; set; }
+        public IEnumerable<EndEventModelEntity>? EndEvents { get; set; }
+        public IEnumerable<SendEventModelEntity>? SendEvents { get; set; }
+        public IEnumerable<RecieveEventModelEntity>? RecieveEventModelEntities { get; set; }
+        public IEnumerable<ParallelGatewayModelEntity>? ParallelGateways { get; set; }
+        public IEnumerable<ExclusiveGatewayModelEntity>? ExclusiveGateways { get; set; }
         public IEnumerable<FlowEntity> Flows { get; set; } = new List<FlowEntity>();
     }
 }

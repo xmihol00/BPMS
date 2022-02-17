@@ -16,16 +16,11 @@ namespace BPMS_DAL.Repositories
     {
         public FlowRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<FlowShareDTO>> Share(Guid modelId)
+        public Task<List<FlowEntity>> Share(Guid modelId)
         {
             return _dbSet.Include(x => x.InBlock)
                             .ThenInclude(x => x.Pool)
                          .Where(x => x.InBlock.Pool.ModelId == modelId)
-                         .Select(x => new FlowShareDTO
-                         {
-                             InBlockId = x.InBlockId,
-                             OutBlockId = x.OutBlockId
-                         })
                          .ToListAsync();
         }
     }
