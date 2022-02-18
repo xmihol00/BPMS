@@ -18,10 +18,10 @@ namespace BPMS_DAL.Repositories
     {
         public PoolRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<SystemPickerDTO?> CurrentSystem(Guid id)
+        public Task<SystemAddDTO?> CurrentSystem(Guid id)
         {
             return _dbSet.Include(x => x.System)
-                         .Select(x => new SystemPickerDTO
+                         .Select(x => new SystemAddDTO
                          {
                             Value = x.System.Name,
                             SystemId = x.System.Id
@@ -104,6 +104,23 @@ namespace BPMS_DAL.Repositories
                          })
                          .Distinct()
                          .ToListAsync();
+        }
+
+        public Task<List<SystemPickerDTO>> OfAgenda(Guid id)
+        {
+            return _dbSet.Include(x => x.Model)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.Systems)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Model.Agenda.Systems)
+                         .Select(x => x.System)
+                         .Select(x => new SystemPickerDTO
+                          {
+                              Name = x.Name,
+                              Id = x.Id,
+                              URL = x.URL
+                          })
+                          .ToListAsync();
         }
     }
 }

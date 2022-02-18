@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
-services.AddControllersWithViews();
-        //.AddRazorRuntimeCompilation();
+services.AddControllersWithViews()
+        .AddRazorRuntimeCompilation();
 
 services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
 

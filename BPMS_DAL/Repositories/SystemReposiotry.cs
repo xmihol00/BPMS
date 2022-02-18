@@ -15,11 +15,11 @@ namespace BPMS_DAL.Repositories
     {
         public SystemRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<List<SystemPickerDTO>> SystemsOfAgenda(Guid? agendaId)
+        public Task<List<SystemAddDTO>> SystemsOfAgenda(Guid? agendaId)
         {
             return _dbSet.Include(x => x.Agendas)
                          .Where(x => x.Agendas.Any(y => y.AgendaId == agendaId))
-                         .Select(x => new SystemPickerDTO
+                         .Select(x => new SystemAddDTO
                          {
                              SystemId = x.Id,
                              Value = x.Name

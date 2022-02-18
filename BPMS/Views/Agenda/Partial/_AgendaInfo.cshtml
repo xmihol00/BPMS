@@ -1,28 +1,34 @@
 @model AgendaDetailPartialDTO
 <h1 class="text-center text-font">@Model.Name</h1>
 <div class="row">
-    <div class="col-5">
-        <h4 class="text-center text-font">Správce</h4>
+    <div class="col-12 col-lg-4">
+        <h4 class="text-center text-font my-1">Správce</h4>
         <div class="d-flex justify-content-center">
-            <div class="me-2">
+            <div class="me-1">
                 Jméno:<br>
                 Email:
             </div>
-            <b class="d-block ms-2">
+            <b class="d-block ms-1">
                 @Model.AdministratorName<br>
                 @Model.AdministratorEmail
             </b>
         </div>
     </div>
-    <div class="col-7">
-        <h4 class="text-center text-font">Popis</h4>
+    <div class="col-12 col-lg-4">
+        <h4 class="text-center text-font my-1">Popis</h4>
         @if (String.IsNullOrEmpty(Model.Description))
         {
-            <span class="text-secondary text-italic text-center">Agenda nemá popis.</span>
+            <div class="text-secondary text-italic text-center">Agenda nemá popis.</div>
         }
         else
         {
             @Model.Description
         }
+    </div>
+    <div class="col-12 col-lg-4">
+        <div class="d-flex justify-content-around">
+            <h4 class="text-font my-1">Systémy</h4>
+            <button type="button" class="butn btn-p" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
+        </div>
     </div>
 </div>

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Agenda;
 using BPMS_Common.Enums;
+using BPMS_DTOs.System;
 
 namespace BPMS_DAL.Repositories
 {
@@ -60,6 +61,8 @@ namespace BPMS_DAL.Repositories
         public Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
             return _dbSet.Include(x => x.Administrator)
+                         .Include(x => x.Systems)
+                            .ThenInclude(x => x.System)
                          .Select(x => new AgendaDetailPartialDTO 
                          {
                              AdministratorId = x.AdministratorId,
@@ -67,7 +70,13 @@ namespace BPMS_DAL.Repositories
                              AdministratorEmail = x.Administrator.Email,
                              Id = x.Id,
                              Name = x.Name,
-                             Description = x.Description
+                             Description = x.Description,
+                             Systems = x.Systems.Select(y => new SystemAllDTO
+                             {
+                                 Id = y.System.Id,
+                                 Name = y.System.Name,
+                                 URL = y.System.URL
+                             }).ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }

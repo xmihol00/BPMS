@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.System
 {
-    public class SystemPickerDTO
+    public class SystemAddDTO
     {
-        public Guid? Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string URL { get; set; } = string.Empty;
+        public Guid SystemId { get; set; }
+        public Guid TargetId { get; set; }
+        public string Value { get; set; } = string.Empty;
     }
 }

@@ -15,6 +15,6 @@ namespace BPMS_DTOs.Pool
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Guid? SystemId { get; set; }
-        public List<SystemIdNameDTO> Systems { get; set; } = new List<SystemIdNameDTO>();
+        public List<SystemPickerDTO> Systems { get; set; } = new List<SystemPickerDTO>();
     }
 }

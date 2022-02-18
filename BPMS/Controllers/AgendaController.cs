@@ -100,5 +100,11 @@ namespace BPMS.Controllers
             await _agendaFacade.RemoveUserRole(userId, agendaId, roleId);
             return Ok();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AddSystem(Guid id)
+        {            
+            return PartialView("Partial/_AgendaAddSystem", await _agendaFacade.MissingSystems(id));
+        }
     }
 }

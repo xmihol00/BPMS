@@ -94,6 +94,11 @@ namespace BPMS_BL.Facades
             await _agendaRoleUserRepository.Save();
         }
 
+        public Task<object?> MissingSystems(Guid agendaId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task RemoveRole(Guid agendaId, Guid roleId)
         {
             foreach (AgendaRoleUserEntity role in await _agendaRoleUserRepository.ForRemoval(agendaId, roleId))
