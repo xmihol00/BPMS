@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.System;
+using BPMS_Common;
 
 namespace BPMS_DAL.Repositories
 {
@@ -15,14 +16,15 @@ namespace BPMS_DAL.Repositories
     {
         public SystemRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<List<SystemAddDTO>> SystemsOfAgenda(Guid? agendaId)
+        public Task<List<SystemPickerDTO>> SystemsOfAgenda(Guid? agendaId)
         {
             return _dbSet.Include(x => x.Agendas)
                          .Where(x => x.Agendas.Any(y => y.AgendaId == agendaId))
-                         .Select(x => new SystemAddDTO
+                         .Select(x => new SystemPickerDTO
                          {
-                             SystemId = x.Id,
-                             Value = x.Name
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL
                          })
                          .ToListAsync();
         }
@@ -42,6 +44,31 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Where(x => x.URL == systemURL)
                          .Select(x => x.Id)
                          .FirstOrDefaultAsync();
+        }
+
+        public Task<List<SystemAllDTO>> NotInAgenda(Guid agendaId)
+        {
+            return _dbSet.Include(x => x.Agendas)
+                         .Where(x => x.Agendas.All(y => y.AgendaId != agendaId) && x.Id != StaticData.ThisSystemId)
+                         .Select(x => new SystemAllDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<SystemPickerDTO> ThisSystem()
+        {
+            return _dbSet.Where(x => x.Id == StaticData.ThisSystemId)
+                         .Select(x => new SystemPickerDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL
+                         })
+                         .FirstAsync();
         }
     }
 }

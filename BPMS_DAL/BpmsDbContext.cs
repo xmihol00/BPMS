@@ -45,8 +45,8 @@ namespace BPMS_DAL
             modelBuilder.Entity<SystemEntity>().HasIndex(x => x.URL).IsUnique(true);
 
             modelBuilder.Entity<SystemAgendaEntity>().HasKey(x => new { x.AgendaId, x.SystemId });
-            modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.Agenda).WithMany(x => x.Systems).HasForeignKey(x => x.SystemId);
-            modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.System).WithMany(x => x.Agendas).HasForeignKey(x => x.AgendaId);
+            modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.Agenda).WithMany(x => x.Systems).HasForeignKey(x => x.AgendaId);
+            modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.System).WithMany(x => x.Agendas).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<UserEntity>().HasKey(x => x.Id);
 

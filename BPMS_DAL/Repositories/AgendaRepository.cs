@@ -58,6 +58,20 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<List<SystemAllDTO>> Systems(Guid id)
+        {
+            return _dbSet.Include(x => x.Systems)
+                            .ThenInclude(x => x.System)
+                         .SelectMany(x => x.Systems)
+                         .Select(x => new SystemAllDTO
+                         {
+                             Id = x.System.Id,
+                             Name = x.System.Name,
+                             URL = x.System.URL
+                         })
+                         .ToListAsync();
+        }
+
         public Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
             return _dbSet.Include(x => x.Administrator)

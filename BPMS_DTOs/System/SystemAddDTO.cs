@@ -11,6 +11,5 @@ namespace BPMS_DTOs.System
     {
         public Guid SystemId { get; set; }
         public Guid TargetId { get; set; }
-        public string Value { get; set; } = string.Empty;
     }
 }

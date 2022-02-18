@@ -75,8 +75,8 @@
     </div>
 </form>
 <form id="AddSystemFormId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/AddSystem" novalidate 
-      onsubmit="AjaxFormSubmit(event, 'AddSystemFormId', true)" oninput="InputValidator(this)">
-    <input type="hidden" name="AgendaId" value="@Model.Id">
+      onsubmit="AjaxFormSubmit(event, 'AgendaSystemsId', true)" oninput="InputValidator(this)">
+    <input type="hidden" name="TargetId" value="@Model.Id">
     <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
         <h2 class="mb-0">Přidání systému</h2>
         <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>

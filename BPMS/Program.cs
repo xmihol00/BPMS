@@ -29,6 +29,7 @@ services.AddScoped<SolvingRoleRepository>();
 services.AddScoped<AgendaRoleUserRepository>();
 services.AddScoped<PoolRepository>();
 services.AddScoped<FlowRepository>();
+services.AddScoped<SystemAgendaRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

@@ -12,6 +12,7 @@ using BPMS_DAL.Repositories;
 using BPMS_DTOs.Agenda;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
+using BPMS_DTOs.System;
 using BPMS_DTOs.User;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -25,11 +26,14 @@ namespace BPMS_BL.Facades
         private readonly SolvingRoleRepository _solvingRoleRepository;
         private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
         private readonly BlockModelRepository _blockModelRepository;
+        private readonly SystemRepository _systemRepository;
+        private readonly SystemAgendaRepository _systemAgendaRepository;
         private readonly IMapper _mapper;
 
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
                             SolvingRoleRepository solvingRoleRepository, AgendaRoleUserRepository agendaRoleUserRepository, 
-                            BlockModelRepository blockModelRepository, IMapper mapper)
+                            BlockModelRepository blockModelRepository, SystemRepository systemRepository,
+                            SystemAgendaRepository systemAgendaRepository, IMapper mapper)
         {
             _agendaRepository = agendaRepository;
             _userRepository = userRepository;
@@ -37,6 +41,8 @@ namespace BPMS_BL.Facades
             _solvingRoleRepository = solvingRoleRepository;
             _agendaRoleUserRepository = agendaRoleUserRepository;
             _blockModelRepository = blockModelRepository;
+            _systemRepository = systemRepository;
+            _systemAgendaRepository = systemAgendaRepository;
             _mapper = mapper;
         }
 
@@ -46,6 +52,7 @@ namespace BPMS_BL.Facades
             dto.Models = await _modelRepository.OfAgenda(id);
             dto.AllAgendas = await _agendaRepository.All();
             dto.Roles = await _solvingRoleRepository.Roles(id);
+            dto.Systems = await _agendaRepository.Systems(id);
             return dto;
         }
 
@@ -94,9 +101,22 @@ namespace BPMS_BL.Facades
             await _agendaRoleUserRepository.Save();
         }
 
-        public Task<object?> MissingSystems(Guid agendaId)
+        public Task<List<SystemAllDTO>> MissingSystems(Guid agendaId)
         {
-            throw new NotImplementedException();
+            return _systemRepository.NotInAgenda(agendaId); 
+        }
+
+        public async Task<List<SystemAllDTO>> AddSystem(SystemAddDTO dto)
+        {
+            await _systemAgendaRepository.Create(new SystemAgendaEntity
+            {
+                AgendaId = dto.TargetId,
+                SystemId = dto.SystemId
+            });
+
+            await _systemAgendaRepository.Save();
+
+            return await _agendaRepository.Systems(dto.TargetId); 
         }
 
         public async Task RemoveRole(Guid agendaId, Guid roleId)

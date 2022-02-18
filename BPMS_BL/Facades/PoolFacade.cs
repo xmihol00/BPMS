@@ -88,12 +88,15 @@ namespace BPMS_BL.Facades
         public async Task<PoolConfigDTO> Config(Guid id)
         {
             PoolConfigDTO dto = await _poolRepository.Config(id);
+            List<Guid?> assignedSystems = await _poolRepository.AssignedSystems(id);
             dto.Systems.Add(new SystemPickerDTO
             {
                 Id = null,
                 Name = "Nevybrán",
             });
             dto.Systems.AddRange(await _poolRepository.OfAgenda(id));
+            dto.Systems.Add(await _systemRepository.ThisSystem());
+            dto.Systems = dto.Systems.Where(x => !assignedSystems.Contains(x.Id)).ToList();
 
             return dto;
         }

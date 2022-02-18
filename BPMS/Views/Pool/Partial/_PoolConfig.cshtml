@@ -14,11 +14,11 @@
                 {
                     if (system.Id == Model.SystemId)
                     {
-                        <option value="@system.Id" selected>@system.Name</option>
+                        <option value="@system.Id" selected>@system.Name @(String.IsNullOrEmpty(system.URL) ? "" : $"({system.URL})")</option>
                     }
                     else
                     {
-                        <option value="@system.Id" >@system.Name</option>
+                        <option value="@system.Id" >@system.Name @(String.IsNullOrEmpty(system.URL) ? "" : $"({system.URL})")</option>
                     }
                 }
             </select>

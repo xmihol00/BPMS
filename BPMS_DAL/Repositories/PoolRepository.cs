@@ -18,17 +18,6 @@ namespace BPMS_DAL.Repositories
     {
         public PoolRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<SystemAddDTO?> CurrentSystem(Guid id)
-        {
-            return _dbSet.Include(x => x.System)
-                         .Select(x => new SystemAddDTO
-                         {
-                            Value = x.System.Name,
-                            SystemId = x.System.Id
-                         })
-                         .FirstOrDefaultAsync(x => x.SystemId == id);
-        }
-
         public Task<PoolEntity> DetailForEdit(Guid id)
         {
             return _dbSet.Include(x => x.Model)
@@ -85,6 +74,18 @@ namespace BPMS_DAL.Repositories
                              PoolId = x.Id,
                              DestinationURL = x.System.URL
                          })
+                         .ToListAsync();
+        }
+
+        public Task<List<Guid?>> AssignedSystems(Guid id)
+        {
+            return _dbSet.Include(x => x.Model)
+                            .ThenInclude(x => x.Pools)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Model.Pools)
+                         .Where(x => x.Id != id)
+                         .Select(x => x.SystemId)
+                         .Where(x => x.HasValue)
                          .ToListAsync();
         }
 

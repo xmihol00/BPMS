@@ -1,7 +1,7 @@
 @model AgendaDetailPartialDTO
 <h1 class="text-center text-font">@Model.Name</h1>
 <div class="row">
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-lg-5">
         <h4 class="text-center text-font my-1">Správce</h4>
         <div class="d-flex justify-content-center">
             <div class="me-1">
@@ -14,7 +14,7 @@
             </b>
         </div>
     </div>
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-lg-7">
         <h4 class="text-center text-font my-1">Popis</h4>
         @if (String.IsNullOrEmpty(Model.Description))
         {
@@ -24,11 +24,5 @@
         {
             @Model.Description
         }
-    </div>
-    <div class="col-12 col-lg-4">
-        <div class="d-flex justify-content-around">
-            <h4 class="text-font my-1">Systémy</h4>
-            <button type="button" class="butn btn-p" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
-        </div>
     </div>
 </div>

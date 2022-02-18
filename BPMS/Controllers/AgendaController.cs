@@ -2,6 +2,7 @@
 using BPMS_DTOs.Agenda;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
+using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPMS.Controllers
@@ -105,6 +106,12 @@ namespace BPMS.Controllers
         public async Task<IActionResult> AddSystem(Guid id)
         {            
             return PartialView("Partial/_AgendaAddSystem", await _agendaFacade.MissingSystems(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSystem(SystemAddDTO dto)
+        {            
+            return PartialView("Partial/_AgendaSystems", await _agendaFacade.AddSystem(dto));
         }
     }
 }
