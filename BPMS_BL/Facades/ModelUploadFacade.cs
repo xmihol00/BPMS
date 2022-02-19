@@ -43,7 +43,7 @@ namespace BPMS_BL.Facades
             {
                 try
                 {
-                    bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()));   
+                    bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()), LoadOptions.PreserveWhitespace);   
                 }
                 catch
                 {
@@ -59,7 +59,7 @@ namespace BPMS_BL.Facades
             {
                 try
                 {
-                    _svg = XDocument.Load(new StreamReader(dto.SVG.OpenReadStream()));
+                    _svg = XDocument.Load(new StreamReader(dto.SVG.OpenReadStream()), LoadOptions.PreserveWhitespace);
                 }
                 catch
                 {

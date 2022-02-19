@@ -50,6 +50,7 @@ namespace BPMS_BL.Facades
         public async Task<string> ShareImport(ModelDetailShare dto, string auth)
         {
             ModelEntity model = _mapper.Map<ModelEntity>(dto);
+            XDocument svg = XDocument.Parse(dto.SVG, LoadOptions.PreserveWhitespace);
             
             List<Guid> targetAgendas = await _systemRepository.Agendas(dto.SenderURL);
             if (targetAgendas.Count == 0)
@@ -65,14 +66,16 @@ namespace BPMS_BL.Facades
                 model.AgendaId = null;
             }
 
-            await _modelRepository.Create(model);
 
             foreach (PoolShareDTO poolDTO in dto.Pools)
             {
                 PoolEntity poolEntity = _mapper.Map<PoolEntity>(poolDTO);
+                XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == poolEntity.Id.ToString());
+
                 if (poolDTO.SystemURL == StaticData.ThisSystemURL)
                 {
                     poolEntity.SystemId = StaticData.ThisSystemId;
+                    element.Attribute("class").SetValue("djs-group bpmn-pool bpmn-this-sys");
                 }
                 else
                 {
@@ -81,12 +84,15 @@ namespace BPMS_BL.Facades
                     {
                         poolEntity.SystemId = null;
                     }
+
+                    element.Attribute("class").SetValue("djs-group bpmn-pool");
                 }
+
+                await _poolRepository.Create(poolEntity);
             }
 
-            //XDocument svg = XDocument.Parse(dto.SVG);
-            //XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == StaticData.ThisSystemId.ToString());
-            //element.Attribute("class").SetValue("djs-group bpmn-pool");
+            model.SVG = svg.ToString(SaveOptions.DisableFormatting);
+            await _modelRepository.Create(model);
 
             await _blockModelRepository.CreateRange(dto.EndEvents);
             await _blockModelRepository.CreateRange(dto.StartEvents);

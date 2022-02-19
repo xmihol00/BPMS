@@ -16,7 +16,8 @@ namespace BPMS_BL.Profiles
         public CommunicationProfile()
         {
             CreateMap<ModelDetailShare, ModelEntity>()
-                .ForMember(dst => dst.Description, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.Description) ? "" : src.Description));
+                .ForMember(dst => dst.Description, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.Description) ? "" : src.Description))
+                .ForMember(dst => dst.SVG, opt => opt.Ignore());
 
             CreateMap<PoolShareDTO, PoolEntity>();
         }
