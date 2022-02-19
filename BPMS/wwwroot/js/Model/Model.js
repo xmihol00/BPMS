@@ -308,7 +308,7 @@ function RemoveModel()
     {
         async: true,
         type: "POST",
-        url: `/Model/Reomve/${modelId}`
+        url: `/Model/Remove/${modelId}`
     })
     .done((result) => 
     {

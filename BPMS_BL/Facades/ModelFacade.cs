@@ -43,7 +43,7 @@ namespace BPMS_BL.Facades
 
         public async Task<Guid> Remove(Guid id)
         {
-            ModelEntity entity = await _modelRepository.DetailRaw(id);
+            ModelEntity entity = await _modelRepository.DetailDeep(id);
             _modelRepository.Remove(entity);
             await _modelRepository.Save();
 

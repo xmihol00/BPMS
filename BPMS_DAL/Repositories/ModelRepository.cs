@@ -48,6 +48,23 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
+        public Task<ModelEntity> DetailDeep(Guid id)
+        {
+            return _dbSet.Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.InFlows)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.OutFlows)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.Attributes)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.MappedAttributes)
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<ModelDetailShare> Share(Guid id)
         {
             return _dbSet.Select(x => new ModelDetailShare
