@@ -303,7 +303,7 @@ function ShareModel(btn)
 function RunModel(btn)
 {
     let modelId = document.getElementById("ModelIdId").value;
-    
+
     $.ajax(
     {
         async: true,
@@ -317,7 +317,7 @@ function RunModel(btn)
             btn.innerText = "Spustit";
             btn.disabled = true;
             btn.setAttribute("title", "Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy.")
-            btn.RemoveAttribute("onclick");
+            btn.removeAttribute("onclick");
         }
     })
     .fail(() => 
