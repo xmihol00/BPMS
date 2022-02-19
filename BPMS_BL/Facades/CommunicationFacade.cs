@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
 using BPMS_Common;
+using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
@@ -47,9 +48,10 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public async Task<string> ShareImport(ModelDetailShare dto, string auth)
+        public async Task<string> ShareImport(ModelDetailShare dto)
         {
             ModelEntity model = _mapper.Map<ModelEntity>(dto);
+            model.State = ModelStateEnum.Shared;
             XDocument svg = XDocument.Parse(dto.SVG, LoadOptions.PreserveWhitespace);
             
             List<Guid> targetAgendas = await _systemRepository.Agendas(dto.SenderURL);
@@ -65,7 +67,6 @@ namespace BPMS_BL.Facades
             {
                 model.AgendaId = null;
             }
-
 
             foreach (PoolShareDTO poolDTO in dto.Pools)
             {
@@ -108,6 +109,16 @@ namespace BPMS_BL.Facades
             await _modelRepository.Save();
 
             return "";
+        }
+
+        private async Task AuthorizeSystem(string auth)
+        {
+            SystemUrlKeyDTO system = SymetricCypherHelper.JsonDecrypt<SystemUrlKeyDTO>(auth);
+
+            if (!await _systemRepository.Authorize(system.URL, system.Key))
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,7 +9,25 @@ namespace BPMS_BL.Helpers
 {
     public static class CommunicationHelper
     {
-        public static async Task<bool> ShareModel(string url, string auth, string payload)
+        public static async Task<bool> ShareModel(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ShareImport", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> AskForModelRun(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ModelRunable", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> RunModel(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/RunModel", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload)
         {
             using HttpClientHandler httpClientHandler = new HttpClientHandler();
             httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
@@ -17,7 +36,7 @@ namespace BPMS_BL.Helpers
             using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(url + "Communication/ShareImport"), 
+                RequestUri = new Uri(systemURL + path), 
                 Content = new StringContent(payload)
                 {
                     Headers = { 
@@ -27,8 +46,7 @@ namespace BPMS_BL.Helpers
             };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", auth);
 
-            HttpResponseMessage response = await client.SendAsync(request);
-            return response.StatusCode == System.Net.HttpStatusCode.OK;
+            return await client.SendAsync(request);
         }
     }
 }

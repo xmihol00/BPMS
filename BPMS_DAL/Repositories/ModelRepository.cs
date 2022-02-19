@@ -11,6 +11,7 @@ using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DAL.Sharing;
 using BPMS_Common;
+using BPMS_Common.Enums;
 
 namespace BPMS_DAL.Repositories
 {
@@ -89,6 +90,17 @@ namespace BPMS_DAL.Repositories
                              State = x.State
                          })
                          .FirstAsync(x => x.Id == id);
+        }
+
+        public void ChangeState(Guid id, ModelStateEnum state)
+        {
+            _dbSet.Attach(new ModelEntity 
+                  {
+                      Id = id,
+                      State = state
+                  })
+                  .Property(x => x.State)
+                  .IsModified = true;
         }
     }
 }

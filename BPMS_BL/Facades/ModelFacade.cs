@@ -18,6 +18,7 @@ using BPMS_DTOs.User;
 using Newtonsoft.Json;
 using BPMS_DAL.Sharing;
 using BPMS_DAL.Interfaces.ModelBlocks;
+using BPMS_Common.Enums;
 
 namespace BPMS_BL.Facades
 {
@@ -95,7 +96,48 @@ namespace BPMS_BL.Facades
                                                                serilizedModel);
             }
 
-            return serilizedModel;
+            if (shared)
+            {
+                model.State = ModelStateEnum.Shared;
+            }
+            await _modelRepository.Save();
+
+            return "";
+        }
+
+        public async Task<string> Run(Guid id)
+        {
+            _modelRepository.ChangeState(id, ModelStateEnum.Waiting);
+            
+            List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(id);
+            string message = JsonConvert.SerializeObject(new { modelId = id });
+
+            bool run = true;
+            foreach (PoolDstAddressDTO pool in pools)
+            {
+                run &= await CommunicationHelper.AskForModelRun(pool.DestinationURL, 
+                                                                SymetricCypherHelper.JsonEncrypt(pool), 
+                                                                message);
+            }
+
+            if (run)
+            {
+                foreach (PoolDstAddressDTO pool in pools)
+                {
+                    run &= await CommunicationHelper.RunModel(pool.DestinationURL, 
+                                                              SymetricCypherHelper.JsonEncrypt(pool), 
+                                                              message);
+                }   
+            }
+
+            if (run)
+            {
+                _modelRepository.ChangeState(id, ModelStateEnum.Shared);
+            }
+
+            await _modelRepository.Save();
+
+            return "";
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

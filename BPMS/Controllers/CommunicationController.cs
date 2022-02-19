@@ -16,11 +16,15 @@ namespace BPMS.Controllers
             _communicationFacade = communicationFacade;
         }
 
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            _communicationFacade.AuthorizeSystem(Request.Headers.Authorization);
+        }
 
         [HttpPost]
         public async Task<IActionResult> ShareImport([FromBody] ModelDetailShare dto)
         {
-            return Ok(await _communicationFacade.ShareImport(dto, Request.Headers.Authorization));
+            return Ok(await _communicationFacade.ShareImport(dto));
         }
     }
 }
