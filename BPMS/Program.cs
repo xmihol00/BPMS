@@ -33,6 +33,9 @@ services.AddScoped<AgendaRoleUserRepository>();
 services.AddScoped<PoolRepository>();
 services.AddScoped<FlowRepository>();
 services.AddScoped<SystemAgendaRepository>();
+services.AddScoped<TaskRepository>();
+services.AddScoped<TaskDataRepository>();
+services.AddScoped<WorkflowRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
@@ -42,6 +45,9 @@ services.AddScoped<ServiceFacade>();
 services.AddScoped<PoolFacade>();
 services.AddScoped<CommunicationFacade>();
 services.AddScoped<UserFacade>();
+services.AddScoped<TaskFacade>();
+services.AddScoped<WorkflowFacade>();
+services.AddScoped<SystemFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile));
 
