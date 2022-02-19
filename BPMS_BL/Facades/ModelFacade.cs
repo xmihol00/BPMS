@@ -108,7 +108,7 @@ namespace BPMS_BL.Facades
         public async Task<string> Run(Guid id)
         {
             List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(id);
-            string message = JsonConvert.SerializeObject(new { modelId = id });
+            string message = JsonConvert.SerializeObject(new ModelIdDTO { Id = id });
 
             bool run = true;
             foreach (PoolDstAddressDTO pool in pools)

@@ -112,20 +112,20 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> IsModelRunable(Guid modelId)
+        public async Task<string> IsModelRunable(ModelIdDTO dto)
         {
-            if (!await _modelRepository.CheckState(modelId, ModelStateEnum.Waiting))
+            if (!await _modelRepository.CheckState(dto.Id, ModelStateEnum.Waiting))
             {
                 throw new NotImplementedException();
             }
             return "";
         }
 
-        public async Task<string> RunModel(Guid modelId)
+        public async Task<string> RunModel(ModelIdDTO dto)
         {
-            _modelRepository.ChangeState(modelId, ModelStateEnum.Executable);
+            _modelRepository.ChangeState(dto.Id, ModelStateEnum.Executable);
             await _modelRepository.Save();
-            
+
             // create workflow
             return "";   
         }
