@@ -299,3 +299,24 @@ function ShareModel(btn)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });    
 }
+
+function RemoveModel()
+{
+    let modelId = document.getElementById("ModelIdId").value;
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Model/Reomve/${modelId}`
+    })
+    .done((result) => 
+    {
+        window.location.replace = `/Agenda/Detail${result}`;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });    
+}

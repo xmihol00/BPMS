@@ -41,6 +41,15 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public async Task<Guid> Remove(Guid id)
+        {
+            ModelEntity entity = await _modelRepository.DetailRaw(id);
+            _modelRepository.Remove(entity);
+            await _modelRepository.Save();
+
+            return entity.Id;
+        }
+
         public Task<ModelDetailDTO> Detail(Guid id)
         {
             return _modelRepository.Detail(id);

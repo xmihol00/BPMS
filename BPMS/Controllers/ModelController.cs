@@ -41,5 +41,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _modelFacade.Share(id));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            return Ok(await _modelFacade.Remove(id));
+        }
     }
 }
