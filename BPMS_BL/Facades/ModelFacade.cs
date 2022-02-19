@@ -107,8 +107,6 @@ namespace BPMS_BL.Facades
 
         public async Task<string> Run(Guid id)
         {
-            _modelRepository.ChangeState(id, ModelStateEnum.Waiting);
-            
             List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(id);
             string message = JsonConvert.SerializeObject(new { modelId = id });
 
