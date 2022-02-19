@@ -32,6 +32,7 @@ namespace BPMS_BL.Facades
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
         private readonly SystemAgendaRepository _systemAgendaRepository;
+
         private readonly IMapper _mapper;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
@@ -111,9 +112,18 @@ namespace BPMS_BL.Facades
             return "";
         }
 
+        public async Task<string> IsModelRunable(Guid modelId)
+        {
+            if (!await _modelRepository.CheckState(modelId, ModelStateEnum.Waiting))
+            {
+                throw new NotImplementedException();
+            }
+            return "";
+        }
+
         public void AuthorizeSystem(string auth)
         {
-            SystemUrlKeyDTO system = SymetricCypherHelper.JsonDecrypt<SystemUrlKeyDTO>(auth);
+            SystemUrlKeyDTO system = SymetricCypherHelper.JsonDecrypt<SystemUrlKeyDTO>(auth["Bearer ".Length..]);
 
             if (!_systemRepository.Authorize(system.URL, system.Key))
             {

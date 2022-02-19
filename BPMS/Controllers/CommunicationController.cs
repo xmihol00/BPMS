@@ -27,5 +27,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.ShareImport(dto));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> IsModelRunable([FromBody] Guid modelId)
+        {
+            return Ok(await _communicationFacade.IsModelRunable(modelId));
+        }
     }
 }

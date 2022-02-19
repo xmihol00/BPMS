@@ -17,7 +17,7 @@ namespace BPMS_BL.Helpers
 
         public static async Task<bool> AskForModelRun(string systemURL, string auth, string payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ModelRunable", auth, payload);
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/IsModelRunable", auth, payload);
             return response.StatusCode == HttpStatusCode.OK;
         }
 

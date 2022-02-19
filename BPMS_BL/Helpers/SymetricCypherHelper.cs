@@ -34,13 +34,18 @@ namespace BPMS_BL.Helpers
             using Aes aes = Aes.Create();
             aes.Key = Encoding.UTF8.GetBytes(StaticData.SymetricKey);
             aes.IV = StaticData.IV;
-            ICryptoTransform decryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-            using MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(cipherText));
-            using CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-            using StreamReader streamReader = new StreamReader(cryptoStream);
-
-            return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+            
+            using (MemoryStream memStream = new MemoryStream(Convert.FromBase64String(cipherText)))
+            {
+                using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read))
+                {
+                    using (StreamReader streamReader = new StreamReader(cryptoStream))
+                    {
+                        return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                    }
+                }
+            }
         }
     }
 }

@@ -102,5 +102,10 @@ namespace BPMS_DAL.Repositories
                   .Property(x => x.State)
                   .IsModified = true;
         }
+
+        public Task<bool> CheckState(Guid modelId, ModelStateEnum state)
+        {
+            return _dbSet.AnyAsync(x => x.Id == modelId && x.State == state);
+        }
     }
 }
