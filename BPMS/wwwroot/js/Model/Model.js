@@ -302,6 +302,8 @@ function ShareModel(btn)
 
 function RunModel(btn)
 {
+    let modelId = document.getElementById("ModelIdId").value;
+    
     $.ajax(
     {
         async: true,
