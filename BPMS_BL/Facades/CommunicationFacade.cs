@@ -121,6 +121,15 @@ namespace BPMS_BL.Facades
             return "";
         }
 
+        public async Task<string> RunModel(Guid modelId)
+        {
+            _modelRepository.ChangeState(modelId, ModelStateEnum.Executable);
+            await _modelRepository.Save();
+            
+            // create workflow
+            return "";   
+        }
+
         public void AuthorizeSystem(string auth)
         {
             SystemUrlKeyDTO system = SymetricCypherHelper.JsonDecrypt<SystemUrlKeyDTO>(auth["Bearer ".Length..]);

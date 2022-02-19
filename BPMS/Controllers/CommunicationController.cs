@@ -33,5 +33,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.IsModelRunable(modelId));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RunModel([FromBody] Guid modelId)
+        {
+            return Ok(await _communicationFacade.RunModel(modelId));
+        }
     }
 }

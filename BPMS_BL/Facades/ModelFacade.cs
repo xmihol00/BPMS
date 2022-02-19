@@ -98,7 +98,7 @@ namespace BPMS_BL.Facades
 
             if (shared)
             {
-                model.State = ModelStateEnum.Shared;
+                _modelRepository.ChangeState(model.Id, ModelStateEnum.Shared);
             }
             await _modelRepository.Save();
 
@@ -132,10 +132,11 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                _modelRepository.ChangeState(id, ModelStateEnum.Shared);
-            }
+                _modelRepository.ChangeState(id, ModelStateEnum.Executable);
+                await _modelRepository.Save();
 
-            await _modelRepository.Save();
+                // TODO create WF
+            }
 
             return "";
         }

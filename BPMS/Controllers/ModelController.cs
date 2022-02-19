@@ -43,6 +43,12 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Run(Guid id)
+        {
+            return Ok(await _modelFacade.Run(id));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {
             return Ok(await _modelFacade.Remove(id));

@@ -290,14 +290,36 @@ function ShareModel(btn)
     })
     .done((result) => 
     {
-        console.log(result);
-        btn.innerText = "Spustit";        
+        btn.innerText = "Spustit";
+        btn.onclick = () => RunModel(btn);
     })
     .fail(() => 
     {
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-    });    
+    });
+}
+
+function RunModel(btn)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Model/Run/${modelId}`
+    })
+    .done((result) => 
+    {
+        btn.innerText = "Spustit";
+        btn.disabled = true;
+        btn.setAttribute("title", "Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy.")
+        btn.RemoveAttribute("onclick");
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
 }
 
 function RemoveModel()
@@ -327,3 +349,4 @@ function RemoveModel()
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });    
 }
+

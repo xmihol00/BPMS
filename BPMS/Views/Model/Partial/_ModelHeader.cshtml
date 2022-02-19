@@ -21,12 +21,13 @@
                     <button class="butn btn-s" onclick="ShareModel(this)">Sdílet</button>
                     break;
                 
+                case ModelStateEnum.Shared: @*TODO remove*@
                 case ModelStateEnum.Executable:
-                    <button class="butn btn-s">Spustit</button>
+                    <button class="butn btn-s" onclick="RunModel(this)">Spustit</button>
                     break;
                 
                 case ModelStateEnum.Waiting:
-                    <button class="butn btn-s" title="Model již byl spuštěn, čeká se na spolupracující systémy." disabled>Spustit</button>
+                    <button class="butn btn-s" title="Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy." disabled>Spustit</button>
                     break;
             }
         </div>
