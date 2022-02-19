@@ -17,7 +17,9 @@ namespace BPMS_BL.Profiles
         {
             CreateMap<ModelDetailShare, ModelEntity>()
                 .ForMember(dst => dst.Description, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.Description) ? "" : src.Description))
-                .ForMember(dst => dst.SVG, opt => opt.Ignore());
+                .ForMember(dst => dst.SVG, opt => opt.Ignore())
+                .ForMember(dst => dst.Pools, opt => opt.Ignore())
+                .ForMember(dst => dst.Workflows, opt => opt.Ignore());
 
             CreateMap<PoolShareDTO, PoolEntity>();
         }
