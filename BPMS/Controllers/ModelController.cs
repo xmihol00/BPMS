@@ -1,10 +1,12 @@
 using BPMS_BL.Facades;
 using BPMS_DTOs.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPMS.Controllers
 {
-    public class ModelController : Controller
+    [Authorize]
+    public class ModelController : BaseController
     {
         private readonly ModelFacade _modelFacade;
 

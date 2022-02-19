@@ -3,10 +3,12 @@ using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.Pool;
 using Microsoft.AspNetCore.Mvc;
 using BPMS_DTOs.BlockAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BPMS.Controllers
 {
-    public class PoolController : Controller
+    [Authorize]
+    public class PoolController : BaseController
     {
         private readonly PoolFacade _PoolFacade;
 

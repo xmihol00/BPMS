@@ -47,6 +47,35 @@ body {
   background-color: var(--color-bg-footer);
 }
 
+.footer-full {
+  width: 100% !important;
+  margin: 0px !important;
+}
+
+.signin-position {
+  padding-top: max(calc(40vh - 250px), 0px);
+}
+
+.signin-fail {
+  color: red; 
+  margin-top: -10px; 
+  margin-bottom: 10px
+}
+
+.sign-out-div {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  font-size: 30px;
+  color: #ccc;
+  width: var(--side-bar-width);
+  transition: all 0.75s;
+}
+
+.side-menu-bar-small .sign-out-div {
+  width: var(--side-bar-small-width) !important;
+}
+
 .bg-primary {
   background-color: var(--color-primary) !important;
 }
@@ -293,7 +322,7 @@ body {
   color: inherit;
 }
 
-.side-bar-ul a {
+.side-bar-ul a, .sign-out-div a {
   display: inline-block;
   text-decoration: none;
   color: inherit;
@@ -304,10 +333,9 @@ body {
   padding-left: 25px;
 }
 
-.side-bar-ul span {
+.side-bar-ul span, .sign-out-div span {
   padding-left: 18px;
   font-size: 22px;
-  padding-bottom: 3px;
 }
 
 .system-icon, .workflow-icon, .user-icon {
@@ -322,7 +350,7 @@ body {
   color: #fff;
 }
 
-.side-bar-ul a:hover {
+.side-bar-ul a:hover, .sign-out-div a:hover {
   text-decoration: none;
   color: #fff;
   transition: all 0.25s;

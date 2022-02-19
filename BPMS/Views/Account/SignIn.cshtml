@@ -1,0 +1,34 @@
+@model SignInDTO
+@{
+    ViewData["Title"] = "Přihlášení";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-center signin-position">
+        <div class="col-12 col-md-6 col-lg-4 p-2">
+            <div class="shadow-box p-3 my-card bradius-card">
+                <h2 class="border-bottom text-center">Přihlášení — BPMS</h2>
+                <form id="SignInFormId" method="POST" action="/Account/SignIn" oninput="InputValidator(this)">
+                    <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" />
+                    <label class="input mt-2">
+                        <input class="input-field" type="text" placeholder=" " name="UserName" data-reqi="UNameLabelId" 
+                                autocomplete="off" value="@Model.UserName" />
+                        <span id="UNameLabelId" class="input-label color-required">Přihlašovací jméno</span>
+                    </label>
+                    <label class="input mt-3">
+                        <input class="input-field" type="password" placeholder=" " name="Password" data-reqi="PWordLabelId" 
+                                autocomplete="off" value="" />
+                        <span id="PWordLabelId" class="input-label color-required">Heslo</span>
+                    </label>
+                    @if (!String.IsNullOrWhiteSpace(Model.UserName))
+                    {
+                        <div class="signin-fail">Nezámé přihlašovací údaje</div>
+                    }
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" form="SignInFormId" class="butn btn-p" disabled>Přihlásit se</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

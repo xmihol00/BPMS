@@ -39,5 +39,19 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<UserAuthDTO> Authenticate(string userName)
+        {
+            return _dbSet.Include(x => x.Roles)
+                         .Where(x => x.UserName == userName)
+                         .Select(x => new UserAuthDTO
+                         {
+                             FullName = $"{x.Name} {x.Surname}",
+                             Id = x.Id,
+                             Password = x.Password,
+                             Roles = x.Roles.Select(y => y.Role).ToList()
+                         })
+                         .FirstAsync();
+        }
     }
 }

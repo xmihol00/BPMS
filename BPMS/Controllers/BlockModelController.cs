@@ -3,10 +3,12 @@ using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.BlockModel;
 using Microsoft.AspNetCore.Mvc;
 using BPMS_DTOs.BlockAttribute;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BPMS.Controllers
 {
-    public class BlockModelController : Controller
+    [Authorize]
+    public class BlockModelController : BaseController
     {
         private readonly BlockModelFacade _blockModelFacade;
 

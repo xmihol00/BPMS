@@ -4,6 +4,7 @@ using BPMS_BL.Profiles;
 using BPMS_Common;
 using BPMS_DAL;
 using BPMS_DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,8 +41,15 @@ services.AddScoped<BlockModelFacade>();
 services.AddScoped<ServiceFacade>();
 services.AddScoped<PoolFacade>();
 services.AddScoped<CommunicationFacade>();
+services.AddScoped<UserFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile));
+
+services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/Account/SignIn";
+        });
 
 var app = builder.Build();
 
@@ -56,6 +64,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

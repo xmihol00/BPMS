@@ -10,5 +10,8 @@ namespace BPMS_Common.Enums
     {
         Admin,
         AgendaKeeper,
+        WorkflowKeeper,
+        ServiceKeeper,
+        TaskSolver,
     }
 }

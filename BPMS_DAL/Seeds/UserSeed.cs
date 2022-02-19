@@ -1,3 +1,4 @@
+using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,6 +20,7 @@ namespace BPMS_DAL.Seeds
                 Name = "Admin",
                 Surname = "System",
                 UserName = "admin",
+                Password = PasswordHelper.HashPassword("admin")
             },
             new UserEntity()
             {
@@ -27,6 +29,7 @@ namespace BPMS_DAL.Seeds
                 Name = "Správce",
                 Surname = "System",
                 UserName = "spravce",
+                Password = PasswordHelper.HashPassword("spravce")
             },
             new UserEntity()
             {
@@ -35,6 +38,7 @@ namespace BPMS_DAL.Seeds
                 Name = "Karel",
                 Surname = "Stavitel",
                 UserName = "kaja",
+                Password = PasswordHelper.HashPassword("test")
             },
             new UserEntity()
             {
@@ -43,6 +47,7 @@ namespace BPMS_DAL.Seeds
                 Name = "Pavel",
                 Surname = "Svoboda",
                 UserName = "paja",
+                Password = PasswordHelper.HashPassword("test")
             }
         };
 

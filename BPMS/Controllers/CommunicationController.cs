@@ -19,6 +19,8 @@ namespace BPMS.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            base.OnActionExecuting(context);
+            
              _communicationFacade.AuthorizeSystem(Request.Headers.Authorization);
         }
 

@@ -1,10 +1,12 @@
 using BPMS_BL.Facades;
 using BPMS_DTOs.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPMS.Controllers
 {
-    public class ModelUploadController : Controller
+    [Authorize]
+    public class ModelUploadController : BaseController
     {
         private readonly ModelUploadFacade _modelUploadFacade;
 

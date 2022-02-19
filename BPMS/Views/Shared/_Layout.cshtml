@@ -14,50 +14,56 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-toggleable-md navbar-light bg-white border-bottom box-shadow screen-md">
-            <div class="container-fluid">
-                <i class="fas fa-bars float-end menu-btn" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"></i>
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BPMS</a>
-                <div class="navbar-collapse collapse d-md-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Agenda" asp-action="Overview">Home</a>
+        @if (ViewBag.Signed)
+        {
+            <nav class="navbar navbar-expand-md navbar-toggleable-md navbar-light bg-white border-bottom box-shadow screen-md">
+                <div class="container-fluid">
+                    <i class="fas fa-bars float-end menu-btn" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"></i>
+                    <a class="navbar-brand" href="Home/Index">BPMS</a>
+                    <div class="navbar-collapse collapse d-md-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="Agenda/Overview">Home</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <nav class="screen-lg">
+                <div id="MainSideBarId" class="side-menu-bar side-menu-bar-small">
+                    <i class="fas fa-bars float-end menu-btn" onclick="ToggleSideBar()"></i>
+                    <ul class="py-5 mt-3 side-bar-ul">
+                        <li class="active-nav-item">
+                            <a href="Task/Overview"><i class="fas fa-tasks"></i> <span>Úkoly</span></a>
+                        </li>
+                        <li>
+                            <a href="Workflow/Overview"><i class="fas fa-retweet workflow-icon"></i> <span>Workflow</span></a>
+                        </li>
+                        <li>
+                            <a href="Agenda/Overview"><i class="fas fa-list-alt"></i> <span>Agendy</span></a>
+                        </li>
+                        <li>
+                            <a href="Service/Overview"><i class="fas fa-satellite-dish"></i> <span>Webové služby</span></a>
+                        </li>
+                        <li>
+                            <a href="User/Overview"><i class="fas fa-user-cog user-icon"></i> <span>Uživatelé</span></a>
+                        </li>
+                        <li>
+                            <a href="System/Overview"><i class="fas fa-network-wired system-icon"></i> <span>Systémy</span></a>
                         </li>
                     </ul>
+                    <div class="sign-out-div">
+                        <a href="/Account/SignOut"><i class="fas fa-sign-out-alt"></i> <span>Odhlásit se</span></a>
+                    </div>
                 </div>
-            </div>
-        </nav>
-        <nav class="screen-lg">
-            <div id="MainSideBarId" class="side-menu-bar side-menu-bar-small">
-                <i class="fas fa-bars float-end menu-btn" onclick="ToggleSideBar()"></i>
-                <ul class="pt-5 mt-3 side-bar-ul">
-                    <li class="active-nav-item">
-                        <a asp-area="" asp-controller="Task" asp-action="Overview"><i class="fas fa-tasks"></i> <span>Úkoly</span></a>
-                    </li>
-                    <li>
-                        <a asp-area="" asp-controller="Workflow" asp-action="Overview"><i class="fas fa-retweet workflow-icon"></i> <span>Workflow</span></a>
-                    </li>
-                    <li>
-                        <a asp-area="" asp-controller="Agenda" asp-action="Overview"><i class="fas fa-list-alt"></i> <span>Agendy</span></a>
-                    </li>
-                    <li>
-                        <a asp-area="" asp-controller="Service" asp-action="Overview"><i class="fas fa-satellite-dish"></i> <span>Webové služby</span></a>
-                    </li>
-                    <li>
-                        <a asp-area="" asp-controller="User" asp-action="Overview"><i class="fas fa-user-cog user-icon"></i> <span>Uživatelé</span></a>
-                    </li>
-                    <li>
-                        <a asp-area="" asp-controller="System" asp-action="Overview"><i class="fas fa-network-wired system-icon"></i> <span>Systémy</span></a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+            </nav>
+        }
     </header>
-    <div id="Main" role="main" class="pb-3 main-content-large main-content">
+    <div id="Main" role="main" class="pb-3 @(ViewBag.Signed ? "main-content-large main-content" : "")">
         @RenderBody()
     </div>
 
-    <footer id="Footer" class="border-top footer footer-large text-muted">
+    <footer id="Footer" class="border-top footer text-muted @(ViewBag.Signed ? "footer-large" : "footer-full")">
         <div class="container">
             &copy; 2022 - David Mihola
         </div>

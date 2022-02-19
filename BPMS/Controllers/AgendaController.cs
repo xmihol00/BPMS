@@ -3,11 +3,13 @@ using BPMS_DTOs.Agenda;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BPMS.Controllers
 {
-    public class AgendaController : Controller
+    [Authorize]
+    public class AgendaController : BaseController
     {
         private readonly AgendaFacade _agendaFacade;
 
