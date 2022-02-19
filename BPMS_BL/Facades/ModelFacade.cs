@@ -133,10 +133,14 @@ namespace BPMS_BL.Facades
             if (run)
             {
                 _modelRepository.ChangeState(id, ModelStateEnum.Executable);
-                await _modelRepository.Save();
 
                 // TODO create WF
             }
+            else
+            {
+                _modelRepository.ChangeState(id, ModelStateEnum.Waiting);
+            }
+            await _modelRepository.Save();
 
             return "";
         }
