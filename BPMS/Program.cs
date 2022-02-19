@@ -1,6 +1,7 @@
 
 using BPMS_BL.Facades;
 using BPMS_BL.Profiles;
+using BPMS_Common;
 using BPMS_DAL;
 using BPMS_DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ services.AddControllersWithViews()
         .AddRazorRuntimeCompilation();
 
 services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+StaticData.ThisSystemURL = builder.Configuration.GetValue<string>("SystemURL");
 
 services.AddScoped<AgendaRepository>();
 services.AddScoped<BlockModelRepository>();
