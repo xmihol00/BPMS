@@ -312,7 +312,14 @@ function RemoveModel()
     })
     .done((result) => 
     {
-        window.location.replace = `/Agenda/Detail${result}`;
+        if (result)
+        {
+            window.location.replace(`/Agenda/Detail/${result}`);
+        }
+        else
+        {
+            window.location.replace(`/Agenda/Overview/`);
+        }
     })
     .fail(() => 
     {
