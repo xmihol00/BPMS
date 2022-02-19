@@ -105,7 +105,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> Run(Guid id)
+        public async Task<bool> Run(Guid id)
         {
             List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(id);
             string message = JsonConvert.SerializeObject(new ModelIdDTO { Id = id });
@@ -140,7 +140,7 @@ namespace BPMS_BL.Facades
             }
             await _modelRepository.Save();
 
-            return "";
+            return run;
         }
 
         public Task<ModelHeaderDTO> Header(Guid id)

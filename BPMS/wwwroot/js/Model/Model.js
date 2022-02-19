@@ -312,10 +312,13 @@ function RunModel(btn)
     })
     .done((result) => 
     {
-        btn.innerText = "Spustit";
-        btn.disabled = true;
-        btn.setAttribute("title", "Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy.")
-        btn.RemoveAttribute("onclick");
+        if (!result)
+        {
+            btn.innerText = "Spustit";
+            btn.disabled = true;
+            btn.setAttribute("title", "Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy.")
+            btn.RemoveAttribute("onclick");
+        }
     })
     .fail(() => 
     {
