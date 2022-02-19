@@ -111,11 +111,11 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        private async Task AuthorizeSystem(string auth)
+        public void AuthorizeSystem(string auth)
         {
             SystemUrlKeyDTO system = SymetricCypherHelper.JsonDecrypt<SystemUrlKeyDTO>(auth);
 
-            if (!await _systemRepository.Authorize(system.URL, system.Key))
+            if (!_systemRepository.Authorize(system.URL, system.Key))
             {
                 throw new UnauthorizedAccessException();
             }

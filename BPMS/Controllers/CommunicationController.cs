@@ -4,6 +4,7 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BPMS.Controllers
 {
@@ -18,7 +19,7 @@ namespace BPMS.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            _communicationFacade.AuthorizeSystem(Request.Headers.Authorization);
+             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization);
         }
 
         [HttpPost]

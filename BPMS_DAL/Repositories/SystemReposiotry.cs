@@ -80,9 +80,9 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
-        public Task<bool> Authorize(string url, string key)
+        public bool Authorize(string url, string key)
         {
-            return _dbSet.AnyAsync(x => x.URL == url && x.Key == key);
+            return _dbSet.Any(x => x.URL == url && x.Key == key);
         }
     }
 }
