@@ -59,6 +59,15 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<List<Guid>> Agendas(string senderURL)
+        {
+            return _dbSet.Include(x => x.Agendas)
+                            .Where(x => x.URL == senderURL)
+                         .SelectMany(x => x.Agendas)
+                         .Select(x => x.AgendaId)
+                         .ToListAsync();
+        }
+
         public Task<SystemPickerDTO> ThisSystem()
         {
             return _dbSet.Where(x => x.Id == StaticData.ThisSystemId)

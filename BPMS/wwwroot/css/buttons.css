@@ -99,6 +99,10 @@ a.butn:hover {
     z-index: 100;
 }
 
-.btn-role-remove:hover {
-    color: red;
+.btn-remove {
+    color: rgb(190, 4, 4);
+}
+
+.btn-remove:hover {
+    color: rgb(255, 0, 0);
 }

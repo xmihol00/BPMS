@@ -77,10 +77,7 @@ namespace BPMS_BL.Facades
             model.RecieveEvents = GetCorrectBlocks<RecieveEventModelEntity>(allBlocks);
 
             string serilizedModel = JsonConvert.SerializeObject(model);
-            //XDocument svg = XDocument.Parse(dto.SVG);
-            //XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == StaticData.ThisSystemId.ToString());
-            //element.Attribute("class").SetValue("djs-group bpmn-pool");
-
+            
             bool shared = true;
             foreach (PoolDstAddressDTO pool in await _poolRepository.Addresses(id))
             {

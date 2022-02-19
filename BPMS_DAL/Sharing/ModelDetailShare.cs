@@ -16,6 +16,7 @@ namespace BPMS_DAL.Sharing
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string SVG { get; set; } = string.Empty;
+        public string SenderURL { get; set; } = string.Empty;
         public ModelStateEnum State { get; set; }
         public IEnumerable<PoolShareDTO> Pools { get; set; } = new List<PoolShareDTO>();
         public IEnumerable<UserTaskModelEntity> UserTasks { get; set; } = new List<UserTaskModelEntity>();

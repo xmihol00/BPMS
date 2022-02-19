@@ -101,6 +101,17 @@ namespace BPMS_BL.Facades
             await _agendaRoleUserRepository.Save();
         }
 
+        public async Task RemoveSystem(Guid agendaId, Guid systemId)
+        {
+            _systemAgendaRepository.Remove(new SystemAgendaEntity 
+            {
+                AgendaId = agendaId,
+                SystemId = systemId
+            });
+
+            await _systemAgendaRepository.Save();
+        }
+
         public Task<List<SystemAllDTO>> MissingSystems(Guid agendaId)
         {
             return _systemRepository.NotInAgenda(agendaId); 

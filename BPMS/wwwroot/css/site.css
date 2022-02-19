@@ -694,3 +694,7 @@ select + option[value=""] {
   color: var(--color-inactive);
   font-style: italic;
 }
+
+.pt-sys-remove {
+  padding-top: 0.35rem;
+}

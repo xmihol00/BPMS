@@ -15,6 +15,7 @@ using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
+using BPMS_DTOs.System;
 using BPMS_DTOs.User;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
@@ -29,11 +30,12 @@ namespace BPMS_BL.Facades
         private readonly BlockModelRepository _blockModelRepository;
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
+        private readonly SystemAgendaRepository _systemAgendaRepository;
         private readonly IMapper _mapper;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                                    BlockModelRepository blockModelRepository, PoolRepository poolRepository, SystemRepository systemRepository, 
-                                   IMapper mapper)
+                                   SystemAgendaRepository systemAgendaRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -41,13 +43,29 @@ namespace BPMS_BL.Facades
             _blockModelRepository = blockModelRepository;
             _poolRepository = poolRepository;
             _systemRepository = systemRepository;
+            _systemAgendaRepository = systemAgendaRepository;
             _mapper = mapper;
         }
 
         public async Task<string> ShareImport(ModelDetailShare dto, string auth)
         {
-            //IDbContextTransaction transaction = await _modelRepository.CreateTransaction();
-            await _modelRepository.Create(_mapper.Map<ModelEntity>(dto));
+            ModelEntity model = _mapper.Map<ModelEntity>(dto);
+            
+            List<Guid> targetAgendas = await _systemRepository.Agendas(dto.SenderURL);
+            if (targetAgendas.Count == 0)
+            {
+                throw new Exception();
+            }
+            else if (targetAgendas.Count == 1)
+            {
+                model.AgendaId = targetAgendas.First();
+            }
+            else
+            {
+                model.AgendaId = null;
+            }
+
+            await _modelRepository.Create(model);
 
             foreach (PoolShareDTO poolDTO in dto.Pools)
             {
@@ -65,6 +83,10 @@ namespace BPMS_BL.Facades
                     }
                 }
             }
+
+            //XDocument svg = XDocument.Parse(dto.SVG);
+            //XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == StaticData.ThisSystemId.ToString());
+            //element.Attribute("class").SetValue("djs-group bpmn-pool");
 
             await _blockModelRepository.CreateRange(dto.EndEvents);
             await _blockModelRepository.CreateRange(dto.StartEvents);

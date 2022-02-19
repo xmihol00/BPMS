@@ -261,3 +261,38 @@ function RemoveUser(btn)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });
 }
+
+function EditSystem(btn)
+{
+    let closeBtn = btn.parentNode.children[0];
+    if (btn.classList.contains("text-prim"))
+    {
+        btn.classList.remove("text-prim");
+        closeBtn.classList.add("d-none");
+    }
+    else
+    {
+        btn.classList.add("text-prim");
+        closeBtn.classList.remove("d-none");
+    }
+}
+
+function RemoveSystem(btn)
+{
+    let agendaId = document.getElementById("AgendaIdId").value;
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Agenda/RemoveSystem/${agendaId}/${btn.id}`
+    })
+    .done(() => 
+    {
+        btn.parentNode.parentNode.parentNode.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}

@@ -10,6 +10,7 @@ using BPMS_DAL.Entities;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DAL.Sharing;
+using BPMS_Common;
 
 namespace BPMS_DAL.Repositories
 {
@@ -55,7 +56,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              State = x.State,
-                             SVG = x.SVG
+                             SVG = x.SVG,
+                             SenderURL = StaticData.ThisSystemURL
                          })
                          .FirstAsync(x => x.Id == id);
         }

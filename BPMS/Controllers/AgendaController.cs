@@ -113,5 +113,13 @@ namespace BPMS.Controllers
         {            
             return PartialView("Partial/_AgendaSystems", await _agendaFacade.AddSystem(dto));
         }
+
+        [HttpPost]
+        [Route("/Agenda/RemoveSystem/{agendaId}/{systemId}")]
+        public async Task<IActionResult> RemoveSystem(Guid agendaId, Guid systemId)
+        {    
+            await _agendaFacade.RemoveSystem(agendaId, systemId);
+            return Ok();
+        }
     }
 }
