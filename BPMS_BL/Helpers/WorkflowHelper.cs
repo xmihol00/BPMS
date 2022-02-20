@@ -2,6 +2,7 @@
 using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
+using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.ModelBlocks;
@@ -74,7 +75,7 @@ namespace BPMS_BL.Helpers
                         uTask.Id = agendaAdminId;
                     }
 
-                    uTask.Data = await CrateBlockData(await blockAttributeRepository.All(nextBlock.Id));
+                    uTask.Data = CrateTaskData(await blockAttributeRepository.All(nextBlock.Id));
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
@@ -92,9 +93,42 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private static async Task<List<TaskDataEntity>> CrateBlockData(List<BlockAttributeAllDTO> blockAttributes)
+        private static List<TaskDataEntity> CrateTaskData(List<BlockAttributeAllDTO> blockAttributes)
         {
-            throw new NotImplementedException();
+            List<TaskDataEntity> data = new List<TaskDataEntity>();
+            foreach(BlockAttributeAllDTO attribute in blockAttributes)
+            {
+                data.Add(CreateTaskData(attribute.Type));
+            }
+
+            return data;
+        }
+
+        private static TaskDataEntity CreateTaskData(AttributeTypeEnum type)
+        {
+            switch (type)
+            {
+                case AttributeTypeEnum.String:
+                    return new StringDataEntity();
+
+                case AttributeTypeEnum.Number:
+                    return new NumberDataEntity();
+                
+                case AttributeTypeEnum.Text:
+                    return new TextDataEntity();
+
+                case AttributeTypeEnum.YesNo:
+                    return new BoolDataEntity();
+                
+                case AttributeTypeEnum.File:
+                    return new FileDataEntity();
+                
+                case AttributeTypeEnum.Selection:
+                    return new SelectionDataEntity();
+                
+                default:
+                    return new TaskDataEntity();
+            }
         }
     }
 }

@@ -1,4 +1,3 @@
-﻿using BPMS_Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities.BlockDataTypes
 {
-    public class ArrayBlockEntity : TaskDataEntity
+    public class FileDataEntity : TaskDataEntity
     {
-        public DataTypeEnum Type { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string MIMEType { get; set; } = string.Empty;
     }
 }

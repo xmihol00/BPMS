@@ -113,11 +113,11 @@ namespace BPMS_DAL
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Task).WithMany(x => x.TaskData).HasForeignKey(x => x.TaskId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Attribute).WithMany(x => x.Data).HasForeignKey(x => x.AttributeId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Schema).WithMany(x => x.Data).HasForeignKey(x => x.SchemaId);
-            modelBuilder.Entity<BoolBlockEntity>().ToTable("BoolBlocks");
-            modelBuilder.Entity<NumberBlockEntity>().ToTable("NumberBlocks");
-            modelBuilder.Entity<StringBlockEntity>().ToTable("StringBlocks");
-            modelBuilder.Entity<ArrayBlockEntity>().ToTable("ArrayBlocks");
-            modelBuilder.Entity<FileBlockEntity>().ToTable("FileBlocks");            
+            modelBuilder.Entity<BoolDataEntity>().ToTable("BoolBlocks");
+            modelBuilder.Entity<NumberDataEntity>().ToTable("NumberBlocks");
+            modelBuilder.Entity<StringDataEntity>().ToTable("StringBlocks");
+            modelBuilder.Entity<ArrayDataEntity>().ToTable("ArrayBlocks");
+            modelBuilder.Entity<FileDataEntity>().ToTable("FileBlocks");            
 
             modelBuilder.Entity<ConditionDataEntity>().HasKey(x => new { x.ExclusiveGatewayId, x.DataSchemaId });
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.ExclusiveGateway).WithMany(x => x.Conditions);
