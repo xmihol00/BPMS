@@ -141,7 +141,7 @@ namespace BPMS_BL.Facades
             if (run)
             {
                 _modelRepository.ChangeState(id, ModelStateEnum.Executable);
-                await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeep(id), _workflowRepository, 
+                await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(id), _workflowRepository, 
                                                     _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
             }
             else
