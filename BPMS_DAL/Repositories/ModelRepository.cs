@@ -107,5 +107,23 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.AnyAsync(x => x.Id == modelId && x.State == state);
         }
+
+        public Task<ModelEntity> DetailDeepAgenda(Guid id)
+        {
+            return _dbSet.Include(x => x.Agenda)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.InFlows)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.OutFlows)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.Attributes)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.MappedAttributes)
+                         .FirstAsync(x => x.Id == id);
+        }
     }
 }
