@@ -48,7 +48,7 @@ namespace BPMS_BL.Helpers
             BlockModelEntity nextNextBlock = nextBlock.OutFlows.FirstOrDefault()?.InBlock;
             if (nextBlock != null && nextNextBlock is ServiceTaskModelEntity)
             {
-                BlockWorkflowEntity serviceBlockWorkflow = await CreateBlock(model.Agenda.AdministratorId, agendaId, nextBlock,
+                BlockWorkflowEntity serviceBlockWorkflow = await CreateBlock(model.Agenda.AdministratorId, agendaId, nextNextBlock,
                                                                              agendaRoleUserRepository, blockAttributeRepository,
                                                                              serviceDataSchemaRepository);
                 blocks.Add(serviceBlockWorkflow);
