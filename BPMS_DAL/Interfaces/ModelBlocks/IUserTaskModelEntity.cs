@@ -11,6 +11,6 @@ namespace BPMS_DAL.Interfaces.ModelBlocks
     {
         public Guid? RoleId { get; set; }
         public SolvingRoleEntity? Role { get; set; }
-        public TimeSpan Span { get; set; }
+        public TimeSpan Difficulty { get; set; }
     }
 }

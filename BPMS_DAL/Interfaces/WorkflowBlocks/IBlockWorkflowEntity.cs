@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DAL.Interfaces.WorkflowBlocks;
+using BPMS_DAL.Entities;
 
-namespace BPMS_DAL.Entities
+namespace BPMS_DAL.Interfaces.WorkflowBlocks
 {
-    public class BlockWorkflowEntity : IBlockWorkflowEntity
+    public interface IBlockWorkflowEntity
     {
         public Guid Id { get; set; }
         public bool Active { get; set; }
@@ -16,6 +16,6 @@ namespace BPMS_DAL.Entities
         public WorkflowEntity? Workflow { get; set; }
         public Guid BlockModelId { get; set; }
         public BlockModelEntity? BlockModel { get; set; }
-        public List<TaskDataEntity> TaskData { get; set; } = new List<TaskDataEntity>();
+        public List<TaskDataEntity> TaskData { get; set; }
     }
 }

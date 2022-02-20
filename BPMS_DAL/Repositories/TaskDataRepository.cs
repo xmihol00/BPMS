@@ -10,7 +10,7 @@ using BPMS_Common.Enums;
 
 namespace BPMS_DAL.Repositories
 {
-    public class TaskDataRepository : BaseRepository<BlockWorkflowEntity>
+    public class TaskDataRepository : BaseRepository<TaskDataEntity>
     {
         public TaskDataRepository(BpmsDbContext context) : base(context) {}
 

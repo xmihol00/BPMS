@@ -33,7 +33,7 @@ services.AddScoped<AgendaRoleUserRepository>();
 services.AddScoped<PoolRepository>();
 services.AddScoped<FlowRepository>();
 services.AddScoped<SystemAgendaRepository>();
-services.AddScoped<TaskRepository>();
+services.AddScoped<BlockWorkflowRepository>();
 services.AddScoped<TaskDataRepository>();
 services.AddScoped<WorkflowRepository>();
 

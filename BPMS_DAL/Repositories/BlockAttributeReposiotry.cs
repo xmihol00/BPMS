@@ -15,7 +15,7 @@ namespace BPMS_DAL.Repositories
     {
         public BlockAttributeRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<BlockAttributeDTO>> All(Guid blockId)
+        public Task<List<BlockAttributeDTO>> Details(Guid blockId)
         {
             return _dbSet.Where(x => x.BlockId == blockId)
                          .Select(x => new BlockAttributeDTO
@@ -25,6 +25,18 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              Specification = x.Specification,
+                             Type = x.Type
+                         })
+                         .ToListAsync();
+        }
+
+
+        public Task<List<BlockAttributeAllDTO>> All(Guid id)
+        {
+            return _dbSet.Where(x => x.BlockId == id)
+                         .Select(x => new BlockAttributeAllDTO
+                         {
+                             Id = x.Id,
                              Type = x.Type
                          })
                          .ToListAsync();

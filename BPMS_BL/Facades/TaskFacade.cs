@@ -26,9 +26,9 @@ namespace BPMS_BL.Facades
 {
     public class TaskFacade
     {
-        private readonly TaskRepository _taskRepository;
+        private readonly BlockWorkflowRepository _taskRepository;
 
-        public TaskFacade(TaskRepository taskRepository)
+        public TaskFacade(BlockWorkflowRepository taskRepository)
         {
             _taskRepository = taskRepository;
         }

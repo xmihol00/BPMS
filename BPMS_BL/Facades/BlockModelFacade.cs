@@ -194,7 +194,7 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> UserTaskConfig(IUserTaskModelEntity userTask)
         {
             BlockModelConfigDTO dto = new UserTaskConfigDTO();
-            (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.All(userTask.Id);
+            (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(userTask.Id);
             (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(userTask.InFlows);
             IRoleConfig roleConfig = dto as IRoleConfig;
             roleConfig.CurrentRole = userTask.RoleId;
