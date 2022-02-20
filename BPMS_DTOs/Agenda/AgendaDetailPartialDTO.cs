@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
+using BPMS_DTOs.Workflow;
 using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Agenda
@@ -18,5 +19,6 @@ namespace BPMS_DTOs.Agenda
         public List<ModelAllDTO> Models { get; set; } = new List<ModelAllDTO>();
         public List<RoleDetailDTO> Roles { get; set; } = new List<RoleDetailDTO>();
         public List<SystemAllDTO> Systems { get; set; } = new List<SystemAllDTO>();
+        public List<WorkflowAllDTO> Workflows { get; set; } = new List<WorkflowAllDTO>();
     }
 }

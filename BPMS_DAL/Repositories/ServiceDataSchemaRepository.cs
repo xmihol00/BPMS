@@ -107,5 +107,16 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<List<DataSchemaBareDTO>> All(Guid? serviceId)
+        {
+            return _dbSet.Where(x => x.ServiceId == serviceId)
+                         .Select(x => new DataSchemaBareDTO
+                         {
+                             Id = x.Id,
+                             Type = x.Type
+                         })
+                         .ToListAsync();
+        }
     }
 }

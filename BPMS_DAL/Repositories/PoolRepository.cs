@@ -49,6 +49,20 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
+        public Task<ModelEntity?> DeepModelOfThisSys(Guid modelId)
+        {
+            return _dbSet.Include(x => x.Model)
+                         .Include(x => x.Blocks)
+                             .ThenInclude(x => x.OutFlows)
+                         .Include(x => x.Blocks)
+                            .ThenInclude(x => x.Attributes)
+                         .Include(x => x.Blocks)
+                             .ThenInclude(x => x.MappedAttributes)
+                         .Where(x => x.SystemId == StaticData.ThisSystemId)
+                         .Select(x => x.Model)
+                         .FirstAsync(x => x.Id == modelId);
+        }
+
         public Task<List<PoolShareDTO>> Share(Guid modelId)
         {
             return _dbSet.Where(x => x.ModelId == modelId)

@@ -29,16 +29,26 @@ namespace BPMS_BL.Facades
         private readonly FlowRepository _flowRepository;
         private readonly BlockModelRepository _blockModelRepository;
         private readonly PoolRepository _poolRepository;
+        private readonly WorkflowRepository _workflowRepository;
+        private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
+        private readonly BlockAttributeRepository _blockAttributeRepository;
+        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly IMapper _mapper;
 
         public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
-                           BlockModelRepository blockModelRepository, PoolRepository poolRepository, IMapper mapper)
+                           BlockModelRepository blockModelRepository, PoolRepository poolRepository, WorkflowRepository workflowRepository,
+                           AgendaRoleUserRepository agendaRoleUserRepository, BlockAttributeRepository blockAttributeRepository, 
+                           ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
             _flowRepository = flowRepository;
             _blockModelRepository = blockModelRepository;
             _poolRepository = poolRepository;
+            _workflowRepository = workflowRepository;
+            _agendaRoleUserRepository = agendaRoleUserRepository;
+            _blockAttributeRepository = blockAttributeRepository;
+            _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _mapper = mapper;
         }
 
@@ -131,8 +141,8 @@ namespace BPMS_BL.Facades
             if (run)
             {
                 _modelRepository.ChangeState(id, ModelStateEnum.Executable);
-
-                // TODO create WF
+                await WorkflowHelper.CreateWorkflow(await _poolRepository.DeepModelOfThisSys(id), _workflowRepository, 
+                                                    _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
             }
             else
             {

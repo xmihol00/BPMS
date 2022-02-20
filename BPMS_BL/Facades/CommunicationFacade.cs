@@ -32,12 +32,17 @@ namespace BPMS_BL.Facades
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
         private readonly SystemAgendaRepository _systemAgendaRepository;
-
+        private readonly WorkflowRepository _workflowRepository;
+        private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
+        private readonly BlockAttributeRepository _blockAttributeRepository;
+        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly IMapper _mapper;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                                    BlockModelRepository blockModelRepository, PoolRepository poolRepository, SystemRepository systemRepository, 
-                                   SystemAgendaRepository systemAgendaRepository, IMapper mapper)
+                                   SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
+                                   AgendaRoleUserRepository agendaRoleUserRepository, BlockAttributeRepository blockAttributeRepository,
+                                   ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -46,6 +51,10 @@ namespace BPMS_BL.Facades
             _poolRepository = poolRepository;
             _systemRepository = systemRepository;
             _systemAgendaRepository = systemAgendaRepository;
+            _workflowRepository = workflowRepository;
+            _agendaRoleUserRepository = agendaRoleUserRepository;
+            _blockAttributeRepository = blockAttributeRepository;
+            _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _mapper = mapper;
         }
 
@@ -126,7 +135,8 @@ namespace BPMS_BL.Facades
             _modelRepository.ChangeState(dto.Id, ModelStateEnum.Executable);
             await _modelRepository.Save();
 
-            // create workflow
+            await WorkflowHelper.CreateWorkflow(await _poolRepository.DeepModelOfThisSys(dto.Id), _workflowRepository,
+                                                _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
             return "";   
         }
 
