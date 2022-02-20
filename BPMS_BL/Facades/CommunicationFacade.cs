@@ -135,7 +135,7 @@ namespace BPMS_BL.Facades
             _modelRepository.ChangeState(dto.Id, ModelStateEnum.Executable);
             await _modelRepository.Save();
 
-            await WorkflowHelper.CreateWorkflow(await _poolRepository.DeepModelOfThisSys(dto.Id), _workflowRepository,
+            await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeep(dto.Id), _workflowRepository,
                                                 _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
             return "";   
         }
