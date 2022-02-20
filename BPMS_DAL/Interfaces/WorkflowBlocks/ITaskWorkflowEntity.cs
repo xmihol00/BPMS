@@ -12,6 +12,5 @@ namespace BPMS_DAL.Interfaces.WorkflowBlocks
         public Guid UserId { get; set; }
         public UserEntity? User { get; set; }
         public DateTime SolveDate { get; set; }
-        public List<TaskDataEntity> Data { get; set; }
     }
 }

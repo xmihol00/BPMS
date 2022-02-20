@@ -110,7 +110,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<TaskWorkflowEntity>().ToTable("TasksWorkflow");
 
             modelBuilder.Entity<TaskDataEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Task).WithMany(x => x.TaskData).HasForeignKey(x => x.TaskId);
+            modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Task).WithMany(x => x.Data).HasForeignKey(x => x.TaskId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Attribute).WithMany(x => x.Data).HasForeignKey(x => x.AttributeId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Schema).WithMany(x => x.Data).HasForeignKey(x => x.SchemaId);
             modelBuilder.Entity<BoolDataEntity>().ToTable("BoolBlocks");
