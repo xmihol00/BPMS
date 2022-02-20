@@ -133,10 +133,10 @@ namespace BPMS_BL.Facades
         public async Task<string> RunModel(ModelIdDTO dto)
         {
             _modelRepository.ChangeState(dto.Id, ModelStateEnum.Executable);
-            await _modelRepository.Save();
-
             await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeep(dto.Id), _workflowRepository,
                                                 _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
+                                                
+            await _modelRepository.Save();
             return "";   
         }
 
