@@ -20,13 +20,12 @@ namespace BPMS_BL.Helpers
                                                 BlockAttributeRepository blockAttributeRepository,
                                                 ServiceDataSchemaRepository serviceDataSchemaRepository)
         {
+            model.State = ModelStateEnum.Executable;
             Guid agendaId = model.AgendaId ?? Guid.Empty;
             BlockModelEntity startEvent = model.Pools
                                                .First(x => x.SystemId == StaticData.ThisSystemId)
                                                .Blocks
                                                .First(x => x.GetType() == typeof(StartEventModelEntity));
-
-
 
             BlockWorkflowEntity startEventWorkflow = new BlockWorkflowEntity()
             {
@@ -34,7 +33,6 @@ namespace BPMS_BL.Helpers
                 BlockModelId = startEvent.Id,
                 SolvedDate = DateTime.Now,
             };
-
 
             BlockModelEntity nextBlock = startEvent.OutFlows.First().InBlock;
             BlockWorkflowEntity blockWorkflow = await CreateBlock(model.Agenda.AdministratorId, agendaId, nextBlock,

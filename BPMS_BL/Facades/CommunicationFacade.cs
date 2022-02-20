@@ -132,7 +132,6 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RunModel(ModelIdDTO dto)
         {
-            _modelRepository.ChangeState(dto.Id, ModelStateEnum.Executable);
             await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(dto.Id), _workflowRepository,
                                                 _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
 
