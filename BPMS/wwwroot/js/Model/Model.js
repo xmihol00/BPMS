@@ -166,8 +166,8 @@ function AddSpecBtn(type)
 function CreateSpecInput(index, type, value = "")
 {
     return `<label class="input mb-1">
-        <input name="Specification[${index}]" class="input-field" type="text" data-reqi="S${index}LableId" placeholder=" " value="${value}" oninput="" />
-        <span id="S${index}LableId" class="input-label color-required">${index + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}</span>
+        <input required name="Specification[${index}]" class="input-field" type="text" placeholder=" " value="${value}" oninput="" />
+        <span id="S${index}LableId" class="input-label">${index + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}</span>
         <button class="btn spec-remove" onclick="RemoveSpec(this, '${type}')" type="button"><i class="fas fa-times"></i></button>
     </label>`
 }
@@ -197,8 +197,6 @@ function RemoveSpec(button, type)
     {
         let inputBlock = specDiv.children[i];
         inputBlock.children[0].setAttribute("name", `Specification[${i}]`);
-        inputBlock.children[0].setAttribute("data-reqi", `S${i}LableId`);
-        inputBlock.children[1].id = `S${i}LableId`;
         inputBlock.children[1].innerText = `${i + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}`
     }
 

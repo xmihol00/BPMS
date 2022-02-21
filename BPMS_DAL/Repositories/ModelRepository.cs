@@ -138,7 +138,6 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.UserRoles)
                                 .ThenInclude(x => x.User)
                                     .ThenInclude(x => x.SystemRoles)
-                                        .ThenInclude(x => x.Role)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.Agenda.UserRoles)
                          .Select(x => x.User)
@@ -149,6 +148,13 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id
                          })
                          .ToListAsync();
+        }
+
+        public Task<Guid?> AgendaId(Guid id)
+        {
+            return _dbSet.Where(x => x.Id == id)
+                         .Select(x => x.AgendaId)
+                         .FirstAsync();
         }
     }
 }

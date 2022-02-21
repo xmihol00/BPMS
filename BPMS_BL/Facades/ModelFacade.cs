@@ -125,6 +125,17 @@ namespace BPMS_BL.Facades
             List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
             string message = JsonConvert.SerializeObject(new ModelIdDTO { Id = dto.Id });
 
+            await _workflowRepository.Create(new WorkflowEntity()
+            {
+                ModelId = dto.Id,
+                State = WorkflowStateEnum.Waiting,
+                Description = dto.Description ?? "",
+                Name = dto.Name,
+                AgendaId = await _modelRepository.AgendaId(dto.Id) ?? Guid.Empty
+            });
+            await _workflowRepository.Save();
+
+
             bool run = true;
             foreach (PoolDstAddressDTO pool in pools)
             {

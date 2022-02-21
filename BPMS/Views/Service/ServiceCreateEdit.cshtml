@@ -38,14 +38,14 @@
         <div class="row">
             <div class="col-6">
                 <label class="input">
-                    <input class="input-field" type="text" placeholder=" " name="Name" data-reqi="HeaderNameLabelId" autocomplete="off" />
-                    <span id="HeaderNameLabelId" class="input-label color-required">Název</span>
+                    <input required class="input-field" type="text" placeholder=" " name="Name" autocomplete="off" />
+                    <span class="input-label">Název</span>
                 </label>
             </div>
             <div class="col-6">
                 <label class="input">
-                    <input class="input-field" type="text" placeholder=" " name="Value" data-reqi="HeaderValueLabelId" autocomplete="off" />
-                    <span id="HeaderValueLabelId" class="input-label color-required">Hodnota</span>
+                    <input required class="input-field" type="text" placeholder=" " name="Value" autocomplete="off" />
+                    <span class="input-label">Hodnota</span>
                 </label>
             </div>
         </div>
@@ -61,14 +61,14 @@
             <h2 class="col-12">Informace o službě</h2>
             <div class="col-12 mb-3">
                 <label class="input">
-                    <input name="URL" class="input-field" type="text" data-url="URLLabelId" placeholder=" " value="@Model.URL"/>
-                    <span id="URLLabelId" class="input-label @(String.IsNullOrEmpty(Model.URL) ? "color-required" : "")">URL služby</span>
+                    <input required name="URL" class="input-field" type="text" data-url="URLLabelId" placeholder=" " value="@Model.URL"/>
+                    <span id="URLLabelId" class="input-label">URL služby</span>
                 </label>
             </div>
             <div class="col-12 col-md-6 mb-3">
                 <label class="input">
-                    <input name="Name" class="input-field" type="text" data-reqi="NameLabelId" placeholder=" " value="@Model.Name" />
-                    <span id="NameLabelId" class="input-label @(String.IsNullOrEmpty(Model.Name) ? "color-required" : "")">Název</span>
+                    <input name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
+                    <span class="input-label">Název</span>
                 </label>
             </div>
             <div class="col-12 col-md-6 mb-3">

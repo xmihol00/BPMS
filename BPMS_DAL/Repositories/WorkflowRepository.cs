@@ -15,5 +15,9 @@ namespace BPMS_DAL.Repositories
     {
         public WorkflowRepository(BpmsDbContext context) : base(context) {}
 
+        public Task<WorkflowEntity> Waiting(Guid modelId)
+        {
+            return _dbSet.FirstAsync(x => x.ModelId == modelId && x.State == WorkflowStateEnum.Waiting);
+        }
     }
 }

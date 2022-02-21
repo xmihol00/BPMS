@@ -6,8 +6,8 @@
         <input type="hidden" name="Id" value="@Model.Id" />
         <div class="col-12 mb-3">
             <label class="input">
-                <input name="Name" class="input-field" type="text" placeholder=" " data-reqi="BlockNameLabelId" value="@Model.Name" />
-                <span id="BlockNameLabelId" class="input-label">Název</span>
+                <input required name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
+                <span class="input-label">Název</span>
             </label>
         </div>
         <div class="col-12 mb-2">
@@ -48,8 +48,8 @@
         <div class="row">
             <div class="col-4">
                 <label class="input">
-                    <input id="NameId" name="Name" class="input-field" data-reqi="AttribNameLabelId" type="text" placeholder=" " value="" />
-                    <span id="AttribNameLabelId" class="input-label color-required">Název</span>
+                    <input required id="NameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
+                    <span class="input-label">Název</span>
                 </label>
             </div>
             <div class="col-4">

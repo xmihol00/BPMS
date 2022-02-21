@@ -11,14 +11,14 @@
                 <form id="SignInFormId" method="POST" action="/Account/SignIn" oninput="InputValidator(this)">
                     <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" />
                     <label class="input mt-2">
-                        <input class="input-field" type="text" placeholder=" " name="UserName" data-reqi="UNameLabelId" 
+                        <input required class="input-field" type="text" placeholder=" " name="UserName"
                                 autocomplete="off" value="@Model.UserName" />
-                        <span id="UNameLabelId" class="input-label color-required">Přihlašovací jméno</span>
+                        <span class="input-label">Přihlašovací jméno</span>
                     </label>
                     <label class="input mt-3">
-                        <input class="input-field" type="password" placeholder=" " name="Password" data-reqi="PWordLabelId" 
+                        <input required class="input-field" type="password" placeholder=" " name="Password"
                                 autocomplete="off" value="" />
-                        <span id="PWordLabelId" class="input-label color-required">Heslo</span>
+                        <span class="input-label">Heslo</span>
                     </label>
                     @if (!String.IsNullOrWhiteSpace(Model.UserName))
                     {

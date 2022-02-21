@@ -42,8 +42,8 @@
         <div class="row">
             <div class="col-12">
                 <label class="input">
-                    <input class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" data-reqi="ModelNameLabelId" />
-                    <span id="ModelNameLabelId" class="input-label">Název</span>
+                    <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
+                    <span class="input-label">Název</span>
                 </label>
             </div>
             <div class="col-12 mt-3">
@@ -86,8 +86,8 @@
         <div class="row">
             <div class="col-12 col-lg-6 mb-3">
                 <label class="input">
-                    <input class="input-field" type="text" placeholder=" " name="Name" data-reqi="WFNameLabelId" />
-                    <span id="WFNameLabelId" class="input-label">Název</span>
+                    <input required class="input-field" type="text" placeholder=" " name="Name"/>
+                    <span class="input-label">Název</span>
                 </label>
             </div>
             <div id="RunModelTargetId" class="col-12 col-lg-6 mb-3"></div>
@@ -99,7 +99,7 @@
             </div>
         </div>
         <div class="d-flex justify-content-center mt-2 mb-3">
-            <button form="RunModelId" type="submit" class="butn btn-s">Spustit</button>
+            <button form="RunModelId" type="submit" class="butn btn-s" disabled>Spustit</button>
         </div>
     </form>
 }

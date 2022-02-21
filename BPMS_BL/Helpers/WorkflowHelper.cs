@@ -54,16 +54,9 @@ namespace BPMS_BL.Helpers
                 blocks.Add(serviceBlockWorkflow);
             }
 
-            WorkflowEntity workflow = new WorkflowEntity()
-            {
-                Name = $"NEW: {model.Name} {DateTime.Now.ToString("dd. MM. yyyy HH:mm")}",
-                AgendaId = agendaId,
-                ModelId = model.Id,
-                State = WorkflowStateEnum.Active,
-                Blocks = blocks
-            };
-
-            await workflowRepository.Create(workflow);
+            WorkflowEntity workflow = await workflowRepository.Waiting(model.Id);
+            workflow.State = WorkflowStateEnum.Active;
+            workflow.Blocks = blocks;
         }
 
         private static async Task<BlockWorkflowEntity> CreateBlock(Guid agendaAdminId, Guid agendaId, BlockModelEntity nextBlock,

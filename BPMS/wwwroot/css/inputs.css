@@ -62,10 +62,19 @@
   background-color: #fff;
 }
 
-.input-field:focus + .input-label, .input-select:not(:placeholder-shown) + .input-label, .input-field:not(:placeholder-shown) + .input-label, .input-file-chosen {
+.input-field:focus + .input-label, 
+.input-select:not(:empty) + .input-label, 
+.input-field:not(:placeholder-shown) + .input-label, 
+.input-file-chosen {
   transform: translate(0.25rem, -82%) scale(0.95);
   color: var(--color-primary);
   padding: 0rem 0.2rem;
+}
+
+.input-field[required]:invalid + .input-label, 
+.input-select[required]:invalid + .input-label, 
+.input-file[required]:invalid + .input-label {
+  color: var(--color-required) !important;
 }
 
 .input-select {
@@ -139,7 +148,7 @@ input[type=file]:hover::after {
   color: var(--color-primary);
 }
 
-select[required]:invalid {
+.input-select[required]:invalid {
   color: var(--color-inactive);
   font-style: italic;
 }
@@ -149,12 +158,12 @@ option {
   font-style: initial;
 }
 
-option[value=""] {
+.input-select[value=""] {
   color: var(--color-inactive);
   font-style: italic;
 }
 
-select + option[value=""] {
+.input-select + option[value=""] {
   color: var(--color-inactive);
   font-style: italic;
 }

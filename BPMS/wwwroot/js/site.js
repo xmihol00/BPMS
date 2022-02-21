@@ -214,29 +214,27 @@ function InputValidator(form)
 {
     let disabled = false;
 
-    for (let input of form.querySelectorAll("[data-reqi]"))
+    for (let input of form.querySelectorAll("[required]"))
     {
-        if (!input.value || !input.value.trim())
+        console.log(input);
+        if (input.type == "file")
+        {
+            if (!input.files[0])
+            {
+                disabled = true;
+            }
+        }
+        else if (input.classList.contains("input-select"))
+        {
+            if (input.options.length == 0)
+            {
+                disabled = true;
+            }
+        }
+        else if (!input.value || !input.value.trim())
         {
             disabled = true;
-            document.getElementById(input.getAttribute("data-reqi")).classList.add("color-required");
-        }
-        else
-        {
-            document.getElementById(input.getAttribute("data-reqi")).classList.remove("color-required");
-        }
-    }
-
-    for (let input of form.querySelectorAll("[data-reqf]"))
-    {
-        if (!input.files[0])
-        {
-            disabled = true;
-            document.getElementById(input.getAttribute("data-reqf")).classList.add("color-required");
-        }
-        else
-        {
-            document.getElementById(input.getAttribute("data-reqf")).classList.remove("color-required");
+            break;
         }
     }
 

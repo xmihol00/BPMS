@@ -32,11 +32,13 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              ActiveWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
-                             PausedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Paused).Count(),
+                             PausedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                             FinishedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                             CanceledWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
                              ModelsCount = x.Models.Count(),
                              SystemsCount = x.Systems.Count(),
-                             UserCount = x.UserRoles.Where(y => y.UserId != Guid.Empty).Count(),
-                             MissingRolesCount = x.UserRoles.Where(y => y.UserId == Guid.Empty).Count(),
+                             UserCount = x.UserRoles.Where(y => y.UserId != null).Count(),
+                             MissingRolesCount = x.UserRoles.Where(y => y.UserId == null).Count(),
                          })
                          .ToListAsync();
         }
@@ -68,22 +70,6 @@ namespace BPMS_DAL.Repositories
                                            SVG = y.SVG
                                        })
                                        .ToList(),
-                             Roles = x.UserRoles
-                                     .Select(y => y.Role)
-                                     .Select(y => new RoleDetailDTO
-                                     {
-                                         Description = y.Description,
-                                         Id = y.Id,
-                                         Name = y.Name,
-                                         Users = y.UserRoles.Where(z => z.UserId != null)
-                                                  .Select(z => new UserIdNameDTO
-                                                  {
-                                                      Id = z.UserId,
-                                                      FullName = $"{z.User.Name} {z.User.Surname}",
-                                                  })
-                                                  .ToList()
-                                     })
-                                     .ToList(),
                             Workflows = x.Workflows
                                          .Select(y => new WorkflowAllDTO
                                          {
@@ -116,63 +102,6 @@ namespace BPMS_DAL.Repositories
                              URL = x.System.URL
                          })
                          .ToListAsync();
-        }
-
-        public Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
-        {
-            return _dbSet.Include(x => x.Administrator)
-                         .Include(x => x.Models)
-                         .Include(x => x.Workflows)
-                            .ThenInclude(x => x.Model)
-                         .Include(x => x.Systems)
-                         .Include(x => x.UserRoles)
-                            .ThenInclude(x => x.User)
-                         .Include(x => x.UserRoles)
-                            .ThenInclude(x => x.Role)
-                         .Select(x => new AgendaDetailPartialDTO 
-                         {
-                             AdministratorId = x.AdministratorId,
-                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
-                             AdministratorEmail = x.Administrator.Email,
-                             Id = x.Id,
-                             Name = x.Name,
-                             Description = x.Description,
-                             Models = x.Models
-                                       .Select(y => new ModelAllDTO
-                                       {
-                                           Id = y.Id,
-                                           Name = y.Name,
-                                           SVG = y.SVG
-                                       })
-                                       .ToList(),
-                             Roles = x.UserRoles
-                                     .Select(y => y.Role)
-                                     .Select(y => new RoleDetailDTO
-                                     {
-                                         Description = y.Description,
-                                         Id = y.Id,
-                                         Name = y.Name,
-                                         Users = y.UserRoles.Where(z => z.UserId != null)
-                                                  .Select(z => new UserIdNameDTO
-                                                  {
-                                                      Id = z.UserId,
-                                                      FullName = $"{z.User.Name} {z.User.Surname}",
-                                                  })
-                                                  .ToList()
-                                     })
-                                     .ToList(),
-                            Workflows = x.Workflows
-                                         .Select(y => new WorkflowAllDTO
-                                         {
-                                             Description = y.Description,
-                                             Id = y.Id,
-                                             Name = y.Name,
-                                             State = y.State,
-                                             SVG = y.Model.SVG
-                                         })
-                                         .ToList()
-                         })
-                         .FirstAsync(x => x.Id == id);
         }
     }
 }

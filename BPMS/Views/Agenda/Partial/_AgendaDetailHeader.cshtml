@@ -17,20 +17,20 @@
     <div class="row">
         <div class="col-12 mt-1">
             <label class="input">
-                <input class="input-field" type="text" placeholder=" " name="Name" data-reqi="ModelNameLabelId" autocomplete="off" />
-                <span id="ModelNameLabelId" class="input-label color-required">Název</span>
+                <input required class="input-field" type="text" placeholder=" " name="Name" autocomplete="off" />
+                <span id="ModelNameLabelId" class="input-label">Název</span>
             </label>
         </div>
         <div class="col-12 col-md-6 mt-3">
             <label class="input">
-                <input class="input-file" type="file" onchange="FileSelected(this)" name="BPMN" data-reqf="BpmnFileLabelId" accept=".bpmn"/>
-                <span id="BpmnFileLabelId" class="input-label pointer color-required">Soubor BPMN</span>
+                <input required class="input-file" type="file" onchange="FileSelected(this)" name="BPMN" accept=".bpmn"/>
+                <span class="input-label pointer">Soubor BPMN</span>
             </label>
         </div>
         <div class="col-12 col-md-6 mt-3">
             <label class="input">
-                <input class="input-file" type="file" onchange="FileSelected(this)" name="SVG" data-reqf="SvgFileLabelId" accept=".svg" />
-                <span id="SvgFileLabelId" class="input-label pointer color-required">Soubor SVG</span>
+                <input required class="input-file" type="file" onchange="FileSelected(this)" name="SVG" accept=".svg" />
+                <span class="input-label pointer">Soubor SVG</span>
             </label>
         </div>
     </div>
@@ -47,8 +47,7 @@
     <div class="row">
         <div class="col-12 mt-1">
             <label class="input">
-                <input class="input-field" type="text" placeholder=" " name="Name" data-reqi="AgendaNameLabelId" 
-                       autocomplete="off" value="@Model.Name" />
+                <input required class="input-field" type="text" placeholder=" " name="Name" autocomplete="off" value="@Model.Name" />
                 <span id="AgendaNameLabelId" class="input-label">Název</span>
             </label>
         </div>

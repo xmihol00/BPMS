@@ -4,13 +4,11 @@
 {
     <div>
         <label class="input mt-2 mb-2">
-            <select class="input-select"> 
-                @foreach (UserIdNameDTO user in Model)
+            <select required class="input-select">@foreach (UserIdNameDTO user in Model)
                 {
 
                     <option value="@user.Id">@user.FullName</option>
-                }
-            </select>
+                }</select>
             <span class="input-label">Nový uživatel</span>
         </label>
         <div class="d-flex justify-content-center">

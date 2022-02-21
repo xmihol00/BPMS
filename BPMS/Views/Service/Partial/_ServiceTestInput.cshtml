@@ -18,9 +18,9 @@
                     {
                         disabled = true;
                         <label class="input mb-3">
-                            <input name="@schema.Id" class="input-field" data-reqi="@(schema.Id)Id" type="@schema.Type.ToHtmlType()" 
+                            <input required name="@schema.Id" class="input-field" type="@schema.Type.ToHtmlType()" 
                                    placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
-                            <span id="@(schema.Id)Id" class="input-label @(schema.StaticData == null ? "color-required" : "")">
+                            <span class="input-label">
                                 @schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")
                             </span>
                         </label>

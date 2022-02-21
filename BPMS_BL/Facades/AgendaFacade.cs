@@ -49,6 +49,7 @@ namespace BPMS_BL.Facades
         public async Task<AgendaDetailDTO> Detail(Guid id)
         {
             AgendaDetailDTO dto = await _agendaRepository.Detail(id);
+            dto.Roles = await _solvingRoleRepository.Roles(id);
             dto.AllAgendas = await _agendaRepository.All();
             
             return dto;
@@ -155,7 +156,8 @@ namespace BPMS_BL.Facades
 
         public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
-            AgendaDetailPartialDTO detail = await _agendaRepository.DetailPartial(id);
+            AgendaDetailPartialDTO detail = await _agendaRepository.Detail(id);
+            detail.Roles = await _solvingRoleRepository.Roles(id);
             
             return detail;
         }
