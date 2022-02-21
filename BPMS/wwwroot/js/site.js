@@ -216,7 +216,6 @@ function InputValidator(form)
 
     for (let input of form.querySelectorAll("[required]"))
     {
-        console.log(input);
         if (input.type == "file")
         {
             if (!input.files[0])

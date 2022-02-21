@@ -68,15 +68,10 @@ namespace BPMS_BL.Helpers
                     blockWorkflow = new TaskWorkflowEntity()
                     {
                         SolveDate = DateTime.Now.AddDays(userTask.Difficulty.TotalDays),
-                        UserId = await agendaRoleUserRepository.LeastBussyUser(agendaId, roleId)
+                        UserId = await agendaRoleUserRepository.LeastBussyUser(agendaId, roleId) ?? agendaAdminId
                     };
 
                     ITaskWorkflowEntity uTask = blockWorkflow as ITaskWorkflowEntity;
-                    if (uTask.UserId == Guid.Empty)
-                    {
-                        uTask.UserId = agendaAdminId;
-                    }
-
                     uTask.Data = CrateUserTaskData(await blockAttributeRepository.All(blockModel.Id));
                     break;
 
@@ -84,15 +79,10 @@ namespace BPMS_BL.Helpers
                     roleId = serviceTask.RoleId ?? Guid.Empty;
                     blockWorkflow = new ServiceWorkflowEntity()
                     {
-                        UserId = await agendaRoleUserRepository.LeastBussyUser(agendaId, roleId)
+                        UserId = await agendaRoleUserRepository.LeastBussyUser(agendaId, roleId) ?? agendaAdminId
                     };
 
                     IServiceWorkflowEntity sTask = blockWorkflow as IServiceWorkflowEntity;
-                    if (sTask.UserId == Guid.Empty)
-                    {
-                        sTask.UserId = agendaAdminId;
-                    }
-
                     sTask.Data = CrateServiceTaskData(await serviceDataSchemaRepository.All(serviceTask.ServiceId));
                     break;
 
