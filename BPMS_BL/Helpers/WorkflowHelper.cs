@@ -26,47 +26,42 @@ namespace BPMS_BL.Helpers
                                                .First(x => x.SystemId == StaticData.ThisSystemId)
                                                .Blocks
                                                .First(x => x.GetType() == typeof(StartEventModelEntity));
-
-            BlockWorkflowEntity startEventWorkflow = new BlockWorkflowEntity()
-            {
-                Active = false,
-                BlockModelId = startEvent.Id,
-                SolvedDate = DateTime.Now,
-            };
-
-            BlockModelEntity nextBlock = startEvent.OutFlows.First().InBlock;
-            BlockWorkflowEntity blockWorkflow = await CreateBlock(model.Agenda.AdministratorId, agendaId, nextBlock,
+            
+            List<BlockWorkflowEntity> blocks = await CreateBlocks(model.Agenda.AdministratorId, agendaId, startEvent,
                                                                   agendaRoleUserRepository, blockAttributeRepository,
                                                                   serviceDataSchemaRepository);
-            
-            List<BlockWorkflowEntity> blocks = new List<BlockWorkflowEntity>()
-            {
-                startEventWorkflow,
-                blockWorkflow
-            };
-
-            BlockModelEntity nextNextBlock = nextBlock.OutFlows.FirstOrDefault()?.InBlock;
-            if (nextBlock != null && nextNextBlock is ServiceTaskModelEntity)
-            {
-                BlockWorkflowEntity serviceBlockWorkflow = await CreateBlock(model.Agenda.AdministratorId, agendaId, nextNextBlock,
-                                                                             agendaRoleUserRepository, blockAttributeRepository,
-                                                                             serviceDataSchemaRepository);
-                blocks.Add(serviceBlockWorkflow);
-            }
+            blocks[1].Active = true;
 
             WorkflowEntity workflow = await workflowRepository.Waiting(model.Id);
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = blocks;
         }
 
-        private static async Task<BlockWorkflowEntity> CreateBlock(Guid agendaAdminId, Guid agendaId, BlockModelEntity nextBlock,
+        private static async Task<List<BlockWorkflowEntity>> CreateBlocks(Guid agendaAdminId, Guid agendaId, BlockModelEntity blockModel,
+                                                                          AgendaRoleUserRepository agendaRoleUserRepository,
+                                                                          BlockAttributeRepository blockAttributeRepository,
+                                                                          ServiceDataSchemaRepository serviceDataSchemaRepository)
+        {
+            List<BlockWorkflowEntity> blocks = new List<BlockWorkflowEntity>();
+            blocks.Add(await CreateBlock(agendaAdminId, agendaId, blockModel, agendaRoleUserRepository, 
+                                         blockAttributeRepository, serviceDataSchemaRepository));
+            foreach (FlowEntity outFlows in blockModel.OutFlows)
+            {
+                blocks.AddRange(await CreateBlocks(agendaAdminId, agendaId, outFlows.InBlock, agendaRoleUserRepository, 
+                                                   blockAttributeRepository, serviceDataSchemaRepository));
+            }
+
+            return blocks;
+        }
+
+        private static async Task<BlockWorkflowEntity> CreateBlock(Guid agendaAdminId, Guid agendaId, BlockModelEntity blockModel,
                                                                    AgendaRoleUserRepository agendaRoleUserRepository,
                                                                    BlockAttributeRepository blockAttributeRepository,
                                                                    ServiceDataSchemaRepository serviceDataSchemaRepository)
         {
             Guid roleId;
             BlockWorkflowEntity blockWorkflow;
-            switch (nextBlock)
+            switch (blockModel)
             {
                 case IUserTaskModelEntity userTask:
                     roleId = userTask.RoleId ?? Guid.Empty;
@@ -82,7 +77,7 @@ namespace BPMS_BL.Helpers
                         uTask.UserId = agendaAdminId;
                     }
 
-                    uTask.Data = CrateUserTaskData(await blockAttributeRepository.All(nextBlock.Id));
+                    uTask.Data = CrateUserTaskData(await blockAttributeRepository.All(blockModel.Id));
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
@@ -107,7 +102,7 @@ namespace BPMS_BL.Helpers
             }
 
             blockWorkflow.Active = true;
-            blockWorkflow.BlockModelId = nextBlock.Id;
+            blockWorkflow.BlockModelId = blockModel.Id;
 
             return blockWorkflow;
         }
