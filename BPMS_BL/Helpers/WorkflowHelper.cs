@@ -68,7 +68,8 @@ namespace BPMS_BL.Helpers
                     blockWorkflow = new TaskWorkflowEntity()
                     {
                         SolveDate = DateTime.Now.AddDays(userTask.Difficulty.TotalDays),
-                        UserId = await agendaRoleUserRepository.LeastBussyUser(agendaId, roleId) ?? agendaAdminId
+                        UserId = await agendaRoleUserRepository.LeastBussyUser(agendaId, roleId) ?? agendaAdminId,
+                        Priority = TaskPriorityEnum.Medium
                     };
 
                     ITaskWorkflowEntity uTask = blockWorkflow as ITaskWorkflowEntity;
