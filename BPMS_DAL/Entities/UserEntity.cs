@@ -16,7 +16,7 @@ namespace BPMS_DAL.Entities
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public List<SystemRoleEntity> Roles { get; set; } = new List<SystemRoleEntity>();
+        public List<SystemRoleEntity> SystemRoles { get; set; } = new List<SystemRoleEntity>();
         public List<AgendaEntity> Agendas { get; set; } = new List<AgendaEntity>();
         public List<TaskWorkflowEntity> Tasks { get; set; } = new List<TaskWorkflowEntity>();
         public List<AgendaRoleUserEntity> UserRoles { get; set; } = new List<AgendaRoleUserEntity>();

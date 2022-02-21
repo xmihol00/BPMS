@@ -51,7 +51,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<UserEntity>().HasKey(x => x.Id);
 
             modelBuilder.Entity<SystemRoleEntity>().HasKey(x => new { x.UserId, x.Role });
-            modelBuilder.Entity<SystemRoleEntity>().HasOne(x => x.User).WithMany(x => x.Roles).HasForeignKey(x => x.UserId);
+            modelBuilder.Entity<SystemRoleEntity>().HasOne(x => x.User).WithMany(x => x.SystemRoles).HasForeignKey(x => x.UserId);
 
             modelBuilder.Entity<AgendaEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<AgendaEntity>().HasOne(x => x.Administrator).WithMany(x => x.Agendas).HasForeignKey(x => x.AdministratorId);

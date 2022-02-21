@@ -18,8 +18,8 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<UserIdNameDTO>> CreateModal()
         {
-            return _dbSet.Include(x => x.Roles)
-                         .Where(x => x.Roles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper))
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper))
                          .Select(x => new UserIdNameDTO 
                          {
                              FullName = $"{x.Name} {x.Surname}",
@@ -42,14 +42,14 @@ namespace BPMS_DAL.Repositories
 
         public Task<UserAuthDTO> Authenticate(string userName)
         {
-            return _dbSet.Include(x => x.Roles)
+            return _dbSet.Include(x => x.SystemRoles)
                          .Where(x => x.UserName == userName)
                          .Select(x => new UserAuthDTO
                          {
                              FullName = $"{x.Name} {x.Surname}",
                              Id = x.Id,
                              Password = x.Password,
-                             Roles = x.Roles.Select(y => y.Role).ToList()
+                             Roles = x.SystemRoles.Select(y => y.Role).ToList()
                          })
                          .FirstAsync();
         }

@@ -60,6 +60,11 @@ namespace BPMS_BL.Facades
 
         public async Task<string> ShareImport(ModelDetailShare dto)
         {
+            if (await _modelRepository.Any(dto.Id))
+            {
+                return "";
+            }
+
             ModelEntity model = _mapper.Map<ModelEntity>(dto);
             model.State = ModelStateEnum.Shared;
             XDocument svg = XDocument.Parse(dto.SVG, LoadOptions.PreserveWhitespace);
@@ -132,6 +137,8 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RunModel(ModelIdDTO dto)
         {
+            
+
             await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(dto.Id), _workflowRepository,
                                                 _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
 

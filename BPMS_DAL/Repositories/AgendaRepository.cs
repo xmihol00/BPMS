@@ -10,6 +10,10 @@ using BPMS_DAL.Entities;
 using BPMS_DTOs.Agenda;
 using BPMS_Common.Enums;
 using BPMS_DTOs.System;
+using BPMS_DTOs.Model;
+using BPMS_DTOs.User;
+using BPMS_DTOs.Role;
+using BPMS_DTOs.Workflow;
 
 namespace BPMS_DAL.Repositories
 {
@@ -40,6 +44,14 @@ namespace BPMS_DAL.Repositories
         public Task<AgendaDetailDTO> Detail(Guid id)
         {
             return _dbSet.Include(x => x.Administrator)
+                         .Include(x => x.Models)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Model)
+                         .Include(x => x.Systems)
+                         .Include(x => x.UserRoles)
+                            .ThenInclude(x => x.User)
+                         .Include(x => x.UserRoles)
+                            .ThenInclude(x => x.Role)
                          .Select(x => new AgendaDetailDTO 
                          {
                              AdministratorId = x.AdministratorId,
@@ -47,7 +59,41 @@ namespace BPMS_DAL.Repositories
                              AdministratorEmail = x.Administrator.Email,
                              Id = x.Id,
                              Name = x.Name,
-                             Description = x.Description
+                             Description = x.Description,
+                             Models = x.Models
+                                       .Select(y => new ModelAllDTO
+                                       {
+                                           Id = y.Id,
+                                           Name = y.Name,
+                                           SVG = y.SVG
+                                       })
+                                       .ToList(),
+                             Roles = x.UserRoles
+                                     .Select(y => y.Role)
+                                     .Select(y => new RoleDetailDTO
+                                     {
+                                         Description = y.Description,
+                                         Id = y.Id,
+                                         Name = y.Name,
+                                         Users = y.UserRoles.Where(z => z.UserId != null)
+                                                  .Select(z => new UserIdNameDTO
+                                                  {
+                                                      Id = z.UserId,
+                                                      FullName = $"{z.User.Name} {z.User.Surname}",
+                                                  })
+                                                  .ToList()
+                                     })
+                                     .ToList(),
+                            Workflows = x.Workflows
+                                         .Select(y => new WorkflowAllDTO
+                                         {
+                                             Description = y.Description,
+                                             Id = y.Id,
+                                             Name = y.Name,
+                                             State = y.State,
+                                             SVG = y.Model.SVG
+                                         })
+                                         .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -75,8 +121,14 @@ namespace BPMS_DAL.Repositories
         public Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
             return _dbSet.Include(x => x.Administrator)
+                         .Include(x => x.Models)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Model)
                          .Include(x => x.Systems)
-                            .ThenInclude(x => x.System)
+                         .Include(x => x.UserRoles)
+                            .ThenInclude(x => x.User)
+                         .Include(x => x.UserRoles)
+                            .ThenInclude(x => x.Role)
                          .Select(x => new AgendaDetailPartialDTO 
                          {
                              AdministratorId = x.AdministratorId,
@@ -85,12 +137,40 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              Description = x.Description,
-                             Systems = x.Systems.Select(y => new SystemAllDTO
-                             {
-                                 Id = y.System.Id,
-                                 Name = y.System.Name,
-                                 URL = y.System.URL
-                             }).ToList()
+                             Models = x.Models
+                                       .Select(y => new ModelAllDTO
+                                       {
+                                           Id = y.Id,
+                                           Name = y.Name,
+                                           SVG = y.SVG
+                                       })
+                                       .ToList(),
+                             Roles = x.UserRoles
+                                     .Select(y => y.Role)
+                                     .Select(y => new RoleDetailDTO
+                                     {
+                                         Description = y.Description,
+                                         Id = y.Id,
+                                         Name = y.Name,
+                                         Users = y.UserRoles.Where(z => z.UserId != null)
+                                                  .Select(z => new UserIdNameDTO
+                                                  {
+                                                      Id = z.UserId,
+                                                      FullName = $"{z.User.Name} {z.User.Surname}",
+                                                  })
+                                                  .ToList()
+                                     })
+                                     .ToList(),
+                            Workflows = x.Workflows
+                                         .Select(y => new WorkflowAllDTO
+                                         {
+                                             Description = y.Description,
+                                             Id = y.Id,
+                                             Name = y.Name,
+                                             State = y.State,
+                                             SVG = y.Model.SVG
+                                         })
+                                         .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }

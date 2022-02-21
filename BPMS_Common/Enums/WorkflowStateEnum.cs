@@ -8,6 +8,7 @@ namespace BPMS_Common.Enums
 {
     public enum WorkflowStateEnum
     {
+        Waiting,
         Active,
         Paused,
         Finished,

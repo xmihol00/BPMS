@@ -44,10 +44,16 @@ namespace BPMS.Controllers
             return Ok(await _modelFacade.Share(id));
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Run(Guid id)
         {
-            return Ok(await _modelFacade.Run(id));
+            return PartialView("Partial/_ModelRun", await _modelFacade.Run(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Run(ModelRunDTO dto)
+        {
+            return Ok(await _modelFacade.Run(dto));
         }
 
         [HttpPost]

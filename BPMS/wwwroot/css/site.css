@@ -703,26 +703,6 @@ body {
   text-align: initial;
 }
 
-select[required]:invalid {
-  color: var(--color-inactive);
-  font-style: italic;
-}
-
-option {
-  color: initial;
-  font-style: initial;
-}
-
-option[value=""] {
-  color: var(--color-inactive);
-  font-style: italic;
-}
-
-select + option[value=""] {
-  color: var(--color-inactive);
-  font-style: italic;
-}
-
 .pt-sys-remove {
   padding-top: 0.35rem;
 }

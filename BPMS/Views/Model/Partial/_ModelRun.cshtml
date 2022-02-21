@@ -1,0 +1,11 @@
+@model List<UserIdNameDTO>
+
+<label class="input">
+    <select required class="input-select" name="UserId"> 
+        @foreach (UserIdNameDTO user in Model)
+        {
+            <option value="@user.Id">@user.FullName</option>
+        }
+    </select>
+    <span class="input-label">Správce workflow</span>
+</label>

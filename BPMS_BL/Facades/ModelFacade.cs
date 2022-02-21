@@ -115,10 +115,15 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<bool> Run(Guid id)
+        public Task<List<UserIdNameDTO>> Run(Guid id)
         {
-            List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(id);
-            string message = JsonConvert.SerializeObject(new ModelIdDTO { Id = id });
+            return _modelRepository.WorflowKeepers(id);
+        }
+
+        public async Task<bool> Run(ModelRunDTO dto)
+        {
+            List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
+            string message = JsonConvert.SerializeObject(new ModelIdDTO { Id = dto.Id });
 
             bool run = true;
             foreach (PoolDstAddressDTO pool in pools)
@@ -140,12 +145,12 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(id), _workflowRepository, 
+                await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(dto.Id), _workflowRepository, 
                                                     _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
             }
             else
             {
-                _modelRepository.ChangeState(id, ModelStateEnum.Waiting);
+                _modelRepository.ChangeState(dto.Id, ModelStateEnum.Waiting);
             }
             await _modelRepository.Save();
 
