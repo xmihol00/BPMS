@@ -1,0 +1,24 @@
+
+.TaskController .task, 
+.AgendaController .agenda, 
+.WorkflowController .workflow, 
+.ServiceController .service, 
+.UserController .user,
+.SystemController .system {
+  color: #fff;
+}
+
+.TaskController .task::before, 
+.AgendaController .agenda::before, 
+.WorkflowController .workflow::before, 
+.ServiceController .service::before, 
+.UserController .user::before,
+.SystemController .system::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 38px;
+  margin-top: 3px;
+  background-color: #fff;
+}

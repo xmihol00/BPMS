@@ -111,7 +111,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.Workflow).WithMany(x => x.Blocks).HasForeignKey(x => x.WorkflowId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.BlockModel).WithMany(x => x.BlockWorkflows).HasForeignKey(x => x.BlockModelId);
             modelBuilder.Entity<TaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Tasks).HasForeignKey(x => x.UserId);
+            modelBuilder.Entity<ServiceWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Services).HasForeignKey(x => x.UserId);
             modelBuilder.Entity<TaskWorkflowEntity>().ToTable("TasksWorkflow");
+            modelBuilder.Entity<ServiceWorkflowEntity>().ToTable("ServiceWorkflow");
 
             modelBuilder.Entity<TaskDataEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Task).WithMany(x => x.Data).HasForeignKey(x => x.TaskId);

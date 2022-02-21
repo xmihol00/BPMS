@@ -19,5 +19,6 @@ namespace BPMS_DTOs.Task
         public string AgendaName { get; set; } = string.Empty;
         public TaskPriorityEnum Priority { get; set; }
         public DateTime SolveDate { get; set; }
+        public TaskTypeEnum Type { get; set; }
     }
 }

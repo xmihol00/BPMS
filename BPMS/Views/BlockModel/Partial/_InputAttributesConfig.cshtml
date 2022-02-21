@@ -37,7 +37,7 @@
             <h6 class="border-bottom mb-1 pb-1">Atributy bloku: 
                 @if (String.IsNullOrEmpty(group.Key))
                 {
-                    <span class="text-secondary text-italic">Bez názvu</span>
+                    <span class="text-placeholder">Bez názvu</span>
                 }
                 else
                 {
@@ -63,7 +63,7 @@
                     <div class="col-5 text-center mt-2 mb-2">
                         @if (String.IsNullOrEmpty(@attrib.Description))
                         {
-                            <span class="text-secondary text-italic">Atribut nemá popis.</span>
+                            <span class="text-placeholder">Atribut nemá popis.</span>
                         }
                         else
                         {
@@ -95,7 +95,7 @@
                         }
                         else
                         {
-                            <span class="text-secondary text-italic">Atribut nemá specifikaci.</span>
+                            <span class="text-placeholder">Atribut nemá specifikaci.</span>
                         }
                     </div>
                 </div>

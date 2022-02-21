@@ -23,25 +23,48 @@ namespace BPMS_DAL.Repositories
             _serviceTasks = context.Set<ServiceWorkflowEntity>();
         }
 
-        public Task<List<TaskAllDTO>> Overview(Guid userId)
+        public async Task<List<TaskAllDTO>> Overview(Guid userId)
         {
-            return _userTasks.Include(x => x.BlockModel)
-                             .Include(x => x.Workflow)
-                                .ThenInclude(x => x.Agenda)
-                             .Where(x => x.UserId == userId)
-                             .Select(x => new TaskAllDTO
-                             {
-                                AgendaId = x.Workflow.AgendaId,
-                                AgendaName = x.Workflow.Agenda.Name,
-                                Description = x.BlockModel.Description,
-                                SolveDate = x.SolveDate,
-                                Id = x.Id,
-                                Priority = x.Priority,
-                                TaskName = x.BlockModel.Name,
-                                WorkflowId = x.WorkflowId,
-                                WorkflowName = x.Workflow.Name
-                             })
-                             .ToListAsync();
+            List<TaskAllDTO> tasks = await _serviceTasks.Include(x => x.BlockModel)
+                                                        .Include(x => x.Workflow)
+                                                           .ThenInclude(x => x.Agenda)
+                                                        .Where(x => x.UserId == userId && x.Active == true)
+                                                        .Select(x => new TaskAllDTO
+                                                        {
+                                                           AgendaId = x.Workflow.AgendaId,
+                                                           AgendaName = x.Workflow.Agenda.Name,
+                                                           Description = x.BlockModel.Description,
+                                                           SolveDate = DateTime.MinValue,
+                                                           Id = x.Id,
+                                                           Priority = TaskPriorityEnum.Urgent,
+                                                           TaskName = x.BlockModel.Name,
+                                                           WorkflowId = x.WorkflowId,
+                                                           WorkflowName = x.Workflow.Name,
+                                                           Type = TaskTypeEnum.UserTask
+                                                        })
+                                                        .ToListAsync();
+                                                     
+            tasks.AddRange(await _userTasks.Include(x => x.BlockModel)
+                                           .Include(x => x.Workflow)
+                                              .ThenInclude(x => x.Agenda)
+                                           .Where(x => x.UserId == userId && x.Active == true)
+                                           .Select(x => new TaskAllDTO
+                                           {
+                                              AgendaId = x.Workflow.AgendaId,
+                                              AgendaName = x.Workflow.Agenda.Name,
+                                              Description = x.BlockModel.Description,
+                                              SolveDate = x.SolveDate,
+                                              Id = x.Id,
+                                              Priority = x.Priority,
+                                              TaskName = x.BlockModel.Name,
+                                              WorkflowId = x.WorkflowId,
+                                              WorkflowName = x.Workflow.Name,
+                                              Type = TaskTypeEnum.UserTask
+                                           })
+                                           .OrderBy(x => x.Priority)
+                                                .ThenBy(x => x.SolveDate)
+                                           .ToListAsync());
+            return tasks;
         }
     }
 }

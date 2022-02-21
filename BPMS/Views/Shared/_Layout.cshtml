@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/buttons.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/inputs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navigation.css" asp-append-version="true" />
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </head>
@@ -32,23 +33,23 @@
             <nav class="screen-lg">
                 <div id="MainSideBarId" class="side-menu-bar side-menu-bar-small">
                     <i class="fas fa-bars float-end menu-btn" onclick="ToggleSideBar()"></i>
-                    <ul class="py-5 mt-3 side-bar-ul">
-                        <li class="active-nav-item">
+                    <ul class="py-5 mt-3 side-bar-ul @ViewBag.Controller">
+                        <li class="task">
                             <a href="/Task/Overview"><i class="fas fa-tasks"></i> <span>Úkoly</span></a>
                         </li>
-                        <li>
+                        <li class="workflow">
                             <a href="/Workflow/Overview"><i class="fas fa-retweet workflow-icon"></i> <span>Workflow</span></a>
                         </li>
-                        <li>
+                        <li class="agenda">
                             <a href="/Agenda/Overview"><i class="fas fa-list-alt"></i> <span>Agendy</span></a>
                         </li>
-                        <li>
+                        <li class="service">
                             <a href="/Service/Overview"><i class="fas fa-satellite-dish"></i> <span>Webové služby</span></a>
                         </li>
-                        <li>
+                        <li class="user">
                             <a href="/User/Overview"><i class="fas fa-user-cog user-icon"></i> <span>Uživatelé</span></a>
                         </li>
-                        <li>
+                        <li class="system">
                             <a href="/System/Overview"><i class="fas fa-network-wired system-icon"></i> <span>Systémy</span></a>
                         </li>
                     </ul>

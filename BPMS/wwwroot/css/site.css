@@ -17,6 +17,10 @@
   --color-border: #e5e5e5;
   --color-disabled: #777;
   --color-inactive: #505050;
+  --color-prio-low: #018f5b;
+  --color-prio-medium: #007bff;
+  --color-prio-high: #fc6a00;
+  --color-prio-urgent: #cf0000;
 }
 
 html {
@@ -54,6 +58,10 @@ body {
 
 .signin-position {
   padding-top: max(calc(40vh - 250px), 0px);
+}
+
+a:hover {
+  color: var(--color-prio-medium);
 }
 
 .signin-fail {
@@ -705,4 +713,35 @@ body {
 
 .pt-sys-remove {
   padding-top: 0.35rem;
+}
+
+.Low {
+  background-color: var(--color-prio-low);
+}
+
+.Medium {
+  background-color: var(--color-prio-medium);
+}
+
+.High {
+  background-color: var(--color-prio-high);
+}
+
+.Urgent {
+  background-color: var(--color-prio-urgent);
+}
+
+.text-placeholder {
+  text-align: center !important;
+  color: rgb(var(--bs-secondary-rgb)) !important;
+  font-style: italic;
+}
+
+.link-p {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.task-icon {
+  font-size: 2em;
 }

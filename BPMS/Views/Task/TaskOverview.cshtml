@@ -1,13 +1,85 @@
 @model TaskOverviewDTO
 
-@if (Model.Tasks.Count > 0)
-{
-    @foreach (TaskAllDTO task in Model.Tasks)
-    {
-        <h1>@task.TaskName</h1>
-    }
-}
-else
-{
-    <div class="text-secondary text-italic text-center">Nemáte žádné aktivní úkoly.</div>
-}
+<div id="PageNavId" class="page-navbar">
+    <h1 class="mt-1 text-font text-center page-navbar-content">Úkoly</h1>
+</div>
+<div id="PageContentId" class="d-flex pt-3">
+    <div id="DetailDivId" class="d-none detail-div">
+        <div class="loading-content"></div>
+    </div>
+    <div id="OverviewDivId" class="container-lg">
+        @if (Model.Tasks.Count > 0)
+        {
+            <div class="row">
+                @foreach (TaskAllDTO task in Model.Tasks)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="shadow-box p-3 my-card bradius-card hover-card pointer">
+                            <h3 class="border-bottom text-center">@task.TaskName</h3>
+                            @if (String.IsNullOrEmpty(task.Description))
+                            {
+                                <div class="text-placeholder">Úkol nemá popis.</div>
+                            }
+                            else
+                            {
+                                <div>@task.Description</div>
+                            }
+                            <div class="row mb-1 mt-2">
+                                <div class="col-6 text-right">
+                                    Priorita:
+                                </div>
+                                <div class="col-6">
+                                    <span class="badge @task.Priority rounded-pill text-1em px-3">
+                                        @task.Priority.ToLabel()
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-6 ps-4 text-right">
+                                    Dokončit do: 
+                                </div>
+                                <div class="col-6">
+                                    <b>@task.SolveDate.ToString("dd. MM. yyyy")</b>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 ps-4 text-right">
+                                    Typ úkolu: 
+                                </div>
+                                <div class="col-6">
+                                    <b>@task.Type.ToLabel()</b>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <a href="/Agenda/Detail/@task.AgendaId" class="w-100 link-p">
+                                        <div class="d-flex justify-content-center">
+                                            <i class="fas fa-list-alt mx-auto task-icon"></i>
+                                        </div>
+                                        <h4 class="text-center mb-0">@task.AgendaName</h4>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="/Workflow/Detail/@task.WorkflowId" class="w-100 link-p">
+                                        <div class="d-flex justify-content-center">
+                                            <i class="fas fa-retweet task-icon"></i>
+                                        </div>
+                                        <h4 class="text-center mb-0">@task.WorkflowName</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-placeholder">Nemáte žádné aktivní úkoly.</div>
+        }
+    </div>
+    <div id="OverviewNavId" class="overview-nav">
+
+    </div>
+</div>
+

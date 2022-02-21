@@ -13,6 +13,8 @@ namespace BPMS.Controllers
             
             ClaimsPrincipal user = HttpContext.User;
 
+            ViewBag.Controller = this.GetType().Name;
+
             ViewBag.Signed = user.Identity.IsAuthenticated;
             ViewBag.Name = user.Identity.Name;
             ViewBag.Id = Guid.Empty;

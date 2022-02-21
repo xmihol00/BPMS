@@ -21,13 +21,13 @@ namespace BPMS_Common.Enums
             switch (value)
             {
                 case TaskPriorityEnum.Low:
-                    return "odložitelný";
+                    return "odložitelná";
                 
                 case TaskPriorityEnum.Medium:
-                    return "běžný";
+                    return "běžná";
                 
                 case TaskPriorityEnum.High:
-                    return "nalehavý";
+                    return "nalehavá";
 
                 case TaskPriorityEnum.Urgent:
                     return "urgentní";
