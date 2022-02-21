@@ -135,17 +135,18 @@ namespace BPMS_DAL.Repositories
         public Task<List<UserIdNameDTO>> WorflowKeepers(Guid id)
         {
             return _dbSet.Include(x => x.Agenda)
-                            .ThenInclude(x => x.UserRoles)
-                                .ThenInclude(x => x.User)
-                                    .ThenInclude(x => x.SystemRoles)
+                            .ThenInclude(x => x.AgendaRoles)
+                                .ThenInclude(x => x.UserRoles)
+                                    .ThenInclude(x => x.User)
+                                        .ThenInclude(x => x.SystemRoles)
                          .Where(x => x.Id == id)
-                         .SelectMany(x => x.Agenda.UserRoles)
-                         .Select(x => x.User)
-                         .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.WorkflowKeeper))
+                         .SelectMany(x => x.Agenda.AgendaRoles)
+                         .SelectMany(x => x.UserRoles)
+                         .Where(x => x.User.SystemRoles.Any(y => y.Role == SystemRoleEnum.WorkflowKeeper))
                          .Select(x => new UserIdNameDTO
                          {
-                             FullName = $"{x.Name} {x.Surname}",
-                             Id = x.Id
+                             FullName = $"{x.User.Name} {x.User.Surname}",
+                             Id = x.User.Id
                          })
                          .ToListAsync();
         }

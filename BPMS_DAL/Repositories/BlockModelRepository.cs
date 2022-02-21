@@ -118,21 +118,17 @@ namespace BPMS_DAL.Repositories
                         .FirstAsync();
         }
 
-        public Task<List<UserTaskModelEntity>> RolesForRemovalUserTaks(Guid roleId, Guid agendaId)
+        public Task<List<UserTaskModelEntity>> RolesForRemovalUserTaks(Guid roleId)
         {
             return _context.Set<UserTaskModelEntity>()
-                           .Include(x => x.Pool)
-                               .ThenInclude(x => x.Model)
-                           .Where(x => x.RoleId == roleId && x.Pool.Model.AgendaId == agendaId)
+                           .Where(x => x.RoleId == roleId)
                            .ToListAsync();
         }
 
-        public Task<List<ServiceTaskModelEntity>> RolesForRemovalServiceTaks(Guid roleId, Guid agendaId)
+        public Task<List<ServiceTaskModelEntity>> RolesForRemovalServiceTaks(Guid roleId)
         {
             return _context.Set<ServiceTaskModelEntity>()
-                           .Include(x => x.Pool)
-                               .ThenInclude(x => x.Model)
-                           .Where(x => x.RoleId == roleId && x.Pool.Model.AgendaId == agendaId)
+                           .Where(x => x.RoleId == roleId)
                            .ToListAsync();
         }
 

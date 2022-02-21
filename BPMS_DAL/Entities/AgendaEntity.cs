@@ -13,7 +13,7 @@ namespace BPMS_DAL.Entities
         public string Description { get; set; } = string.Empty;
         public Guid AdministratorId { get; set; }
         public UserEntity? Administrator { get; set; }
-        public List<AgendaRoleUserEntity> UserRoles { get; set; } = new List<AgendaRoleUserEntity>();
+        public List<AgendaRoleEntity> AgendaRoles { get; set; } = new List<AgendaRoleEntity>();
         public List<SystemAgendaEntity> Systems { get; set; } = new List<SystemAgendaEntity>();
         public List<ModelEntity> Models { get; set; } = new List<ModelEntity>();
         public List<WorkflowEntity> Workflows { get; set; } = new List<WorkflowEntity>();

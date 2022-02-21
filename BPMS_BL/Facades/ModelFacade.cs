@@ -30,14 +30,14 @@ namespace BPMS_BL.Facades
         private readonly BlockModelRepository _blockModelRepository;
         private readonly PoolRepository _poolRepository;
         private readonly WorkflowRepository _workflowRepository;
-        private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
+        private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly IMapper _mapper;
 
         public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                            BlockModelRepository blockModelRepository, PoolRepository poolRepository, WorkflowRepository workflowRepository,
-                           AgendaRoleUserRepository agendaRoleUserRepository, BlockAttributeRepository blockAttributeRepository, 
+                           AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository, 
                            ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
         {
             _userRepository = userRepository;
@@ -46,7 +46,7 @@ namespace BPMS_BL.Facades
             _blockModelRepository = blockModelRepository;
             _poolRepository = poolRepository;
             _workflowRepository = workflowRepository;
-            _agendaRoleUserRepository = agendaRoleUserRepository;
+            _agendaRoleRepository = agendaRoleRepository;
             _blockAttributeRepository = blockAttributeRepository;
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _mapper = mapper;
@@ -157,7 +157,7 @@ namespace BPMS_BL.Facades
             if (run)
             {
                 await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(dto.Id), _workflowRepository, 
-                                                    _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
+                                                    _agendaRoleRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
             }
             else
             {

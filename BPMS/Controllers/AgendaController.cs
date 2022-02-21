@@ -81,26 +81,25 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Route("/Agenda/AddUserRole/{userId}/{agendaId}/{roleId}")]
-        public async Task<IActionResult> AddUserRole(Guid userId, Guid agendaId, Guid roleId)
+        [Route("/Agenda/AddUserRole/{userId}/{agendaRoleId}")]
+        public async Task<IActionResult> AddUserRole(Guid userId, Guid agendaRoleId)
         {
-            await _agendaFacade.AddUserRole(userId, agendaId, roleId);
+            await _agendaFacade.AddUserRole(userId, agendaRoleId);
             return Ok();
         }
 
         [HttpPost]
-        [Route("/Agenda/RemoveRole/{agendaId}/{roleId}")]
-        public async Task<IActionResult> RemoveRole(Guid agendaId, Guid roleId)
+        public async Task<IActionResult> RemoveAgendaRole(Guid id)
         {
-            await _agendaFacade.RemoveRole(agendaId, roleId);
+            await _agendaFacade.RemoveAgendaRole(id);
             return Ok();
         }
 
         [HttpPost]
-        [Route("/Agenda/RemoveUserRole/{userId}/{agendaId}/{roleId}")]
-        public async Task<IActionResult> RemoveUserRole(Guid userId, Guid agendaId, Guid roleId)
+        [Route("/Agenda/RemoveUserRole/{userId}/{agendaRoleId}")]
+        public async Task<IActionResult> RemoveUserRole(Guid userId, Guid agendaRoleId)
         {
-            await _agendaFacade.RemoveUserRole(userId, agendaId, roleId);
+            await _agendaFacade.RemoveUserRole(userId, agendaRoleId);
             return Ok();
         }
 

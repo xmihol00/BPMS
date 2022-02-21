@@ -19,34 +19,13 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<RoleAllDTO>> AllNotInAgenda(Guid agendaId)
         {
-            return _dbSet.Include(x => x.UserRoles)
-                         .Where(x => x.UserRoles.All(y => y.AgendaId != agendaId))
+            return _dbSet.Include(x => x.AgendaRoles)
+                         .Where(x => x.AgendaRoles.All(y => y.AgendaId != agendaId))
                          .Select(x => new RoleAllDTO
                          {
                              Id = x.Id,
                              Name = x.Name,
                              Description = x.Description
-                         })
-                         .ToListAsync();
-        }
-
-        public Task<List<RoleDetailDTO>> Roles(Guid agendaId)
-        {
-            return _dbSet.Include(x => x.UserRoles)
-                            .ThenInclude(x => x.User)
-                         .Where(x => x.UserRoles.Any(y => y.AgendaId == agendaId))
-                         .Select(x => new RoleDetailDTO
-                         {
-                             Description = x.Description,
-                             Id = x.Id,
-                             Name = x.Name,
-                             Users = x.UserRoles.Where(y => y.UserId != null)
-                                                .Select(y => new UserIdNameDTO
-                                                {
-                                                    Id = y.UserId,
-                                                    FullName = $"{y.User.Name} {y.User.Surname}",
-                                                })
-                                                .ToList()
                          })
                          .ToListAsync();
         }

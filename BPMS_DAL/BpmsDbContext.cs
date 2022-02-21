@@ -17,7 +17,7 @@ namespace BPMS_DAL
         public BpmsDbContext(DbContextOptions<BpmsDbContext> options) : base(options) { }
 
         public DbSet<AgendaEntity>? Agendas { get; set; }
-        public DbSet<AgendaRoleUserEntity>? AgendaRoles { get; set; }
+        public DbSet<AgendaRoleEntity>? AgendaRoles { get; set; }
         public DbSet<TaskDataEntity>? TaskData { get; set; }
         public DbSet<BlockAttributeEntity>? Attributes { get; set; }
         public DbSet<BlockAttributeMapEntity>? AttributesMap { get; set; }
@@ -35,6 +35,7 @@ namespace BPMS_DAL
         public DbSet<SystemEntity>? Systems { get; set; }
         public DbSet<SystemRoleEntity>? SystemRoles { get; set; }
         public DbSet<UserEntity>? Users { get; set; }
+        public DbSet<UserRoleEntity>? UserRoles { get; set; }
         public DbSet<WorkflowEntity>? Workflows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,10 +57,13 @@ namespace BPMS_DAL
             modelBuilder.Entity<AgendaEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<AgendaEntity>().HasOne(x => x.Administrator).WithMany(x => x.Agendas).HasForeignKey(x => x.AdministratorId);
 
-            modelBuilder.Entity<AgendaRoleUserEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Role).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
-            modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.UserId);
-            modelBuilder.Entity<AgendaRoleUserEntity>().HasOne(x => x.Agenda).WithMany(x => x.UserRoles).HasForeignKey(x => x.AgendaId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<AgendaRoleEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<AgendaRoleEntity>().HasOne(x => x.Role).WithMany(x => x.AgendaRoles).HasForeignKey(x => x.RoleId);
+            modelBuilder.Entity<AgendaRoleEntity>().HasOne(x => x.Agenda).WithMany(x => x.AgendaRoles).HasForeignKey(x => x.AgendaId);
+
+            modelBuilder.Entity<UserRoleEntity>().HasKey(x => new { x.AgendaRoleId, x.UserId });
+            modelBuilder.Entity<UserRoleEntity>().HasOne(x => x.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<UserRoleEntity>().HasOne(x => x.AgendaRole).WithMany(x => x.UserRoles).HasForeignKey(x => x.AgendaRoleId).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<SolvingRoleEntity>().HasKey(x => x.Id);
 

@@ -93,10 +93,10 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.Model)
                             .ThenInclude(x => x.Agenda)
-                                .ThenInclude(x => x.UserRoles)
+                                .ThenInclude(x => x.AgendaRoles)
                                     .ThenInclude(x => x.Role)
                          .Where(x => x.Id == poolId)
-                         .SelectMany(x => x.Model.Agenda.UserRoles)
+                         .SelectMany(x => x.Model.Agenda.AgendaRoles)
                          .Select(x => x.Role)
                          .Select(x => new RoleAllDTO
                          {

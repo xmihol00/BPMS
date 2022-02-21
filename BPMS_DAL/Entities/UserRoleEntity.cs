@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DAL.Entities;
 
-namespace BPMS_DAL.Interfaces.WorkflowBlocks
+namespace BPMS_DAL.Entities
 {
-    public interface IServiceWorkflowEntity : IBlockWorkflowEntity
+    public class UserRoleEntity
     {
+        public Guid AgendaRoleId { get; set; }
         public Guid UserId { get; set; }
+        public AgendaRoleEntity? AgendaRole { get; set; }
         public UserEntity? User { get; set; }
     }
 }

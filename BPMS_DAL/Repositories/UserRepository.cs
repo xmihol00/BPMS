@@ -31,7 +31,8 @@ namespace BPMS_DAL.Repositories
         public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
         {
             return _dbSet.Include(x => x.UserRoles)
-                         .Where(x => x.UserRoles.All(y => y.RoleId != roleId || y.AgendaId != agendaId))
+                            .ThenInclude(x => x.AgendaRole)
+                         .Where(x => x.UserRoles.All(y => y.AgendaRole.RoleId != roleId || y.AgendaRole.AgendaId != agendaId))
                          .Select(x => new UserIdNameDTO
                          {
                              FullName = $"{x.Name} {x.Surname}",

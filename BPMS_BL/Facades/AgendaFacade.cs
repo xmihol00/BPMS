@@ -24,32 +24,34 @@ namespace BPMS_BL.Facades
         private readonly UserRepository _userRepository;
         private readonly ModelRepository _modelRepository;
         private readonly SolvingRoleRepository _solvingRoleRepository;
-        private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
+        private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly BlockModelRepository _blockModelRepository;
         private readonly SystemRepository _systemRepository;
         private readonly SystemAgendaRepository _systemAgendaRepository;
+        private readonly UserRoleRepository _userRoleRepository;
         private readonly IMapper _mapper;
 
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
-                            SolvingRoleRepository solvingRoleRepository, AgendaRoleUserRepository agendaRoleUserRepository, 
+                            SolvingRoleRepository solvingRoleRepository, AgendaRoleRepository agendaRoleRepository, 
                             BlockModelRepository blockModelRepository, SystemRepository systemRepository,
-                            SystemAgendaRepository systemAgendaRepository, IMapper mapper)
+                            SystemAgendaRepository systemAgendaRepository, UserRoleRepository userRoleRepository, IMapper mapper)
         {
             _agendaRepository = agendaRepository;
             _userRepository = userRepository;
             _modelRepository = modelRepository;
             _solvingRoleRepository = solvingRoleRepository;
-            _agendaRoleUserRepository = agendaRoleUserRepository;
+            _agendaRoleRepository = agendaRoleRepository;
             _blockModelRepository = blockModelRepository;
             _systemRepository = systemRepository;
             _systemAgendaRepository = systemAgendaRepository;
+            _userRoleRepository = userRoleRepository;
             _mapper = mapper;
         }
 
         public async Task<AgendaDetailDTO> Detail(Guid id)
         {
             AgendaDetailDTO dto = await _agendaRepository.Detail(id);
-            dto.Roles = await _solvingRoleRepository.Roles(id);
+            //dto.Roles = await _solvingRoleRepository.Roles(id);
             dto.AllAgendas = await _agendaRepository.All();
             
             return dto;
@@ -81,23 +83,22 @@ namespace BPMS_BL.Facades
             return _mapper.Map<AgendaDetailPartialDTO>(agenda);
         }
 
-        public async Task AddUserRole(Guid userId, Guid agendaId, Guid roleId)
+        public async Task AddUserRole(Guid userId, Guid agendaRoleId)
         {
-            await _agendaRoleUserRepository.Create(new AgendaRoleUserEntity
+            await _userRoleRepository.Create(new UserRoleEntity
             {
-                AgendaId = agendaId,
-                RoleId = roleId,
+                AgendaRoleId = agendaRoleId,
                 UserId = userId
             });
 
-            await _agendaRoleUserRepository.Save();
+            await _agendaRoleRepository.Save();
         }
 
-        public async Task RemoveUserRole(Guid userId, Guid agendaId, Guid roleId)
+        public async Task RemoveUserRole(Guid userId, Guid agendaRoleId)
         {
-            _agendaRoleUserRepository.Remove(await _agendaRoleUserRepository.RoleForRemoval(userId, agendaId, roleId));
+            _userRoleRepository.Remove(await _userRoleRepository.RoleForRemoval(userId, agendaRoleId));
 
-            await _agendaRoleUserRepository.Save();
+            await _userRoleRepository.Save();
         }
 
         public async Task RemoveSystem(Guid agendaId, Guid systemId)
@@ -129,24 +130,22 @@ namespace BPMS_BL.Facades
             return await _agendaRepository.Systems(dto.TargetId); 
         }
 
-        public async Task RemoveRole(Guid agendaId, Guid roleId)
+        public async Task RemoveAgendaRole(Guid id)
         {
-            foreach (AgendaRoleUserEntity role in await _agendaRoleUserRepository.ForRemoval(agendaId, roleId))
-            {
-                _agendaRoleUserRepository.Remove(role);
-            }
+            AgendaRoleEntity agendaRole = await _agendaRoleRepository.RoleForRemoval(id); 
 
-            foreach (UserTaskModelEntity task in await _blockModelRepository.RolesForRemovalUserTaks(roleId, agendaId))
+            foreach (UserTaskModelEntity task in await _blockModelRepository.RolesForRemovalUserTaks(agendaRole.RoleId))
             {
                 task.RoleId = null;
             }
 
-            foreach (ServiceTaskModelEntity task in await _blockModelRepository.RolesForRemovalServiceTaks(roleId, agendaId))
+            foreach (ServiceTaskModelEntity task in await _blockModelRepository.RolesForRemovalServiceTaks(agendaRole.RoleId))
             {
                 task.RoleId = null;
             }
 
-            await _agendaRoleUserRepository.Save();
+            _agendaRoleRepository.Remove(agendaRole);
+            await _agendaRoleRepository.Save();
         }
 
         public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
@@ -157,7 +156,7 @@ namespace BPMS_BL.Facades
         public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
             AgendaDetailPartialDTO detail = await _agendaRepository.Detail(id);
-            detail.Roles = await _solvingRoleRepository.Roles(id);
+            //detail.Roles = await _solvingRoleRepository.Roles(id);
             
             return detail;
         }
@@ -178,30 +177,35 @@ namespace BPMS_BL.Facades
 
         public async Task<List<RoleDetailDTO>> AddRole(RoleAddDTO dto)
         {
-            IDbContextTransaction transaction = await _agendaRepository.CreateTransaction();
             if (dto.Id == null)
             {
                 SolvingRoleEntity role = new SolvingRoleEntity
                 {
                     Name = dto.Name,
                     Description = dto.Description ?? "",
+                    AgendaRoles = new List<AgendaRoleEntity>
+                    {
+                        new AgendaRoleEntity
+                        {
+                            AgendaId = dto.AgendaId,
+                        }
+                    }
                 };
 
                 await _solvingRoleRepository.Create(role);
-                await _solvingRoleRepository.Save();
-                dto.Id = role.Id;
+            }
+            else
+            {
+                await _agendaRoleRepository.Create(new AgendaRoleEntity
+                {
+                    AgendaId = dto.AgendaId,
+                    RoleId = dto.Id.Value,
+                });
             }
             
-            await _agendaRoleUserRepository.Create(new AgendaRoleUserEntity
-            {
-                AgendaId = dto.AgendaId,
-                RoleId = dto.Id,
-            });
 
-            await _agendaRoleUserRepository.Save();
-            await transaction.CommitAsync();
-
-            return await _solvingRoleRepository.Roles(dto.AgendaId);
+            await _agendaRoleRepository.Save();
+            return await _agendaRoleRepository.Roles(dto.AgendaId);
         }
     }
 }

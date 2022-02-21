@@ -186,7 +186,7 @@ function AddUserToRole(btn)
     {
         async: true,
         type: "POST",
-        url: `/Agenda/AddUserRole/${userId}/${agendaId}/${roleId}`
+        url: `/Agenda/AddUserRole/${userId}/${roleId}`
     })
     .done(() => 
     {
@@ -210,12 +210,11 @@ function AddUserToRole(btn)
 
 function RemoveRole(btn)
 {
-    let agendaId = document.getElementById("AgendaIdId").value;
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: `/Agenda/RemoveRole/${agendaId}/${btn.parentNode.id}`
+        url: `/Agenda/RemoveAgendaRole/${btn.parentNode.id}`
     })
     .done(() => 
     {
@@ -232,16 +231,15 @@ function RemoveRole(btn)
 function RemoveUser(btn)
 {
     let parent = btn.parentNode.parentNode;
+    let agendaRoleId = parent.id;
     let select = parent.getElementsByTagName("select")[0]
     let userId = btn.id;
-    let roleId = parent.id;
-    let agendaId = document.getElementById("AgendaIdId").value;
 
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: `/Agenda/RemoveUserRole/${userId}/${agendaId}/${roleId}`
+        url: `/Agenda/RemoveUserRole/${userId}/${agendaRoleId}`
     })
     .done(() => 
     {

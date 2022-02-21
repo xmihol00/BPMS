@@ -26,7 +26,8 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Include(x => x.Models)
                          .Include(x => x.Systems)
                          .Include(x => x.Workflows)
-                         .Include(x => x.UserRoles)
+                         .Include(x => x.AgendaRoles)
+                            .ThenInclude(x => x.UserRoles)
                          .Select(x => new AgendaAllDTO 
                          {
                              Id = x.Id,
@@ -37,8 +38,8 @@ namespace BPMS_DAL.Repositories
                              CanceledWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
                              ModelsCount = x.Models.Count(),
                              SystemsCount = x.Systems.Count(),
-                             UserCount = x.UserRoles.Where(y => y.UserId != null).Count(),
-                             MissingRolesCount = x.UserRoles.Where(y => y.UserId == null).Count(),
+                             UserCount = x.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                             MissingRolesCount = x.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
                          })
                          .ToListAsync();
         }
@@ -50,9 +51,12 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.Workflows)
                             .ThenInclude(x => x.Model)
                          .Include(x => x.Systems)
-                         .Include(x => x.UserRoles)
-                            .ThenInclude(x => x.User)
-                         .Include(x => x.UserRoles)
+                         .Include(x => x.AgendaRoles)
+                            .ThenInclude(x => x.Role)
+                         .Include(x => x.AgendaRoles)
+                            .ThenInclude(x => x.UserRoles)
+                                .ThenInclude(x => x.User)
+                         .Include(x => x.AgendaRoles)
                             .ThenInclude(x => x.Role)
                          .Select(x => new AgendaDetailDTO 
                          {
@@ -79,7 +83,20 @@ namespace BPMS_DAL.Repositories
                                              State = y.State,
                                              SVG = y.Model.SVG
                                          })
-                                         .ToList()
+                                         .ToList(),
+                            Roles = x.AgendaRoles.Select(x => new RoleDetailDTO
+                                     {
+                                         Description = x.Role.Description,
+                                         Id = x.Id,
+                                         Name = x.Role.Name,
+                                         Users = x.UserRoles.Select(y => new UserIdNameDTO
+                                                            {
+                                                                Id = y.UserId,
+                                                                FullName = $"{y.User.Name} {y.User.Surname}",
+                                                            })
+                                                            .ToList()
+                                     })
+                                     .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }

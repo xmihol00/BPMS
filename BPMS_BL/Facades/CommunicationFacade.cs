@@ -33,7 +33,7 @@ namespace BPMS_BL.Facades
         private readonly SystemRepository _systemRepository;
         private readonly SystemAgendaRepository _systemAgendaRepository;
         private readonly WorkflowRepository _workflowRepository;
-        private readonly AgendaRoleUserRepository _agendaRoleUserRepository;
+        private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly IMapper _mapper;
@@ -41,7 +41,7 @@ namespace BPMS_BL.Facades
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                                    BlockModelRepository blockModelRepository, PoolRepository poolRepository, SystemRepository systemRepository, 
                                    SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
-                                   AgendaRoleUserRepository agendaRoleUserRepository, BlockAttributeRepository blockAttributeRepository,
+                                   AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository,
                                    ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
         {
             _userRepository = userRepository;
@@ -52,7 +52,7 @@ namespace BPMS_BL.Facades
             _systemRepository = systemRepository;
             _systemAgendaRepository = systemAgendaRepository;
             _workflowRepository = workflowRepository;
-            _agendaRoleUserRepository = agendaRoleUserRepository;
+            _agendaRoleRepository = agendaRoleRepository;
             _blockAttributeRepository = blockAttributeRepository;
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _mapper = mapper;
@@ -140,7 +140,7 @@ namespace BPMS_BL.Facades
             
 
             await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(dto.Id), _workflowRepository,
-                                                _agendaRoleUserRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
+                                                _agendaRoleRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
 
             await _modelRepository.Save();
             return "";   
