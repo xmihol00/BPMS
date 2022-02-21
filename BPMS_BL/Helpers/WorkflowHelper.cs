@@ -21,54 +21,61 @@ namespace BPMS_BL.Helpers
                                                 ServiceDataSchemaRepository serviceDataSchemaRepository)
         {
             model.State = ModelStateEnum.Executable;
-            Guid agendaId = model.AgendaId ?? Guid.Empty;
+            Guid agendaAdminId = model.Agenda.AdministratorId;
             BlockModelEntity startEvent = model.Pools
                                                .First(x => x.SystemId == StaticData.ThisSystemId)
                                                .Blocks
                                                .First(x => x.GetType() == typeof(StartEventModelEntity));
             
-            List<BlockWorkflowEntity> blocks = await CreateBlocks(model.Agenda.AdministratorId, agendaId, startEvent,
-                                                                  agendaRoleRepository, blockAttributeRepository,
-                                                                  serviceDataSchemaRepository);
+            List<BlockWorkflowEntity> blocks = await CreateBlocks(agendaAdminId, startEvent,
+                                                                  blockAttributeRepository, serviceDataSchemaRepository);
+            
+            blocks[0].SolvedDate = DateTime.Now;
             blocks[1].Active = true;
+            if (blocks[1] is ITaskWorkflowEntity)
+            {
+                IUserTaskModelEntity taskModel = startEvent.OutFlows[1].OutBlock as IUserTaskModelEntity;
+                ITaskWorkflowEntity taskWorkflow = blocks[1] as ITaskWorkflowEntity;
+                taskWorkflow.UserId = await agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
+                taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
+            }
+            else if (blocks[1] is ITaskWorkflowEntity)
+            {
+                IServiceTaskModelEntity serviceModel = startEvent.OutFlows[1].OutBlock as IServiceTaskModelEntity;
+                (blocks[1] as IServiceWorkflowEntity).UserId = await agendaRoleRepository
+                                                               .LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
+            }
 
             WorkflowEntity workflow = await workflowRepository.Waiting(model.Id);
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = blocks;
         }
 
-        private static async Task<List<BlockWorkflowEntity>> CreateBlocks(Guid agendaAdminId, Guid agendaId, BlockModelEntity blockModel,
-                                                                          AgendaRoleRepository agendaRoleRepository,
+        private static async Task<List<BlockWorkflowEntity>> CreateBlocks(Guid agendaAdminId, BlockModelEntity blockModel,
                                                                           BlockAttributeRepository blockAttributeRepository,
                                                                           ServiceDataSchemaRepository serviceDataSchemaRepository)
         {
             List<BlockWorkflowEntity> blocks = new List<BlockWorkflowEntity>();
-            blocks.Add(await CreateBlock(agendaAdminId, agendaId, blockModel, agendaRoleRepository, 
-                                         blockAttributeRepository, serviceDataSchemaRepository));
+            blocks.Add(await CreateBlock(agendaAdminId, blockModel, blockAttributeRepository, serviceDataSchemaRepository));
             foreach (FlowEntity outFlows in blockModel.OutFlows)
             {
-                blocks.AddRange(await CreateBlocks(agendaAdminId, agendaId, outFlows.InBlock, agendaRoleRepository, 
-                                                   blockAttributeRepository, serviceDataSchemaRepository));
+                blocks.AddRange(await CreateBlocks(agendaAdminId, outFlows.InBlock, blockAttributeRepository, serviceDataSchemaRepository));
             }
 
             return blocks;
         }
 
-        private static async Task<BlockWorkflowEntity> CreateBlock(Guid agendaAdminId, Guid agendaId, BlockModelEntity blockModel,
-                                                                   AgendaRoleRepository agendaRoleRepository,
+        private static async Task<BlockWorkflowEntity> CreateBlock(Guid agendaAdminId, BlockModelEntity blockModel,
                                                                    BlockAttributeRepository blockAttributeRepository,
                                                                    ServiceDataSchemaRepository serviceDataSchemaRepository)
         {
-            Guid roleId;
             BlockWorkflowEntity blockWorkflow;
             switch (blockModel)
             {
                 case IUserTaskModelEntity userTask:
-                    roleId = userTask.RoleId ?? Guid.Empty;
                     blockWorkflow = new TaskWorkflowEntity()
                     {
-                        SolveDate = DateTime.Now.AddDays(userTask.Difficulty.TotalDays),
-                        UserId = await agendaRoleRepository.LeastBussyUser(roleId) ?? agendaAdminId,
+                        UserId = agendaAdminId,
                         Priority = TaskPriorityEnum.Medium
                     };
 
@@ -77,10 +84,9 @@ namespace BPMS_BL.Helpers
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
-                    roleId = serviceTask.RoleId ?? Guid.Empty;
                     blockWorkflow = new ServiceWorkflowEntity()
                     {
-                        UserId = await agendaRoleRepository.LeastBussyUser(roleId) ?? agendaAdminId
+                        UserId = agendaAdminId
                     };
 
                     IServiceWorkflowEntity sTask = blockWorkflow as IServiceWorkflowEntity;

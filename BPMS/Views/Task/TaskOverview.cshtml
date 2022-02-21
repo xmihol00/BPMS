@@ -1,0 +1,13 @@
+@model TaskOverviewDTO
+
+@if (Model.Tasks.Count > 0)
+{
+    @foreach (TaskAllDTO task in Model.Tasks)
+    {
+        <h1>@task.TaskName</h1>
+    }
+}
+else
+{
+    <div class="text-secondary text-italic text-center">Nemáte žádné aktivní úkoly.</div>
+}

@@ -29,9 +29,12 @@ namespace BPMS_BL.Facades
     {
         private readonly BlockWorkflowRepository _taskRepository;
 
-        public Task<TaskOverviewDTO> Overview(Guid userId)
+        public async Task<TaskOverviewDTO> Overview(Guid userId)
         {
-            throw new NotImplementedException();
+            return new TaskOverviewDTO()
+            {
+                Tasks = await _taskRepository.Overview(userId)
+            };
         }
 
         public TaskFacade(BlockWorkflowRepository taskRepository)

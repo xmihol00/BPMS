@@ -10,11 +10,6 @@ namespace BPMS_DTOs.Task
 {
     public class TaskOverviewDTO
     {
-        public Guid Id { get; set; }
-        public string TaskName { get; set; } = string.Empty;
-        public Guid WorkflowId { get; set; }
-        public string WorkflowName { get; set; } = string.Empty;
-        public Guid AgendaId { get; set; }
-        public string AgendaName { get; set; } = string.Empty;
+        public List<TaskAllDTO> Tasks { get; set; } = new List<TaskAllDTO>();
     }
 }
