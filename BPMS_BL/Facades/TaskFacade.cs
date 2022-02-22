@@ -50,17 +50,17 @@ namespace BPMS_BL.Facades
 
             if (type == TaskTypeEnum.UserTask)
             {
-                detail.Data = await CreateData(await _taskDataRepository.DataUser(id));
+                detail.Data = await CreateData(await _taskRepository.DataUser(id));
             }
             else if (type == TaskTypeEnum.ServiceTask)
             {
-                detail.Data = await CreateData(await _taskDataRepository.DataService(id));
+                detail.Data = await CreateData(await _taskRepository.DataService(id));
             }
 
             return detail;
         }
 
-        private Task<List<TaskDataDTO>> CreateData(List<TaskDataEntity> data)
+        private Task<List<TaskDataDTO>> CreateData(BlockWorkflowEntity data)
         {
             throw new NotImplementedException();
         }

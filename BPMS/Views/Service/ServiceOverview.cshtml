@@ -6,7 +6,7 @@
 <div id="PageNavId" class="page-navbar">
     <div class="d-flex justify-content-between px-4 page-navbar-content">
         <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
-        <h1 class="mb-0 pt-1 text-font">@ViewData["Title"]</h1>
+        <h1 class="mb-0 my-auto text-font">@ViewData["Title"]</h1>
         <div class="my-auto">
             <a class="butn btn-p" href="/Service/Create">Vytvořit</a>
         </div>
@@ -22,7 +22,37 @@
         <div class="row">
             @foreach (ServiceAllDTO service in Model.Services)
             {
-                <a href="/Service/Edit/@service.Id"><h2>@service.Name</h2></a>
+                <div id="@service.Id" class="col-12 col-md-6 col-lg-4" onclick="ServiceDetail(this)">    
+                    <div class="shadow-box p-3 my-card bradius-card hover-card pointer">
+                        <h3 class="border-bottom text-center">@service.Name</h3>
+                        <div class="text-url text-center">@service.URL</div>
+                        <div class="row">
+                            <div class="col-6 text-right px-2">
+                                HTTP metoda:
+                            </div>
+                            <div class="col-6 px-2">
+                                <b>@service.HttpMethod</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-right px-2">
+                                Způsob serializace:
+                            </div>
+                            <div class="col-6 px-2">
+                                <b>@service.Serialization.ToLabel()</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-right px-2">
+                                Typ služby:
+                            </div>
+                            <div class="col-6 px-2">
+                                <b>@service.Type</b>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/Service/Edit/@service.Id"><h2>@service.Name</h2></a>
+                </div>
             }
         </div>
     </div>

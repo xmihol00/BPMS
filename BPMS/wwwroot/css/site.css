@@ -745,3 +745,9 @@ a:hover {
 .task-icon {
   font-size: 2em;
 }
+
+.text-url {
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: bold;
+}

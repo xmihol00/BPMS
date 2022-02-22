@@ -67,6 +67,25 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<BlockWorkflowEntity> DataService(Guid id)
+        {
+            return _dbSet.Include(x => x.Data)
+                            .ThenInclude(x => x.Schema)
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<BlockWorkflowEntity> DataUser(Guid id)
+        {
+            return _dbSet.Include(x => x.Data)
+                            .ThenInclude(x => x.Attribute)
+                         .Include(x => x.BlockModel)
+                            .ThenInclude(x => x.Attributes)
+                                .ThenInclude(x => x.MappedBlocks)
+                                    .ThenInclude(x => x.Attribute)
+                                        .ThenInclude(x => x.Data)
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<TaskDetailDTO> Detail(Guid id, Guid userId)
         {
             throw new NotImplementedException();
