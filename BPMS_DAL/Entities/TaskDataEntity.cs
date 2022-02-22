@@ -10,8 +10,9 @@ namespace BPMS_DAL.Entities
     public class TaskDataEntity
     {
         public Guid Id { get; set; }
-        public Guid TaskId { get; set; }
-        public TaskWorkflowEntity? Task { get; set; }
+        public Guid OutputTaskId { get; set; }
+        public BlockWorkflowEntity? OutputTask { get; set; }
+        public List<TaskDataMapEntity> InputData { get; set; } = new List<TaskDataMapEntity>();
         public Guid? AttributeId { get; set; }
         public BlockAttributeEntity? Attribute { get; set; }
         public Guid? SchemaId { get; set; }

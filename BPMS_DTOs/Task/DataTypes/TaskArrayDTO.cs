@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Task.DataTypes
 {
-    public class TaskBoolDTO : TaskDataDTO, ITaskBool
+    public class TaskArrayDTO : TaskDataDTO, ITaskData
     {
-        public bool? Value { get; set; }
+        public List<TaskDataDTO>? Values { get; set; }
     }
 }

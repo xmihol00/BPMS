@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Task
 {
-    public class TaskDetailDTO
+    public class UserTaskDetailDTO
     {
         public Guid Id { get; set; }
         public string TaskName { get; set; } = string.Empty;
@@ -19,7 +19,10 @@ namespace BPMS_DTOs.Task
         public string AgendaName { get; set; } = string.Empty;
         public TaskPriorityEnum Priority { get; set; }
         public DateTime SolveDate { get; set; }
-        public TaskTypeEnum Type { get; set; }
-        public List<TaskDataDTO> Data { get; set; } = new List<TaskDataDTO>();
+        public Guid BlockModelId { get; set; }
+        public List<TaskDataDTO> InputData { get; set; } = new List<TaskDataDTO>();
+        public List<TaskDataDTO> OutputData { get; set; } = new List<TaskDataDTO>();
+        public List<TaskDataDTO> InputServiceData { get; set; } = new List<TaskDataDTO>();
+        public List<TaskDataDTO> OutputServiceData { get; set; } = new List<TaskDataDTO>();
     }
 }

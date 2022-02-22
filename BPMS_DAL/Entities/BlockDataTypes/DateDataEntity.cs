@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities.BlockDataTypes
 {
-    public class SelectionDataEntity : TaskDataEntity
+    public class DateDataEntity : TaskDataEntity
     {
-        public string? Value { get; set; }
+        public DateTime? Value { get; set; }
     }
 }

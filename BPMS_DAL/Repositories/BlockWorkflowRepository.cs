@@ -10,17 +10,18 @@ using BPMS_DAL.Entities;
 using BPMS_Common.Enums;
 using BPMS_DTOs.Task;
 using BPMS_DAL.Entities.WorkflowBlocks;
+using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_DAL.Repositories
 {
     public class BlockWorkflowRepository : BaseRepository<BlockWorkflowEntity>
     {
-        private readonly DbSet<TaskWorkflowEntity> _userTasks;
-        private readonly DbSet<ServiceWorkflowEntity> _serviceTasks;
+        private readonly DbSet<UserTaskWorkflowEntity> _userTasks;
+        private readonly DbSet<ServiceTaskWorkflowEntity> _serviceTasks;
         public BlockWorkflowRepository(BpmsDbContext context) : base(context) 
         {
-            _userTasks = context.Set<TaskWorkflowEntity>();
-            _serviceTasks = context.Set<ServiceWorkflowEntity>();
+            _userTasks = context.Set<UserTaskWorkflowEntity>();
+            _serviceTasks = context.Set<ServiceTaskWorkflowEntity>();
         }
 
         public async Task<List<TaskAllDTO>> Overview(Guid userId)
@@ -69,14 +70,14 @@ namespace BPMS_DAL.Repositories
 
         public Task<BlockWorkflowEntity> DataService(Guid id)
         {
-            return _dbSet.Include(x => x.Data)
+            return _dbSet.Include(x => x.OutputData)
                             .ThenInclude(x => x.Schema)
                          .FirstAsync(x => x.Id == id);
         }
 
         public Task<BlockWorkflowEntity> DataUser(Guid id)
         {
-            return _dbSet.Include(x => x.Data)
+            return _dbSet.Include(x => x.OutputData)
                             .ThenInclude(x => x.Attribute)
                          .Include(x => x.BlockModel)
                             .ThenInclude(x => x.Attributes)
@@ -86,9 +87,25 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<TaskDetailDTO> Detail(Guid id, Guid userId)
+        public Task<UserTaskDetailDTO> UserDetail(Guid id, Guid userId)
         {
-            throw new NotImplementedException();
+            return _userTasks.Include(x => x.Workflow)
+                                .ThenInclude(x => x.Agenda)
+                             .Include(x => x.BlockModel)
+                             .Select(x => new UserTaskDetailDTO
+                             {
+                                 AgendaId = x.Workflow.AgendaId,
+                                 AgendaName = x.Workflow.Agenda.Name,
+                                 Description = x.BlockModel.Description,
+                                 Id = x.Id,
+                                 Priority = x.Priority,
+                                 WorkflowId = x.WorkflowId,
+                                 WorkflowName = x.Workflow.Name,
+                                 SolveDate = x.SolveDate,
+                                 TaskName = x.BlockModel.Name,
+                                 BlockModelId = x.BlockModelId,
+                             })
+                             .FirstAsync(x => x.Id == id);
         }
     }
 }

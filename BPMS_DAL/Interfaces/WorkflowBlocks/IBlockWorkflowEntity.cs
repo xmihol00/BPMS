@@ -16,6 +16,6 @@ namespace BPMS_DAL.Interfaces.WorkflowBlocks
         public WorkflowEntity? Workflow { get; set; }
         public Guid BlockModelId { get; set; }
         public BlockModelEntity? BlockModel { get; set; }
-        public List<TaskDataEntity> Data { get; set; }
+        public List<TaskDataEntity> OutputData { get; set; }
     }
 }

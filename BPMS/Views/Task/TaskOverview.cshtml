@@ -14,6 +14,7 @@
                 @foreach (TaskAllDTO task in Model.Tasks)
                 {
                     <div class="col-12 col-md-6 col-lg-4">
+                        <a href="/Task/Detail/@task.Id">@task.TaskName</a>
                         <div class="shadow-box p-3 my-card bradius-card hover-card pointer">
                             <h3 class="border-bottom text-center">@task.TaskName</h3>
                             @if (String.IsNullOrEmpty(task.Description))

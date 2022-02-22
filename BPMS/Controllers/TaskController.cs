@@ -31,9 +31,14 @@ namespace BPMS.Controllers
             return View("TaskOverview", await _taskFacade.Overview(_userId));
         }
 
-        public async Task<IActionResult> Detail(Guid id, TaskTypeEnum type)
+        public async Task<IActionResult> UserDetail(Guid id)
         {
-            return View("TaskDetail", await _taskFacade.Detail(id, type, _userId));
+            return View("UserTaskDetail", await _taskFacade.UserDetail(id, _userId));
+        }
+
+        public async Task<IActionResult> ServiceDetail(Guid id)
+        {
+            return View("ServiceTaskDetail", await _taskFacade.ServiceDetail(id, _userId));
         }
     }
 }

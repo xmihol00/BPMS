@@ -7,7 +7,7 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_DAL.Entities.WorkflowBlocks
 {
-    public class ServiceWorkflowEntity : BlockWorkflowEntity, IServiceWorkflowEntity
+    public class ServiceTaskWorkflowEntity : BlockWorkflowEntity, IServiceTaskWorkflowEntity
     {
         public Guid UserId { get; set; }
         public UserEntity? User { get; set; }

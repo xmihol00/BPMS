@@ -8,9 +8,9 @@ using BPMS_DAL.Entities;
 
 namespace BPMS_DAL.Interfaces.WorkflowBlocks
 {
-    public interface ITaskWorkflowEntity : IBlockWorkflowEntity
+    public interface IUserTaskWorkflowEntity : ITaskWorkflowEntity
     {
-        public Guid UserId { get; set; }
-        public UserEntity? User { get; set; }
+        public DateTime SolveDate { get; set; }
+        public TaskPriorityEnum Priority { get; set; }
     }
 }

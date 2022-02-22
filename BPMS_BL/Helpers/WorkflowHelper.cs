@@ -32,17 +32,17 @@ namespace BPMS_BL.Helpers
             
             blocks[0].SolvedDate = DateTime.Now;
             blocks[1].Active = true;
-            if (blocks[1] is ITaskWorkflowEntity)
+            if (blocks[1] is IUserTaskWorkflowEntity)
             {
                 IUserTaskModelEntity taskModel = startEvent.OutFlows[1].OutBlock as IUserTaskModelEntity;
-                ITaskWorkflowEntity taskWorkflow = blocks[1] as ITaskWorkflowEntity;
+                IUserTaskWorkflowEntity taskWorkflow = blocks[1] as IUserTaskWorkflowEntity;
                 taskWorkflow.UserId = await agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
                 taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
             }
-            else if (blocks[1] is ITaskWorkflowEntity)
+            else if (blocks[1] is IUserTaskWorkflowEntity)
             {
                 IServiceTaskModelEntity serviceModel = startEvent.OutFlows[1].OutBlock as IServiceTaskModelEntity;
-                (blocks[1] as IServiceWorkflowEntity).UserId = await agendaRoleRepository
+                (blocks[1] as IServiceTaskWorkflowEntity).UserId = await agendaRoleRepository
                                                                .LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
             }
 
@@ -73,24 +73,24 @@ namespace BPMS_BL.Helpers
             switch (blockModel)
             {
                 case IUserTaskModelEntity userTask:
-                    blockWorkflow = new TaskWorkflowEntity()
+                    blockWorkflow = new UserTaskWorkflowEntity()
                     {
                         UserId = agendaAdminId,
                         Priority = TaskPriorityEnum.Medium
                     };
 
-                    ITaskWorkflowEntity uTask = blockWorkflow as ITaskWorkflowEntity;
-                    uTask.Data = CrateUserTaskData(await blockAttributeRepository.All(blockModel.Id));
+                    IUserTaskWorkflowEntity uTask = blockWorkflow as IUserTaskWorkflowEntity;
+                    uTask.OutputData = CrateUserTaskData(await blockAttributeRepository.All(blockModel.Id));
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
-                    blockWorkflow = new ServiceWorkflowEntity()
+                    blockWorkflow = new ServiceTaskWorkflowEntity()
                     {
                         UserId = agendaAdminId
                     };
 
-                    IServiceWorkflowEntity sTask = blockWorkflow as IServiceWorkflowEntity;
-                    sTask.Data = CrateServiceTaskData(await serviceDataSchemaRepository.All(serviceTask.ServiceId));
+                    IServiceTaskWorkflowEntity sTask = blockWorkflow as IServiceTaskWorkflowEntity;
+                    sTask.OutputData = CrateServiceTaskData(await serviceDataSchemaRepository.All(serviceTask.ServiceId));
                     break;
 
                 default:
@@ -163,8 +163,11 @@ namespace BPMS_BL.Helpers
                 case AttributeTypeEnum.File:
                     return new FileDataEntity();
                 
-                case AttributeTypeEnum.Selection:
-                    return new SelectionDataEntity();
+                case AttributeTypeEnum.Select:
+                    return new SelectDataEntity();
+                
+                case AttributeTypeEnum.Date:
+                    return new DateDataEntity();
                 
                 default:
                     return new TaskDataEntity();

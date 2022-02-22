@@ -23,5 +23,19 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.InBlock.Pool.ModelId == modelId)
                          .ToListAsync();
         }
+
+        public Task<List<FlowEntity>> InFlows(Guid outBlockId)
+        {
+            return _dbSet.Include(x => x.OutBlock)
+                         .Where(x => x.InBlockId == outBlockId)
+                         .ToListAsync();
+        }
+
+        public Task<List<FlowEntity>> OutFlows(Guid inBlockId)
+        {
+            return _dbSet.Include(x => x.InBlock)
+                         .Where(x => x.OutBlockId == inBlockId)
+                         .ToListAsync();
+        }
     }
 }

@@ -18,10 +18,11 @@ namespace BPMS_DAL
 
         public DbSet<AgendaEntity>? Agendas { get; set; }
         public DbSet<AgendaRoleEntity>? AgendaRoles { get; set; }
-        public DbSet<TaskDataEntity>? TaskData { get; set; }
+        public DbSet<TaskDataEntity>? TaskDatas { get; set; }
+        public DbSet<TaskDataMapEntity>? TaskDataMaps { get; set; }
         public DbSet<BlockAttributeEntity>? Attributes { get; set; }
-        public DbSet<BlockAttributeMapEntity>? AttributesMap { get; set; }
-        public DbSet<BlockModelEntity>? BlockModel { get; set; }
+        public DbSet<BlockAttributeMapEntity>? AttributesMaps { get; set; }
+        public DbSet<BlockModelEntity>? BlockModels { get; set; }
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
         public DbSet<FlowEntity>? Flows { get; set; }
@@ -110,20 +111,27 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockWorkflowEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.Workflow).WithMany(x => x.Blocks).HasForeignKey(x => x.WorkflowId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.BlockModel).WithMany(x => x.BlockWorkflows).HasForeignKey(x => x.BlockModelId);
-            modelBuilder.Entity<TaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Tasks).HasForeignKey(x => x.UserId);
-            modelBuilder.Entity<ServiceWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Services).HasForeignKey(x => x.UserId);
-            modelBuilder.Entity<TaskWorkflowEntity>().ToTable("TasksWorkflow");
-            modelBuilder.Entity<ServiceWorkflowEntity>().ToTable("ServiceWorkflow");
+            modelBuilder.Entity<UserTaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Tasks).HasForeignKey(x => x.UserId);
+            modelBuilder.Entity<ServiceTaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Services).HasForeignKey(x => x.UserId);
+            modelBuilder.Entity<UserTaskWorkflowEntity>().ToTable("TasksWorkflow");
+            modelBuilder.Entity<ServiceTaskWorkflowEntity>().ToTable("ServiceWorkflow");
 
             modelBuilder.Entity<TaskDataEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Task).WithMany(x => x.Data).HasForeignKey(x => x.TaskId);
+            modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.OutputTask).WithMany(x => x.OutputData).HasForeignKey(x => x.OutputTaskId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Attribute).WithMany(x => x.Data).HasForeignKey(x => x.AttributeId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Schema).WithMany(x => x.Data).HasForeignKey(x => x.SchemaId);
             modelBuilder.Entity<BoolDataEntity>().ToTable("BoolBlocks");
             modelBuilder.Entity<NumberDataEntity>().ToTable("NumberBlocks");
             modelBuilder.Entity<StringDataEntity>().ToTable("StringBlocks");
+            modelBuilder.Entity<TextDataEntity>().ToTable("TextBlocks");
             modelBuilder.Entity<ArrayDataEntity>().ToTable("ArrayBlocks");
-            modelBuilder.Entity<FileDataEntity>().ToTable("FileBlocks");            
+            modelBuilder.Entity<FileDataEntity>().ToTable("FileBlocks");
+            modelBuilder.Entity<SelectDataEntity>().ToTable("SelectBlocks");
+            modelBuilder.Entity<DateDataEntity>().ToTable("DateBlocks");
+
+            modelBuilder.Entity<TaskDataMapEntity>().HasKey(x => new { x.TaskDataId, x.TaskId });
+            modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.Task).WithMany(x => x.InputData).HasForeignKey(x => x.TaskId);
+            modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.TaskData).WithMany(x => x.InputData).HasForeignKey(x => x.TaskDataId);
 
             modelBuilder.Entity<ConditionDataEntity>().HasKey(x => new { x.ExclusiveGatewayId, x.DataSchemaId });
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.ExclusiveGateway).WithMany(x => x.Conditions);

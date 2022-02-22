@@ -27,12 +27,12 @@ namespace BPMS_BL.Facades
     {
         private readonly BlockModelRepository _blockModelRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
-
         private readonly BlockAttributeMapRepository _blockAttributeMapRepository;
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
         private readonly ServiceRepository _serviceRepository;
         private readonly ServiceDataSchemaRepository _dataSchemaRepository;
+        private readonly FlowRepository _flowRepository;
         private readonly IMapper _mapper;
         private Guid _blockId;
         private bool _deepAttributeSearch = false;
@@ -41,7 +41,8 @@ namespace BPMS_BL.Facades
         public BlockModelFacade(BlockModelRepository blockModelRepository, BlockAttributeRepository blockAttributeRepository,
                                 BlockAttributeMapRepository blockAttributeMapRepository, PoolRepository poolRepository,
                                 SystemRepository systemRepository, ServiceRepository serviceRepository, 
-                                ServiceDataSchemaRepository dataSchemaRepository, IMapper mapper)
+                                ServiceDataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
+                                IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
             _blockAttributeRepository = blockAttributeRepository;
@@ -50,6 +51,7 @@ namespace BPMS_BL.Facades
             _systemRepository = systemRepository;
             _serviceRepository = serviceRepository;
             _dataSchemaRepository = dataSchemaRepository;
+            _flowRepository = flowRepository;
             _mapper = mapper;
         }
 
@@ -198,32 +200,55 @@ namespace BPMS_BL.Facades
             (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(userTask.InFlows);
             IRoleConfig roleConfig = dto as IRoleConfig;
             roleConfig.CurrentRole = userTask.RoleId;
-            roleConfig.Roles.Add(new RoleAllDTO 
+            roleConfig.Roles.Add(new RoleAllDTO
             {
                 Id = null,
                 Name = "Nevybrána",
             });
             roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(userTask.PoolId));
 
-            foreach (FlowEntity flow in userTask.InFlows)
-            {
-                if (flow.OutBlock is IServiceTaskModelEntity)
-                {
-                    (dto as IServiceOutputAttributes).ServiceOutputAttributes = 
-                        await _dataSchemaRepository.AsAttributes((flow.OutBlock as IServiceTaskModelEntity).ServiceId, DirectionEnum.Output);
-                }
-            }
+            (dto as IServiceOutputAttributes).ServiceOutputAttributes = await FindOutputService(userTask.InFlows);
+            (dto as IServiceInputAttributes).ServiceInputAttributes = await FindInputService(userTask.OutFlows);
 
-            foreach (FlowEntity flow in userTask.OutFlows)
+            return dto;
+        }
+
+        private async Task<List<DataSchemaAttributeDTO>> FindInputService(List<FlowEntity> flows)
+        {
+            List<DataSchemaAttributeDTO> attribs = new List<DataSchemaAttributeDTO>();
+            foreach (FlowEntity flow in flows)
             {
                 if (flow.InBlock is IServiceTaskModelEntity)
                 {
-                    (dto as IServiceInputAttributes).ServiceInputAttributes = 
-                        await _dataSchemaRepository.AsAttributes((flow.InBlock as IServiceTaskModelEntity).ServiceId, DirectionEnum.Input);
+                    attribs.AddRange(await _dataSchemaRepository.AsAttributes((flow.InBlock as IServiceTaskModelEntity).ServiceId, 
+                                                                               DirectionEnum.Input));
+                }
+                else if (flow.InBlock is IRecieveEventModelEntity || flow.InBlock is ISendEventModelEntity)
+                {
+                    attribs.AddRange(await FindInputService(await _flowRepository.OutFlows(flow.InBlockId)));
                 }
             }
 
-            return dto;
+            return attribs;
+        }
+
+        private async Task<List<DataSchemaAttributeDTO>> FindOutputService(List<FlowEntity> flows)
+        {
+            List<DataSchemaAttributeDTO> attribs = new List<DataSchemaAttributeDTO>();
+            foreach (FlowEntity flow in flows)
+            {
+                if (flow.OutBlock is IServiceTaskModelEntity)
+                {
+                    attribs.AddRange(await _dataSchemaRepository.AsAttributes((flow.OutBlock as IServiceTaskModelEntity).ServiceId, 
+                                                                              DirectionEnum.Output));
+                }
+                else if (flow.OutBlock is IRecieveEventModelEntity || flow.OutBlock is ISendEventModelEntity)
+                {
+                    attribs.AddRange(await FindOutputService(await _flowRepository.InFlows(flow.OutBlockId)));
+                }
+            }
+
+            return attribs;
         }
 
         private async Task<BlockModelConfigDTO> ServiceTaskConfig(IServiceTaskModelEntity serviceTask)
@@ -281,7 +306,7 @@ namespace BPMS_BL.Facades
         {
             List<IGrouping<string, InputBlockAttributeDTO>> attributes = new List<IGrouping<string, InputBlockAttributeDTO>>();
             
-            BlockModelEntity block = await _blockModelRepository.PreviousBlock(flow.OutBlockId);
+            BlockModelEntity block = await _blockModelRepository.PreviousFlow(flow.OutBlockId);
 
             if (block is INoAttributes)
             {

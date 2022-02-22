@@ -57,7 +57,7 @@
                             }
                         </ol>
                     }
-                    else if (attrib.Type == AttributeTypeEnum.Selection)
+                    else if (attrib.Type == AttributeTypeEnum.Select)
                     {
                         <ol>
                             @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())

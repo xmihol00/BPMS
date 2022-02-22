@@ -29,11 +29,21 @@ namespace BPMS_BL.Facades
     {
         private readonly BlockWorkflowRepository _taskRepository;
         private readonly TaskDataRepository _taskDataRepository;
+        private readonly BlockModelRepository _blockModelRepository;
+        private readonly IMapper _mapper;
 
-        public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository)
+        public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository, 
+                          BlockModelRepository blockModelRepository, IMapper mapper)
         {
             _taskRepository = taskRepository;
             _taskDataRepository = taskDataRepository;
+            _blockModelRepository = blockModelRepository;
+            _mapper = mapper;
+        }
+
+        public Task<object?> ServiceDetail(Guid id, Guid userId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<TaskOverviewDTO> Overview(Guid userId)
@@ -44,25 +54,44 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public async Task<TaskDetailDTO> Detail(Guid id, TaskTypeEnum type, Guid userId)
+        public async Task<UserTaskDetailDTO> UserDetail(Guid id, Guid userId)
         {
-            TaskDetailDTO detail = await _taskRepository.Detail(id, userId);
+            UserTaskDetailDTO detail = await _taskRepository.UserDetail(id, userId);
+            
+            foreach (TaskDataEntity data in await _taskDataRepository.Mapped(id))
+            {
+                detail.InputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+            }
 
-            if (type == TaskTypeEnum.UserTask)
+            foreach (TaskDataEntity data in await _taskDataRepository.Output(id))
             {
-                detail.Data = await CreateData(await _taskRepository.DataUser(id));
+                detail.OutputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }
-            else if (type == TaskTypeEnum.ServiceTask)
-            {
-                detail.Data = await CreateData(await _taskRepository.DataService(id));
-            }
+
+            detail.InputServiceData = await FindInputServiceData(detail.BlockModelId);
 
             return detail;
         }
 
-        private Task<List<TaskDataDTO>> CreateData(BlockWorkflowEntity data)
+        private async Task<List<TaskDataDTO>> FindInputServiceData(Guid blockId)
         {
-            throw new NotImplementedException();
+            //TODO
+            List<TaskDataDTO> data = new List<TaskDataDTO>();
+            List<BlockModelEntity?> blocks = await _blockModelRepository.PreviousBlock(blockId);
+
+            foreach (BlockModelEntity block in blocks)
+            {
+                if (block is IServiceTaskModelEntity)
+                {
+                    //data.AddRange(await _taskDataRepository.InputService(bloc))                    
+                }
+                else if (block is ISendEventModelEntity || block is IRecieveEventModelEntity)
+                {
+                    data.AddRange(await FindInputServiceData(blockId));
+                }
+            }
+
+            return data;
         }
     }
 }

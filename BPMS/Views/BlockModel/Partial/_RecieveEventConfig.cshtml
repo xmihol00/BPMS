@@ -62,7 +62,7 @@ else
                             }
                         </ol>
                     }
-                    else if (attrib.Type == AttributeTypeEnum.Selection)
+                    else if (attrib.Type == AttributeTypeEnum.Select)
                     {
                         <ol class="mb-2">
                             @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())

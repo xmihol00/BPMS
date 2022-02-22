@@ -28,7 +28,7 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<BlockModelEntity> PreviousBlock(Guid id)
+        public Task<BlockModelEntity> PreviousFlow(Guid id)
         {
             return _dbSet.Include(x => x.InFlows)
                          .FirstAsync(x => x.Id == id);
@@ -76,6 +76,16 @@ namespace BPMS_DAL.Repositories
                                SenderId = x.SenderId
                            })
                            .ToListAsync();
+        }
+
+        public Task<List<BlockModelEntity?>> PreviousBlock(Guid id)
+        {
+            return _dbSet.Include(x => x.InFlows)
+                            .ThenInclude(x => x.OutBlock)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.InFlows)
+                         .Select(x => x.OutBlock)
+                         .ToListAsync();
         }
 
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> MappedInputAttributes(Guid blockId, Guid? id, string blockName, bool compulsoryAttributes)

@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_Common.Enums;
-using BPMS_DTOs.Task.IDataTypes;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.Task.DataTypes
+namespace BPMS_DTOs.Task.IDataTypes
 {
-    public class TaskBoolDTO : TaskDataDTO, ITaskBool
+    public interface ITaskArray : ITaskData
     {
-        public bool? Value { get; set; }
+        public List<TaskDataDTO>? Values { get; set; }
     }
 }
