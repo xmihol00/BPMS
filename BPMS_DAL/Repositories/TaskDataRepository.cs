@@ -14,5 +14,14 @@ namespace BPMS_DAL.Repositories
     {
         public TaskDataRepository(BpmsDbContext context) : base(context) {}
 
+        public Task<List<TaskDataEntity>> DataUser(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TaskDataEntity>> DataService(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -28,6 +28,13 @@ namespace BPMS_BL.Facades
     public class TaskFacade
     {
         private readonly BlockWorkflowRepository _taskRepository;
+        private readonly TaskDataRepository _taskDataRepository;
+
+        public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository)
+        {
+            _taskRepository = taskRepository;
+            _taskDataRepository = taskDataRepository;
+        }
 
         public async Task<TaskOverviewDTO> Overview(Guid userId)
         {
@@ -37,9 +44,25 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public TaskFacade(BlockWorkflowRepository taskRepository)
+        public async Task<TaskDetailDTO> Detail(Guid id, TaskTypeEnum type, Guid userId)
         {
-            _taskRepository = taskRepository;
+            TaskDetailDTO detail = await _taskRepository.Detail(id, userId);
+
+            if (type == TaskTypeEnum.UserTask)
+            {
+                detail.Data = await CreateData(await _taskDataRepository.DataUser(id));
+            }
+            else if (type == TaskTypeEnum.ServiceTask)
+            {
+                detail.Data = await CreateData(await _taskDataRepository.DataService(id));
+            }
+
+            return detail;
+        }
+
+        private Task<List<TaskDataDTO>> CreateData(List<TaskDataEntity> data)
+        {
+            throw new NotImplementedException();
         }
     }
 }

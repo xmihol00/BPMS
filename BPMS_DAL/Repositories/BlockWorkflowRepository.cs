@@ -66,5 +66,10 @@ namespace BPMS_DAL.Repositories
                                            .ToListAsync());
             return tasks;
         }
+
+        public Task<TaskDetailDTO> Detail(Guid id, Guid userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
