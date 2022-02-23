@@ -23,12 +23,6 @@ namespace BPMS.Controllers
             return PartialView("Partial/_BlockModelConfig", await _blockModelFacade.Config(id));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> PoolConfig(Guid id)
-        {
-            return PartialView("Partial/_PoolConfig", await _blockModelFacade.PoolConfig(id));
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreateEditAttribute(AttributeCreateEditDTO dto)
         {
@@ -36,10 +30,18 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Route("/BlockModel/ToggleMap/{blockId}/{attributeId}")]
-        public async Task<IActionResult> ToggleMap(Guid blockId, Guid attributeId)
+        [Route("/BlockModel/ToggleTaskMap/{blockId}/{attributeId}")]
+        public async Task<IActionResult> ToggleTaskMap(Guid blockId, Guid attributeId)
         {
-            await _blockModelFacade.ToggleMap(blockId, attributeId);
+            await _blockModelFacade.ToggleTaskMap(blockId, attributeId);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("/BlockModel/ToggleServiceMap/{blockId}/{dataSchemaId}")]
+        public async Task<IActionResult> ToggleServicekMap(Guid blockId, Guid dataSchemaId)
+        {
+            await _blockModelFacade.ToggleServiceMap(blockId, dataSchemaId);
             return Ok();
         }
 

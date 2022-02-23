@@ -33,16 +33,15 @@ namespace BPMS_BL.Facades
         private readonly ServiceRepository _serviceRepository;
         private readonly ServiceDataSchemaRepository _dataSchemaRepository;
         private readonly FlowRepository _flowRepository;
+        private readonly BlockModelDataSchemaRepository _blockModelDataSchemaRepository;
         private readonly IMapper _mapper;
         private Guid _blockId;
-        private bool _deepAttributeSearch = false;
-        private bool _compulsoryAttributes = true;
 
         public BlockModelFacade(BlockModelRepository blockModelRepository, BlockAttributeRepository blockAttributeRepository,
                                 BlockAttributeMapRepository blockAttributeMapRepository, PoolRepository poolRepository,
                                 SystemRepository systemRepository, ServiceRepository serviceRepository, 
                                 ServiceDataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
-                                IMapper mapper)
+                                BlockModelDataSchemaRepository blockModelDataSchemaRepository, IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
             _blockAttributeRepository = blockAttributeRepository;
@@ -52,6 +51,7 @@ namespace BPMS_BL.Facades
             _serviceRepository = serviceRepository;
             _dataSchemaRepository = dataSchemaRepository;
             _flowRepository = flowRepository;
+            _blockModelDataSchemaRepository = blockModelDataSchemaRepository;
             _mapper = mapper;
         }
 
@@ -97,7 +97,7 @@ namespace BPMS_BL.Facades
             return await Config(dto.BlockId);
         }
 
-        public async Task ToggleMap(Guid blockId, Guid attributeId)
+        public async Task ToggleTaskMap(Guid blockId, Guid attributeId)
         {
             BlockAttributeMapEntity entity = new BlockAttributeMapEntity()
             {
@@ -124,6 +124,26 @@ namespace BPMS_BL.Facades
             }
 
             await _blockAttributeMapRepository.Save();
+        }
+
+        public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId)
+        {
+            BlockModelDataSchemaEntity entity = new BlockModelDataSchemaEntity() 
+            {
+                BlockId = blockId,
+                DataSchemaId = dataSchemaId
+            };
+
+            if (await _blockModelDataSchemaRepository.Any(blockId, dataSchemaId))
+            {
+                _blockModelDataSchemaRepository.Remove(entity);
+            }
+            else
+            {
+                await _blockModelDataSchemaRepository.Create(entity);
+            }
+
+            await _blockModelDataSchemaRepository.Save();
         }
 
         public async Task<BlockModelConfigDTO> Config(Guid id)
@@ -188,8 +208,8 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> SendEventConfig(ISendEventModelEntity sendEvent)
         {
             BlockModelConfigDTO dto = new SendEventConfigDTO();
-            _deepAttributeSearch = true;
-            (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(sendEvent.InFlows);
+            (dto as IInputAttributesConfig).InputAttributes = 
+                    await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
             return dto;
         }
 
@@ -197,7 +217,8 @@ namespace BPMS_BL.Facades
         {
             BlockModelConfigDTO dto = new UserTaskConfigDTO();
             (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(userTask.Id);
-            (dto as IInputAttributesConfig).InputAttributes = await InputAttributes(userTask.InFlows);
+            (dto as IInputAttributesConfig).InputAttributes = 
+                    await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
             IRoleConfig roleConfig = dto as IRoleConfig;
             roleConfig.CurrentRole = userTask.RoleId;
             roleConfig.Roles.Add(new RoleAllDTO
@@ -207,48 +228,12 @@ namespace BPMS_BL.Facades
             });
             roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(userTask.PoolId));
 
-            (dto as IServiceOutputAttributes).ServiceOutputAttributes = await FindOutputService(userTask.InFlows);
-            (dto as IServiceInputAttributes).ServiceInputAttributes = await FindInputService(userTask.OutFlows);
+            (dto as IServiceInputAttributes).ServiceInputAttributes = 
+                    await _blockModelRepository.ServiceInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
+            (dto as IServiceOutputAttributes).ServiceOutputAttributes = 
+                    await _blockModelRepository.ServiceOutputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
 
             return dto;
-        }
-
-        private async Task<List<DataSchemaAttributeDTO>> FindInputService(List<FlowEntity> flows)
-        {
-            List<DataSchemaAttributeDTO> attribs = new List<DataSchemaAttributeDTO>();
-            foreach (FlowEntity flow in flows)
-            {
-                if (flow.InBlock is IServiceTaskModelEntity)
-                {
-                    attribs.AddRange(await _dataSchemaRepository.AsAttributes((flow.InBlock as IServiceTaskModelEntity).ServiceId, 
-                                                                               DirectionEnum.Input));
-                }
-                else if (flow.InBlock is IRecieveEventModelEntity || flow.InBlock is ISendEventModelEntity)
-                {
-                    attribs.AddRange(await FindInputService(await _flowRepository.OutFlows(flow.InBlockId)));
-                }
-            }
-
-            return attribs;
-        }
-
-        private async Task<List<DataSchemaAttributeDTO>> FindOutputService(List<FlowEntity> flows)
-        {
-            List<DataSchemaAttributeDTO> attribs = new List<DataSchemaAttributeDTO>();
-            foreach (FlowEntity flow in flows)
-            {
-                if (flow.OutBlock is IServiceTaskModelEntity)
-                {
-                    attribs.AddRange(await _dataSchemaRepository.AsAttributes((flow.OutBlock as IServiceTaskModelEntity).ServiceId, 
-                                                                              DirectionEnum.Output));
-                }
-                else if (flow.OutBlock is IRecieveEventModelEntity || flow.OutBlock is ISendEventModelEntity)
-                {
-                    attribs.AddRange(await FindOutputService(await _flowRepository.InFlows(flow.OutBlockId)));
-                }
-            }
-
-            return attribs;
         }
 
         private async Task<BlockModelConfigDTO> ServiceTaskConfig(IServiceTaskModelEntity serviceTask)
@@ -289,65 +274,6 @@ namespace BPMS_BL.Facades
             }
 
             return dto;
-        }
-
-        private async Task<List<IGrouping<string, InputBlockAttributeDTO>>> InputAttributes(List<FlowEntity> flows)
-        {
-            List<IGrouping<string, InputBlockAttributeDTO>> inputAttributes = new List<IGrouping<string, InputBlockAttributeDTO>>();
-            foreach (FlowEntity flow in flows)
-            {
-                inputAttributes.AddRange(await FlowInputAttributes(flow));
-            }
-
-            return inputAttributes;
-        }
-
-        private async Task<List<IGrouping<string, InputBlockAttributeDTO>>> FlowInputAttributes(FlowEntity flow)
-        {
-            List<IGrouping<string, InputBlockAttributeDTO>> attributes = new List<IGrouping<string, InputBlockAttributeDTO>>();
-            
-            BlockModelEntity block = await _blockModelRepository.PreviousFlow(flow.OutBlockId);
-
-            if (block is INoAttributes)
-            {
-                return attributes;
-            }
-
-            if (block is IAttributes)
-            {
-                attributes.AddRange(await _blockAttributeRepository.InputAttributes(_blockId, flow.OutBlockId, _compulsoryAttributes));
-                if (!_deepAttributeSearch)
-                {
-                    return attributes;
-                }
-            }
-
-            if (block is IRecieveEventModelEntity)
-            {
-                attributes.AddRange(
-                    await _blockModelRepository.MappedInputAttributes(_blockId, (block as IRecieveEventModelEntity).SenderId, 
-                                                                      block.Name, _compulsoryAttributes));
-                if (!_deepAttributeSearch)
-                {
-                    return attributes;
-                }
-            }
-
-            if (block is IExclusiveGatewayModelEntity)
-            {
-                _compulsoryAttributes = true;
-            }
-
-            foreach (FlowEntity nextFlow in block.InFlows)
-            {
-                attributes.AddRange(await FlowInputAttributes(nextFlow));
-            }
-            return attributes;
-        }
-
-        public Task<object?> PoolConfig(Guid id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

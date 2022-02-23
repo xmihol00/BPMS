@@ -12,6 +12,7 @@ namespace BPMS_DAL.Interfaces
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public uint Order { get; set; }
         public Guid PoolId { get; set; }
         public PoolEntity? Pool { get; set; }
         public List<FlowEntity> InFlows { get; set; }

@@ -85,7 +85,6 @@ function EditAttribute(button)
     form.querySelector("#IdId").value = element.id;
     form.querySelector("#HeadlineId").remove();
     form.querySelector("#NameId").value = element.children[1].innerText;
-    form.querySelector("#AttribNameLabelId").classList.remove("color-required");
     let checked = element.children[3].children[0].classList.contains("bg-primary");
     form.querySelector("#CompulsoryId").checked = checked;
     form.querySelector("#DescrId").value = element.children[4].innerText;
@@ -225,14 +224,44 @@ function MakeSpecEditable(type, list, target)
     target.innerHTML += AddSpecBtn(type);
 }
 
-function ToggleMapping(attribId, button)
+function ToggleTaskMap(attribId, button)
 {
     button.innerHTML = "<i class='fas fa-spinner'></i>"
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ToggleMap/${BlockId}/${attribId}`
+        url: `/BlockModel/ToggleTaskMap/${BlockId}/${attribId}`
+    })
+    .done(() => 
+    {
+        button.innerHTML = "<i class='fas fa-check-circle'></i>"
+        if (button.classList.contains("bg-success"))
+        {
+            button.classList.remove("bg-success");
+            button.classList.add("bg-secondary");
+        }
+        else
+        {
+            button.classList.add("bg-success");
+            button.classList.remove("bg-secondary");
+        }
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function ToggleServiceMap(dataSchemaId, button)
+{
+    button.innerHTML = "<i class='fas fa-spinner'></i>"
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/ToggleServiceMap/${BlockId}/${dataSchemaId}`
     })
     .done(() => 
     {

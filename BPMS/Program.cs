@@ -37,6 +37,8 @@ services.AddScoped<SystemAgendaRepository>();
 services.AddScoped<BlockWorkflowRepository>();
 services.AddScoped<TaskDataRepository>();
 services.AddScoped<WorkflowRepository>();
+services.AddScoped<BlockModelDataSchemaRepository>();
+services.AddScoped<TaskDataMapRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
