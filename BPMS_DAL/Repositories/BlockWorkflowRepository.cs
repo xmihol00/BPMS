@@ -68,6 +68,11 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<UserTaskWorkflowEntity> Detail(Guid id)
+        {
+            return _userTasks.Include(x => x.InputData).ThenInclude(x => x.TaskData).FirstAsync(x => x.Id == id);
+        }
+
         public Task<BlockWorkflowEntity> DataService(Guid id)
         {
             return _dbSet.Include(x => x.OutputData)
@@ -103,7 +108,6 @@ namespace BPMS_DAL.Repositories
                                  WorkflowName = x.Workflow.Name,
                                  SolveDate = x.SolveDate,
                                  TaskName = x.BlockModel.Name,
-                                 BlockModelId = x.BlockModelId,
                              })
                              .FirstAsync(x => x.Id == id);
         }

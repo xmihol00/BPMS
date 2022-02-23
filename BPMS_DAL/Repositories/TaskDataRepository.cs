@@ -15,11 +15,20 @@ namespace BPMS_DAL.Repositories
     {
         public TaskDataRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<TaskDataEntity>> Mapped(Guid taskId)
+        public Task<List<TaskDataEntity>> MappedUserTasks(Guid taskId)
         {
             return _dbSet.Include(x => x.InputData)
                          .Include(x => x.Attribute)
-                         .Where(x => x.InputData.Any(y => y.TaskId == taskId))
+                         .Where(x => x.AttributeId != null && x.InputData.Any(y => y.TaskId == taskId))
+                         .ToListAsync();
+        }
+
+        public Task<List<TaskDataEntity>> MappedServiceTasks(Guid taskId)
+        {
+            return _dbSet.Include(x => x.InputData)
+                         .Include(x => x.Schema)
+                         .Include(x => x.Attribute)
+                         .Where(x => x.SchemaId != null && x.InputData.Any(y => y.TaskId == taskId))
                          .ToListAsync();
         }
 

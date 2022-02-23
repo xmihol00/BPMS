@@ -57,8 +57,9 @@ namespace BPMS_BL.Facades
         public async Task<UserTaskDetailDTO> UserDetail(Guid id, Guid userId)
         {
             UserTaskDetailDTO detail = await _taskRepository.UserDetail(id, userId);
+            var entity = await _taskRepository.Detail(id);
             
-            foreach (TaskDataEntity data in await _taskDataRepository.Mapped(id))
+            foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTasks(id))
             {
                 detail.InputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }
@@ -68,30 +69,19 @@ namespace BPMS_BL.Facades
                 detail.OutputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }
 
-            detail.InputServiceData = await FindInputServiceData(detail.BlockModelId);
-
-            return detail;
-        }
-
-        private async Task<List<TaskDataDTO>> FindInputServiceData(Guid blockId)
-        {
-            //TODO
-            List<TaskDataDTO> data = new List<TaskDataDTO>();
-            List<BlockModelEntity?> blocks = await _blockModelRepository.PreviousBlock(blockId);
-
-            foreach (BlockModelEntity block in blocks)
+            foreach (TaskDataEntity data in await _taskDataRepository.MappedServiceTasks(id))
             {
-                if (block is IServiceTaskModelEntity)
+                if (data.Schema.Direction == DirectionEnum.Input)
                 {
-                    //data.AddRange(await _taskDataRepository.InputService(bloc))                    
+                    detail.InputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
                 }
-                else if (block is ISendEventModelEntity || block is IRecieveEventModelEntity)
+                else
                 {
-                    data.AddRange(await FindInputServiceData(blockId));
+                    detail.OutputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
                 }
             }
 
-            return data;
+            return detail;
         }
     }
 }

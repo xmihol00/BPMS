@@ -143,6 +143,7 @@ namespace BPMS_BL.Helpers
             foreach(ServiceDataSchemaEntity attrib in dataSchemas)
             {
                 TaskDataEntity taskData = CreateServiceTaskData(attrib.Type);
+                taskData.SchemaId = attrib.Id;
                 _createdServiceData[(attrib.Id, serviceTaskId)] = taskData;
                 data.Add(taskData);
 
@@ -187,6 +188,7 @@ namespace BPMS_BL.Helpers
             foreach(BlockAttributeEntity attribute in blockAttributes)
             {
                 TaskDataEntity taskData = CreateUserTaskData(attribute.Type);
+                taskData.AttributeId = attribute.Id;
                 data.Add(taskData);
 
                 foreach(BlockAttributeMapEntity mappedAttrib in attribute.MappedAttributes)

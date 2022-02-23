@@ -1,0 +1,21 @@
+@model UserTaskDetailDTO
+
+@foreach (TaskDataDTO data in Model.InputData)
+{
+    <h3>@data.Id</h3>
+}
+
+@foreach (TaskDataDTO data in Model.OutputData)
+{
+    //<h3>@data.Id</h3>
+}
+
+@foreach (TaskDataDTO data in Model.InputServiceData)
+{
+    <h3>@data.Id</h3>
+}
+
+@foreach (TaskDataDTO data in Model.OutputServiceData)
+{
+    <h3>@data.Id</h3>
+}
