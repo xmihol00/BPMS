@@ -22,6 +22,7 @@ namespace BPMS_BL.Helpers
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private Dictionary<Guid, BlockWorkflowEntity> _createdUserTasks = new Dictionary<Guid, BlockWorkflowEntity>();
         private Dictionary<(Guid, Guid), TaskDataEntity> _createdServiceData = new Dictionary<(Guid, Guid), TaskDataEntity>();
+        private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
 
         public WorkflowHelper(ModelRepository modelRepository, WorkflowRepository workflowRepository, AgendaRoleRepository agendaRoleRepository,
                               BlockAttributeRepository blockAttributeRepository, ServiceDataSchemaRepository serviceDataSchemaRepository)
@@ -133,6 +134,19 @@ namespace BPMS_BL.Helpers
                 }
             }
 
+            foreach (BlockAttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            {
+                TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
+                if (taskData != null)
+                {
+                    blockWorkflow.InputData.Add(new TaskDataMapEntity
+                    {
+                        Task = blockWorkflow,
+                        TaskData = taskData
+                    });
+                }
+            }
+
             uTask.OutputData = CrateUserTaskData(blockModel.Attributes);
             return blockWorkflow;
         }
@@ -193,19 +207,7 @@ namespace BPMS_BL.Helpers
                 TaskDataEntity taskData = CreateUserTaskData(attribute.Type);
                 taskData.AttributeId = attribute.Id;
                 data.Add(taskData);
-
-                foreach(BlockAttributeMapEntity mappedAttrib in attribute.MappedAttributes)
-                {
-                    BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.Attribute.BlockId);
-                    if (blockWorkflow != null)
-                    {
-                        blockWorkflow.InputData.Add(new TaskDataMapEntity
-                        {
-                            TaskData = taskData,
-                            Task = blockWorkflow
-                        });
-                    }
-                }
+                _createdTaskData[attribute.Id] = taskData;
             }
 
             return data;

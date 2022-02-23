@@ -21,7 +21,9 @@
         </div>
         @foreach (ServiceTaskDataSchemaDTO group in Model.ServiceOutputAttributes)
         {
-            <h6 class="border-bottom mb-1 py-1">Atributy bloku: <span class="text-prim">@group.Name</span></h6>
+            <div class="row border-bottom">
+                <h6 class="col-12 mb-0 py-1">Atributy bloku: <span class="text-prim">@group.Name</span></h6>
+            </div>
             @foreach (DataSchemaAttributeDTO attrib in group.Attributes)
             {
                 <div class="row border-bottom pt-1 pb-1">
