@@ -167,7 +167,7 @@ namespace BPMS_DAL.Repositories
                                     Id = x.Id,
                                     Name = x.Name,
                                     Attributes = x.Service.DataSchemas
-                                                  .Where(y => y.Direction == DirectionEnum.Output && y.Data == null && y.Type != DataTypeEnum.Object)
+                                                  .Where(y => y.Direction == DirectionEnum.Output && y.StaticData == null && y.Type != DataTypeEnum.Object)
                                                   .Select(y => new DataSchemaAttributeDTO
                                                   {
                                                       Id = y.Id,
@@ -192,7 +192,7 @@ namespace BPMS_DAL.Repositories
                                     Id = x.Id,
                                     Name = x.Name,
                                     Attributes = x.Service.DataSchemas
-                                                  .Where(y => y.Direction == DirectionEnum.Input && y.Data == null && y.Type != DataTypeEnum.Object)
+                                                  .Where(y => y.Direction == DirectionEnum.Input && y.StaticData == null && y.Type != DataTypeEnum.Object)
                                                   .Select(y => new DataSchemaAttributeDTO
                                                   {
                                                       Id = y.Id,
