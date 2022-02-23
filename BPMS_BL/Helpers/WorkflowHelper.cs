@@ -43,7 +43,7 @@ namespace BPMS_BL.Helpers
             List<BlockWorkflowEntity> blocks = await CreateBlocks(startEvent);
 
             blocks[0].SolvedDate = DateTime.Now;
-            await ExecuteFirstBlock(startEvent.OutFlows[0].OutBlock, blocks[1], model.Agenda.Id);
+            await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], model.Agenda.Id);
 
             WorkflowEntity workflow = await _workflowRepository.Waiting(model.Id);
             workflow.State = WorkflowStateEnum.Active;
