@@ -196,7 +196,7 @@ namespace BPMS_BL.Helpers
 
                 foreach(BlockAttributeMapEntity mappedAttrib in attribute.MappedAttributes)
                 {
-                    BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.BlockId);
+                    BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.Attribute.BlockId);
                     if (blockWorkflow != null)
                     {
                         blockWorkflow.InputData.Add(new TaskDataMapEntity
