@@ -143,6 +143,7 @@ namespace BPMS_BL.Helpers
             foreach(ServiceDataSchemaEntity attrib in dataSchemas)
             {
                 TaskDataEntity taskData = CreateServiceTaskData(attrib.Type);
+                _createdServiceData[attrib.Id] = taskData;
                 data.Add(taskData);
 
                 foreach (BlockModelDataSchemaEntity mappedAttrib in attrib.Blocks)
