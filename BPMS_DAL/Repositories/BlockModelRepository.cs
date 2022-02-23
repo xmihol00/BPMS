@@ -99,7 +99,7 @@ namespace BPMS_DAL.Repositories
         {
             return (await _dbSet.Include(x => x.MappedAttributes)
                             .ThenInclude(x => x.Attribute)
-                                .ThenInclude(x => x.MappedBlocks)
+                                .ThenInclude(x => x.MappedAttributes)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.MappedAttributes)
                          .Select(x => x.Attribute)
@@ -112,7 +112,7 @@ namespace BPMS_DAL.Repositories
                              Specification = x.Specification,
                              Type = x.Type,
                              BlockName = blockName,
-                             Mapped = x.MappedBlocks.Any(x => x.BlockId == blockId)
+                             Mapped = x.MappedAttributes.Any(x => x.BlockId == blockId)
                          })
                          .ToListAsync())
                          .GroupBy(x => x.BlockName)
@@ -196,7 +196,7 @@ namespace BPMS_DAL.Repositories
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> TaskInputAttributes(Guid blockId, uint order, Guid poolId)
         {
             return (await _userTasks.Include(x => x.Attributes)
-                                       .ThenInclude(x => x.MappedBlocks)
+                                       .ThenInclude(x => x.MappedAttributes)
                                     .Where(x => x.PoolId == poolId && x.Order < order)
                                     .SelectMany(x => x.Attributes)
                                     .Select(x => new InputBlockAttributeDTO
@@ -208,7 +208,7 @@ namespace BPMS_DAL.Repositories
                                         Name = x.Name,
                                         Specification = x.Specification,
                                         Type = x.Type,
-                                        Mapped = x.MappedBlocks.Any(x => x.BlockId == blockId)
+                                        Mapped = x.MappedAttributes.Any(x => x.BlockId == blockId)
                                     }).ToListAsync())
                                     .GroupBy(x => x.BlockName)
                                     .ToList();

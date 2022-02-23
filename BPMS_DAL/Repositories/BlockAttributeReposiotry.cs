@@ -44,7 +44,7 @@ namespace BPMS_DAL.Repositories
 
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> InputAttributes(Guid blockId, Guid outputId, bool compulsoryAttributes)
         {
-            return (await _dbSet.Include(x => x.MappedBlocks)
+            return (await _dbSet.Include(x => x.MappedAttributes)
                          .Include(x => x.Block)
                          .Where(x => x.BlockId == outputId)
                          .Select(x => new InputBlockAttributeDTO
@@ -56,7 +56,7 @@ namespace BPMS_DAL.Repositories
                              BlockName = x.Block.Name,
                              Specification = x.Specification,
                              Type = x.Type,
-                             Mapped = x.MappedBlocks.Any(y => y.BlockId == blockId)
+                             Mapped = x.MappedAttributes.Any(y => y.BlockId == blockId)
                          })
                          .ToListAsync())
                          .GroupBy(x => x.BlockName)
@@ -66,9 +66,9 @@ namespace BPMS_DAL.Repositories
         public Task<List<BlockAttributeMapEntity>> MapsFromDifferentPool(Guid attribId, Guid poolId)
         {
             return _dbSet.Where(x => x.Id == attribId)
-                         .Include(x => x.MappedBlocks)
+                         .Include(x => x.MappedAttributes)
                             .ThenInclude(x => x.Block)
-                         .SelectMany(x => x.MappedBlocks)
+                         .SelectMany(x => x.MappedAttributes)
                          .Where(x => x.Block.PoolId != poolId)
                          .ToListAsync();
         }

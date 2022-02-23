@@ -22,6 +22,6 @@ namespace BPMS_DAL.Entities
         public Guid? ConditionId { get; set; }
         public ConditionDataEntity? Condition { get; set; }
         public List<TaskDataEntity> Data { get; set; } = new List<TaskDataEntity>();
-        public List<BlockAttributeMapEntity> MappedBlocks { get; set; } = new List<BlockAttributeMapEntity>();
+        public List<BlockAttributeMapEntity> MappedAttributes { get; set; } = new List<BlockAttributeMapEntity>();
     }
 }

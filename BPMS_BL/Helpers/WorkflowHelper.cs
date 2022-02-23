@@ -13,84 +13,90 @@ using BPMS_DTOs.ServiceDataSchema;
 
 namespace BPMS_BL.Helpers
 {
-    public static class WorkflowHelper
+    public class WorkflowHelper
     {
-        public static async Task CreateWorkflow(ModelEntity model, WorkflowRepository workflowRepository,
-                                                AgendaRoleRepository agendaRoleRepository,
-                                                BlockAttributeRepository blockAttributeRepository,
-                                                ServiceDataSchemaRepository serviceDataSchemaRepository)
-        {
-            model.State = ModelStateEnum.Executable;
-            Guid agendaAdminId = model.Agenda.AdministratorId;
-            BlockModelEntity startEvent = model.Pools
-                                               .First(x => x.SystemId == StaticData.ThisSystemId)
-                                               .Blocks
-                                               .First(x => x.GetType() == typeof(StartEventModelEntity));
-            
-            List<BlockWorkflowEntity> blocks = await CreateBlocks(agendaAdminId, startEvent,
-                                                                  blockAttributeRepository, serviceDataSchemaRepository);
-            
-            blocks[0].SolvedDate = DateTime.Now;
-            blocks[1].Active = true;
-            if (blocks[1] is IUserTaskWorkflowEntity)
-            {
-                IUserTaskModelEntity taskModel = startEvent.OutFlows[1].OutBlock as IUserTaskModelEntity;
-                IUserTaskWorkflowEntity taskWorkflow = blocks[1] as IUserTaskWorkflowEntity;
-                taskWorkflow.UserId = await agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
-                taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
-            }
-            else if (blocks[1] is IUserTaskWorkflowEntity)
-            {
-                IServiceTaskModelEntity serviceModel = startEvent.OutFlows[1].OutBlock as IServiceTaskModelEntity;
-                (blocks[1] as IServiceTaskWorkflowEntity).UserId = await agendaRoleRepository
-                                                               .LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
-            }
+        private readonly ModelRepository _modelRepository;
+        private readonly WorkflowRepository _workflowRepository;
+        private readonly AgendaRoleRepository _agendaRoleRepository;
+        private readonly BlockAttributeRepository _blockAttributeRepository;
+        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private Dictionary<Guid, BlockWorkflowEntity> _createdUserTasks = new Dictionary<Guid, BlockWorkflowEntity>();
+        private Dictionary<Guid, TaskDataEntity> _createdServiceData = new Dictionary<Guid, TaskDataEntity>();
 
-            WorkflowEntity workflow = await workflowRepository.Waiting(model.Id);
+        public WorkflowHelper(ModelRepository modelRepository, WorkflowRepository workflowRepository, AgendaRoleRepository agendaRoleRepository,
+                              BlockAttributeRepository blockAttributeRepository, ServiceDataSchemaRepository serviceDataSchemaRepository)
+        {
+            _modelRepository = modelRepository;
+            _workflowRepository = workflowRepository;
+            _agendaRoleRepository = agendaRoleRepository;
+            _blockAttributeRepository = blockAttributeRepository;
+            _serviceDataSchemaRepository = serviceDataSchemaRepository;
+        }
+
+        public async Task CreateWorkflow(Guid id)
+        {
+            ModelEntity model = await _modelRepository.DetailToCreateWF(id);
+            model.State = ModelStateEnum.Executable;
+            BlockModelEntity startEvent = model.Pools.First(x => x.SystemId == StaticData.ThisSystemId)
+                                               .Blocks.First(x => x is IStartEventModelEntity);
+
+            List<BlockWorkflowEntity> blocks = await CreateBlocks(startEvent);
+
+            blocks[0].SolvedDate = DateTime.Now;
+            await ExecuteFirstBlock(startEvent.OutFlows[1].OutBlock, blocks[1], model.Agenda.Id);
+
+            WorkflowEntity workflow = await _workflowRepository.Waiting(model.Id);
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = blocks;
         }
 
-        private static async Task<List<BlockWorkflowEntity>> CreateBlocks(Guid agendaAdminId, BlockModelEntity blockModel,
-                                                                          BlockAttributeRepository blockAttributeRepository,
-                                                                          ServiceDataSchemaRepository serviceDataSchemaRepository)
+        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, Guid agendaAdminId)
+        {
+            blockWorkflow.Active = true;
+            if (blockWorkflow is IUserTaskWorkflowEntity)
+            {
+                IUserTaskModelEntity taskModel = blockModel as IUserTaskModelEntity;
+                IUserTaskWorkflowEntity taskWorkflow = blockWorkflow as IUserTaskWorkflowEntity;
+                taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
+                taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
+            }
+            else if (blockWorkflow is IUserTaskWorkflowEntity)
+            {
+                IServiceTaskModelEntity serviceModel = blockModel as IServiceTaskModelEntity;
+                (blockWorkflow as IServiceTaskWorkflowEntity).UserId =
+                        await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
+            }
+        }
+
+        private async Task<List<BlockWorkflowEntity>> CreateBlocks(BlockModelEntity blockModel)
         {
             List<BlockWorkflowEntity> blocks = new List<BlockWorkflowEntity>();
-            blocks.Add(await CreateBlock(agendaAdminId, blockModel, blockAttributeRepository, serviceDataSchemaRepository));
+            blocks.Add(await CreateBlock(blockModel));
             foreach (FlowEntity outFlows in blockModel.OutFlows)
             {
-                blocks.AddRange(await CreateBlocks(agendaAdminId, outFlows.InBlock, blockAttributeRepository, serviceDataSchemaRepository));
+                blocks.AddRange(await CreateBlocks(outFlows.InBlock));
             }
 
             return blocks;
         }
 
-        private static async Task<BlockWorkflowEntity> CreateBlock(Guid agendaAdminId, BlockModelEntity blockModel,
-                                                                   BlockAttributeRepository blockAttributeRepository,
-                                                                   ServiceDataSchemaRepository serviceDataSchemaRepository)
+        private async Task<BlockWorkflowEntity> CreateBlock(BlockModelEntity blockModel)
         {
             BlockWorkflowEntity blockWorkflow;
             switch (blockModel)
             {
-                case IUserTaskModelEntity userTask:
-                    blockWorkflow = new UserTaskWorkflowEntity()
-                    {
-                        UserId = agendaAdminId,
-                        Priority = TaskPriorityEnum.Medium
-                    };
-
-                    IUserTaskWorkflowEntity uTask = blockWorkflow as IUserTaskWorkflowEntity;
-                    uTask.OutputData = CrateUserTaskData(await blockAttributeRepository.All(blockModel.Id));
+                case IUserTaskModelEntity:
+                    blockWorkflow = CreateUserTask(blockModel);
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
                     blockWorkflow = new ServiceTaskWorkflowEntity()
                     {
-                        UserId = agendaAdminId
+                        UserId = null
                     };
 
                     IServiceTaskWorkflowEntity sTask = blockWorkflow as IServiceTaskWorkflowEntity;
-                    sTask.OutputData = CrateServiceTaskData(await serviceDataSchemaRepository.All(serviceTask.ServiceId));
+                    sTask.OutputData = CrateServiceTaskData(await _serviceDataSchemaRepository.AllWithMaps(serviceTask.ServiceId));
                     break;
 
                 default:
@@ -104,18 +110,59 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private static List<TaskDataEntity> CrateServiceTaskData(List<DataSchemaBareDTO> dataSchemaEntities)
+        private BlockWorkflowEntity CreateUserTask(BlockModelEntity blockModel)
+        {
+            BlockWorkflowEntity blockWorkflow = new UserTaskWorkflowEntity()
+            {
+                UserId = null,
+                Priority = TaskPriorityEnum.Medium
+            };
+            IUserTaskWorkflowEntity uTask = blockWorkflow as IUserTaskWorkflowEntity;
+
+            _createdUserTasks[blockModel.Id] = blockWorkflow;
+            foreach (BlockModelDataSchemaEntity schema in blockModel.DataSchemas)
+            {
+                TaskDataEntity? taskData = _createdServiceData.GetValueOrDefault(schema.DataSchemaId);
+                if (taskData != null)
+                {
+                    blockWorkflow.InputData.Add(new TaskDataMapEntity
+                    {
+                        Task = blockWorkflow,
+                        TaskData = taskData
+                    });
+                }
+            }
+
+            uTask.OutputData = CrateUserTaskData(blockModel.Attributes);
+            return blockWorkflow;
+        }
+
+        private List<TaskDataEntity> CrateServiceTaskData(List<ServiceDataSchemaEntity> dataSchemas)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
-            foreach(DataSchemaBareDTO attribute in dataSchemaEntities)
+            foreach(ServiceDataSchemaEntity attrib in dataSchemas)
             {
-                data.Add(CreateServiceTaskData(attribute.Type));
+                TaskDataEntity taskData = CreateServiceTaskData(attrib.Type);
+                data.Add(taskData);
+
+                foreach (BlockModelDataSchemaEntity mappedAttrib in attrib.Blocks)
+                {
+                    BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.BlockId);
+                    if (blockWorkflow != null)
+                    {
+                        blockWorkflow.InputData.Add(new TaskDataMapEntity
+                        {
+                            TaskData = taskData,
+                            Task = blockWorkflow
+                        });
+                    }
+                }
             }
 
             return data;
         }
 
-        private static TaskDataEntity CreateServiceTaskData(DataTypeEnum type)
+        private TaskDataEntity CreateServiceTaskData(DataTypeEnum type)
         {
             switch (type)
             {
@@ -133,18 +180,32 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private static List<TaskDataEntity> CrateUserTaskData(List<BlockAttributeAllDTO> blockAttributes)
+        private List<TaskDataEntity> CrateUserTaskData(List<BlockAttributeEntity> blockAttributes)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
-            foreach(BlockAttributeAllDTO attribute in blockAttributes)
+            foreach(BlockAttributeEntity attribute in blockAttributes)
             {
-                data.Add(CreateUserTaskData(attribute.Type));
+                TaskDataEntity taskData = CreateUserTaskData(attribute.Type);
+                data.Add(taskData);
+
+                foreach(BlockAttributeMapEntity mappedAttrib in attribute.MappedAttributes)
+                {
+                    BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.BlockId);
+                    if (blockWorkflow != null)
+                    {
+                        blockWorkflow.InputData.Add(new TaskDataMapEntity
+                        {
+                            TaskData = taskData,
+                            Task = blockWorkflow
+                        });
+                    }
+                }
             }
 
             return data;
         }
 
-        private static TaskDataEntity CreateUserTaskData(AttributeTypeEnum type)
+        private TaskDataEntity CreateUserTaskData(AttributeTypeEnum type)
         {
             switch (type)
             {

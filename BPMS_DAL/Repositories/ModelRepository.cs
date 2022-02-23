@@ -114,7 +114,7 @@ namespace BPMS_DAL.Repositories
             return _dbSet.AnyAsync(x => x.Id == modelId && x.State == state);
         }
 
-        public Task<ModelEntity> DetailDeepAgenda(Guid id)
+        public Task<ModelEntity> DetailToCreateWF(Guid id)
         {
             return _dbSet.Include(x => x.Agenda)
                          .Include(x => x.Pools)
@@ -129,6 +129,9 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.Pools)
                             .ThenInclude(x => x.Blocks)
                                 .ThenInclude(x => x.MappedAttributes)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
+                                .ThenInclude(x => x.DataSchemas)
                          .FirstAsync(x => x.Id == id);
         }
 

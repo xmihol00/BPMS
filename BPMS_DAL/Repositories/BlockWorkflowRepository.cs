@@ -81,7 +81,7 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.Attribute)
                          .Include(x => x.BlockModel)
                             .ThenInclude(x => x.Attributes)
-                                .ThenInclude(x => x.MappedBlocks)
+                                .ThenInclude(x => x.MappedAttributes)
                                     .ThenInclude(x => x.Attribute)
                                         .ThenInclude(x => x.Data)
                          .FirstAsync(x => x.Id == id);

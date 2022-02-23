@@ -139,8 +139,9 @@ namespace BPMS_BL.Facades
         {
             
 
-            await WorkflowHelper.CreateWorkflow(await _modelRepository.DetailDeepAgenda(dto.Id), _workflowRepository,
-                                                _agendaRoleRepository, _blockAttributeRepository, _serviceDataSchemaRepository);
+            await new WorkflowHelper(_modelRepository, _workflowRepository, _agendaRoleRepository, 
+                                     _blockAttributeRepository, _serviceDataSchemaRepository)
+                                    .CreateWorkflow(dto.Id);
 
             await _modelRepository.Save();
             return "";   

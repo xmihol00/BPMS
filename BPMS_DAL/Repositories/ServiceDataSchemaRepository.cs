@@ -118,5 +118,18 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<List<ServiceDataSchemaEntity>> AllWithMaps(Guid? serviceId)
+        {
+            return _dbSet.Include(x => x.Blocks)
+                         .Where(x => x.ServiceId == serviceId)
+                         .Select(x => new ServiceDataSchemaEntity 
+                         {
+                             Type = x.Type,
+                             Blocks = x.Blocks,
+                             Id = x.Id
+                         })
+                         .ToListAsync();
+        }
     }
 }
