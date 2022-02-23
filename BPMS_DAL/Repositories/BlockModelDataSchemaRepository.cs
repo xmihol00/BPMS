@@ -15,9 +15,9 @@ namespace BPMS_DAL.Repositories
     {
         public BlockModelDataSchemaRepository(BpmsDbContext context) : base(context) {}
        
-        public Task<bool> Any(Guid blockId, Guid dataSchemaId)
+        public Task<bool> Any(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)
         {
-            return _dbSet.AnyAsync(x => x.BlockId == blockId && x.DataSchemaId == dataSchemaId);
+            return _dbSet.AnyAsync(x => x.BlockId == blockId && x.DataSchemaId == dataSchemaId && x.ServiceTaskId == serviceTaskId);
         }
     }
 }

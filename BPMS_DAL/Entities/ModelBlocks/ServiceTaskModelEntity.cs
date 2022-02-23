@@ -19,5 +19,6 @@ namespace BPMS_DAL.Entities.ModelBlocks
         public Guid? RoleId { get; set; }
         public SolvingRoleEntity? Role { get; set; }
         public ServiceStateEnum State { get; set; }
+        public List<BlockModelDataSchemaEntity> Blocks { get; set; } = new List<BlockModelDataSchemaEntity>();
     }
 }

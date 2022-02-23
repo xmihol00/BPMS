@@ -254,14 +254,14 @@ function ToggleTaskMap(attribId, button)
     });
 }
 
-function ToggleServiceMap(dataSchemaId, button)
+function ToggleServiceMap(button, dataSchemaId, serviceTaskId)
 {
     button.innerHTML = "<i class='fas fa-spinner'></i>"
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ToggleServiceMap/${BlockId}/${dataSchemaId}`
+        url: `/BlockModel/ToggleServiceMap/${BlockId}/${dataSchemaId}/${serviceTaskId}`
     })
     .done(() => 
     {

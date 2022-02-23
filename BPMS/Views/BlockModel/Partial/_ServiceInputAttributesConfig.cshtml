@@ -20,23 +20,27 @@
             </div>
         </div>
             
-        @foreach (DataSchemaAttributeDTO attrib in Model.ServiceInputAttributes)
+        @foreach (ServiceTaskDataSchemaDTO group in Model.ServiceInputAttributes)
         {
-            <div class="row border-bottom pt-1 pb-1">
-                <div class="col-4 text-center text-bold">@attrib.Name</div>
-                <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
-                <div class="col-2 text-center">
-                    <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
-                        <i class="fas fa-check-circle"></i>
-                    </span>
+            <h6 class="border-bottom mb-1 pb-1">Atributy bloku: <span class="text-prim">@group.Name</span></h6>
+            @foreach (DataSchemaAttributeDTO attrib in group.Attributes)
+            {
+                <div class="row border-bottom pt-1 pb-1">
+                    <div class="col-4 text-center text-bold">@attrib.Name</div>
+                    <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
+                    <div class="col-2 text-center">
+                        <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+                    </div>
+                    <div class="col-2 text-center">
+                        <span class="badge @(attrib.Mapped ? "bg-success" : "bg-secondary") bg-su-se-change rounded-pill text-1em pointer" 
+                                onclick="ToggleServiceMap(this, '@attrib.Id', '@group.Id')">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+                    </div>
                 </div>
-                <div class="col-2 text-center">
-                    <span class="badge @(attrib.Mapped ? "bg-success" : "bg-secondary") bg-su-se-change rounded-pill text-1em pointer" 
-                            onclick="ToggleServiceMap('@attrib.Id', this)">
-                        <i class="fas fa-check-circle"></i>
-                    </span>
-                </div>
-            </div>
+            }
         }
     }
     else

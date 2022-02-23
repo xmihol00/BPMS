@@ -126,15 +126,16 @@ namespace BPMS_BL.Facades
             await _blockAttributeMapRepository.Save();
         }
 
-        public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId)
+        public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)
         {
             BlockModelDataSchemaEntity entity = new BlockModelDataSchemaEntity() 
             {
                 BlockId = blockId,
-                DataSchemaId = dataSchemaId
+                DataSchemaId = dataSchemaId,
+                ServiceTaskId = serviceTaskId
             };
 
-            if (await _blockModelDataSchemaRepository.Any(blockId, dataSchemaId))
+            if (await _blockModelDataSchemaRepository.Any(blockId, dataSchemaId, serviceTaskId))
             {
                 _blockModelDataSchemaRepository.Remove(entity);
             }

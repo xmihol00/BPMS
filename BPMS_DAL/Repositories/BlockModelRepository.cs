@@ -13,6 +13,7 @@ using BPMS_DTOs.BlockModel;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DTOs.BlockModel.ShareTypes;
 using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.Task;
 
 namespace BPMS_DAL.Repositories
 {
@@ -155,40 +156,52 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<DataSchemaAttributeDTO>> ServiceOutputAttributes(Guid blockId, uint order, Guid poolId)
+        public Task<List<ServiceTaskDataSchemaDTO>> ServiceOutputAttributes(Guid blockId, uint order, Guid poolId)
         {
             return _serviceTasks.Include(x => x.Service)
                                     .ThenInclude(x => x.DataSchemas)
                                         .ThenInclude(x => x.Blocks)
                                 .Where(x => x.PoolId == poolId && x.Order < order)
-                                .SelectMany(x => x.Service.DataSchemas)
-                                .Where(x => x.Direction == DirectionEnum.Output)
-                                .Select(x => new DataSchemaAttributeDTO
+                                .Select(x => new ServiceTaskDataSchemaDTO 
                                 {
                                     Id = x.Id,
-                                    Compulsory = x.Compulsory,
                                     Name = x.Name,
-                                    Type = x.Type,
-                                    Mapped = x.Blocks.Any(x => x.BlockId == blockId)
+                                    Attributes = x.Service.DataSchemas
+                                                  .Where(x => x.Direction == DirectionEnum.Output)
+                                                  .Select(x => new DataSchemaAttributeDTO
+                                                  {
+                                                      Id = x.Id,
+                                                      Compulsory = x.Compulsory,
+                                                      Name = x.Name,
+                                                      Type = x.Type,
+                                                      Mapped = x.Blocks.Any(x => x.BlockId == blockId)
+                                                  })
+                                                  .ToList()
                                 })
-                                .ToListAsync();
+                                .ToListAsync();;
         }
 
-        public Task<List<DataSchemaAttributeDTO>> ServiceInputAttributes(Guid blockId, uint order, Guid poolId)
+        public Task<List<ServiceTaskDataSchemaDTO>> ServiceInputAttributes(Guid blockId, uint order, Guid poolId)
         {
             return _serviceTasks.Include(x => x.Service)
                                     .ThenInclude(x => x.DataSchemas)
                                         .ThenInclude(x => x.Blocks)
                                 .Where(x => x.PoolId == poolId && x.Order > order)
-                                .SelectMany(x => x.Service.DataSchemas)
-                                .Where(x => x.Direction == DirectionEnum.Input)
-                                .Select(x => new DataSchemaAttributeDTO
+                                .Select(x => new ServiceTaskDataSchemaDTO 
                                 {
                                     Id = x.Id,
-                                    Compulsory = x.Compulsory,
                                     Name = x.Name,
-                                    Type = x.Type,
-                                    Mapped = x.Blocks.Any(x => x.BlockId == blockId)
+                                    Attributes = x.Service.DataSchemas
+                                                  .Where(x => x.Direction == DirectionEnum.Input)
+                                                  .Select(x => new DataSchemaAttributeDTO
+                                                  {
+                                                      Id = x.Id,
+                                                      Compulsory = x.Compulsory,
+                                                      Name = x.Name,
+                                                      Type = x.Type,
+                                                      Mapped = x.Blocks.Any(x => x.BlockId == blockId)
+                                                  })
+                                                  .ToList()
                                 })
                                 .ToListAsync();
         }

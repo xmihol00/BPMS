@@ -38,10 +38,10 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Route("/BlockModel/ToggleServiceMap/{blockId}/{dataSchemaId}")]
-        public async Task<IActionResult> ToggleServicekMap(Guid blockId, Guid dataSchemaId)
+        [Route("/BlockModel/ToggleServiceMap/{blockId}/{dataSchemaId}/{serviceTaskId}")]
+        public async Task<IActionResult> ToggleServicekMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)
         {
-            await _blockModelFacade.ToggleServiceMap(blockId, dataSchemaId);
+            await _blockModelFacade.ToggleServiceMap(blockId, dataSchemaId, serviceTaskId);
             return Ok();
         }
 

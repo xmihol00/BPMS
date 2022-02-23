@@ -93,9 +93,10 @@ namespace BPMS_DAL
             modelBuilder.Entity<StartEventModelEntity>().ToTable("StartEventsModel");
             modelBuilder.Entity<EndEventModelEntity>().ToTable("EndEventsModel");
 
-            modelBuilder.Entity<BlockModelDataSchemaEntity>().HasKey(x => new { x.BlockId, x.DataSchemaId });
+            modelBuilder.Entity<BlockModelDataSchemaEntity>().HasKey(x => new { x.BlockId, x.DataSchemaId, x.ServiceTaskId });
             modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.Block).WithMany(x => x.DataSchemas).HasForeignKey(x => x.BlockId);
             modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.DataSchema).WithMany(x => x.Blocks).HasForeignKey(x => x.DataSchemaId);
+            modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.ServiceTask).WithMany(x => x.Blocks).HasForeignKey(x => x.ServiceTaskId);
 
             modelBuilder.Entity<BlockAttributeEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockAttributeEntity>().HasOne(x => x.Block).WithMany(x => x.Attributes).HasForeignKey(x => x.BlockId);

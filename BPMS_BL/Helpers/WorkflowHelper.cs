@@ -21,7 +21,7 @@ namespace BPMS_BL.Helpers
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private Dictionary<Guid, BlockWorkflowEntity> _createdUserTasks = new Dictionary<Guid, BlockWorkflowEntity>();
-        private Dictionary<Guid, TaskDataEntity> _createdServiceData = new Dictionary<Guid, TaskDataEntity>();
+        private Dictionary<(Guid, Guid), TaskDataEntity> _createdServiceData = new Dictionary<(Guid, Guid), TaskDataEntity>();
 
         public WorkflowHelper(ModelRepository modelRepository, WorkflowRepository workflowRepository, AgendaRoleRepository agendaRoleRepository,
                               BlockAttributeRepository blockAttributeRepository, ServiceDataSchemaRepository serviceDataSchemaRepository)
@@ -96,7 +96,7 @@ namespace BPMS_BL.Helpers
                     };
 
                     IServiceTaskWorkflowEntity sTask = blockWorkflow as IServiceTaskWorkflowEntity;
-                    sTask.OutputData = CrateServiceTaskData(await _serviceDataSchemaRepository.AllWithMaps(serviceTask.ServiceId));
+                    sTask.OutputData = CrateServiceTaskData(await _serviceDataSchemaRepository.AllWithMaps(serviceTask.ServiceId), serviceTask.Id);
                     break;
 
                 default:
@@ -122,7 +122,7 @@ namespace BPMS_BL.Helpers
             _createdUserTasks[blockModel.Id] = blockWorkflow;
             foreach (BlockModelDataSchemaEntity schema in blockModel.DataSchemas)
             {
-                TaskDataEntity? taskData = _createdServiceData.GetValueOrDefault(schema.DataSchemaId);
+                TaskDataEntity? taskData = _createdServiceData.GetValueOrDefault((schema.DataSchemaId, schema.ServiceTaskId));
                 if (taskData != null)
                 {
                     blockWorkflow.InputData.Add(new TaskDataMapEntity
@@ -137,13 +137,13 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private List<TaskDataEntity> CrateServiceTaskData(List<ServiceDataSchemaEntity> dataSchemas)
+        private List<TaskDataEntity> CrateServiceTaskData(List<ServiceDataSchemaEntity> dataSchemas, Guid serviceTaskId)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
             foreach(ServiceDataSchemaEntity attrib in dataSchemas)
             {
                 TaskDataEntity taskData = CreateServiceTaskData(attrib.Type);
-                _createdServiceData[attrib.Id] = taskData;
+                _createdServiceData[(attrib.Id, serviceTaskId)] = taskData;
                 data.Add(taskData);
 
                 foreach (BlockModelDataSchemaEntity mappedAttrib in attrib.Blocks)
