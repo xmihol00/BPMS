@@ -23,7 +23,13 @@ namespace BPMS_BL.Profiles
                 .ForMember(dst => dst.Compulsory, opt => opt.MapFrom(src => src.Attribute.Compulsory))
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Attribute.Name))
                 .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Attribute.Description))
-                .IncludeAllDerived();
+            .Include<StringDataEntity, TaskStringDTO>()
+            .Include<BoolDataEntity, TaskBoolDTO>()
+            .Include<NumberDataEntity, TaskNumberDTO>()
+            .Include<SelectDataEntity, TaskSelectDTO>()
+            .Include<FileDataEntity, TaskFileDTO>()
+            .Include<TextDataEntity, TaskTextDTO>()
+            .Include<DateDataEntity, TaskDateDTO>();
 
             CreateMap<StringDataEntity, TaskStringDTO>();
             CreateMap<BoolDataEntity, TaskBoolDTO>();

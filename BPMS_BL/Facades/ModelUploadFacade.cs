@@ -28,6 +28,7 @@ namespace BPMS_BL.Facades
         private IEnumerable<BlockModelEntity> _startEvents = new List<BlockModelEntity>();
         private Dictionary<Guid, ExecutabilityStateEnum> _solvedGateways = new Dictionary<Guid, ExecutabilityStateEnum>();
         private ModelEntity _model = new ModelEntity();
+        private uint _order = 0;
 
         public ModelUploadFacade(ModelRepository modelRepository, PoolRepository poolRepository, BlockModelRepository blockModelRepository)
         {
@@ -394,6 +395,7 @@ namespace BPMS_BL.Facades
         {
             while (branch?.OutFlows.Count == 1)
             {
+                branch.Order = _order++;
                 branch = branch.OutFlows[0].InBlock;   
             }
 
@@ -414,6 +416,7 @@ namespace BPMS_BL.Facades
             }
             else if (branch is IEndEventModelEntity)
             {
+                branch.Order = _order++;
                 return ExecutabilityStateEnum.Executable;
             }
             else
@@ -433,6 +436,7 @@ namespace BPMS_BL.Facades
                 _solvedGateways[gateway.Id] = ExecutabilityStateEnum.Loop;
             }
 
+            gateway.Order = _order++;
             ExecutabilityStateEnum result = ExecutabilityStateEnum.NotExecutable;
             foreach (BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
             {
@@ -463,6 +467,7 @@ namespace BPMS_BL.Facades
                 _solvedGateways[gateway.Id] = ExecutabilityStateEnum.Loop;
             }
 
+            gateway.Order = _order++;
             foreach (BlockModelEntity? branch in gateway.OutFlows.Select(x => x.InBlock))
             {
                 if (CheckBranchExecutability(branch) == ExecutabilityStateEnum.Executable)

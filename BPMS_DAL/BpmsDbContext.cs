@@ -93,6 +93,10 @@ namespace BPMS_DAL
             modelBuilder.Entity<StartEventModelEntity>().ToTable("StartEventsModel");
             modelBuilder.Entity<EndEventModelEntity>().ToTable("EndEventsModel");
 
+            modelBuilder.Entity<BlockModelDataSchemaEntity>().HasKey(x => new { x.BlockId, x.DataSchemaId });
+            modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.Block).WithMany(x => x.DataSchemas).HasForeignKey(x => x.BlockId);
+            modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.DataSchema).WithMany(x => x.Blocks).HasForeignKey(x => x.DataSchemaId);
+
             modelBuilder.Entity<BlockAttributeEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockAttributeEntity>().HasOne(x => x.Block).WithMany(x => x.Attributes).HasForeignKey(x => x.BlockId);
 
@@ -130,8 +134,8 @@ namespace BPMS_DAL
             modelBuilder.Entity<DateDataEntity>().ToTable("DateBlocks");
 
             modelBuilder.Entity<TaskDataMapEntity>().HasKey(x => new { x.TaskDataId, x.TaskId });
-            modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.Task).WithMany(x => x.InputData).HasForeignKey(x => x.TaskId);
-            modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.TaskData).WithMany(x => x.InputData).HasForeignKey(x => x.TaskDataId);
+            modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.Task).WithMany(x => x.InputData).HasForeignKey(x => x.TaskId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.TaskData).WithMany(x => x.InputData).HasForeignKey(x => x.TaskDataId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ConditionDataEntity>().HasKey(x => new { x.ExclusiveGatewayId, x.DataSchemaId });
             modelBuilder.Entity<ConditionDataEntity>().HasOne(x => x.ExclusiveGateway).WithMany(x => x.Conditions);

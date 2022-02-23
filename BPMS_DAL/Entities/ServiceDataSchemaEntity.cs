@@ -24,5 +24,6 @@ namespace BPMS_DAL.Entities
         public ServiceEntity? Service { get; set; }
         public List<ConditionDataEntity> Conditions { get; set; } = new List<ConditionDataEntity>();
         public List<TaskDataEntity> Data { get; set; } = new List<TaskDataEntity>();
+        public List<BlockModelDataSchemaEntity> Blocks { get; set; } = new List<BlockModelDataSchemaEntity>();
     }
 }
