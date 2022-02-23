@@ -167,14 +167,14 @@ namespace BPMS_DAL.Repositories
                                     Id = x.Id,
                                     Name = x.Name,
                                     Attributes = x.Service.DataSchemas
-                                                  .Where(x => x.Direction == DirectionEnum.Output)
-                                                  .Select(x => new DataSchemaAttributeDTO
+                                                  .Where(y => y.Direction == DirectionEnum.Output && y.Data == null && y.Type != DataTypeEnum.Object)
+                                                  .Select(y => new DataSchemaAttributeDTO
                                                   {
-                                                      Id = x.Id,
-                                                      Compulsory = x.Compulsory,
-                                                      Name = x.Name,
-                                                      Type = x.Type,
-                                                      Mapped = x.Blocks.Any(x => x.BlockId == blockId)
+                                                      Id = y.Id,
+                                                      Compulsory = y.Compulsory,
+                                                      Name = y.Name,
+                                                      Type = y.Type,
+                                                      Mapped = y.Blocks.Any(z => z.BlockId == blockId && z.ServiceTaskId == x.Id)
                                                   })
                                                   .ToList()
                                 })
@@ -192,14 +192,14 @@ namespace BPMS_DAL.Repositories
                                     Id = x.Id,
                                     Name = x.Name,
                                     Attributes = x.Service.DataSchemas
-                                                  .Where(x => x.Direction == DirectionEnum.Input)
-                                                  .Select(x => new DataSchemaAttributeDTO
+                                                  .Where(y => y.Direction == DirectionEnum.Input && y.Data == null && y.Type != DataTypeEnum.Object)
+                                                  .Select(y => new DataSchemaAttributeDTO
                                                   {
-                                                      Id = x.Id,
-                                                      Compulsory = x.Compulsory,
-                                                      Name = x.Name,
-                                                      Type = x.Type,
-                                                      Mapped = x.Blocks.Any(x => x.BlockId == blockId)
+                                                      Id = y.Id,
+                                                      Compulsory = y.Compulsory,
+                                                      Name = y.Name,
+                                                      Type = y.Type,
+                                                      Mapped = y.Blocks.Any(z => z.BlockId == blockId && z.ServiceTaskId == x.Id)
                                                   })
                                                   .ToList()
                                 })
