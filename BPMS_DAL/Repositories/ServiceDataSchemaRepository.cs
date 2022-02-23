@@ -127,6 +127,7 @@ namespace BPMS_DAL.Repositories
                          {
                              Type = x.Type,
                              Blocks = x.Blocks,
+                             Direction = x.Direction,
                              Id = x.Id
                          })
                          .ToListAsync();

@@ -147,16 +147,19 @@ namespace BPMS_BL.Helpers
                 _createdServiceData[(attrib.Id, serviceTaskId)] = taskData;
                 data.Add(taskData);
 
-                foreach (BlockModelDataSchemaEntity mappedAttrib in attrib.Blocks)
+                if (attrib.Direction == DirectionEnum.Input)
                 {
-                    BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.BlockId);
-                    if (blockWorkflow != null)
+                    foreach (BlockModelDataSchemaEntity mappedAttrib in attrib.Blocks.Where(x => x.ServiceTaskId == serviceTaskId))
                     {
-                        blockWorkflow.InputData.Add(new TaskDataMapEntity
+                        BlockWorkflowEntity? blockWorkflow = _createdUserTasks.GetValueOrDefault(mappedAttrib.BlockId);
+                        if (blockWorkflow != null)
                         {
-                            TaskData = taskData,
-                            Task = blockWorkflow
-                        });
+                            blockWorkflow.InputData.Add(new TaskDataMapEntity
+                            {
+                                TaskData = taskData,
+                                Task = blockWorkflow
+                            });
+                        }
                     }
                 }
             }
