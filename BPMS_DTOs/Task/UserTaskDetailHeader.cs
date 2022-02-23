@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Task
 {
-    public class UserTaskDetailDTO : UserTaskDetailPartialDTO
+    public class UserTaskDetailHeaderDTO
     {
-        
+        public Guid Id { get; set; }
     }
 }

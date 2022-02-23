@@ -750,4 +750,5 @@ a:hover {
   font-family: monospace;
   font-size: 0.9rem;
   font-weight: bold;
+  word-break: break-all;
 }

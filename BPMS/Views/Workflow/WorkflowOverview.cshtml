@@ -1,0 +1,29 @@
+@model WorkflowOverviewDTO
+@{
+    ViewData["title"] = "Workflow";
+}
+
+<div id="PageNavId" class="page-navbar">
+    <h1 class="mt-1 text-font text-center page-navbar-content">@ViewData["title"]</h1>
+</div>
+<div id="PageContentId" class="d-flex pt-3">
+    <div id="DetailDivId" class="d-none detail-div">
+        <div class="loading-content"></div>
+    </div>
+    <div id="OverviewDivId" class="container-lg">
+        @if (Model.Workflows.Count > 0)
+        {
+            @foreach (WorkflowAllDTO workflow in Model.Workflows)
+            {
+                <a href="/Workflow/Detail/@workflow.Id">@workflow.Name</a>
+            }
+        }
+        else
+        {
+            <div class="text-placeholder my-2">Nebyla nalezena žádná workflow.</div>
+        }
+    </div>
+    <div id="OverviewNavId" class="overview-nav">
+
+    </div>
+</div>

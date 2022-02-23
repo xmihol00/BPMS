@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_Common.Enums;
+using BPMS_DTOs.Workflow;
 
 namespace BPMS_DAL.Repositories
 {
@@ -18,6 +19,25 @@ namespace BPMS_DAL.Repositories
         public Task<WorkflowEntity> Waiting(Guid modelId)
         {
             return _dbSet.FirstAsync(x => x.ModelId == modelId && x.State == WorkflowStateEnum.Waiting);
+        }
+
+        public Task<List<WorkflowAllDTO>> Overview()
+        {
+            return _dbSet.Include(x => x.Model)
+                         .Include(x => x.Agenda)
+                         .Select(x => new WorkflowAllDTO
+                         {
+                             AgendaId = x.AgendaId,
+                             AgendaName = x.Agenda.Name,
+                             Description = x.Description,
+                             Id = x.Id,
+                             ModelId = x.ModelId,
+                             ModelName = x.Model.Name,
+                             Name = x.Name,
+                             State = x.State,
+                             SVG = x.Model.SVG
+                         })
+                         .ToListAsync();
         }
     }
 }

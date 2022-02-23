@@ -20,6 +20,7 @@ using BPMS_DTOs.Role;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
+using BPMS_DTOs.Workflow;
 using Microsoft.AspNetCore.Authentication;
 
 namespace BPMS_BL.Facades
@@ -31,6 +32,14 @@ namespace BPMS_BL.Facades
         public WorkflowFacade(WorkflowRepository workflowRepository)
         {
             _workflowRepository = workflowRepository;
+        }
+
+        public async Task<WorkflowOverviewDTO> Overview()
+        {
+            return new WorkflowOverviewDTO()
+            {
+                Workflows = await _workflowRepository.Overview()
+            };
         }
     }
 }

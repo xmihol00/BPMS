@@ -1,0 +1,26 @@
+@model UserTaskDetailPartialDTO
+
+<div class="row">
+    <h2 class="text-center text-font">Vstupní data</h2>
+    <div class="col-12 col-md-6">
+        <h3 class="text-center text-font mb-0">Zadána uživateli</h3>
+        @await Html.PartialAsync("Partial/_TaskData", (Model.InputData, false))
+    </div>
+    <div class="col-12 col-md-6">
+        <h3 class="text-center text-font mb-0">Získaná voláním webové služby</h3>
+        @await Html.PartialAsync("Partial/_TaskData", (Model.OutputServiceData, false))
+    </div>
+</div>
+<form id="TaskDataFormId" class="row" action="/Task/SaveData" class="d-flex flex-wrap" method="POST" novalidate
+      oninput="InputValidator(this)", onsubmit="AjaxFormSubmit(event)">
+    <input type="hidden" name="TaskId" value="@Model.Id" />
+    <h2 class="text-center text-font">Výstupní data</h2>
+    <div class="col-12 col-md-6">
+        <h3 class="text-center text-font mb-0">Pro vypracování úkolu</h3>
+        @await Html.PartialAsync("Partial/_TaskData", (Model.OutputData, true))
+    </div>
+    <div class="col-12 col-md-6">
+        <h3 class="text-center text-font mb-0">Pro volání služby</h3>
+        @await Html.PartialAsync("Partial/_TaskData", (Model.InputServiceData, true))
+    </div>
+</form>

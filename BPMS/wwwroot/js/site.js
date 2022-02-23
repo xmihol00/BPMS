@@ -151,8 +151,17 @@ function FileSelected(element)
 
 function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, callback = null, successCallback = null, failCallback = null)
 {
-    event.preventDefault();
-    let form = event.target;
+    let form;
+    if (event.target)
+    {
+        event.preventDefault();
+        form = event.target;
+    }
+    else
+    {
+        form = event;
+    }
+
     if (callback)
     {
         callback();

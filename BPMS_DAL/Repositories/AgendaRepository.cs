@@ -75,7 +75,7 @@ namespace BPMS_DAL.Repositories
                                        })
                                        .ToList(),
                             Workflows = x.Workflows
-                                         .Select(y => new WorkflowAllDTO
+                                         .Select(y => new WorkflowAllAgendaDTO
                                          {
                                              Description = y.Description,
                                              Id = y.Id,

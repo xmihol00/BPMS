@@ -38,5 +38,10 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.OutputTaskId == taskId)
                          .ToListAsync();
         }
+
+        public Task<TaskDataEntity> Detail(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
+        }
     }
 }

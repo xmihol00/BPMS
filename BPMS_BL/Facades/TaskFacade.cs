@@ -11,6 +11,7 @@ using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces;
+using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockAttribute;
@@ -22,6 +23,8 @@ using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace BPMS_BL.Facades
 {
@@ -39,6 +42,49 @@ namespace BPMS_BL.Facades
             _taskDataRepository = taskDataRepository;
             _blockModelRepository = blockModelRepository;
             _mapper = mapper;
+        }
+
+        public async Task SaveData(IFormCollection data)
+        {
+            foreach (KeyValuePair<string, StringValues> valuePair in data.Skip(1))
+            {
+                TaskDataEntity task = await _taskDataRepository.Detail(Guid.Parse(valuePair.Key));
+                switch (task)
+                {
+                    case IBoolDataEntity boolData:
+                        boolData.Value = Boolean.Parse(valuePair.Value);
+                        break;
+                    
+                    case IArrayDataEntity arrayData:
+                        break;
+                    
+                    case INumberDataEntity numberData:
+                        numberData.Value = Double.Parse(valuePair.Value);
+                        break;
+                    
+                    case IStringDataEntity stringData:
+                        stringData.Value = valuePair.Value;
+                        break;
+
+                    case ITextDataEntity textData:
+                        textData.Value = valuePair.Value;
+                        break;
+
+                    case IFileDataEntity fileData:
+                        // TODO
+                        break;
+                    
+                    case ISelectDataEntity selectData:
+                        selectData.Value = valuePair.Value;
+                        break;
+                    
+                    case IDateDataEntity dateData:
+                        dateData.Value = DateTime.Parse(valuePair.Value);
+                        break;
+                }
+            }
+
+            await _taskDataRepository.Save();
         }
 
         public Task<object?> ServiceDetail(Guid id, Guid userId)

@@ -14,7 +14,7 @@
 <div id="PageNavId" class="page-navbar">
     <div class="d-flex justify-content-between px-4 page-navbar-content">
         <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto @(Model.Id == Guid.Empty ? "" : "mr-100")"></i></button>
-        <h1 class="mb-0 pt-1 text-font">@ViewData["Title"]</h1>
+        <h1 class="my-auto text-font">@ViewData["Title"]</h1>
         <div class="my-auto">
             @if (Model.Id == Guid.Empty)
             {
@@ -38,13 +38,13 @@
         <div class="row">
             <div class="col-6">
                 <label class="input">
-                    <input required class="input-field" type="text" placeholder=" " name="Name" autocomplete="off" />
+                    <input required class="input-field" type="text" placeholder=" " name="Name" />
                     <span class="input-label">Název</span>
                 </label>
             </div>
             <div class="col-6">
                 <label class="input">
-                    <input required class="input-field" type="text" placeholder=" " name="Value" autocomplete="off" />
+                    <input required class="input-field" type="text" placeholder=" " name="Value" />
                     <span class="input-label">Hodnota</span>
                 </label>
             </div>

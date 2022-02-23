@@ -1,0 +1,9 @@
+@model (ITaskText data, bool editable)
+
+<div class="col-12 col-xl-6 mt-3">
+    <label class="input" @Html.Raw(String.IsNullOrEmpty(Model.data.Description) ? "" : $"data-title='{Model.data.Description}'")>
+        <textarea @(Model.data.Compulsory ? "required" : "") class="input-field" placeholder=" " 
+               name="@Model.data.Id" @(Model.editable ? "" : "readonly")>@Model.data.Value</textarea>
+        <span class="input-label">@Model.data.Name</span>
+    </label>
+</div>

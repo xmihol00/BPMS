@@ -12,12 +12,12 @@
                     <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" />
                     <label class="input mt-2">
                         <input required class="input-field" type="text" placeholder=" " name="UserName"
-                                autocomplete="off" value="@Model.UserName" />
+                                value="@Model.UserName" />
                         <span class="input-label">Přihlašovací jméno</span>
                     </label>
                     <label class="input mt-3">
                         <input required class="input-field" type="password" placeholder=" " name="Password"
-                                autocomplete="off" value="" />
+                                value="" />
                         <span class="input-label">Heslo</span>
                     </label>
                     @if (!String.IsNullOrWhiteSpace(Model.UserName))

@@ -15,5 +15,11 @@ namespace BPMS.Controllers
         {
             _workflowFacade = workflowFacade;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Overview()
+        {
+            return View("WorkflowOverview", await _workflowFacade.Overview());
+        }
     }
 }

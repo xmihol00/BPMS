@@ -19,6 +19,6 @@ namespace BPMS_DTOs.Agenda
         public List<ModelAllDTO> Models { get; set; } = new List<ModelAllDTO>();
         public List<RoleDetailDTO> Roles { get; set; } = new List<RoleDetailDTO>();
         public List<SystemAllDTO> Systems { get; set; } = new List<SystemAllDTO>();
-        public List<WorkflowAllDTO> Workflows { get; set; } = new List<WorkflowAllDTO>();
+        public List<WorkflowAllAgendaDTO> Workflows { get; set; } = new List<WorkflowAllAgendaDTO>();
     }
 }

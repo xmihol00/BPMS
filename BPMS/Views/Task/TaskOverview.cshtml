@@ -1,7 +1,11 @@
 @model TaskOverviewDTO
+@{
+    ViewData["title"] = "Úkoly";
+}
+<script src="~/js/Task/Task.js"></script>
 
 <div id="PageNavId" class="page-navbar">
-    <h1 class="mt-1 text-font text-center page-navbar-content">Úkoly</h1>
+    <h1 class="mt-1 text-font text-center page-navbar-content">@ViewData["title"]</h1>
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">
