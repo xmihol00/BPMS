@@ -96,6 +96,21 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<TimeSpan> UserTaskDifficulty(Guid id)
+        {
+            return _userTasks.Where(x => x.Id == id)
+                             .Select(x => x.Difficulty)
+                             .FirstAsync();
+        }
+
+        public Task<UserTaskModelEntity> UserTaskForSolve(Guid id)
+        {
+            return _userTasks.Include(x => x.Pool)
+                                .ThenInclude(x => x.Model)
+                                    .ThenInclude(x => x.Agenda)
+                             .FirstAsync(x => x.Id == id);
+        }
+
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> MappedInputAttributes(Guid blockId, Guid? id, string blockName, bool compulsoryAttributes)
         {
             return (await _dbSet.Include(x => x.MappedAttributes)

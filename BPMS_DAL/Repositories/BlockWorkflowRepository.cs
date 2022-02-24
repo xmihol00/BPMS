@@ -68,6 +68,25 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<BlockWorkflowEntity> Bare(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<List<BlockWorkflowEntity>> NextBlocks(Guid id, Guid workflowId)
+        {
+            return _dbSet.Include(x => x.BlockModel)
+                            .ThenInclude(x => x.OutFlows)
+                                .ThenInclude(x => x.InBlock)
+                                    .ThenInclude(x => x.BlockWorkflows)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.BlockModel.OutFlows)
+                         .Select(x => x.InBlock)
+                         .SelectMany(x => x.BlockWorkflows)
+                         .Where(x => x.WorkflowId == workflowId)
+                         .ToListAsync();
+        }
+
         public Task<UserTaskWorkflowEntity> Detail(Guid id)
         {
             return _userTasks.Include(x => x.InputData).ThenInclude(x => x.TaskData).FirstAsync(x => x.Id == id);

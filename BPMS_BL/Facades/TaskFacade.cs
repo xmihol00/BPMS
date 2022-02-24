@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using AutoMapper;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
@@ -13,16 +6,9 @@ using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Interfaces.ModelBlocks;
+using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
-using BPMS_DTOs.BlockAttribute;
-using BPMS_DTOs.BlockModel;
-using BPMS_DTOs.BlockModel.ConfigTypes;
-using BPMS_DTOs.Role;
-using BPMS_DTOs.Service;
-using BPMS_DTOs.ServiceDataSchema;
-using BPMS_DTOs.System;
 using BPMS_DTOs.Task;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
@@ -33,18 +19,20 @@ namespace BPMS_BL.Facades
         private readonly BlockWorkflowRepository _taskRepository;
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockModelRepository _blockModelRepository;
+        private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly IMapper _mapper;
 
         public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository, 
-                          BlockModelRepository blockModelRepository, IMapper mapper)
+                          BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, IMapper mapper)
         {
             _taskRepository = taskRepository;
             _taskDataRepository = taskDataRepository;
             _blockModelRepository = blockModelRepository;
+            _agendaRoleRepository = agendaRoleRepository;
             _mapper = mapper;
         }
 
-        public async Task SaveData(IFormCollection data)
+        public async Task SaveData(IFormCollection data, bool save = true)
         {
             foreach (KeyValuePair<string, StringValues> valuePair in data.Skip(1))
             {
@@ -84,10 +72,43 @@ namespace BPMS_BL.Facades
                 }
             }
 
-            await _taskDataRepository.Save();
+            if (save)
+            {
+                await _taskDataRepository.Save();
+            }
         }
 
-        public Task<object?> ServiceDetail(Guid id, Guid userId)
+        public async Task SolveUserTask(IFormCollection data)
+        {
+            await SaveData(data, false);
+            BlockWorkflowEntity solvedTask = await _taskRepository.Bare(Guid.Parse(data["TaskId"]));
+
+            foreach (BlockWorkflowEntity task in await _taskRepository.NextBlocks(solvedTask.Id, solvedTask.WorkflowId))
+            {
+                switch (task)
+                {
+                    case IUserTaskWorkflowEntity userTask:
+                        userTask.Active = true;
+                        UserTaskModelEntity userTaskModel = await _blockModelRepository.UserTaskForSolve(userTask.BlockModelId);
+                        userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty.TotalDays);
+                        userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ?? 
+                                          userTaskModel.Pool.Model.Agenda.AdministratorId;
+                        break;
+                    
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                _taskRepository.Update(task);
+            }
+            
+            solvedTask.Active = false;
+            solvedTask.SolvedDate = DateTime.Now;
+
+            await _taskRepository.Save();
+        }
+
+        public Task<object?> ServiceTaskDetail(Guid id, Guid userId)
         {
             throw new NotImplementedException();
         }
@@ -100,7 +121,7 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public async Task<UserTaskDetailDTO> UserDetail(Guid id, Guid userId)
+        public async Task<UserTaskDetailDTO> UserTaskDetail(Guid id, Guid userId)
         {
             UserTaskDetailDTO detail = await _taskRepository.UserDetail(id, userId);
             var entity = await _taskRepository.Detail(id);

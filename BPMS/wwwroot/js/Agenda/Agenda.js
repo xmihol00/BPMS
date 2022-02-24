@@ -16,8 +16,8 @@ function AgendaDetail(element)
     detailDiv.classList.add("container-lg");
     detailDiv.classList.remove("d-none");
     overviewDiv.classList.add("overview-nav-hide");
+    
     element.children[0].classList.add("selected-card");
-
     element.parentElement.prepend(element);
 
     $.ajax(

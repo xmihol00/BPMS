@@ -35,19 +35,27 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> UserDetail(Guid id)
         {
-            return View("UserTaskDetail", await _taskFacade.UserDetail(id, _userId));
+            return View("UserTaskDetail", await _taskFacade.UserTaskDetail(id, _userId));
         }
 
         [HttpGet]
         public async Task<IActionResult> ServiceDetail(Guid id)
         {
-            return View("ServiceTaskDetail", await _taskFacade.ServiceDetail(id, _userId));
+            return View("ServiceTaskDetail", await _taskFacade.ServiceTaskDetail(id, _userId));
         }
 
+        [HttpPost]
         public async Task<IActionResult> SaveData(IFormCollection data)
         {
             await _taskFacade.SaveData(data);
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SolveUserTask(IFormCollection data)
+        {
+            await _taskFacade.SolveUserTask(data);
+            return Redirect("Task/Overview"); // TODO
         }
     }
 }

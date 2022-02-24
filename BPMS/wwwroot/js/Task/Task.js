@@ -14,5 +14,5 @@ function SaveTaskData()
 function SolveTask()
 {
     let form = document.getElementById("TaskDataFormId");
-    form.setAttribute("action", "/Task/Solve");
+    form.setAttribute("action", "/Task/SolveUserTask");
 }

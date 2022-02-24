@@ -10,7 +10,7 @@ namespace BPMS_DAL.Entities
     public class BlockWorkflowEntity : IBlockWorkflowEntity
     {
         public Guid Id { get; set; }
-        public bool Active { get; set; }
+        public bool Active { get; set; } = false;
         public DateTime SolvedDate { get; set; }
         public Guid WorkflowId { get; set; }
         public WorkflowEntity? Workflow { get; set; }

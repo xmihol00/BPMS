@@ -18,4 +18,13 @@
     <div id="OverviewDivId" class="container-lg">
         @await Html.PartialAsync("Partial/_ServiceCreateEdit", Model)
     </div>
+    <div id="OverviewDivId" class="container-lg side-overview">
+        <div class="row">
+            @await Html.PartialAsync("Partial/_ServiceCard", (Model.SelectedService, true))
+            @foreach (ServiceAllDTO service in Model.OtherServices)
+            {
+                @await Html.PartialAsync("Partial/_ServiceCard", (service, false))
+            }
+        </div>
+    </div>
 </div>
