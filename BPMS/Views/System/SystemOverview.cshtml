@@ -1,8 +1,7 @@
-@model ServiceOverviewDTO
+@model SystemOverviewDTO
 @{
-    ViewData["Title"] = "Webové služby";
+    ViewData["Title"] = "Spolupracující systémy";
 }
-<script src="~/js/Service/Service.js"></script>
 
 <div id="PageNavId" class="page-navbar">
     <div class="d-flex justify-content-between px-4 page-navbar-content">
@@ -21,9 +20,14 @@
     </div>
     <div id="OverviewDivId" class="container-lg">
         <div class="row">
-            @foreach (ServiceAllDTO service in Model.Services)
+            @foreach (SystemAllDTO systems in Model.Systems)
             {
-                @await Html.PartialAsync("Partial/_ServiceCard", (service, false))
+                <div id="@systems.Id" class="col-12 col-md-6 col-lg-4">    
+                    <div class="shadow-box p-3 my-card bradius-card hover-card pointer">
+                        <h3 class="border-bottom text-center">@systems.Name</h3>
+                        <div class="text-url text-center">@systems.URL</div>
+                    </div>
+                </div>
             }
         </div>
     </div>

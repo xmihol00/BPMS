@@ -11,9 +11,10 @@ namespace BPMS_DAL.Repositories
     {
         public ServiceRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<List<ServiceAllDTO>> All()
+        public Task<List<ServiceAllDTO>> All(Guid? apartFromId = null)
         {
-            return _dbSet.Select(x => new ServiceAllDTO 
+            return _dbSet.Where(x => x.Id != apartFromId)
+                         .Select(x => new ServiceAllDTO 
                          {
                              HttpMethod = x.HttpMethod,
                              Id = x.Id,
@@ -61,6 +62,20 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name
                          })
                          .ToListAsync();
+        }
+
+        public Task<ServiceAllDTO> Selected(Guid id)
+        {
+            return _dbSet.Select(x => new ServiceAllDTO 
+                         {
+                             HttpMethod = x.HttpMethod,
+                             Id = x.Id,
+                             Name = x.Name,
+                             Serialization = x.Serialization,
+                             Type = x.Type,
+                             URL = x.URL
+                         })
+                         .FirstAsync(x => x.Id == id);
         }
     }
 }

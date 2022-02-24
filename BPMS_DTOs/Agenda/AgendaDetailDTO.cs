@@ -11,5 +11,6 @@ namespace BPMS_DTOs.Agenda
     public class AgendaDetailDTO : AgendaDetailPartialDTO
     {
         public List<AgendaAllDTO> AllAgendas { get; set; } = new List<AgendaAllDTO>();
+        public AgendaAllDTO SelectedAgenda { get; set; } = new AgendaAllDTO();
     }
 }

@@ -32,6 +32,23 @@ namespace BPMS.Controllers
             return View("ServiceCreateEdit", await _serviceFacade.CreateEdit(id));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditPartial(Guid id)
+        {
+            ServiceEditPagePartialDTO dto = await _serviceFacade.EditParial(id);
+            return Ok(new
+            {
+                detail = await this.RenderViewAsync("Partial/_ServiceCreateEdit", dto, true),
+                header = await this.RenderViewAsync("Partial/_ServiceEditHeader", dto, true),
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            return View("AgendaCreateEdit", await _serviceFacade.Edit(id));
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateEdit(ServiceCreateEditDTO dto)
         {

@@ -16,8 +16,8 @@
         </div>
         <div id="OverviewDivId" class="container-lg side-overview">
             <div class="row">
-                @await Html.PartialAsync("Partial/_AgendaCard", (Model.AllAgendas.First(x => x.Id == Model.Id), true))
-                @foreach (AgendaAllDTO agenda in Model.AllAgendas.Where(x => x.Id != Model.Id))
+                @await Html.PartialAsync("Partial/_AgendaCard", (Model.SelectedAgenda, true))
+                @foreach (AgendaAllDTO agenda in Model.AllAgendas)
                 {
                     @await Html.PartialAsync("Partial/_AgendaCard", (agenda, false))
                 }

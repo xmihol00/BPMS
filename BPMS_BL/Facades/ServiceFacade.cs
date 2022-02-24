@@ -40,6 +40,16 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public async Task<ServiceEditPagePartialDTO> Edit(Guid id)
+        {
+            return await EditPageDTO(id, true);
+        }
+
+        public async Task<ServiceEditPagePartialDTO> EditParial(Guid id)
+        {
+            return await EditPageDTO(id, false);
+        }
+
         public async Task<ServiceEditPageDTO> CreateEdit(Guid id)
         {
             if (id == Guid.Empty)
@@ -48,12 +58,32 @@ namespace BPMS_BL.Facades
             }
             else
             {
-                ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
-                dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
-                dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
-                dto.Headers = await _serviceHeaderRepository.All(id);
-                return dto;
+                return await EditPageDTO(id, true);
             }
+        }
+
+        private async Task<ServiceEditPageDTO> EditPageDTO(Guid id, bool otherSystems = false)
+        {
+            ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
+            dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
+            dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
+            dto.Headers = await _serviceHeaderRepository.All(id);
+            if (otherSystems)
+            {
+                dto.OtherServices = await _serviceRepository.All(id);
+                dto.SelectedService = await _serviceRepository.Selected(id);
+            }
+            
+            return dto;
+        }
+
+        public async Task<ServiceEditPageDTO> EditPartial(Guid id)
+        {
+            ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
+            dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
+            dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
+            dto.Headers = await _serviceHeaderRepository.All(id);
+            return dto;
         }
 
         public async Task RemoveSchema(Guid id)

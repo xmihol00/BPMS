@@ -21,13 +21,14 @@ namespace BPMS_DAL.Repositories
     {
         public AgendaRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<List<AgendaAllDTO>> All()
+        public Task<List<AgendaAllDTO>> All(Guid? apartFromId = null)
         {
             return _dbSet.Include(x => x.Models)
                          .Include(x => x.Systems)
                          .Include(x => x.Workflows)
                          .Include(x => x.AgendaRoles)
                             .ThenInclude(x => x.UserRoles)
+                         .Where(x => x.Id != apartFromId)
                          .Select(x => new AgendaAllDTO 
                          {
                              Id = x.Id,
@@ -97,6 +98,29 @@ namespace BPMS_DAL.Repositories
                                                             .ToList()
                                      })
                                      .ToList()
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<AgendaAllDTO> SelectedAgenda(Guid id)
+        {
+            return _dbSet.Include(x => x.Models)
+                         .Include(x => x.Systems)
+                         .Include(x => x.Workflows)
+                         .Include(x => x.AgendaRoles)
+                            .ThenInclude(x => x.UserRoles)
+                         .Select(x => new AgendaAllDTO 
+                         {
+                             Id = x.Id,
+                             Name = x.Name,
+                             ActiveWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
+                             PausedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                             FinishedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                             CanceledWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
+                             ModelsCount = x.Models.Count(),
+                             SystemsCount = x.Systems.Count(),
+                             UserCount = x.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                             MissingRolesCount = x.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
                          })
                          .FirstAsync(x => x.Id == id);
         }
