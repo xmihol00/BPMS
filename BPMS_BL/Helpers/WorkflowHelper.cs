@@ -82,6 +82,22 @@ namespace BPMS_BL.Helpers
                     sTask.OutputData = CrateServiceTaskData(await _serviceDataSchemaRepository.AllWithMaps(serviceTask.ServiceId), serviceTask.Id);
                     break;
 
+                case IEndEventModelEntity:
+                    blockWorkflow = new EndEventWorkflowEntity();
+                    break;
+
+                case IStartEventModelEntity:
+                    blockWorkflow = new StartEventWorkflowEntity();
+                    break;
+
+                case ISendEventModelEntity:
+                    blockWorkflow = new SendEventWorkflowEntity();
+                    break;
+                
+                case IRecieveEventModelEntity:
+                    blockWorkflow = new RecieveEventWorkflowEntity();
+                    break;
+
                 default:
                     blockWorkflow = new BlockWorkflowEntity();
                     break;

@@ -78,6 +78,7 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.OutFlows)
                                 .ThenInclude(x => x.InBlock)
                                     .ThenInclude(x => x.BlockWorkflows)
+                                        .ThenInclude(x => x.Workflow)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.BlockModel.OutFlows)
                          .Select(x => x.InBlock)

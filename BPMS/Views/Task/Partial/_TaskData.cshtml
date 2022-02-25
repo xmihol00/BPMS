@@ -1,28 +1,64 @@
-@model (List<TaskDataDTO> data, bool editable)
+@model (IEnumerable<IGrouping<string, TaskDataDTO>> data, bool editable)
 
-@if (Model.data.Count > 0)
+@if (Model.data.Count() > 0)
 {
     <div class="row">
-        @foreach (TaskDataDTO task in Model.data)
+        @foreach (var group in Model.data)
         {
-            switch (task)
+            <h5 class="col-12 mb-0 mt-2">Blok workflow: 
+                @if (String.IsNullOrEmpty(group.Key))
+                {
+                    <span class="text-placeholder">Bez názvu</span>
+                }
+                else
+                {
+                    <span class="text-prim">@group.Key</span>
+                }
+            </h5>
+            @if (Model.editable)
             {
-                case ITaskString taskString:
-                    @await Html.PartialAsync("Partial/_TaskDataString", (taskString, Model.editable))
-                    break;
+                @foreach (TaskDataDTO task in group)
+                {
+                    switch (task)
+                    {
+                        case ITaskString taskString:
+                            @await Html.PartialAsync("Partial/_TaskDataString", taskString)
+                            break;
 
-                case ITaskNumber taskNumber:
-                    @await Html.PartialAsync("Partial/_TaskDataNumber", (taskNumber, Model.editable))
-                    break;
+                        case ITaskNumber taskNumber:
+                            @await Html.PartialAsync("Partial/_TaskDataNumber", taskNumber)
+                            break;
 
-                case ITaskText taskText:
-                    @await Html.PartialAsync("Partial/_TaskDataText", (taskText, Model.editable))
-                    break;
+                        case ITaskText taskText:
+                            @await Html.PartialAsync("Partial/_TaskDataText", taskText)
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                @foreach (TaskDataDTO task in group)
+                {
+                    switch (task)
+                    {
+                        case ITaskString taskString:
+                            @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskString.Value))
+                            break;
+
+                        case ITaskNumber taskNumber:
+                            @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskNumber.Value.ToString()))
+                            break;
+
+                        case ITaskText taskText:
+                            @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskText.Value))
+                            break;
+                    }
+                }
             }
         }
     </div>
 }
 else
 {
-    <div class="text-placeholder my-3">V této sekci nemá úkol žádná data.</div>
+    <div class="text-placeholder mt-3">V této sekci nemá úkol žádná data.</div>
 }

@@ -71,6 +71,12 @@
   padding: 0rem 0.2rem;
 }
 
+.readonly-div + .input-label {
+  transform: translate(0rem, -82%) scale(0.95);
+  color: var(--color-primary);
+  padding: 0rem 0.2rem;
+}
+
 .input-field[required]:invalid + .input-label, 
 .input-select[required]:invalid + .input-label, 
 .input-file[required]:invalid + .input-label {
@@ -166,4 +172,11 @@ option {
 .input-select + option[value=""] {
   color: var(--color-inactive);
   font-style: italic;
+}
+
+.readonly-div {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 1rem;
+  border: none;
 }

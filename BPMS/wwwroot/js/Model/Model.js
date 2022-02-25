@@ -254,6 +254,36 @@ function ToggleTaskMap(attribId, button)
     });
 }
 
+function ToggleSendMap()
+{
+    button.innerHTML = "<i class='fas fa-spinner'></i>"
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/ToggleSendMap/${BlockId}/${attribId}`
+    })
+    .done(() => 
+    {
+        button.innerHTML = "<i class='fas fa-check-circle'></i>"
+        if (button.classList.contains("bg-success"))
+        {
+            button.classList.remove("bg-success");
+            button.classList.add("bg-secondary");
+        }
+        else
+        {
+            button.classList.add("bg-success");
+            button.classList.remove("bg-secondary");
+        }
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
 function ToggleServiceMap(button, dataSchemaId, serviceTaskId)
 {
     button.innerHTML = "<i class='fas fa-spinner'></i>"

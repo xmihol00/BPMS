@@ -1,9 +1,8 @@
-@model (ITaskString data, bool editable)
+@model ITaskString
 
 <div class="col-12 col-xl-6 mt-3">
-    <label class="input" @Html.Raw(String.IsNullOrEmpty(Model.data.Description) ? "" : $"data-title='{Model.data.Description}'")>
-        <input @(Model.data.Compulsory ? "required" : "") class="input-field" type="text" placeholder=" " 
-               name="@Model.data.Id" value="@Model.data.Value" @(Model.editable ? "" : "readonly") />
-        <span class="input-label">@Model.data.Name</span>
+    <label class="input" @Html.Raw(String.IsNullOrEmpty(Model.Description) ? "" : $"data-title='{Model.Description}'")>
+        <input @(Model.Compulsory ? "required" : "") class="input-field" type="text" placeholder=" " name="@Model.Id" value="@Model.Value" />
+        <span class="input-label">@Model.Name</span>
     </label>
 </div>

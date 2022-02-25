@@ -15,5 +15,6 @@ namespace BPMS_DTOs.Task
         public string Name { get; set; } = string.Empty;
         public bool Compulsory { get; set; }
         public string Description { get; set; } = string.Empty;
+        public string BlockName { get; set; } = string.Empty;
     }
 }

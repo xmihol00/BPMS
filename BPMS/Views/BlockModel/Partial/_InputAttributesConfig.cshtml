@@ -1,4 +1,15 @@
 @model BlockModelConfigDTO
+@{
+    string togleFunction;
+    if (Model.GetType() == typeof(SendEventConfigDTO))
+    {
+        togleFunction = "ToggleSendMap";
+    }
+    else
+    {
+        togleFunction = "ToggleTaskMap";
+    }
+}
 
 <h4 class="mt-2">Vstupní atributy bloku</h4>
 @if ((Model as IInputAttributesConfig).InputAttributes.Count > 0)
@@ -56,7 +67,7 @@
                     </div>
                     <div class="col-2 text-center">
                         <span class="badge @(attrib.Mapped ? "bg-success" : "bg-secondary") bg-su-se-change rounded-pill text-1em pointer" 
-                                onclick="ToggleTaskMap('@attrib.Id', this)">
+                                onclick="@(togleFunction)('@attrib.Id', this)">
                             <i class="fas fa-check-circle"></i>
                         </span>
                     </div>

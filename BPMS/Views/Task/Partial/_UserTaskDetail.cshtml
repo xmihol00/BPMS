@@ -14,7 +14,7 @@
 <form id="TaskDataFormId" class="row" action="/Task/SaveData" class="d-flex flex-wrap" method="POST" novalidate
       oninput="InputValidator(this)", onsubmit="AjaxFormSubmit(event)">
     <input type="hidden" name="TaskId" value="@Model.Id" />
-    <h2 class="text-center text-font">Výstupní data</h2>
+    <h2 class="text-center text-font mt-3">Výstupní data</h2>
     <div class="col-12 col-md-6">
         <h3 class="text-center text-font mb-0">Pro vypracování úkolu</h3>
         @await Html.PartialAsync("Partial/_TaskData", (Model.OutputData, true))

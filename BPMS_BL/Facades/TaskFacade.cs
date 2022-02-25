@@ -127,11 +127,29 @@ namespace BPMS_BL.Facades
                         await NextServiceTask(task);
                         break;
                     
-                    case IEndEventModelEntity:
+                    case IEndEventWorkflowEntity:
                         await FinishWorkflow(task);
+                        break;
+                    
+                    case ISendEventWorkflowEntity:
+                        await SendData(task);
+                        break;
+                    
+                    case IRecieveEventWorkflowEntity:
+                        await NextRecieveEvent(task);
                         break;
                 }
             }
+        }
+
+        private Task NextRecieveEvent(BlockWorkflowEntity task)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task SendData(BlockWorkflowEntity task)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task FinishWorkflow(BlockWorkflowEntity task)
@@ -303,27 +321,35 @@ namespace BPMS_BL.Facades
             UserTaskDetailDTO detail = await _taskRepository.UserDetail(id, userId);
             var entity = await _taskRepository.Detail(id);
             
+            List<TaskDataDTO> inputData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTasks(id))
             {
-                detail.InputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+                inputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }
+            detail.InputData = inputData.GroupBy(x => x.BlockName);
 
+            List<TaskDataDTO> outputData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _taskDataRepository.OutputUserTasks(id))
             {
-                detail.OutputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+                outputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }
+            detail.OutputData = outputData.GroupBy(x => x.BlockName);
 
+            List<TaskDataDTO> inputServiceData = new List<TaskDataDTO>();
+            List<TaskDataDTO> outputServiceData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _taskDataRepository.MappedServiceTasks(id))
             {
                 if (data.Schema.Direction == DirectionEnum.Input)
                 {
-                    detail.InputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+                    inputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
                 }
                 else
                 {
-                    detail.OutputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+                    outputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
                 }
             }
+            detail.InputServiceData = inputServiceData.GroupBy(x => x.BlockName);
+            detail.OutputServiceData = outputServiceData.GroupBy(x => x.BlockName);
 
             return detail;
         }

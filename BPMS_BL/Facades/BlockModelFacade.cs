@@ -55,6 +55,11 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public Task ToggleSendMap(Guid blockId, Guid attributeId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task Edit(BlockModelEditDTO dto)
         {
             BlockModelEntity block = await _blockModelRepository.Detail(dto.Id);

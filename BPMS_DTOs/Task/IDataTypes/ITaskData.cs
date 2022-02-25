@@ -14,5 +14,6 @@ namespace BPMS_DTOs.Task.IDataTypes
         public string Name { get; set; }
         public bool Compulsory { get; set; }
         public string Description { get; set; }
+        public string BlockName { get; set; }
     }
 }

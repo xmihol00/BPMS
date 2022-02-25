@@ -119,21 +119,25 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.BlockModel).WithMany(x => x.BlockWorkflows).HasForeignKey(x => x.BlockModelId);
             modelBuilder.Entity<UserTaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Tasks).HasForeignKey(x => x.UserId);
             modelBuilder.Entity<ServiceTaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Services).HasForeignKey(x => x.UserId);
-            modelBuilder.Entity<UserTaskWorkflowEntity>().ToTable("TasksWorkflow");
-            modelBuilder.Entity<ServiceTaskWorkflowEntity>().ToTable("ServiceWorkflow");
+            modelBuilder.Entity<UserTaskWorkflowEntity>().ToTable("UserTasksWorkflow");
+            modelBuilder.Entity<ServiceTaskWorkflowEntity>().ToTable("ServiceTasksWorkflow");
+            modelBuilder.Entity<StartEventWorkflowEntity>().ToTable("StartEventsWorkflow");
+            modelBuilder.Entity<EndEventWorkflowEntity>().ToTable("EndEventsWorkflow");
+            modelBuilder.Entity<RecieveEventWorkflowEntity>().ToTable("RecieveEventsWorkflow");
+            modelBuilder.Entity<SendEventWorkflowEntity>().ToTable("SendEventsWorkflow");
 
             modelBuilder.Entity<TaskDataEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.OutputTask).WithMany(x => x.OutputData).HasForeignKey(x => x.OutputTaskId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Attribute).WithMany(x => x.Data).HasForeignKey(x => x.AttributeId);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.Schema).WithMany(x => x.Data).HasForeignKey(x => x.SchemaId);
-            modelBuilder.Entity<BoolDataEntity>().ToTable("BoolBlocks");
-            modelBuilder.Entity<NumberDataEntity>().ToTable("NumberBlocks");
-            modelBuilder.Entity<StringDataEntity>().ToTable("StringBlocks");
-            modelBuilder.Entity<TextDataEntity>().ToTable("TextBlocks");
-            modelBuilder.Entity<ArrayDataEntity>().ToTable("ArrayBlocks");
-            modelBuilder.Entity<FileDataEntity>().ToTable("FileBlocks");
-            modelBuilder.Entity<SelectDataEntity>().ToTable("SelectBlocks");
-            modelBuilder.Entity<DateDataEntity>().ToTable("DateBlocks");
+            modelBuilder.Entity<BoolDataEntity>().ToTable("BoolTaskData");
+            modelBuilder.Entity<NumberDataEntity>().ToTable("NumberTaskData");
+            modelBuilder.Entity<StringDataEntity>().ToTable("StringTaskData");
+            modelBuilder.Entity<TextDataEntity>().ToTable("TextTaskData");
+            modelBuilder.Entity<ArrayDataEntity>().ToTable("ArrayTaskData");
+            modelBuilder.Entity<FileDataEntity>().ToTable("FileTaskData");
+            modelBuilder.Entity<SelectDataEntity>().ToTable("SelectTaskData");
+            modelBuilder.Entity<DateDataEntity>().ToTable("DateTaskData");
 
             modelBuilder.Entity<TaskDataMapEntity>().HasKey(x => new { x.TaskDataId, x.TaskId });
             modelBuilder.Entity<TaskDataMapEntity>().HasOne(x => x.Task).WithMany(x => x.InputData).HasForeignKey(x => x.TaskId).OnDelete(DeleteBehavior.NoAction);

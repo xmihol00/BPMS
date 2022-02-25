@@ -23,6 +23,7 @@ namespace BPMS_BL.Profiles
                 .ForMember(dst => dst.Compulsory, opt => opt.MapFrom(src => src.Attribute != null ? src.Attribute.Compulsory : src.Schema.Compulsory))
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.Attribute != null ? src.Attribute.Name : src.Schema.Name))
                 .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Attribute.Description))
+                .ForMember(dst => dst.BlockName, opt => opt.MapFrom(src => src.OutputTask.BlockModel.Name))
             .Include<StringDataEntity, TaskStringDTO>()
             .Include<BoolDataEntity, TaskBoolDTO>()
             .Include<NumberDataEntity, TaskNumberDTO>()

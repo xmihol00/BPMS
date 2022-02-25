@@ -19,6 +19,8 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.InputData)
                          .Include(x => x.Attribute)
+                         .Include(x => x.OutputTask)
+                            .ThenInclude(x => x.BlockModel)
                          .Where(x => x.AttributeId != null && x.InputData.Any(y => y.TaskId == taskId))
                          .ToListAsync();
         }
@@ -28,6 +30,8 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Include(x => x.InputData)
                          .Include(x => x.Schema)
                          .Include(x => x.Attribute)
+                         .Include(x => x.OutputTask)
+                            .ThenInclude(x => x.BlockModel)
                          .Where(x => x.SchemaId != null && x.InputData.Any(y => y.TaskId == taskId))
                          .ToListAsync();
         }
@@ -35,6 +39,8 @@ namespace BPMS_DAL.Repositories
         public Task<List<TaskDataEntity>> OutputUserTasks(Guid taskId)
         {
             return _dbSet.Include(x => x.Attribute)
+                         .Include(x => x.OutputTask)
+                            .ThenInclude(x => x.BlockModel)
                          .Where(x => x.OutputTaskId == taskId)
                          .ToListAsync();
         }
