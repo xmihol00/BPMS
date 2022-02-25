@@ -105,10 +105,12 @@ namespace BPMS_DAL.Repositories
 
         public Task<UserTaskModelEntity> UserTaskForSolve(Guid id)
         {
-            return _userTasks.Include(x => x.Pool)
-                                .ThenInclude(x => x.Model)
-                                    .ThenInclude(x => x.Agenda)
-                             .FirstAsync(x => x.Id == id);
+            return _userTasks.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<ServiceTaskModelEntity> ServiceTaskForSolve(Guid id)
+        {
+            return _serviceTasks.FirstAsync(x => x.Id == id);
         }
 
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> MappedInputAttributes(Guid blockId, Guid? id, string blockName, bool compulsoryAttributes)

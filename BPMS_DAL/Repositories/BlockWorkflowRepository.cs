@@ -35,7 +35,6 @@ namespace BPMS_DAL.Repositories
                                                            AgendaId = x.Workflow.AgendaId,
                                                            AgendaName = x.Workflow.Agenda.Name,
                                                            Description = x.BlockModel.Description,
-                                                           SolveDate = DateTime.MinValue,
                                                            Id = x.Id,
                                                            Priority = TaskPriorityEnum.Urgent,
                                                            TaskName = x.BlockModel.Name,
@@ -68,7 +67,7 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
-        public Task<BlockWorkflowEntity> Bare(Guid id)
+        public Task<BlockWorkflowEntity> TaskForSolving(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
         }

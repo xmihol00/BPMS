@@ -61,7 +61,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public async Task<ServiceTestResultDTO> SendRequest()
+        public async Task<ServiceCallResultDTO> SendRequest()
         {
             switch (_method)
             {
@@ -127,7 +127,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task<ServiceTestResultDTO> SendGetRequest()
+        private async Task<ServiceCallResultDTO> SendGetRequest()
         {
             SerilizeData();
             using HttpClient client = new HttpClient();
@@ -141,7 +141,7 @@ namespace BPMS_BL.Helpers
             return await CreateResult(await client.SendAsync(request));
         }
 
-        private async Task<ServiceTestResultDTO> SendPostRequest()
+        private async Task<ServiceCallResultDTO> SendPostRequest()
         {
             SerilizeData();
             using HttpClient client = new HttpClient();
@@ -163,37 +163,23 @@ namespace BPMS_BL.Helpers
         }
 
 
-        private async Task<ServiceTestResultDTO> CreateResult(HttpResponseMessage response)
+        private async Task<ServiceCallResultDTO> CreateResult(HttpResponseMessage response)
         {
-            string content = await response.Content.ReadAsStringAsync();
             string? mediaType = response.Content.Headers?.ContentType?.MediaType;
-            ServiceTestResultDTO result = new ServiceTestResultDTO();
+            ServiceCallResultDTO result = new ServiceCallResultDTO();
+            result.RecievedData = await response.Content.ReadAsStringAsync();
 
             if (mediaType == "text/xml" || mediaType == "application/xml")
             {
-                result.RecievedData = await response.Content.ReadAsStringAsync();
                 result.Serialization = SerializationEnum.XML;
+            }
+            else if (mediaType == "application/json")
+            {
+                result.Serialization = SerializationEnum.JSON;
             }
             else
             {
-                try
-                {
-                    result.RecievedData = JObject.Parse(content).ToString(Formatting.Indented);
-                    result.Serialization = SerializationEnum.JSON;
-                }
-                catch
-                {
-                    try
-                    {
-                        result.RecievedData = JObject.Parse("{\"data\":" + content + "}").ToString(Formatting.Indented);
-                        result.Serialization = SerializationEnum.JSON;
-                    }
-                    catch
-                    {
-                        result.RecievedData = content;
-                        result.Serialization = null;
-                    }
-                }
+                result.Serialization = null;
             }
 
             response.Dispose();

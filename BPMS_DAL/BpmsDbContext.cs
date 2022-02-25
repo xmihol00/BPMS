@@ -108,6 +108,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<WorkflowEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Agenda).WithMany(x => x.Workflows).HasForeignKey(x => x.AgendaId);
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Model).WithMany(x => x.Workflows).HasForeignKey(x => x.ModelId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Administrator).WithMany(x => x.Workflows).HasForeignKey(x => x.AdministratorId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ServiceDataSchemaEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<ServiceDataSchemaEntity>().HasOne(x => x.Service).WithMany(x => x.DataSchemas).HasForeignKey(x => x.ServiceId);
@@ -154,6 +155,8 @@ namespace BPMS_DAL
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();
             modelBuilder.SeedSystems();
+            modelBuilder.SeedServices();
+            modelBuilder.SeedServiceDataSchemas();
         }
     }
 }

@@ -43,12 +43,12 @@ namespace BPMS_BL.Helpers
 
             List<BlockWorkflowEntity> blocks = await CreateBlocks(startEvent);
 
-            blocks[0].SolvedDate = DateTime.Now;
-            await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], model.Agenda.AdministratorId);
-
             WorkflowEntity workflow = await _workflowRepository.Waiting(model.Id);
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = blocks;
+
+            blocks[0].SolvedDate = DateTime.Now;
+            await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], workflow.AdministratorId);
         }
 
         private async Task<List<BlockWorkflowEntity>> CreateBlocks(BlockModelEntity blockModel)
@@ -86,6 +86,7 @@ namespace BPMS_BL.Helpers
                     blockWorkflow = new BlockWorkflowEntity();
                     break;
             }
+            blockWorkflow.Active = false;
             blockWorkflow.BlockModelId = blockModel.Id;
 
             return blockWorkflow;
@@ -223,21 +224,21 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, Guid agendaAdminId)
+        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, Guid workflowKeeperId)
         {
             blockWorkflow.Active = true;
             if (blockWorkflow is IUserTaskWorkflowEntity)
             {
                 IUserTaskModelEntity taskModel = blockModel as IUserTaskModelEntity;
                 IUserTaskWorkflowEntity taskWorkflow = blockWorkflow as IUserTaskWorkflowEntity;
-                taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
+                taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? workflowKeeperId;
                 taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
             }
             else if (blockWorkflow is IUserTaskWorkflowEntity)
             {
                 IServiceTaskModelEntity serviceModel = blockModel as IServiceTaskModelEntity;
                 (blockWorkflow as IServiceTaskWorkflowEntity).UserId =
-                        await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? agendaAdminId;
+                        await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflowKeeperId;
             }
         }
     }

@@ -49,7 +49,7 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<DataSchemaDataDTO>> DataSchemasTest(Guid serviceId)
+        public Task<List<DataSchemaDataDTO>> DataSchemaToSend(Guid serviceId)
         {
             return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input)
                          .Select(x => new DataSchemaDataDTO 
@@ -59,7 +59,8 @@ namespace BPMS_DAL.Repositories
                             Alias = x.Alias,
                             Name = x.Name,
                             Type = x.Type,
-                            StaticData = x.StaticData
+                            StaticData = x.StaticData,
+                            Compulsory = x.Compulsory
                          })
                          .ToListAsync();
         }

@@ -116,8 +116,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<ModelEntity> DetailToCreateWF(Guid id)
         {
-            return _dbSet.Include(x => x.Agenda)
-                         .Include(x => x.Pools)
+            return _dbSet.Include(x => x.Pools)
                             .ThenInclude(x => x.Blocks)
                                 .ThenInclude(x => x.InFlows)
                          .Include(x => x.Pools)

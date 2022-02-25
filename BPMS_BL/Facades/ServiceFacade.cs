@@ -65,8 +65,8 @@ namespace BPMS_BL.Facades
         private async Task<ServiceEditPageDTO> EditPageDTO(Guid id, bool otherSystems = false)
         {
             ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
-            dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
-            dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
+            dto.InputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
+            dto.OutputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
             dto.Headers = await _serviceHeaderRepository.All(id);
             if (otherSystems)
             {
@@ -80,8 +80,8 @@ namespace BPMS_BL.Facades
         public async Task<ServiceEditPageDTO> EditPartial(Guid id)
         {
             ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
-            dto.InputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
-            dto.OutputAttributes = CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
+            dto.InputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
+            dto.OutputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
             dto.Headers = await _serviceHeaderRepository.All(id);
             return dto;
         }
@@ -125,7 +125,7 @@ namespace BPMS_BL.Facades
             return await _serviceHeaderRepository.All(dto.ServiceId);
         }
 
-        public async Task<IEnumerable<IDataSchemaNode>> GenerateAttributes(ServiceTestResultDTO dto)
+        public async Task<IEnumerable<IDataSchemaNode>> GenerateAttributes(ServiceCallResultDTO dto)
         {
             _serviceId = dto.ServiceId;
 
@@ -141,25 +141,54 @@ namespace BPMS_BL.Facades
             }
             await transaction.CommitAsync();
 
-            return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Output));
+            return ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, DirectionEnum.Output));
         }
 
-        public async Task<ServiceTestResultDTO> SendRequest(IFormCollection data)
+        public async Task<ServiceCallResultDTO> SendRequest(IFormCollection data)
         {
             ServiceRequestDTO service = await _serviceRepository.ForRequest(Guid.Parse(data["ServiceId"].First()));
             service.Nodes = await CreateRequestTree(service.Id, data);
-            service.Headers = await _serviceHeaderRepository.ForRequest(service.Id);
-            ServiceTestResultDTO result = await new WebServiceHelper(service).SendRequest();
+            ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
+            FormatResult(result);
             result.ServiceId = service.Id;
             
             return result;
+        }
+
+        private void FormatResult(ServiceCallResultDTO result)
+        {
+            if (result.Serialization == null)
+            {
+                try
+                {
+                    result.RecievedData = JObject.Parse("{\"data\":" + result.RecievedData + "}").ToString(Formatting.Indented);
+                }
+                catch 
+                {
+
+                }
+            }
+            else if (result.Serialization == SerializationEnum.JSON)
+            {
+                try
+                {
+                    result.RecievedData = JObject.Parse(result.RecievedData).ToString(Formatting.Indented);
+                }
+                catch
+                {
+
+                }
+            }
+            else if (result.Serialization == SerializationEnum.XML)
+            {
+                // TODO
+            }
         }
 
         public async Task<string> GenerateRequest(IFormCollection data)
         {
             ServiceRequestDTO service = await _serviceRepository.ForRequest(Guid.Parse(data["ServiceId"].First()));
             service.Nodes = await CreateRequestTree(service.Id, data);
-            service.Headers = await _serviceHeaderRepository.ForRequest(service.Id);
 
             return new WebServiceHelper(service).GenerateRequest();
         }
@@ -216,21 +245,7 @@ namespace BPMS_BL.Facades
 
             await _serviceDataSchemaRepository.Save();
 
-            return CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, dto.Direction));
-        }
-
-        private IEnumerable<T> CreateTree<T>(IEnumerable<T> allNodes, Guid? parentId = null) where T : DataSchema
-        {
-            IEnumerable<T> nodes = allNodes.Where(x => x.ParentId == parentId);
-            foreach (T node in nodes)
-            {
-                if (node.Type == DataTypeEnum.Object)
-                {
-                    node.Children = CreateTree(allNodes, node.Id);
-                }
-            }
-
-            return nodes;
+            return ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(dto.ServiceId, dto.Direction));
         }
 
         private async Task<Guid> CreateOutputDataSchema(string name, DataTypeEnum type, Guid? parentId)
@@ -261,7 +276,7 @@ namespace BPMS_BL.Facades
 
         private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, IFormCollection data)
         {
-            IEnumerable<DataSchemaDataDTO> nodes = await _serviceDataSchemaRepository.DataSchemasTest(serviceId);
+            IEnumerable<DataSchemaDataDTO> nodes = await _serviceDataSchemaRepository.DataSchemaToSend(serviceId);
             foreach (DataSchemaDataDTO node in nodes)
             {
                 if (node.StaticData == null)
@@ -274,9 +289,7 @@ namespace BPMS_BL.Facades
                 }
             }
 
-            nodes = CreateTree<DataSchemaDataDTO>(nodes);
-
-            return nodes;
+            return ServiceTreeHelper.CreateTree<DataSchemaDataDTO>(nodes);
         }
 
         private async Task ParseJObject(IEnumerable<JToken> tokens, Guid? parentId = null)
@@ -297,6 +310,10 @@ namespace BPMS_BL.Facades
                     case JTokenType.Float:
                     case JTokenType.Integer:
                         await CreateOutputDataSchema(name, DataTypeEnum.Number, parentId);
+                        break;
+
+                    case JTokenType.Boolean:
+                        await CreateOutputDataSchema(name, DataTypeEnum.Bool, parentId);
                         break;
                     
                     case JTokenType.Array:

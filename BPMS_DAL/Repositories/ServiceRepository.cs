@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Service;
 using Microsoft.Extensions.Primitives;
+using BPMS_DTOs.Header;
 
 namespace BPMS_DAL.Repositories
 {
@@ -43,13 +44,20 @@ namespace BPMS_DAL.Repositories
 
         public Task<ServiceRequestDTO> ForRequest(Guid id)
         {
-            return _dbSet.Select(x => new ServiceRequestDTO 
+            return _dbSet.Include(x => x.Headers)
+                         .Select(x => new ServiceRequestDTO 
                          {
                              Id = x.Id,
                              HttpMethod = x.HttpMethod,
                              Type = x.Type,
                              Serialization = x.Serialization,
-                             URL = x.URL
+                             URL = x.URL,
+                             Headers = x.Headers.Select(y => new HeaderRequestDTO
+                                                {
+                                                    Name = y.Name,
+                                                    Value = y.Value
+                                                })
+                                                .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }

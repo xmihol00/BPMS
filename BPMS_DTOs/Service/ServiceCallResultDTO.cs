@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Service
 {
-    public class ServiceTestResultDTO
+    public class ServiceCallResultDTO
     {
         public Guid ServiceId { get; set; }
         public string RecievedData { get; set; } = string.Empty;

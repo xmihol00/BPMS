@@ -14,5 +14,6 @@ namespace BPMS_DTOs.ServiceDataSchema
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
         public string? StaticData { get; set; } = string.Empty;
+        public bool Compulsory { get; set; }
     }
 }

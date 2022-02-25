@@ -87,7 +87,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateAttributes(ServiceTestResultDTO dto)
+        public async Task<IActionResult> GenerateAttributes(ServiceCallResultDTO dto)
         {
             return PartialView("Partial/_OutputDataSchema", await _serviceFacade.GenerateAttributes(dto)); 
         }

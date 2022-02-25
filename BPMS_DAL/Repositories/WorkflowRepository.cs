@@ -39,5 +39,10 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<WorkflowEntity> Bare(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
+        }
     }
 }

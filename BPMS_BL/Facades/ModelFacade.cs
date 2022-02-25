@@ -131,10 +131,11 @@ namespace BPMS_BL.Facades
                 State = WorkflowStateEnum.Waiting,
                 Description = dto.Description ?? "",
                 Name = dto.Name,
-                AgendaId = await _modelRepository.AgendaId(dto.Id) ?? Guid.Empty
+                AgendaId = await _modelRepository.AgendaId(dto.Id) ?? Guid.Empty,
+                AdministratorId = dto.UserId,
+                Start = DateTime.Now
             });
             await _workflowRepository.Save();
-
 
             bool run = true;
             foreach (PoolDstAddressDTO pool in pools)

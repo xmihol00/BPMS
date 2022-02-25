@@ -32,16 +32,30 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<TaskDataEntity>> Output(Guid taskId)
+        public Task<List<TaskDataEntity>> OutputUserTasks(Guid taskId)
         {
             return _dbSet.Include(x => x.Attribute)
                          .Where(x => x.OutputTaskId == taskId)
                          .ToListAsync();
         }
 
+        public Task<Dictionary<Guid, TaskDataEntity>> InputServiceTaskData(Guid taskId)
+        {
+            return _dbSet.Include(x => x.Schema)
+                         .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Input)
+                         .ToDictionaryAsync(x => x.SchemaId.Value);
+        }
+
         public Task<TaskDataEntity> Detail(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<List<TaskDataEntity>> OutputServiceTaskData(Guid taskId)
+        {
+            return _dbSet.Include(x => x.Schema)
+                         .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Output)
+                         .ToListAsync();
         }
     }
 }

@@ -11,6 +11,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
 using BPMS_DAL.Entities.ModelBlocks;
+using BPMS_Common;
 
 namespace BPMS_BL.Facades
 {
@@ -107,30 +108,44 @@ namespace BPMS_BL.Facades
             _svg.Root?.Attribute("width")?.Remove();
             _svg.Root?.Attribute("height")?.Remove();
 
-            _model.Name = dto.Name;
-            _model.SVG = _svg.ToString(SaveOptions.DisableFormatting);
-            _model.AgendaId = dto.AgendaId;
-            await _modelRepository.Create(_model);
-
             if (_poolsDict is not null)
             {
-                foreach (PoolEntity pool in _poolsDict.ToArray().Select(x => x.Value))
+                List<PoolEntity> pools = _poolsDict.Select(x => x.Value).ToList();
+                if (pools.Count == 1)
+                {
+                    _currentPool = pools[0];
+                    _currentPool.SystemId = StaticData.ThisSystemId;
+                    _model.State = ModelStateEnum.Shared;
+                }
+                
+                foreach (PoolEntity pool in pools)
                 {
                     await _poolRepository.Create(pool);
                 }
             }
             else
             {
+                _currentPool.SystemId = StaticData.ThisSystemId;
+                _model.State = ModelStateEnum.Shared;
                 await _poolRepository.Create(_currentPool);
             }
 
-            await _poolRepository.Save();
-
-            foreach (BlockModelEntity blockModel in _blocksDict.ToArray().Select(x => x.Value))
+            foreach (BlockModelEntity blockModel in _blocksDict.Select(x => x.Value))
             {
                 await _blockModelRepository.Create(blockModel);
             }
 
+            if (_model.State == ModelStateEnum.Shared)
+            {
+                XElement svgPool = _svg.Descendants().First(x => x.Attribute("id")?.Value == _currentPool.Id.ToString());
+                XAttribute attribute = svgPool.Attribute("class");
+                attribute.SetValue("djs-group bpmn-pool bpmn-this-sys");
+            }
+            _model.Name = dto.Name;
+            _model.SVG = _svg.ToString(SaveOptions.DisableFormatting);
+            _model.AgendaId = dto.AgendaId;
+
+            await _modelRepository.Create(_model);
             await _blockModelRepository.Save();
             return null;
         }
