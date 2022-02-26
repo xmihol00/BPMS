@@ -31,13 +31,13 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> IsModelRunable([FromBody] ModelIdDTO dto)
+        public async Task<IActionResult> IsModelRunable([FromBody] WorkflowShare dto)
         {
             return Ok(await _communicationFacade.IsModelRunable(dto));
         }
 
         [HttpPost]
-        public async Task<IActionResult> RunModel([FromBody] ModelIdDTO dto)
+        public async Task<IActionResult> RunModel([FromBody] ModelIdWorkflowDTO dto)
         {
             return Ok(await _communicationFacade.RunModel(dto));
         }

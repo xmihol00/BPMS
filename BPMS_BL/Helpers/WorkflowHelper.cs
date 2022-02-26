@@ -34,21 +34,25 @@ namespace BPMS_BL.Helpers
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
         }
 
-        public async Task CreateWorkflow(Guid id)
+        public async Task CreateWorkflow(Guid modelId, WorkflowEntity workflow)
         {
-            ModelEntity model = await _modelRepository.DetailToCreateWF(id);
+            ModelEntity model = await _modelRepository.DetailToCreateWF(modelId);
             model.State = ModelStateEnum.Executable;
             BlockModelEntity startEvent = model.Pools.First(x => x.SystemId == StaticData.ThisSystemId)
                                                .Blocks.First(x => x is IStartEventModelEntity);
 
             List<BlockWorkflowEntity> blocks = await CreateBlocks(startEvent);
 
-            WorkflowEntity workflow = await _workflowRepository.Waiting(model.Id);
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = blocks;
 
             blocks[0].SolvedDate = DateTime.Now;
             await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], workflow.AdministratorId);
+        }
+
+        public async Task CreateWorkflow(Guid modelId, Guid workflowId)
+        {
+            await CreateWorkflow(modelId, await _workflowRepository.Waiting(workflowId));
         }
 
         private async Task<List<BlockWorkflowEntity>> CreateBlocks(BlockModelEntity blockModel)
@@ -96,6 +100,7 @@ namespace BPMS_BL.Helpers
                 
                 case IRecieveEventModelEntity:
                     blockWorkflow = new RecieveEventWorkflowEntity();
+                    blockWorkflow.OutputData = CrateUserTaskData(blockModel.Attributes);
                     break;
 
                 default:

@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Model
 {
-    public class ModelIdDTO
+    public class ModelIdWorkflowDTO
     {
-        public Guid Id { get; set; }
+        public Guid ModelId { get; set; }
+        public Guid WorkflowId { get; set; }
     }
 }

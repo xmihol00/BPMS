@@ -21,10 +21,12 @@ namespace BPMS_DAL.Repositories
     {
         private readonly DbSet<ServiceTaskModelEntity> _serviceTasks;
         private readonly DbSet<UserTaskModelEntity> _userTasks;
+        private readonly DbSet<RecieveEventModelEntity> _recieveEvens;
         public BlockModelRepository(BpmsDbContext context) : base(context) 
         {
             _serviceTasks = context.Set<ServiceTaskModelEntity>();
             _userTasks = context.Set<UserTaskModelEntity>();
+            _recieveEvens = context.Set<RecieveEventModelEntity>();
         }
 
         public Task<BlockModelEntity> Config(Guid id)
@@ -242,6 +244,27 @@ namespace BPMS_DAL.Repositories
                                     }).ToListAsync())
                                     .GroupBy(x => x.BlockName)
                                     .ToList();
+        }
+
+        public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> RecieveEventAttribures(Guid blockId, uint order, Guid poolId)
+        {
+            return (await _recieveEvens.Include(x => x.Attributes)
+                                          .ThenInclude(x => x.MappedBlocks)
+                                       .Where(x => x.PoolId == poolId && x.Order < order)
+                                       .SelectMany(x => x.Attributes)
+                                       .Select(x => new InputBlockAttributeDTO
+                                       {
+                                           BlockName = x.Block.Name,
+                                           Compulsory = x.Compulsory,
+                                           Description = x.Description,
+                                           Id = x.Id,
+                                           Name = x.Name,
+                                           Specification = x.Specification,
+                                           Type = x.Type,
+                                           Mapped = x.MappedBlocks.Any(x => x.BlockId == blockId)
+                                       }).ToListAsync())
+                                       .GroupBy(x => x.BlockName)
+                                       .ToList();
         }
     }
 }

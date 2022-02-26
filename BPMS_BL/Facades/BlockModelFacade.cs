@@ -253,6 +253,8 @@ namespace BPMS_BL.Facades
             (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(userTask.Id);
             (dto as IInputAttributesConfig).InputAttributes = 
                     await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
+            (dto as IInputAttributesConfig).InputAttributes.AddRange(await _blockModelRepository.RecieveEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
+            
             IRoleConfig roleConfig = dto as IRoleConfig;
             roleConfig.CurrentRole = userTask.RoleId;
             roleConfig.Roles.Add(new RoleAllDTO

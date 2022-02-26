@@ -16,9 +16,9 @@ namespace BPMS_DAL.Repositories
     {
         public WorkflowRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<WorkflowEntity> Waiting(Guid modelId)
+        public Task<WorkflowEntity> Waiting(Guid id)
         {
-            return _dbSet.FirstAsync(x => x.ModelId == modelId && x.State == WorkflowStateEnum.Waiting);
+            return _dbSet.FirstAsync(x => x.Id == id && x.State == WorkflowStateEnum.Waiting);
         }
 
         public Task<List<WorkflowAllDTO>> Overview()
@@ -43,6 +43,16 @@ namespace BPMS_DAL.Repositories
         public Task<WorkflowEntity> Bare(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<WorkflowEntity?> WaitingOrDefault(Guid modelId)
+        {
+            return _dbSet.FirstOrDefaultAsync(x => x.ModelId == modelId && x.State == WorkflowStateEnum.Waiting);
+        }
+
+        public Task<bool> Any(Guid id)
+        {
+            return _dbSet.AnyAsync(x => x.Id == id);
         }
     }
 }

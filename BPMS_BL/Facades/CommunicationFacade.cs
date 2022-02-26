@@ -153,22 +153,26 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> IsModelRunable(ModelIdDTO dto)
+        public async Task<string> IsModelRunable(WorkflowShare dto)
         {
-            if (!await _modelRepository.CheckState(dto.Id, ModelStateEnum.Waiting))
+            if (!await _workflowRepository.Any(dto.Workflow.Id))
+            {
+                await _workflowRepository.Create(dto.Workflow);
+                await _workflowRepository.Save();
+            }
+
+            if (!await _modelRepository.CheckState(dto.ModelId, ModelStateEnum.Waiting))
             {
                 throw new NotImplementedException();
             }
             return "";
         }
 
-        public async Task<string> RunModel(ModelIdDTO dto)
+        public async Task<string> RunModel(ModelIdWorkflowDTO dto)
         {
-            
-
             await new WorkflowHelper(_modelRepository, _workflowRepository, _agendaRoleRepository, 
                                      _blockAttributeRepository, _serviceDataSchemaRepository)
-                                    .CreateWorkflow(dto.Id);
+                                    .CreateWorkflow(dto.ModelId, dto.WorkflowId);
 
             await _modelRepository.Save();
             return "";   

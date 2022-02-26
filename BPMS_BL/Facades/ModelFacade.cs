@@ -123,26 +123,49 @@ namespace BPMS_BL.Facades
         public async Task<bool> Run(ModelRunDTO dto)
         {
             List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
-            string message = JsonConvert.SerializeObject(new ModelIdDTO { Id = dto.Id });
 
-            await _workflowRepository.Create(new WorkflowEntity()
+            WorkflowEntity? workflow = await _workflowRepository.WaitingOrDefault(dto.Id);
+            if (workflow == null)
+            {
+                workflow = new WorkflowEntity()
+                {
+                    ModelId = dto.Id,
+                    State = WorkflowStateEnum.Waiting,
+                    Description = dto.Description ?? "",
+                    Name = dto.Name,
+                    AgendaId = await _modelRepository.AgendaId(dto.Id) ?? Guid.Empty,
+                    AdministratorId = dto.UserId,
+                    Start = DateTime.Now
+                };
+
+                await _workflowRepository.Create(workflow);
+            }
+            else
+            {
+                workflow.Description = dto.Description ?? "";
+                workflow.Name = dto.Name;
+                workflow.AdministratorId = dto.UserId;
+                workflow.Start = DateTime.Now;
+            }
+            await _workflowRepository.Save();
+
+            string checkMessage = JsonConvert.SerializeObject(new WorkflowShare 
+            { 
+                ModelId = dto.Id,
+                Workflow = workflow
+            });
+            string runMessage = JsonConvert.SerializeObject(new ModelIdWorkflowDTO
             {
                 ModelId = dto.Id,
-                State = WorkflowStateEnum.Waiting,
-                Description = dto.Description ?? "",
-                Name = dto.Name,
-                AgendaId = await _modelRepository.AgendaId(dto.Id) ?? Guid.Empty,
-                AdministratorId = dto.UserId,
-                Start = DateTime.Now
+                WorkflowId = workflow.Id
             });
-            await _workflowRepository.Save();
 
             bool run = true;
             foreach (PoolDstAddressDTO pool in pools)
             {
                 run &= await CommunicationHelper.IsModelRunable(pool.DestinationURL, 
                                                                 SymetricCypherHelper.JsonEncrypt(pool), 
-                                                                message);
+                                                                checkMessage);
             }
 
             if (run)
@@ -151,14 +174,14 @@ namespace BPMS_BL.Facades
                 {
                     run &= await CommunicationHelper.RunModel(pool.DestinationURL, 
                                                               SymetricCypherHelper.JsonEncrypt(pool), 
-                                                              message);
+                                                              runMessage);
                 }   
             }
 
             if (run)
             {
                 await new WorkflowHelper(_modelRepository, _workflowRepository, _agendaRoleRepository, _blockAttributeRepository, _serviceDataSchemaRepository)
-                                        .CreateWorkflow(dto.Id);
+                                        .CreateWorkflow(dto.Id, workflow);
             }
             else
             {
