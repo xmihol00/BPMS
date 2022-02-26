@@ -146,6 +146,7 @@ namespace BPMS_BL.Facades
                 workflow.Name = dto.Name;
                 workflow.AdministratorId = dto.UserId;
                 workflow.Start = DateTime.Now;
+                _workflowRepository.Update(workflow);
             }
             await _workflowRepository.Save();
 

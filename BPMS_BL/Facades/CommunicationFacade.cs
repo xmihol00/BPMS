@@ -155,16 +155,18 @@ namespace BPMS_BL.Facades
 
         public async Task<string> IsModelRunable(WorkflowShare dto)
         {
+            ModelEntity model = await _modelRepository.StateAgendaId(dto.ModelId);
             if (!await _workflowRepository.Any(dto.Workflow.Id))
             {
+                dto.Workflow.AgendaId = model.AgendaId.Value;
                 dto.Workflow.AdministratorId = null;
                 await _workflowRepository.Create(dto.Workflow);
                 await _workflowRepository.Save();
             }
 
-            if (!await _modelRepository.CheckState(dto.ModelId, ModelStateEnum.Waiting))
+            if (model.State != ModelStateEnum.Waiting)
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException(); // TODO
             }
             return "";
         }

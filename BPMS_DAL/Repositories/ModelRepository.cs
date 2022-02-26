@@ -169,6 +169,17 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<ModelEntity> StateAgendaId(Guid id)
+        {
+            return _dbSet.Where(x => x.Id == id)
+                         .Select(x => new ModelEntity
+                         {
+                             AgendaId = x.AgendaId,
+                             State = x.State
+                         })
+                         .FirstAsync();
+        }
+
         public Task<Guid?> AgendaId(Guid id)
         {
             return _dbSet.Where(x => x.Id == id)
