@@ -1,7 +1,9 @@
 using AutoMapper;
 using BPMS_BL.Helpers;
+using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
+using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
@@ -16,6 +18,7 @@ using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -112,7 +115,9 @@ namespace BPMS_BL.Facades
         public async Task SolveUserTask(IFormCollection data)
         {
             await SaveData(data, false);
-            _worflowHelper = new WorkflowHelper();
+            BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
+            _worflowHelper = new WorkflowHelper(context);
+
             BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
 
             await _worflowHelper.StartNextTask(solvedTask);
@@ -120,6 +125,7 @@ namespace BPMS_BL.Facades
             solvedTask.Active = false;
             solvedTask.SolvedDate = DateTime.Now;
 
+            await context.SaveChangesAsync();
             await _taskRepository.Save();
         }
 

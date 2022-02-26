@@ -19,6 +19,8 @@ using Newtonsoft.Json;
 using BPMS_DAL.Sharing;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_Common.Enums;
+using Microsoft.Extensions.DependencyInjection;
+using BPMS_DAL;
 
 namespace BPMS_BL.Facades
 {
@@ -181,7 +183,9 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                await new WorkflowHelper().CreateWorkflow(dto.Id, workflow);
+                BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
+                await new WorkflowHelper(context).CreateWorkflow(dto.Id, workflow);
+                await context.SaveChangesAsync();
             }
             else
             {

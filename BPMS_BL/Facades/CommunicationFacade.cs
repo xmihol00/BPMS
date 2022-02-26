@@ -11,6 +11,7 @@ using BPMS_BL.Helpers;
 using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
+using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.WorkflowBlocks;
@@ -22,6 +23,7 @@ using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
 using BPMS_DTOs.User;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
@@ -128,7 +130,9 @@ namespace BPMS_BL.Facades
                 if (recieveEvent.Active)
                 {
                     recieveEvent.Active = false;
-                    await new WorkflowHelper().StartNextTask(recieveEvent);
+                    BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
+                    await new WorkflowHelper(context).StartNextTask(recieveEvent);
+                    await context.SaveChangesAsync();
                 }
             }
 
@@ -252,9 +256,10 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RunModel(ModelIdWorkflowDTO dto)
         {
-            await new WorkflowHelper().CreateWorkflow(dto.ModelId, dto.WorkflowId);
-
-            await _modelRepository.Save();
+            BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
+            await new WorkflowHelper(context).CreateWorkflow(dto.ModelId, dto.WorkflowId);
+            await context.SaveChangesAsync();
+            
             return "";   
         }
 

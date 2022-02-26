@@ -1,6 +1,7 @@
 
 using BPMS_Common;
 using BPMS_Common.Enums;
+using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
@@ -37,18 +38,18 @@ namespace BPMS_BL.Helpers
         private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
 
         #pragma warning disable CS8618
-        public WorkflowHelper()
+        public WorkflowHelper(BpmsDbContext context)
         {
-            _modelRepository = StaticData.ServiceProvider.GetService<ModelRepository>();
-            _workflowRepository = StaticData.ServiceProvider.GetService<WorkflowRepository>();
-            _agendaRoleRepository = StaticData.ServiceProvider.GetService<AgendaRoleRepository>();
-            _blockAttributeRepository = StaticData.ServiceProvider.GetService<BlockAttributeRepository>();
-            _serviceDataSchemaRepository = StaticData.ServiceProvider.GetService<ServiceDataSchemaRepository>();
-            _taskRepository = StaticData.ServiceProvider.GetService<BlockWorkflowRepository>();
-            _taskDataRepository = StaticData.ServiceProvider.GetService<TaskDataRepository>();
-            _blockModelRepository = StaticData.ServiceProvider.GetService<BlockModelRepository>();
-            _serviceRepository = StaticData.ServiceProvider.GetService<ServiceRepository>();
-            _poolRepository = StaticData.ServiceProvider.GetService<PoolRepository>();
+            _modelRepository = new ModelRepository(context);
+            _workflowRepository = new WorkflowRepository(context);
+            _agendaRoleRepository = new AgendaRoleRepository(context);
+            _blockAttributeRepository = new BlockAttributeRepository(context);
+            _serviceDataSchemaRepository = new ServiceDataSchemaRepository(context);
+            _taskRepository = new BlockWorkflowRepository(context);
+            _taskDataRepository = new TaskDataRepository(context);
+            _blockModelRepository = new BlockModelRepository(context);
+            _serviceRepository = new ServiceRepository(context);
+            _poolRepository = new PoolRepository(context);
         }
         #pragma warning restore CS8618
 
