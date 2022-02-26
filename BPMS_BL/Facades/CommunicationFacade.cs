@@ -122,17 +122,17 @@ namespace BPMS_BL.Facades
                 (taskData[data.AttributeId.Value] as IFileDataEntity).Name = data.Name;
             }
 
-            await _taskDataRepository.Save();
-
             foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)
             {
                 recieveEvent.Delivered = true;
                 if (recieveEvent.Active)
                 {
                     recieveEvent.Active = false;
-                    // TODO Next block WF
+                    await new WorkflowHelper().StartNextTask(recieveEvent);
                 }
             }
+
+            await _taskDataRepository.Save();
 
             return "";
         }
@@ -252,9 +252,7 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RunModel(ModelIdWorkflowDTO dto)
         {
-            await new WorkflowHelper(_modelRepository, _workflowRepository, _agendaRoleRepository, 
-                                     _blockAttributeRepository, _serviceDataSchemaRepository)
-                                    .CreateWorkflow(dto.ModelId, dto.WorkflowId);
+            await new WorkflowHelper().CreateWorkflow(dto.ModelId, dto.WorkflowId);
 
             await _modelRepository.Save();
             return "";   

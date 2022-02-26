@@ -181,8 +181,7 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                await new WorkflowHelper(_modelRepository, _workflowRepository, _agendaRoleRepository, _blockAttributeRepository, _serviceDataSchemaRepository)
-                                        .CreateWorkflow(dto.Id, workflow);
+                await new WorkflowHelper().CreateWorkflow(dto.Id, workflow);
             }
             else
             {

@@ -37,8 +37,7 @@ namespace BPMS_BL.Helpers
         private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
 
         #pragma warning disable CS8618
-        public WorkflowHelper(ModelRepository modelRepository, WorkflowRepository workflowRepository, AgendaRoleRepository agendaRoleRepository,
-                              BlockAttributeRepository blockAttributeRepository, ServiceDataSchemaRepository serviceDataSchemaRepository)
+        public WorkflowHelper()
         {
             _modelRepository = StaticData.ServiceProvider.GetService<ModelRepository>();
             _workflowRepository = StaticData.ServiceProvider.GetService<WorkflowRepository>();
