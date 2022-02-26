@@ -83,13 +83,12 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<BlockModelEntity?>> MappedBlocks(Guid id)
+        public Task<List<BlockAttributeMapEntity>> MappedBlocks(Guid id)
         {
             return _dbSet.Include(x => x.MappedBlocks)
                             .ThenInclude(x => x.Block)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.MappedBlocks)
-                         .Select(x => x.Block)
                          .ToListAsync();
         }
     }

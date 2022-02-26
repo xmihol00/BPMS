@@ -79,20 +79,26 @@ namespace BPMS_BL.Facades
 
         public async Task Remove(Guid id)
         {
-            foreach (BlockModelEntity mappedBlock in await _blockAttributeRepository.MappedBlocks(id))
+            BlockAttributeEntity attrib = new BlockAttributeEntity()
+            { 
+                Id = id,
+                MappedBlocks = await _blockAttributeRepository.MappedBlocks(id)
+            };
+
+            foreach (BlockModelEntity mappedBlock in attrib.MappedBlocks.Select(x => x.Block))
             {
                 if (mappedBlock is ISendEventModelEntity)
                 {
                     foreach (PoolBlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(mappedBlock.Id))
                     {
-                        await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 
+                        await CommunicationHelper.RemoveRecieverAttribute(recieverAddress.DestinationURL, 
                                                                           SymetricCypherHelper.JsonEncrypt(recieverAddress),
                                                                           id.ToString());
                     }
                 }
             }
 
-            _blockAttributeRepository.Remove(new BlockAttributeEntity { Id = id });
+            _blockAttributeRepository.Remove(attrib);
             await _blockAttributeRepository.Save();
         }
 

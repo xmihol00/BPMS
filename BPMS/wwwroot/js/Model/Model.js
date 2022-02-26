@@ -254,7 +254,7 @@ function ToggleTaskMap(attribId, button)
     });
 }
 
-function ToggleSendMap()
+function ToggleSendMap(attribId, button)
 {
     button.innerHTML = "<i class='fas fa-spinner'></i>"
     $.ajax(
