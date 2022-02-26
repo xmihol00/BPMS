@@ -114,7 +114,7 @@ namespace BPMS_BL.Helpers
                     break;
 
                 case ISendEventModelEntity:
-                    blockWorkflow = new SendEventWorkflowEntity();
+                    blockWorkflow = CreateSendEvent(blockModel);
                     break;
                 
                 case IRecieveEventModelEntity:
@@ -128,6 +128,26 @@ namespace BPMS_BL.Helpers
             }
             blockWorkflow.Active = false;
             blockWorkflow.BlockModelId = blockModel.Id;
+
+            return blockWorkflow;
+        }
+
+        private BlockWorkflowEntity CreateSendEvent(BlockModelEntity blockModel)
+        {
+            BlockWorkflowEntity blockWorkflow = new SendEventWorkflowEntity();
+
+            foreach (BlockAttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            {
+                TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
+                if (taskData != null)
+                {
+                    blockWorkflow.InputData.Add(new TaskDataMapEntity
+                    {
+                        Task = blockWorkflow,
+                        TaskData = taskData
+                    });
+                }
+            }
 
             return blockWorkflow;
         }
