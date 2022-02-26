@@ -294,7 +294,6 @@ namespace BPMS_BL.Facades
             SystemIdAgendaIdDTO ids = await _poolRepository.CurrentSystemIdAgendaId(entity.PoolId);
             dto.CurrentSystemId = ids.SystemId;
             dto.Editable = entity.Editable;
-            dto.Attributes = await _blockModelRepository.MappedAttributes(entity.SenderId);
             
             if (entity.Editable)
             {
