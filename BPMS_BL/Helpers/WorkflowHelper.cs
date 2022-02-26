@@ -349,7 +349,7 @@ namespace BPMS_BL.Helpers
 
             foreach (var group in (await _taskDataRepository.MappedSendEventData(task.Id)).GroupBy(x => x.GetType()))
             {
-                switch (group.Key)
+                switch (group.First())
                 {
                     case IStringDataEntity:
                         dto.Strings = group.Cast<StringDataEntity>();
