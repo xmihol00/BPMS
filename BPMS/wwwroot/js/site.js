@@ -79,7 +79,7 @@ function ShowModalElement(contentId)
     ModalContentId = contentId;
 }
 
-function ShowModal(contentId, url = null, targetId = null, remember = true, callback = null)
+function ShowModal(contentId, url = null, targetId = null, remember = true, hideCallback = null, succesCallback = null)
 {
     ShowModalElement(contentId);
     if (targetId)
@@ -102,6 +102,7 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, call
                 {
                     LoadedElements.push(targetId);
                 }
+                succesCallback();
             })
             .fail(() => 
             {
@@ -111,7 +112,7 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, call
         }
     }
     
-    Callback = callback;
+    Callback = hideCallback;
 }
 
 function HideModal()

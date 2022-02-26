@@ -12,6 +12,8 @@ using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
+using BPMS_DAL.Entities.BlockDataTypes;
+using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.Model;
@@ -36,13 +38,15 @@ namespace BPMS_BL.Facades
         private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly TaskDataRepository _taskDataRepository;
         private readonly IMapper _mapper;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                                    BlockModelRepository blockModelRepository, PoolRepository poolRepository, SystemRepository systemRepository, 
                                    SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
                                    AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository,
-                                   ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
+                                   ServiceDataSchemaRepository serviceDataSchemaRepository, TaskDataRepository taskDataRepository,
+                                   IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -55,7 +59,66 @@ namespace BPMS_BL.Facades
             _agendaRoleRepository = agendaRoleRepository;
             _blockAttributeRepository = blockAttributeRepository;
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _taskDataRepository = taskDataRepository;
             _mapper = mapper;
+        }
+
+        public async Task<string> Message(MessageShare message)
+        {
+            Dictionary<Guid, TaskDataEntity> taskData;
+            if (message.WorkflowId != null)
+            {
+                taskData = await _taskDataRepository.OfRecieveEvent(message.WorkflowId.Value, message.BlockId);
+            }
+            else
+            {
+                taskData = await _taskDataRepository.OfRecieveEvent(message.BlockId);
+            }
+
+            foreach (StringDataEntity data in message.Strings)
+            {
+                (taskData[data.Id] as IStringDataEntity).Value = data.Value;
+            }
+
+            foreach (NumberDataEntity data in message.Numbers)
+            {
+                (taskData[data.Id] as INumberDataEntity).Value = data.Value;
+            }
+
+            foreach (TextDataEntity data in message.Texts)
+            {
+                (taskData[data.Id] as ITextDataEntity).Value = data.Value;
+            }
+
+            foreach (DateDataEntity data in message.Dates)
+            {
+                (taskData[data.Id] as IDateDataEntity).Value = data.Value;
+            }
+
+            foreach (BoolDataEntity data in message.Bools)
+            {
+                (taskData[data.Id] as IBoolDataEntity).Value = data.Value;
+            }
+
+            foreach (SelectDataEntity data in message.Selects)
+            {
+                (taskData[data.Id] as ISelectDataEntity).Value = data.Value;
+            }
+
+            foreach (ArrayDataEntity data in message.Arrays)
+            {
+                (taskData[data.Id] as IArrayDataEntity).Type = data.Type;
+            }
+
+            foreach (FileDataEntity data in message.Files)
+            {
+                (taskData[data.Id] as IFileDataEntity).MIMEType = data.MIMEType;
+                (taskData[data.Id] as IFileDataEntity).Name = data.Name;
+            }
+
+            await _taskDataRepository.Save();
+
+            return "";
         }
 
         public async Task<string> RemoveRecieverAttribute(Guid id)

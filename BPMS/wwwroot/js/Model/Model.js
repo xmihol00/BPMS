@@ -412,3 +412,7 @@ function RemoveModel()
     });    
 }
 
+function ValidateStart()
+{
+    InputValidator(document.getElementById("RunModelId"));
+}

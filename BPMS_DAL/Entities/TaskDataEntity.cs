@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
+using Newtonsoft.Json;
 
 namespace BPMS_DAL.Entities
 {
@@ -13,10 +14,16 @@ namespace BPMS_DAL.Entities
         public Guid Id { get; set; }
         public Guid OutputTaskId { get; set; }
         public BlockWorkflowEntity? OutputTask { get; set; }
+        
+        [JsonIgnore]
         public List<TaskDataMapEntity> InputData { get; set; } = new List<TaskDataMapEntity>();
         public Guid? AttributeId { get; set; }
+
+        [JsonIgnore]
         public BlockAttributeEntity? Attribute { get; set; }
         public Guid? SchemaId { get; set; }
+
+        [JsonIgnore]
         public ServiceDataSchemaEntity? Schema { get; set; }
     }
 }

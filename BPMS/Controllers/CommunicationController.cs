@@ -53,5 +53,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.RemoveRecieverAttribute(id));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Message([FromBody] MessageShare message)
+        {
+            return Ok(await _communicationFacade.Message(message));
+        }
     }
 }

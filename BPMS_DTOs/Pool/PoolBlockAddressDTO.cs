@@ -14,5 +14,6 @@ namespace BPMS_DTOs.Pool
     public class PoolBlockAddressDTO : PoolDstAddressDTO
     {
         public Guid BlockId { get; set; }
+        public Guid ModelId { get; set; }
     }
 }

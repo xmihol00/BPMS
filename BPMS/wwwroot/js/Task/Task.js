@@ -1,7 +1,10 @@
 
 window.addEventListener('DOMContentLoaded', () => 
 {
-    InputValidator(document.getElementById("TaskDataFormId"));
+    if (document.location.pathname.startsWith("/Task/UserDetail/"))
+    {
+        InputValidator(document.getElementById("TaskDataFormId"));
+    }
 });
 
 function SaveTaskData()

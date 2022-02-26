@@ -3,17 +3,21 @@ using BPMS_BL.Helpers;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
+using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
+using BPMS_DAL.Sharing;
+using BPMS_DTOs.Pool;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Facades
@@ -27,12 +31,13 @@ namespace BPMS_BL.Facades
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly ServiceRepository _serviceRepository;
         private readonly WorkflowRepository _workflowRepository;
+        private readonly PoolRepository _poolRepository;
         private readonly IMapper _mapper;
 
         public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository, 
                           BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, 
                           ServiceDataSchemaRepository serviceDataSchemaRepository, ServiceRepository serviceRepository, 
-                          WorkflowRepository workflowRepository, IMapper mapper)
+                          WorkflowRepository workflowRepository, PoolRepository poolRepository, IMapper mapper)
         {
             _taskRepository = taskRepository;
             _taskDataRepository = taskDataRepository;
@@ -41,6 +46,7 @@ namespace BPMS_BL.Facades
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _serviceRepository = serviceRepository;
             _workflowRepository = workflowRepository;
+            _poolRepository = poolRepository;
             _mapper = mapper;
         }
 
@@ -147,9 +153,74 @@ namespace BPMS_BL.Facades
             throw new NotImplementedException();
         }
 
-        private Task SendData(BlockWorkflowEntity task)
+        private async Task SendData(BlockWorkflowEntity task)
         {
-            throw new NotImplementedException();
+            MessageShare dto = new MessageShare();
+
+            foreach (var group in (await _taskDataRepository.MappedSendEventData(task.Id)).GroupBy(x => x.GetType()))
+            {
+                switch (group.Key)
+                {
+                    case IStringDataEntity:
+                        dto.Strings = group.Cast<StringDataEntity>();
+                        break;
+                    
+                    case INumberDataEntity:
+                        dto.Numbers = group.Cast<NumberDataEntity>();
+                        break;
+                    
+                    case ITextDataEntity:
+                        dto.Texts = group.Cast<TextDataEntity>();
+                        break;
+                    
+                    case ISelectDataEntity:
+                        dto.Selects = group.Cast<SelectDataEntity>();
+                        break;
+                    
+                    case IFileDataEntity:
+                        dto.Files = group.Cast<FileDataEntity>();
+                        break;
+
+                    case IBoolDataEntity:
+                        dto.Bools = group.Cast<BoolDataEntity>();
+                        break;
+                    
+                    case IArrayDataEntity:
+                        dto.Arrays = group.Cast<ArrayDataEntity>();
+                        break;
+                    
+                    case IDateDataEntity:
+                        dto.Dates = group.Cast<DateDataEntity>();
+                        break;
+                }
+            }
+
+            bool recieved = true;
+            foreach (PoolBlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
+            {
+                if (address.ModelId != task.BlockModelId)
+                {
+                    dto.WorkflowId = null;
+                }
+                else
+                {
+                    dto.WorkflowId = task.WorkflowId;
+                }
+                dto.BlockId = address.BlockId;
+                
+                recieved &= await CommunicationHelper.Message(address.DestinationURL, 
+                                                              SymetricCypherHelper.JsonEncrypt(address),
+                                                              JsonConvert.SerializeObject(dto));
+            }
+
+            if (recieved)
+            {
+                await StartNextTask(task);
+            }
+            else
+            {
+                task.Active = true;
+            }
         }
 
         private async Task FinishWorkflow(BlockWorkflowEntity task)
@@ -322,7 +393,7 @@ namespace BPMS_BL.Facades
             var entity = await _taskRepository.Detail(id);
             
             List<TaskDataDTO> inputData = new List<TaskDataDTO>();
-            foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTasks(id))
+            foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTaskData(id))
             {
                 inputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }
