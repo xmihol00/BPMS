@@ -245,7 +245,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, Guid workflowKeeperId)
+        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, Guid? workflowKeeperId)
         {
             blockWorkflow.Active = true;
             if (blockWorkflow is IUserTaskWorkflowEntity)

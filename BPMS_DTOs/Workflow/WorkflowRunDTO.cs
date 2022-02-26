@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_Common.Enums;
-using BPMS_DTOs.Workflow;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.Model
+namespace BPMS_DTOs.Workflow
 {
-    public class ModelHeaderDTO : ModelInfoDTO
+    public class WorkflowRunDTO
     {
         public Guid Id { get; set; }
-        public ModelStateEnum State { get; set; }
-        public WorkflowRunDTO? Workflow { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

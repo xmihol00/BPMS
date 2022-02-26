@@ -24,7 +24,7 @@ namespace BPMS_DAL.Entities
 
         [JsonIgnore]
         public ModelEntity? Model { get; set; }
-        public Guid AdministratorId { get; set; }
+        public Guid? AdministratorId { get; set; }
 
         [JsonIgnore]
         public UserEntity? Administrator { get; set; }

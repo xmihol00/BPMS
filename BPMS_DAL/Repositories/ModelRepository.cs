@@ -13,6 +13,7 @@ using BPMS_DAL.Sharing;
 using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DTOs.User;
+using BPMS_DTOs.Workflow;
 
 namespace BPMS_DAL.Repositories
 {
@@ -40,7 +41,14 @@ namespace BPMS_DAL.Repositories
                              Description = x.Description,
                              Name = x.Name,
                              SVG = x.SVG,
-                             State = x.State
+                             State = x.State,
+                             Workflow = x.Workflows.Select(y => new WorkflowRunDTO 
+                                                   {
+                                                       Description = x.Description,
+                                                       Id = x.Id,
+                                                       Name = x.Name
+                                                   })
+                                                   .FirstOrDefault()
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -88,12 +96,20 @@ namespace BPMS_DAL.Repositories
 
         public Task<ModelHeaderDTO> Header(Guid id)
         {
-            return _dbSet.Select(x => new ModelHeaderDTO
+            return _dbSet.Include(x => x.Workflows)
+                         .Select(x => new ModelHeaderDTO
                          {
                              Id = x.Id,
                              Description = x.Description,
                              Name = x.Name,
-                             State = x.State
+                             State = x.State,
+                             Workflow = x.Workflows.Select(y => new WorkflowRunDTO 
+                                                   {
+                                                       Description = x.Description,
+                                                       Id = x.Id,
+                                                       Name = x.Name
+                                                   })
+                                                   .FirstOrDefault()
                          })
                          .FirstAsync(x => x.Id == id);
         }

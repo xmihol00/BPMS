@@ -157,6 +157,7 @@ namespace BPMS_BL.Facades
         {
             if (!await _workflowRepository.Any(dto.Workflow.Id))
             {
+                dto.Workflow.AdministratorId = null;
                 await _workflowRepository.Create(dto.Workflow);
                 await _workflowRepository.Save();
             }
