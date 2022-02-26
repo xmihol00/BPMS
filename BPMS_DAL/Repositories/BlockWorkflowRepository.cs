@@ -145,5 +145,12 @@ namespace BPMS_DAL.Repositories
                              })
                              .FirstAsync(x => x.Id == id);
         }
+
+        public Task<bool> IsInModel(Guid modelId, Guid id)
+        {
+            return _dbSet.Include(x => x.BlockModel)
+                            .ThenInclude(x => x.Pool)
+                         .AnyAsync(x => x.Id == id && x.BlockModel.Pool.ModelId == modelId);
+        }
     }
 }

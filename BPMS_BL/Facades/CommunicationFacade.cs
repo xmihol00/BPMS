@@ -81,45 +81,45 @@ namespace BPMS_BL.Facades
                 recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.BlockId);
             }
 
-            foreach (StringDataEntity data in message.Strings)
+             foreach (StringDataEntity data in message.Strings)
             {
-                (taskData[data.Id] as IStringDataEntity).Value = data.Value;
+                (taskData[data.AttributeId.Value] as IStringDataEntity).Value = data.Value;
             }
 
             foreach (NumberDataEntity data in message.Numbers)
             {
-                (taskData[data.Id] as INumberDataEntity).Value = data.Value;
+                (taskData[data.AttributeId.Value] as INumberDataEntity).Value = data.Value;
             }
 
             foreach (TextDataEntity data in message.Texts)
             {
-                (taskData[data.Id] as ITextDataEntity).Value = data.Value;
+                (taskData[data.AttributeId.Value] as ITextDataEntity).Value = data.Value;
             }
 
             foreach (DateDataEntity data in message.Dates)
             {
-                (taskData[data.Id] as IDateDataEntity).Value = data.Value;
+                (taskData[data.AttributeId.Value] as IDateDataEntity).Value = data.Value;
             }
 
             foreach (BoolDataEntity data in message.Bools)
             {
-                (taskData[data.Id] as IBoolDataEntity).Value = data.Value;
+                (taskData[data.AttributeId.Value] as IBoolDataEntity).Value = data.Value;
             }
 
             foreach (SelectDataEntity data in message.Selects)
             {
-                (taskData[data.Id] as ISelectDataEntity).Value = data.Value;
+                (taskData[data.AttributeId.Value] as ISelectDataEntity).Value = data.Value;
             }
 
             foreach (ArrayDataEntity data in message.Arrays)
             {
-                (taskData[data.Id] as IArrayDataEntity).Type = data.Type;
+                (taskData[data.AttributeId.Value] as IArrayDataEntity).Type = data.Type;
             }
 
             foreach (FileDataEntity data in message.Files)
             {
-                (taskData[data.Id] as IFileDataEntity).MIMEType = data.MIMEType;
-                (taskData[data.Id] as IFileDataEntity).Name = data.Name;
+                (taskData[data.AttributeId.Value] as IFileDataEntity).MIMEType = data.MIMEType;
+                (taskData[data.AttributeId.Value] as IFileDataEntity).Name = data.Name;
             }
 
             await _taskDataRepository.Save();

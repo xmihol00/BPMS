@@ -13,6 +13,8 @@ namespace BPMS_DAL.Entities
     {
         public Guid Id { get; set; }
         public Guid OutputTaskId { get; set; }
+        
+        [JsonIgnore]
         public BlockWorkflowEntity? OutputTask { get; set; }
         
         [JsonIgnore]

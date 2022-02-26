@@ -76,7 +76,9 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.Attribute)
                          .Include(x => x.OutputTask)
-                         .Where(x => x.OutputTask.WorkflowId == workflowId && x.Attribute.BlockId == blockId)
+                            .ThenInclude(x => x.Workflow)
+                         .Where(x => x.OutputTask.WorkflowId == workflowId && x.Attribute.BlockId == blockId &&
+                                     x.OutputTask.Workflow.State == WorkflowStateEnum.Active)
                          .ToDictionaryAsync(x => (Guid)x.AttributeId);
         }
 

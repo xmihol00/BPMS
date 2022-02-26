@@ -160,13 +160,13 @@ namespace BPMS_BL.Facades
             }
         }
 
-        private async Task SendData(BlockWorkflowEntity task)
+        private async Task SendData(BlockWorkflowEntity sendEvent)
         {
             MessageShare dto = new MessageShare();
 
-            foreach (var group in (await _taskDataRepository.MappedSendEventData(task.Id)).GroupBy(x => x.GetType()))
+            foreach (var group in (await _taskDataRepository.MappedSendEventData(sendEvent.Id)).GroupBy(x => x.GetType()))
             {
-                switch (group.Key)
+                switch (group.First())
                 {
                     case IStringDataEntity:
                         dto.Strings = group.Cast<StringDataEntity>();
@@ -203,15 +203,15 @@ namespace BPMS_BL.Facades
             }
 
             bool recieved = true;
-            foreach (PoolBlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
+            foreach (PoolBlockAddressDTO address in await _poolRepository.RecieverAddresses(sendEvent.BlockModelId))
             {
-                if (address.ModelId != task.BlockModelId)
+                if (await _taskRepository.IsInModel(address.ModelId, sendEvent.Id))
                 {
-                    dto.WorkflowId = null;
+                    dto.WorkflowId = sendEvent.WorkflowId;
                 }
                 else
                 {
-                    dto.WorkflowId = task.WorkflowId;
+                    dto.WorkflowId = null;
                 }
                 dto.BlockId = address.BlockId;
 
@@ -222,11 +222,11 @@ namespace BPMS_BL.Facades
 
             if (recieved)
             {
-                await StartNextTask(task);
+                await StartNextTask(sendEvent);
             }
             else
             {
-                task.Active = true;
+                sendEvent.Active = true;
             }
         }
 
