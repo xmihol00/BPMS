@@ -11,7 +11,6 @@ namespace BPMS_DTOs.BlockAttribute
 {
     public class RecievedMessageDTO
     {
-        public List<BlockAttributeDTO> Attributes { get; set; } = new List<BlockAttributeDTO>();
         public bool Editable { get; set; }
         public Guid? CurrentSystemId { get; set; }
         public List<SystemPickerDTO> Systems { get; set; } = new List<SystemPickerDTO>();

@@ -1,7 +1,7 @@
-@model IAttributesConfig
+@model (IAttributesConfig data, bool reciever)
 
-<h4 class="mt-2">Výstupní atributy bloku</h4>
-@if (Model.Attributes.Count > 0)
+<h4 class="mt-2">@(Model.reciever ? "Příchozí" : "Výstupní") atributy bloku</h4>
+@if (Model.data.Attributes.Count > 0)
 {
     <div class="row">
         <div class="col-4 text-center text-bold">
@@ -21,13 +21,16 @@
                 Specifikace
             </div>
         </div>
-        @foreach (BlockAttributeDTO attrib in Model.Attributes)
+        @foreach (BlockAttributeDTO attrib in Model.data.Attributes)
         {
             <div id="@attrib.Id" class="d-flex-wrap mb-1 pb-1 border-bottom position-relative p-0">
-                <div class="config-buttons">
-                    <button class="btn padr-icon" type="button" onclick="EditAttribute(this)"><i class="fas fa-edit"></i></button>
-                    <button type="button" class="btn padl-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
-                </div>
+                @if (!Model.reciever)
+                {
+                    <div class="config-buttons">
+                        <button class="btn padr-icon" type="button" onclick="EditAttribute(this)"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn padl-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
+                    </div>
+                }
                 <div class="col-4 text-center text-bold">@attrib.Name</div>
                 <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
                 <div class="col-4 text-center">
@@ -75,7 +78,7 @@
 }
 else
 {
-    <div class="text-center mb-2 text-italic text-secondary">
-        Blok nemá konfigurovany žádné výstupní atributy.
+    <div class="text-placeholder mb-3">
+        Blok nemá konfigurovany žádné @(Model.reciever ? "příchozí" : "výstupní") atributy.
     </div>
 }

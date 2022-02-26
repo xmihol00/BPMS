@@ -82,9 +82,14 @@
             </div>
         </div>
     </form>
+    @if (Model is IRecievedMessageConfig)
+    {
+        @await Html.PartialAsync("Partial/_RecieveEventConfig", Model)
+    }
+
     @if (Model is IAttributesConfig)
     {   
-        @await Html.PartialAsync("Partial/_AttributesConfig", Model)
+        @await Html.PartialAsync("Partial/_AttributesConfig", (Model as IAttributesConfig, Model is IRecievedMessageConfig))
     }
 
     @if (Model is IServiceInputAttributes)
@@ -100,10 +105,5 @@
     @if (Model is IServiceOutputAttributes)
     {
         @await Html.PartialAsync("Partial/_ServiceOutputAttributesConfig", Model)
-    }
-
-    @if (Model is IRecievedMessageConfig)
-    {
-        @await Html.PartialAsync("Partial/_RecieveEventConfig", Model)
     }
 }

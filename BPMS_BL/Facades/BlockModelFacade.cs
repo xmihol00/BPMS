@@ -101,6 +101,7 @@ namespace BPMS_BL.Facades
             BlockAttributeEntity entity = _mapper.Map<BlockAttributeEntity>(dto);
             if (dto.Id == Guid.Empty)
             {
+                entity.Id = Guid.NewGuid();
                 await _blockAttributeRepository.Create(entity);
             }
             else
@@ -227,6 +228,7 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
         {
             BlockModelConfigDTO dto = new RecieveEventConfigDTO();
+            (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(recieveEvent.Id);
             (dto as IRecievedMessageConfig).Message = await RecievedMessage(recieveEvent);
             return dto;
         }

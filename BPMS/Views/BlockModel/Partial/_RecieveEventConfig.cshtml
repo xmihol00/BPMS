@@ -1,92 +1,10 @@
 @model IRecievedMessageConfig
 
-<h4 class="mt-2">Příchozí atributy bloku</h4>
 @if (Model.Message.Editable)
 {
-
+    
 }
 else
 {
 
-}
-
-@if (Model.Message.Attributes.Count > 0)
-{
-    <div class="row">
-        <div class="col-5 text-center text-bold">
-            Název
-        </div>
-        <div class="col-5 text-center text-bold">
-            Typ
-        </div>
-        <div class="col-2 text-center text-bold">
-            Vždy vyplněný
-        </div>
-        <div class="d-flex-wrap border-bottom-2 mb-1 p-0">
-            <div class="col-6 text-center text-bold">
-                Popis
-            </div>
-            <div class="col-6 text-center text-bold">
-                Specifikace
-            </div>
-        </div>
-        @foreach (BlockAttributeDTO attrib in Model.Message.Attributes)
-        {
-            <div class="d-flex-wrap mb-1 p-0 border-bottom">
-                <div class="col-5 text-center text-bold">@attrib.Name</div>
-                <div class="col-5 text-center text-code">@attrib.Type.ToLabel()</div>
-                <div class="col-2 text-center">
-                    <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
-                        <i class="fas fa-check-circle"></i>
-                    </span>
-                </div>
-                <div class="col-6 text-center mt-2 mb-2">
-                    @if (String.IsNullOrEmpty(@attrib.Description))
-                    {
-                        <span class="text-placeholder">Atribut nemá popis.</span>
-                    }
-                    else
-                    {
-                        <text>@attrib.Description</text>
-                    }
-                </div>
-                <div class="col-6 d-flex justify-content-center mt-2">
-                    @if (attrib.Type == AttributeTypeEnum.File)
-                    {
-                        <ol class="mb-2">
-                            @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
-                            {
-                                <li>
-                                    typ souboru: <span class="text-code text-bold">@spec</span>
-                                </li>
-                            }
-                        </ol>
-                    }
-                    else if (attrib.Type == AttributeTypeEnum.Select)
-                    {
-                        <ol class="mb-2">
-                            @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
-                            {
-                                <li>
-                                    hodnota výběru: <span class="text-code text-bold">@spec</span>
-                                </li>
-                            }
-                        </ol>
-                    }
-                    else
-                    {
-                        <span class="text-placeholder">Atribut nemá specifikaci.</span>
-                    }
-                </div>
-            </div>
-        }
-    </div>
-}
-else
-{
-    <div class="row">
-        <p class="text-center mb-2">
-            Zpráva nemá žádné příchozí atributy. Konfigurujte odesílatele.
-        </p>
-    </div>
 }
