@@ -99,6 +99,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.ServiceTask).WithMany(x => x.Blocks).HasForeignKey(x => x.ServiceTaskId);
 
             modelBuilder.Entity<BlockAttributeEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<BlockAttributeEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockAttributeEntity>().HasOne(x => x.Block).WithMany(x => x.Attributes).HasForeignKey(x => x.BlockId);
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
@@ -106,6 +107,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.OutBlock).WithMany(x => x.OutFlows).HasForeignKey(x => x.OutBlockId).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<WorkflowEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<WorkflowEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Agenda).WithMany(x => x.Workflows).HasForeignKey(x => x.AgendaId);
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Model).WithMany(x => x.Workflows).HasForeignKey(x => x.ModelId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Administrator).WithMany(x => x.Workflows).HasForeignKey(x => x.AdministratorId).OnDelete(DeleteBehavior.NoAction);
@@ -154,7 +156,7 @@ namespace BPMS_DAL
 
             modelBuilder.Entity<BlockAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
             modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.ClientCascade);
-            modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

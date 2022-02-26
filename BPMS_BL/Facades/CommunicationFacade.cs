@@ -58,7 +58,33 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public async Task<string> ShareImport(ModelDetailShare dto)
+        public async Task<string> RemoveRecieverAttribute(Guid id)
+        {
+            _blockAttributeRepository.Remove(new BlockAttributeEntity
+            {
+                Id = id
+            });
+            await _blockAttributeRepository.Save();
+
+            return "";
+        }
+
+        public async Task<string> ToggleRecieverAttribute(BlockAttributeEntity attribute)
+        {
+            if (await _blockAttributeRepository.Any(attribute.Id))
+            {
+                _blockAttributeRepository.Remove(attribute);
+            }
+            else
+            {
+                await _blockAttributeRepository.Create(attribute);
+            }
+
+            await _blockAttributeRepository.Save();
+            return "";
+        }
+
+        public async Task<string> ShareModel(ModelDetailShare dto)
         {
             if (await _modelRepository.Any(dto.Id))
             {

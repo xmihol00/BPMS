@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
+using BPMS_BL.Helpers;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
@@ -15,11 +16,13 @@ using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
+using BPMS_DTOs.Pool;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
 using BPMS_DTOs.User;
+using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
 {
@@ -55,11 +58,6 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public Task ToggleSendMap(Guid blockId, Guid attributeId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task Edit(BlockModelEditDTO dto)
         {
             BlockModelEntity block = await _blockModelRepository.Detail(dto.Id);
@@ -81,6 +79,19 @@ namespace BPMS_BL.Facades
 
         public async Task Remove(Guid id)
         {
+            foreach (BlockModelEntity mappedBlock in await _blockAttributeRepository.MappedBlocks(id))
+            {
+                if (mappedBlock is ISendEventModelEntity)
+                {
+                    foreach (PoolBlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(mappedBlock.Id))
+                    {
+                        await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 
+                                                                          SymetricCypherHelper.JsonEncrypt(recieverAddress),
+                                                                          id.ToString());
+                    }
+                }
+            }
+
             _blockAttributeRepository.Remove(new BlockAttributeEntity { Id = id });
             await _blockAttributeRepository.Save();
         }
@@ -113,15 +124,6 @@ namespace BPMS_BL.Facades
             if (await _blockAttributeMapRepository.Any(blockId, attributeId))
             {
                 _blockAttributeMapRepository.Remove(entity);
-
-                BlockTypePoolIdDTO typePoolId = await _blockModelRepository.BlockTypePoolId(blockId);
-                if (typePoolId.Type == typeof(SendEventModelEntity))
-                {
-                    foreach (BlockAttributeMapEntity map in await _blockAttributeRepository.MapsFromDifferentPool(attributeId, typePoolId.PoolId))
-                    {
-                        _blockAttributeMapRepository.Remove(entity);
-                    }
-                }
             }
             else
             {   
@@ -129,6 +131,24 @@ namespace BPMS_BL.Facades
             }
 
             await _blockAttributeMapRepository.Save();
+        }
+
+        public async Task ToggleSendMap(Guid blockId, Guid attributeId)
+        {
+            await ToggleTaskMap(blockId, attributeId);
+
+            BlockAttributeEntity attrib = await _blockAttributeRepository.Bare(attributeId);
+
+            bool success = true;
+            foreach (PoolBlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(blockId))
+            {
+                attrib.BlockId = recieverAddress.BlockId;
+                success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 
+                                                                          SymetricCypherHelper.JsonEncrypt(recieverAddress),
+                                                                          JsonConvert.SerializeObject(attrib));
+            }
+
+            // TODO success
         }
 
         public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)

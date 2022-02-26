@@ -11,6 +11,7 @@ using BPMS_DTOs.System;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.Pool;
 using BPMS_Common;
+using BPMS_DAL.Entities.ModelBlocks;
 
 namespace BPMS_DAL.Repositories
 {
@@ -122,6 +123,24 @@ namespace BPMS_DAL.Repositories
                               URL = x.URL
                           })
                           .ToListAsync();
+        }
+
+        public Task<List<PoolBlockAddressDTO>> RecieverAddresses(Guid id)
+        {
+            return _context.Set<SendEventModelEntity>()
+                           .Include(x => x.Recievers)
+                                .ThenInclude(x => x.Pool)
+                                    .ThenInclude(x => x.System)
+                           .Where(x => x.Id == id)
+                           .SelectMany(x => x.Recievers)
+                           .Select(x => new PoolBlockAddressDTO
+                           {
+                               PoolId = x.PoolId,
+                               DestinationURL = x.Pool.System.URL,
+                               Key = x.Pool.System.ObtainedKey,
+                               BlockId = x.Id
+                           })
+                           .ToListAsync();
         }
     }
 }

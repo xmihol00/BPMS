@@ -140,7 +140,7 @@ namespace BPMS_BL.Facades
             bool run = true;
             foreach (PoolDstAddressDTO pool in pools)
             {
-                run &= await CommunicationHelper.AskForModelRun(pool.DestinationURL, 
+                run &= await CommunicationHelper.IsModelRunable(pool.DestinationURL, 
                                                                 SymetricCypherHelper.JsonEncrypt(pool), 
                                                                 message);
             }

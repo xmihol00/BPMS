@@ -44,7 +44,7 @@ namespace BPMS_DAL.Repositories
 
         public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> InputAttributes(Guid blockId, Guid outputId, bool compulsoryAttributes)
         {
-            return (await _dbSet.Include(x => x.MappedAttributes)
+            return (await _dbSet.Include(x => x.MappedBlocks)
                          .Include(x => x.Block)
                          .Where(x => x.BlockId == outputId)
                          .Select(x => new InputBlockAttributeDTO
@@ -56,7 +56,7 @@ namespace BPMS_DAL.Repositories
                              BlockName = x.Block.Name,
                              Specification = x.Specification,
                              Type = x.Type,
-                             Mapped = x.MappedAttributes.Any(y => y.BlockId == blockId)
+                             Mapped = x.MappedBlocks.Any(y => y.BlockId == blockId)
                          })
                          .ToListAsync())
                          .GroupBy(x => x.BlockName)
@@ -66,10 +66,30 @@ namespace BPMS_DAL.Repositories
         public Task<List<BlockAttributeMapEntity>> MapsFromDifferentPool(Guid attribId, Guid poolId)
         {
             return _dbSet.Where(x => x.Id == attribId)
-                         .Include(x => x.MappedAttributes)
+                         .Include(x => x.MappedBlocks)
                             .ThenInclude(x => x.Block)
-                         .SelectMany(x => x.MappedAttributes)
+                         .SelectMany(x => x.MappedBlocks)
                          .Where(x => x.Block.PoolId != poolId)
+                         .ToListAsync();
+        }
+
+        public Task<bool> Any(Guid id)
+        {
+            return _dbSet.AnyAsync(x => x.Id == id);
+        }
+
+        public Task<BlockAttributeEntity> Bare(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<List<BlockModelEntity?>> MappedBlocks(Guid id)
+        {
+            return _dbSet.Include(x => x.MappedBlocks)
+                            .ThenInclude(x => x.Block)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.MappedBlocks)
+                         .Select(x => x.Block)
                          .ToListAsync();
         }
     }

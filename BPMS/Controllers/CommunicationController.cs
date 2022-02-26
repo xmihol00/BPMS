@@ -25,9 +25,9 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ShareImport([FromBody] ModelDetailShare dto)
+        public async Task<IActionResult> ShareModel([FromBody] ModelDetailShare dto)
         {
-            return Ok(await _communicationFacade.ShareImport(dto));
+            return Ok(await _communicationFacade.ShareModel(dto));
         }
 
         [HttpPost]
@@ -40,6 +40,18 @@ namespace BPMS.Controllers
         public async Task<IActionResult> RunModel([FromBody] ModelIdDTO dto)
         {
             return Ok(await _communicationFacade.RunModel(dto));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleRecieverAttribute([FromBody] BlockAttributeEntity attribute)
+        {
+            return Ok(await _communicationFacade.ToggleRecieverAttribute(attribute));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveRecieverAttribute(Guid id)
+        {
+            return Ok(await _communicationFacade.RemoveRecieverAttribute(id));
         }
     }
 }
