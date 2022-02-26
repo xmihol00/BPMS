@@ -62,7 +62,8 @@ namespace BPMS_BL.Facades
         {
             _blockAttributeRepository.Remove(new BlockAttributeEntity
             {
-                Id = id
+                Id = id,
+                MappedBlocks = await _blockAttributeRepository.MappedBlocks(id)
             });
             await _blockAttributeRepository.Save();
 
