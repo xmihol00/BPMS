@@ -13,6 +13,7 @@ using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
+using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
@@ -39,6 +40,7 @@ namespace BPMS_BL.Facades
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly TaskDataRepository _taskDataRepository;
+        private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly IMapper _mapper;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
@@ -46,7 +48,7 @@ namespace BPMS_BL.Facades
                                    SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
                                    AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository,
                                    ServiceDataSchemaRepository serviceDataSchemaRepository, TaskDataRepository taskDataRepository,
-                                   IMapper mapper)
+                                   BlockWorkflowRepository blockWorkflowRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -60,19 +62,23 @@ namespace BPMS_BL.Facades
             _blockAttributeRepository = blockAttributeRepository;
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _taskDataRepository = taskDataRepository;
+            _blockWorkflowRepository = blockWorkflowRepository;
             _mapper = mapper;
         }
 
         public async Task<string> Message(MessageShare message)
         {
             Dictionary<Guid, TaskDataEntity> taskData;
+            List<RecieveEventWorkflowEntity> recieveEvents;
             if (message.WorkflowId != null)
             {
                 taskData = await _taskDataRepository.OfRecieveEvent(message.WorkflowId.Value, message.BlockId);
+                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.WorkflowId.Value, message.BlockId);
             }
             else
             {
                 taskData = await _taskDataRepository.OfRecieveEvent(message.BlockId);
+                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.BlockId);
             }
 
             foreach (StringDataEntity data in message.Strings)
@@ -117,6 +123,16 @@ namespace BPMS_BL.Facades
             }
 
             await _taskDataRepository.Save();
+
+            foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)
+            {
+                recieveEvent.Delivered = true;
+                if (recieveEvent.Active)
+                {
+                    recieveEvent.Active = false;
+                    // TODO Next block WF
+                }
+            }
 
             return "";
         }

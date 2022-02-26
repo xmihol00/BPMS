@@ -9,5 +9,6 @@ namespace BPMS_DAL.Interfaces.WorkflowBlocks
 {
     public interface IRecieveEventWorkflowEntity : IBlockWorkflowEntity
     {
+        public bool Delivered { get; set; }
     }
 }

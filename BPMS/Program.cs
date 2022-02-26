@@ -80,8 +80,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Agenda}/{action=Overview}/{id?}");
 
-using var scope = app.Services.CreateScope();
-using var context = scope.ServiceProvider.GetService<BpmsDbContext>();
+StaticData.ServiceProvider = app.Services.CreateScope().ServiceProvider;
+using BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();
 
 app.Run();

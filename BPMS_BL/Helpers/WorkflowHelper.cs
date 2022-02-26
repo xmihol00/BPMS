@@ -5,11 +5,18 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Entities.WorkflowBlocks;
+using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
+using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Pool;
+using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Helpers
 {
@@ -20,19 +27,31 @@ namespace BPMS_BL.Helpers
         private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly BlockWorkflowRepository _taskRepository;
+        private readonly TaskDataRepository _taskDataRepository;
+        private readonly BlockModelRepository _blockModelRepository;
+        private readonly ServiceRepository _serviceRepository;
+        private readonly PoolRepository _poolRepository;
         private Dictionary<Guid, BlockWorkflowEntity> _createdUserTasks = new Dictionary<Guid, BlockWorkflowEntity>();
         private Dictionary<(Guid, Guid), TaskDataEntity> _createdServiceData = new Dictionary<(Guid, Guid), TaskDataEntity>();
         private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
 
+        #pragma warning disable CS8618
         public WorkflowHelper(ModelRepository modelRepository, WorkflowRepository workflowRepository, AgendaRoleRepository agendaRoleRepository,
                               BlockAttributeRepository blockAttributeRepository, ServiceDataSchemaRepository serviceDataSchemaRepository)
         {
-            _modelRepository = modelRepository;
-            _workflowRepository = workflowRepository;
-            _agendaRoleRepository = agendaRoleRepository;
-            _blockAttributeRepository = blockAttributeRepository;
-            _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _modelRepository = StaticData.ServiceProvider.GetService<ModelRepository>();
+            _workflowRepository = StaticData.ServiceProvider.GetService<WorkflowRepository>();
+            _agendaRoleRepository = StaticData.ServiceProvider.GetService<AgendaRoleRepository>();
+            _blockAttributeRepository = StaticData.ServiceProvider.GetService<BlockAttributeRepository>();
+            _serviceDataSchemaRepository = StaticData.ServiceProvider.GetService<ServiceDataSchemaRepository>();
+            _taskRepository = StaticData.ServiceProvider.GetService<BlockWorkflowRepository>();
+            _taskDataRepository = StaticData.ServiceProvider.GetService<TaskDataRepository>();
+            _blockModelRepository = StaticData.ServiceProvider.GetService<BlockModelRepository>();
+            _serviceRepository = StaticData.ServiceProvider.GetService<ServiceRepository>();
+            _poolRepository = StaticData.ServiceProvider.GetService<PoolRepository>();
         }
+        #pragma warning restore CS8618
 
         public async Task CreateWorkflow(Guid modelId, WorkflowEntity workflow)
         {
@@ -261,6 +280,268 @@ namespace BPMS_BL.Helpers
                 (blockWorkflow as IServiceTaskWorkflowEntity).UserId =
                         await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflowKeeperId;
             }
+        }
+
+        public async Task StartNextTask(BlockWorkflowEntity solvedTask)
+        {
+            foreach (BlockWorkflowEntity task in await _taskRepository.NextBlocks(solvedTask.Id, solvedTask.WorkflowId))
+            {
+                switch (task)
+                {
+                    case IUserTaskWorkflowEntity:
+                        await NextUserTask(task);
+                        break;
+
+                    case IServiceTaskWorkflowEntity:
+                        await NextServiceTask(task);
+                        break;
+                    
+                    case IEndEventWorkflowEntity:
+                        await FinishWorkflow(task);
+                        break;
+                    
+                    case ISendEventWorkflowEntity:
+                        await SendData(task);
+                        break;
+                    
+                    case IRecieveEventWorkflowEntity:
+                        await RecieveData(task);
+                        break;
+                }
+            }
+        }
+
+                private async Task RecieveData(BlockWorkflowEntity task)
+        {
+            if ((task as IRecieveEventWorkflowEntity).Delivered)
+            {
+                await StartNextTask(task);
+            }
+            else
+            {
+                task.Active = true;
+            }
+        }
+
+        private async Task SendData(BlockWorkflowEntity task)
+        {
+            MessageShare dto = new MessageShare();
+
+            foreach (var group in (await _taskDataRepository.MappedSendEventData(task.Id)).GroupBy(x => x.GetType()))
+            {
+                switch (group.Key)
+                {
+                    case IStringDataEntity:
+                        dto.Strings = group.Cast<StringDataEntity>();
+                        break;
+                    
+                    case INumberDataEntity:
+                        dto.Numbers = group.Cast<NumberDataEntity>();
+                        break;
+                    
+                    case ITextDataEntity:
+                        dto.Texts = group.Cast<TextDataEntity>();
+                        break;
+                    
+                    case ISelectDataEntity:
+                        dto.Selects = group.Cast<SelectDataEntity>();
+                        break;
+                    
+                    case IFileDataEntity:
+                        dto.Files = group.Cast<FileDataEntity>();
+                        break;
+
+                    case IBoolDataEntity:
+                        dto.Bools = group.Cast<BoolDataEntity>();
+                        break;
+                    
+                    case IArrayDataEntity:
+                        dto.Arrays = group.Cast<ArrayDataEntity>();
+                        break;
+                    
+                    case IDateDataEntity:
+                        dto.Dates = group.Cast<DateDataEntity>();
+                        break;
+                }
+            }
+
+            bool recieved = true;
+            foreach (PoolBlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
+            {
+                if (address.ModelId != task.BlockModelId)
+                {
+                    dto.WorkflowId = null;
+                }
+                else
+                {
+                    dto.WorkflowId = task.WorkflowId;
+                }
+                dto.BlockId = address.BlockId;
+
+                recieved &= await CommunicationHelper.Message(address.DestinationURL, 
+                                                              SymetricCypherHelper.JsonEncrypt(address),
+                                                              JsonConvert.SerializeObject(dto));
+            }
+
+            if (recieved)
+            {
+                await StartNextTask(task);
+            }
+            else
+            {
+                task.Active = true;
+            }
+        }
+
+        private async Task FinishWorkflow(BlockWorkflowEntity task)
+        {
+            WorkflowEntity workflow = await _workflowRepository.Bare(task.WorkflowId);
+            workflow.End = DateTime.Now;
+            workflow.State = WorkflowStateEnum.Finished;
+        }
+
+        private async Task NextServiceTask(BlockWorkflowEntity task)
+        {
+            IServiceTaskWorkflowEntity serviceTask = task as IServiceTaskWorkflowEntity;
+            ServiceTaskModelEntity serviceTaskModel = await _blockModelRepository.ServiceTaskForSolve(serviceTask.BlockModelId);
+
+            try
+            {
+                ServiceRequestDTO service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId.Value);
+                service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
+                ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
+                await MapRequestResult(result, serviceTask.Id);
+
+                await StartNextTask(task);
+                serviceTask.Active = false;
+            }
+            catch
+            {
+                serviceTask.Active = true;
+                serviceTask.UserId = await _agendaRoleRepository.LeastBussyUser(serviceTaskModel.RoleId ?? Guid.Empty) ??
+                                                                                serviceTask.Workflow.AdministratorId;
+            }
+        }
+
+        private async Task MapRequestResult(ServiceCallResultDTO result, Guid serviceTaskId)
+        {
+            List<TaskDataEntity> data = await _taskDataRepository.OutputServiceTaskData(serviceTaskId);
+
+            switch (result.Serialization)
+            {
+                case SerializationEnum.JSON:
+                    await MapRequestResultJson(JObject.Parse(result.RecievedData), data);
+                    break;
+                
+                case SerializationEnum.XML:
+                    throw new NotImplementedException();
+
+                case SerializationEnum.URL:
+                    throw new NotImplementedException();
+                
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private async Task MapRequestResultJson(IEnumerable<JToken> tokens, IEnumerable<TaskDataEntity> data)
+        {
+            TaskDataEntity currentData;
+            foreach (JProperty property in tokens)
+            {
+                string name = property.Name;
+                currentData = data.FirstOrDefault(x => x.Schema.Alias == name);
+                if (currentData == null)
+                {
+                    continue;
+                }
+
+                switch (property.Value.Type)
+                {
+                    case JTokenType.Object:
+                        await MapRequestResultJson(property.Value.Children(), data.Where(x => x.Schema.ParentId == currentData.Schema.Id));
+                        continue;
+                    
+                    case JTokenType.String:
+                        IStringDataEntity stringData = currentData as IStringDataEntity;
+                        stringData.Value = ((string?)property.Value);
+                        break;
+                    
+                    case JTokenType.Float:
+                    case JTokenType.Integer:
+                        INumberDataEntity numberData = currentData as INumberDataEntity;
+                        numberData.Value = ((double?)property.Value);
+                        break;
+
+                    case JTokenType.Boolean:
+                        IBoolDataEntity boolData = currentData as IBoolDataEntity;
+                        boolData.Value = ((bool?)property.Value);
+                        break;
+                    
+                    case JTokenType.Array:
+                        // TODO
+                        continue;
+                }
+            }
+        }
+
+        private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, Guid serviceTaskId)
+        {
+            Dictionary<Guid, TaskDataEntity> data = await _taskDataRepository.InputServiceTaskData(serviceTaskId);
+            IEnumerable<DataSchemaDataDTO> nodes = await _serviceDataSchemaRepository.DataSchemaToSend(serviceId);
+            foreach (DataSchemaDataDTO node in nodes)
+            {
+                if (node.StaticData == null)
+                {
+                    node.Data = StringDataOfTask(data.GetValueOrDefault(node.Id));    
+                }
+                else
+                {
+                    node.Data = node.StaticData;
+                }
+
+                if (node.Data == null && node.Compulsory && node.Type != DataTypeEnum.Object)
+                {
+                    throw new Exception(); // TODO
+                }
+            }
+
+            return ServiceTreeHelper.CreateTree<DataSchemaDataDTO>(nodes);
+        }
+
+        private string? StringDataOfTask(TaskDataEntity? taskDataEntity)
+        {
+            if (taskDataEntity == null)
+            {
+                return null;
+            }
+            else
+            {
+                switch (taskDataEntity)
+                {
+                    case IStringDataEntity stringData:
+                        return stringData.Value;
+                    
+                    case INumberDataEntity numberData:
+                        return numberData.Value?.ToString();
+                    
+                    case IBoolDataEntity boolData:
+                        return boolData.Value?.ToString();
+                    
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        private async Task NextUserTask(BlockWorkflowEntity task)
+        {
+            IUserTaskWorkflowEntity userTask = task as IUserTaskWorkflowEntity;
+            userTask.Active = true;
+            UserTaskModelEntity userTaskModel = await _blockModelRepository.UserTaskForSolve(userTask.BlockModelId);
+            userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty.TotalDays);
+            userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
+                              userTask.Workflow.AdministratorId;
         }
     }
 }

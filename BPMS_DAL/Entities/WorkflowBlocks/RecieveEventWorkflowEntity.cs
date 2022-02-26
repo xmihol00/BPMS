@@ -9,5 +9,6 @@ namespace BPMS_DAL.Entities.WorkflowBlocks
 {
     public class RecieveEventWorkflowEntity : BlockWorkflowEntity, IRecieveEventWorkflowEntity
     {
+        public bool Delivered { get; set; }
     }
 }

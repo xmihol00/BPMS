@@ -67,6 +67,21 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<List<RecieveEventWorkflowEntity>> RecieveEvents(Guid blockId)
+        {
+            return _context.Set<RecieveEventWorkflowEntity>()
+                           .Include(x => x.Workflow)
+                           .Where(x => x.Workflow.State == WorkflowStateEnum.Active && x.BlockModelId == blockId)
+                           .ToListAsync();
+        }
+
+        public Task<List<RecieveEventWorkflowEntity>> RecieveEvents(Guid workflowId, Guid blockId)
+        {
+            return _context.Set<RecieveEventWorkflowEntity>()
+                           .Where(x => x.WorkflowId == workflowId && x.BlockModelId == blockId)
+                           .ToListAsync();
+        }
+
         public Task<BlockWorkflowEntity> TaskForSolving(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);

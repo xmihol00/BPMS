@@ -142,15 +142,22 @@ namespace BPMS_BL.Facades
                         break;
                     
                     case IRecieveEventWorkflowEntity:
-                        await NextRecieveEvent(task);
+                        await RecieveData(task);
                         break;
                 }
             }
         }
 
-        private Task NextRecieveEvent(BlockWorkflowEntity task)
+        private async Task RecieveData(BlockWorkflowEntity task)
         {
-            throw new NotImplementedException();
+            if ((task as IRecieveEventWorkflowEntity).Delivered)
+            {
+                await StartNextTask(task);
+            }
+            else
+            {
+                task.Active = true;
+            }
         }
 
         private async Task SendData(BlockWorkflowEntity task)
@@ -207,7 +214,7 @@ namespace BPMS_BL.Facades
                     dto.WorkflowId = task.WorkflowId;
                 }
                 dto.BlockId = address.BlockId;
-                
+
                 recieved &= await CommunicationHelper.Message(address.DestinationURL, 
                                                               SymetricCypherHelper.JsonEncrypt(address),
                                                               JsonConvert.SerializeObject(dto));
