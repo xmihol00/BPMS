@@ -32,6 +32,22 @@
                         case ITaskText taskText:
                             @await Html.PartialAsync("Partial/_TaskDataText", taskText)
                             break;
+                        
+                        case ITaskBool taskBool:
+                            @await Html.PartialAsync("Partial/_TaskDataBool", taskBool)
+                            break;
+                        
+                        case ITaskDate taskDate:
+                            @await Html.PartialAsync("Partial/_TaskDataDate", taskDate)
+                            break;
+                        
+                        case ITaskSelect taskSelect:
+                            @await Html.PartialAsync("Partial/_TaskDataSelect", taskSelect)
+                            break;
+                        
+                        case ITaskFile taskFile:
+                            @await Html.PartialAsync("Partial/_TaskDataFile", taskFile)
+                            break;
                     }
                 }
             }

@@ -12,6 +12,6 @@ namespace BPMS_DTOs.Task.DataTypes
     public class TaskFileDTO : TaskDataDTO, ITaskFile
     {
         public string? Value { get; set; }
-        public List<string> FileFormats { get; set; } = new List<string>();
+        public string FileFormats { get; set; } = string.Empty;
     }
 }

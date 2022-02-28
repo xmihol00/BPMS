@@ -1,0 +1,28 @@
+@model ITaskSelect
+
+<div class="col-12 col-xl-6 mt-3">
+    <label class="input" @Html.Raw(String.IsNullOrEmpty(Model.Description) ? "" : $"data-title='{Model.Description}'")>
+        <select @(Model.Compulsory ? "required" : "") required class="input-select" name="@Model.Id" oninput="RoleChanged(this)"> 
+            @if (Model.Value == null)
+            {
+                <option value="" class="text-secondary text-italic" selected>nevybráno</option>
+            }
+            else
+            {
+                <option value="" class="text-secondary text-italic">nevybráno</option>
+            }
+            @foreach (string val in Model.Options)
+            {
+                if (Model.Value == val)
+                {
+                    <option value="@val" class="text-secondary text-italic" selected>@val</option>
+                }   
+                else
+                {
+                    <option value="@val" class="text-secondary text-italic">@val</option>
+                }
+            }
+        </select>
+        <span class="input-label">@Model.Name</span>
+    </label>
+</div>

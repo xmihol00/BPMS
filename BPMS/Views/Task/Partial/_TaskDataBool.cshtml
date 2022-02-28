@@ -1,0 +1,27 @@
+@model ITaskBool
+
+<div class="col-12 col-xl-6 mt-3">
+    <label class="input" @Html.Raw(String.IsNullOrEmpty(Model.Description) ? "" : $"data-title='{Model.Description}'")>
+        <select @(Model.Compulsory ? "required" : "") required class="input-select" name="@Model.Id" oninput="RoleChanged(this)"> 
+            @if (Model.Value == null)
+            {
+                <option value="" class="text-secondary text-italic" selected>nevybráno</option>
+                <option value="true">ano (true)</option>
+                <option value="false">ne (false)</option>
+            }
+            else if (Model.Value.Value)
+            {
+                <option value="" class="text-secondary text-italic">nevybráno</option>
+                <option value="true" selected>ano (true)</option>
+                <option value="false">ne (false)</option>
+            }
+            else
+            {
+                <option value="" class="text-secondary text-italic">nevybráno</option>
+                <option value="true">ano (true)</option>
+                <option value="false" selected>ne (false)</option>
+            }
+        </select>
+        <span class="input-label">@Model.Name</span>
+    </label>
+</div>

@@ -11,6 +11,6 @@ namespace BPMS_DTOs.Task.IDataTypes
     public interface ITaskFile : ITaskData
     {
         public string? Value { get; set; }
-        public List<string> FileFormats { get; set; }
+        public string FileFormats { get; set; }
     }
 }

@@ -38,7 +38,8 @@ namespace BPMS_BL.Profiles
             CreateMap<SelectDataEntity, TaskSelectDTO>()
                 .ForMember(dst => dst.Options, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.Attribute.Specification)));
             CreateMap<FileDataEntity, TaskFileDTO>()
-                .ForMember(dst => dst.FileFormats, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.Attribute.Specification)));
+                .ForMember(dst => dst.FileFormats, opt => opt.MapFrom(src => JsonConvert.DeserializeObject<List<string>>(src.Attribute.Specification)
+                                                                                        .Aggregate((x, y) => x + ", " + y)));
             CreateMap<TextDataEntity, TaskTextDTO>();
             CreateMap<DateDataEntity, TaskDateDTO>();
         }

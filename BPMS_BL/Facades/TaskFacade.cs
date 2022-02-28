@@ -60,7 +60,7 @@ namespace BPMS_BL.Facades
         }
         #pragma warning restore CS8618
 
-        public async Task SaveData(IFormCollection data)
+        public async Task SaveData(IFormCollection data, IFormFileCollection files, bool save = true)
         {
             foreach (KeyValuePair<string, StringValues> valuePair in data.Skip(1))
             {
@@ -109,11 +109,25 @@ namespace BPMS_BL.Facades
                         break;
                 }
             }
+
+            foreach (IFormFile file in files)
+            {
+                 TaskDataEntity task = await _taskDataRepository.Detail(Guid.Parse(file.Name));
+                 if (task is IFileDataEntity)
+                 {
+                     
+                 }
+            }
+
+            if (save)
+            {
+                await _taskDataRepository.Save();
+            }
         }
 
-        public async Task SolveUserTask(IFormCollection data)
+        public async Task SolveUserTask(IFormCollection data, IFormFileCollection files)
         {
-            await SaveData(data);
+            await SaveData(data, files, false);
             _worflowHelper = new WorkflowHelper(_context);
 
             BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
