@@ -149,15 +149,15 @@ namespace BPMS_BL.Facades
 
             foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)
             {
+                WorkflowHelper workflowHelper = new WorkflowHelper(_context);
                 recieveEvent.Delivered = true;
                 if (recieveEvent.Active)
                 {
                     recieveEvent.Active = false;
-                    WorkflowHelper workflowHelper = new WorkflowHelper(_context);
                     await workflowHelper.StartNextTask(recieveEvent);
                     await _taskDataRepository.Save();
-                    await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.Id);
                 }
+                await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.ModelId);
             }
 
             await _taskDataRepository.Save();

@@ -408,6 +408,7 @@ namespace BPMS_BL.Helpers
 
             if (recieved)
             {
+                task.Active = false;
                 await StartNextTask(task);
             }
             else
