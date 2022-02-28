@@ -391,13 +391,13 @@ namespace BPMS_BL.Helpers
             bool recieved = true;
             foreach (PoolBlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
             {
-                if (address.ModelId != task.BlockModelId)
+                if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
                 {
-                    dto.WorkflowId = null;
+                    dto.WorkflowId = task.WorkflowId;
                 }
                 else
                 {
-                    dto.WorkflowId = task.WorkflowId;
+                    dto.WorkflowId = null;
                 }
                 dto.BlockId = address.BlockId;
 

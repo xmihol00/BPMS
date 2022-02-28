@@ -266,5 +266,11 @@ namespace BPMS_DAL.Repositories
                                        .GroupBy(x => x.BlockName)
                                        .ToList();
         }
+
+        public Task<bool> IsInModel(Guid blockModelId, Guid modelId)
+        {
+            return _dbSet.Include(x => x.Pool)
+                         .AnyAsync(x => x.Id == blockModelId && x.Pool.ModelId == modelId);
+        }
     }
 }
