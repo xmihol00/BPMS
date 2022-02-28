@@ -35,12 +35,13 @@ namespace BPMS_BL.Facades
         private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly BlockAttributeRepository _blockAttributeRepository;
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
 
         public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                            BlockModelRepository blockModelRepository, PoolRepository poolRepository, WorkflowRepository workflowRepository,
                            AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository, 
-                           ServiceDataSchemaRepository serviceDataSchemaRepository, IMapper mapper)
+                           ServiceDataSchemaRepository serviceDataSchemaRepository, BpmsDbContext context, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -51,6 +52,7 @@ namespace BPMS_BL.Facades
             _agendaRoleRepository = agendaRoleRepository;
             _blockAttributeRepository = blockAttributeRepository;
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -124,8 +126,6 @@ namespace BPMS_BL.Facades
 
         public async Task<bool> Run(ModelRunDTO dto)
         {
-            List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
-
             WorkflowEntity? workflow = await _workflowRepository.WaitingOrDefault(dto.Id);
             if (workflow == null)
             {
@@ -164,6 +164,7 @@ namespace BPMS_BL.Facades
             });
 
             bool run = true;
+            List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
             foreach (PoolDstAddressDTO pool in pools)
             {
                 run &= await CommunicationHelper.IsModelRunable(pool.DestinationURL, 
@@ -183,9 +184,8 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
-                await new WorkflowHelper(context).CreateWorkflow(dto.Id, workflow);
-                await context.SaveChangesAsync();
+                WorkflowHelper workflowHelper = new WorkflowHelper(_context);
+                await workflowHelper.CreateWorkflow(dto.Id, workflow);
             }
             else
             {

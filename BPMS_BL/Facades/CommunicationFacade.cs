@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
@@ -162,6 +155,7 @@ namespace BPMS_BL.Facades
                     recieveEvent.Active = false;
                     WorkflowHelper workflowHelper = new WorkflowHelper(_context);
                     await workflowHelper.StartNextTask(recieveEvent);
+                    await _taskDataRepository.Save();
                     await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.Id);
                 }
             }
@@ -286,9 +280,8 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RunModel(ModelIdWorkflowDTO dto)
         {
-            BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
-            await new WorkflowHelper(context).CreateWorkflow(dto.ModelId, dto.WorkflowId);
-            await context.SaveChangesAsync();
+            await new WorkflowHelper(_context).CreateWorkflow(dto.ModelId, dto.WorkflowId);
+            await _context.SaveChangesAsync();
             
             return "";   
         }
