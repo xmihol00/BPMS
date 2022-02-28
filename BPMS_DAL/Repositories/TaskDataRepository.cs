@@ -9,6 +9,8 @@ using BPMS_DAL.Entities;
 using BPMS_Common.Enums;
 using BPMS_DTOs.Task;
 using BPMS_DAL.Entities.ModelBlocks;
+using BPMS_DAL.Interfaces.BlockDataTypes;
+using BPMS_DAL.Entities.BlockDataTypes;
 
 namespace BPMS_DAL.Repositories
 {
@@ -89,6 +91,18 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.Workflow)
                          .Where(x => x.Attribute.BlockId == blockId && x.OutputTask.Workflow.State == WorkflowStateEnum.Active)
                          .ToDictionaryAsync(x => (Guid)x.AttributeId);
+        }
+
+        public Task<FileDownloadDTO> FileForDownload(Guid id)
+        {
+            return _context.Set<FileDataEntity>()
+                           .Where(x => x.Id == id)
+                           .Select(x => new FileDownloadDTO
+                           {
+                               FileName = x.FileName,
+                               MIMEType = x.MIMEType
+                           })
+                           .FirstAsync();
         }
     }
 }

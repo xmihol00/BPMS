@@ -15,7 +15,7 @@ else
         <label class="input mt-3" @Html.Raw(String.IsNullOrEmpty(Model.Description) ? "" : $"data-title='{Model.Description}'")>
             <div class="flex-input-group">
                 <div class="readonly-div">@Model.FileName</div>
-                <i class="fas fa-download my-auto text-prim-edit pointer" onclick="DownloadFile(this)"></i>
+                <i class="fas fa-download my-auto text-prim-edit pointer" onclick="window.location.href = '/Task/DownloadFile/@Model.Id'"></i>
                 <i class="fas fa-times my-auto mx-2 pointer btn-remove" onclick="RemoveFile(this)"></i>
             </div>
             <span class="input-label">@Model.Name</span>

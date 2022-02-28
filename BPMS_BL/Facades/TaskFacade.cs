@@ -58,7 +58,7 @@ namespace BPMS_BL.Facades
             _context = context;
             _mapper = mapper;
         }
-        #pragma warning restore CS8618
+#pragma warning restore CS8618
 
         public async Task<UserTaskDetailPartialDTO> SaveData(IFormCollection data, IFormFileCollection files, Guid userId)
         {
@@ -109,6 +109,11 @@ namespace BPMS_BL.Facades
                         break;
                     
                     case IDateDataEntity dateData:
+                        if (String.IsNullOrEmpty(valuePair.Value))
+                        {
+                            dateData.Value = null;
+                            break;    
+                        }
                         dateData.Value = DateTime.Parse(valuePair.Value);
                         break;
                     
@@ -202,6 +207,13 @@ namespace BPMS_BL.Facades
             detail.OutputServiceData = outputServiceData.GroupBy(x => x.BlockName);
 
             return detail;
+        }
+
+        public async Task<FileDownloadDTO> DownloadFile(Guid id)
+        {
+            FileDownloadDTO file = await _taskDataRepository.FileForDownload(id);
+            file.Data = await File.ReadAllBytesAsync(StaticData.FileStore + id);
+            return file;
         }
     }
 }

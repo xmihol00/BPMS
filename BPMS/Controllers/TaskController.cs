@@ -1,10 +1,11 @@
 using BPMS_BL.Facades;
-using BPMS_Common.Enums;
-using BPMS_DTOs.Header;
+using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Newtonsoft.Json.Linq;
+using System.IO;
+using System;
+using BPMS_Common;
 
 namespace BPMS.Controllers
 {
@@ -55,6 +56,13 @@ namespace BPMS.Controllers
         {
             await _taskFacade.SolveUserTask(data, Request.Form.Files);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(Guid id)
+        {
+            FileDownloadDTO file = await _taskFacade.DownloadFile(id);
+            return File(file.Data, file.MIMEType, file.FileName);
         }
     }
 }
