@@ -12,6 +12,7 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
@@ -300,6 +301,8 @@ namespace BPMS_BL.Helpers
                 (blockWorkflow as IServiceTaskWorkflowEntity).UserId =
                         await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflowKeeperId;
             }
+
+            await ShareActivity(blockModel.PoolId, blockWorkflow.WorkflowId, blockModel.Pool.Id);
         }
 
         public async Task StartNextTask(BlockWorkflowEntity solvedTask)
@@ -562,6 +565,17 @@ namespace BPMS_BL.Helpers
             userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty.TotalDays);
             userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
                               userTask.Workflow.AdministratorId;
+        }
+
+        public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)
+        {
+            List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(poolId, workflowId);
+            string message = JsonConvert.SerializeObject(activeBlocks);
+
+            foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
+            {
+                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCypherHelper.JsonEncrypt(address), message);
+            }
         }
     }
 }

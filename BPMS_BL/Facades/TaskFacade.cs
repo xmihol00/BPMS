@@ -117,7 +117,6 @@ namespace BPMS_BL.Facades
             _worflowHelper = new WorkflowHelper(_context);
 
             BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
-
             await _worflowHelper.StartNextTask(solvedTask);
 
             solvedTask.Active = false;
@@ -125,13 +124,7 @@ namespace BPMS_BL.Facades
 
             await _taskRepository.Save();
 
-            List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(solvedTask.BlockModel.PoolId, solvedTask.WorkflowId);
-            string message = JsonConvert.SerializeObject(activeBlocks);
-
-            foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(solvedTask.BlockModel.Pool.ModelId))
-            {
-                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCypherHelper.JsonEncrypt(address), message);
-            }
+            await _worflowHelper.ShareActivity(solvedTask.BlockModel.PoolId, solvedTask.WorkflowId, solvedTask.BlockModel.Pool.ModelId);
         }
 
         public Task<object?> ServiceTaskDetail(Guid id, Guid userId)

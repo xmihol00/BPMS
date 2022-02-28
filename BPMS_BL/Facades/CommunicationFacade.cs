@@ -44,6 +44,7 @@ namespace BPMS_BL.Facades
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
+        private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
@@ -51,7 +52,7 @@ namespace BPMS_BL.Facades
                                    SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
                                    AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository,
                                    ServiceDataSchemaRepository serviceDataSchemaRepository, TaskDataRepository taskDataRepository,
-                                   BlockWorkflowRepository blockWorkflowRepository, IMapper mapper)
+                                   BlockWorkflowRepository blockWorkflowRepository, BpmsDbContext context, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -66,6 +67,7 @@ namespace BPMS_BL.Facades
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _taskDataRepository = taskDataRepository;
             _blockWorkflowRepository = blockWorkflowRepository;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -158,9 +160,9 @@ namespace BPMS_BL.Facades
                 if (recieveEvent.Active)
                 {
                     recieveEvent.Active = false;
-                    BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
-                    await new WorkflowHelper(context).StartNextTask(recieveEvent);
-                    await context.SaveChangesAsync();
+                    WorkflowHelper workflowHelper = new WorkflowHelper(_context);
+                    await workflowHelper.StartNextTask(recieveEvent);
+                    await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.Id);
                 }
             }
 
