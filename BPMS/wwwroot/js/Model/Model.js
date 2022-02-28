@@ -87,7 +87,7 @@ function EditAttribute(button)
     form.querySelector("#NameId").value = element.children[1].innerText;
     let checked = element.children[3].children[0].classList.contains("bg-primary");
     form.querySelector("#CompulsoryId").checked = checked;
-    form.querySelector("#DescrId").value = element.children[4].innerText;
+    form.querySelector("#DescrId").value = element.children[4].children[0] ? "" : element.children[4].innerText;
     for (let opt of form.querySelector("#TypeId").options)
     {
         if (opt.innerText == element.children[2].innerText)

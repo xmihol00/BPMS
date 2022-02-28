@@ -13,6 +13,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
+using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
@@ -35,6 +36,7 @@ namespace BPMS_BL.Facades
         private readonly ServiceRepository _serviceRepository;
         private readonly WorkflowRepository _workflowRepository;
         private readonly PoolRepository _poolRepository;
+        private readonly BpmsDbContext _context;
         private WorkflowHelper _worflowHelper { get; set; }
         private readonly IMapper _mapper;
 
@@ -42,7 +44,8 @@ namespace BPMS_BL.Facades
         public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository, 
                           BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, 
                           ServiceDataSchemaRepository serviceDataSchemaRepository, ServiceRepository serviceRepository, 
-                          WorkflowRepository workflowRepository, PoolRepository poolRepository, IMapper mapper)
+                          WorkflowRepository workflowRepository, PoolRepository poolRepository, BpmsDbContext context,
+                          IMapper mapper)
         {
             _taskRepository = taskRepository;
             _taskDataRepository = taskDataRepository;
@@ -52,11 +55,12 @@ namespace BPMS_BL.Facades
             _serviceRepository = serviceRepository;
             _workflowRepository = workflowRepository;
             _poolRepository = poolRepository;
+            _context = context;
             _mapper = mapper;
         }
         #pragma warning restore CS8618
 
-        public async Task SaveData(IFormCollection data, bool save = true)
+        public async Task SaveData(IFormCollection data)
         {
             foreach (KeyValuePair<string, StringValues> valuePair in data.Skip(1))
             {
@@ -105,18 +109,12 @@ namespace BPMS_BL.Facades
                         break;
                 }
             }
-
-            if (save)
-            {
-                await _taskDataRepository.Save();
-            }
         }
 
         public async Task SolveUserTask(IFormCollection data)
         {
-            await SaveData(data, false);
-            BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
-            _worflowHelper = new WorkflowHelper(context);
+            await SaveData(data);
+            _worflowHelper = new WorkflowHelper(_context);
 
             BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
 
@@ -125,8 +123,15 @@ namespace BPMS_BL.Facades
             solvedTask.Active = false;
             solvedTask.SolvedDate = DateTime.Now;
 
-            await context.SaveChangesAsync();
             await _taskRepository.Save();
+
+            List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(solvedTask.BlockModel.PoolId, solvedTask.WorkflowId);
+            string message = JsonConvert.SerializeObject(activeBlocks);
+
+            foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(solvedTask.BlockModel.Pool.ModelId))
+            {
+                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCypherHelper.JsonEncrypt(address), message);
+            }
         }
 
         public Task<object?> ServiceTaskDetail(Guid id, Guid userId)

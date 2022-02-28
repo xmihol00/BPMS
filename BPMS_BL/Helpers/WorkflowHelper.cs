@@ -331,7 +331,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-                private async Task RecieveData(BlockWorkflowEntity task)
+        private async Task RecieveData(BlockWorkflowEntity task)
         {
             if ((task as IRecieveEventWorkflowEntity).Delivered)
             {

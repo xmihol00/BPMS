@@ -5,6 +5,7 @@ using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BPMS.Controllers
 {
@@ -39,6 +40,7 @@ namespace BPMS.Controllers
             {
                 detail = await this.RenderViewAsync("Partial/_AgendaDetail", dto, true),
                 header = await this.RenderViewAsync("Partial/_AgendaDetailHeader", dto, true),
+                activeBlocks = dto.ActiveBlocks
             });
         }
 

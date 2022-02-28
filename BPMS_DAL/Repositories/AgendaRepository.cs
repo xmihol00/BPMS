@@ -51,6 +51,8 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.Models)
                          .Include(x => x.Workflows)
                             .ThenInclude(x => x.Model)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Blocks)
                          .Include(x => x.Systems)
                          .Include(x => x.AgendaRoles)
                             .ThenInclude(x => x.Role)
@@ -76,6 +78,7 @@ namespace BPMS_DAL.Repositories
                                        })
                                        .ToList(),
                             Workflows = x.Workflows
+                                         .Where(y => y.State == WorkflowStateEnum.Active)
                                          .Select(y => new WorkflowAllAgendaDTO
                                          {
                                              Description = y.Description,
@@ -85,19 +88,31 @@ namespace BPMS_DAL.Repositories
                                              SVG = y.Model.SVG
                                          })
                                          .ToList(),
-                            Roles = x.AgendaRoles.Select(x => new RoleDetailDTO
+                            Roles = x.AgendaRoles
+                                     .Select(y => new RoleDetailDTO
                                      {
-                                         Description = x.Role.Description,
-                                         Id = x.Id,
-                                         Name = x.Role.Name,
-                                         Users = x.UserRoles.Select(y => new UserIdNameDTO
+                                         Description = y.Role.Description,
+                                         Id = y.Id,
+                                         Name = y.Role.Name,
+                                         Users = y.UserRoles.Select(z => new UserIdNameDTO
                                                             {
-                                                                Id = y.UserId,
-                                                                FullName = $"{y.User.Name} {y.User.Surname}",
+                                                                Id = z.UserId,
+                                                                FullName = $"{z.User.Name} {z.User.Surname}",
                                                             })
                                                             .ToList()
                                      })
-                                     .ToList()
+                                     .ToList(),
+                            ActiveBlocks = x.Workflows
+                                            .Where(x => x.State == WorkflowStateEnum.Active)
+                                            .Select(y => new WorkflowActiveBlocksDTO
+                                            {
+                                                Id = y.Id,
+                                                BlockIds = y.Blocks
+                                                            .Where(z => z.Active)
+                                                            .Select(z => z.BlockModelId)
+                                                            .ToList()
+                                            })
+                                            .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }

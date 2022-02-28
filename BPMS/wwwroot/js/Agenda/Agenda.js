@@ -1,6 +1,29 @@
 var ModalHeaderLoaded = false;
 var ModalHeader = null;
 
+function DisplayActiveBlocks(activeBlocks)
+{
+    for (let ele of activeBlocks)
+    {
+        let workflow = document.querySelector(`[id='${ele.id}']`);
+        for (let blockId of ele.blockIds)
+        {
+            let block = workflow.querySelector(`[id='${blockId}']`);
+            let target = block.children[0].children[0];
+            target.style.stroke = "green";
+            target.style.fill = "#abfffd";
+        }
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => 
+{
+    if (typeof ActiveBlocks != "undefined")
+    {
+        DisplayActiveBlocks(ActiveBlocks);
+    }
+});
+
 
 function AgendaDetail(element)
 {
@@ -30,6 +53,8 @@ function AgendaDetail(element)
     {
         document.getElementById("PageNavId").innerHTML = result.header;
         detailDiv.innerHTML = result.detail;
+        console.log(result.activeBlocks);
+        DisplayActiveBlocks(result.activeBlocks);
         window.history.pushState({}, '', "/Agenda/Detail/" + element.id);
     })
     .fail(() => 
@@ -226,7 +251,6 @@ function RemoveRole(btn)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });
 }
-
 
 function RemoveUser(btn)
 {

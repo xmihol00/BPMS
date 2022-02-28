@@ -157,7 +157,6 @@ namespace BPMS_BL.Facades
         public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
             AgendaDetailPartialDTO detail = await _agendaRepository.Detail(id);
-            //detail.Roles = await _solvingRoleRepository.Roles(id);
             
             return detail;
         }

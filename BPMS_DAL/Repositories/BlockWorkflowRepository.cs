@@ -11,6 +11,7 @@ using BPMS_Common.Enums;
 using BPMS_DTOs.Task;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
+using BPMS_DTOs.BlockModel;
 
 namespace BPMS_DAL.Repositories
 {
@@ -67,6 +68,16 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<BlockWorkflowEntity> Bare(Guid workflowId, Guid blockModelId)
+        {
+            return _dbSet.FirstAsync(x => x.WorkflowId == workflowId && x.BlockModelId == blockModelId);
+        }
+
+        public Task<bool> Any(Guid workflowId, Guid blockModelId)
+        {
+            return _dbSet.AnyAsync(x => x.WorkflowId == workflowId && x.BlockModelId == blockModelId);
+        }
+
         public Task<List<RecieveEventWorkflowEntity>> RecieveEvents(Guid blockId)
         {
             return _context.Set<RecieveEventWorkflowEntity>()
@@ -84,7 +95,9 @@ namespace BPMS_DAL.Repositories
 
         public Task<BlockWorkflowEntity> TaskForSolving(Guid id)
         {
-            return _dbSet.FirstAsync(x => x.Id == id);
+            return _dbSet.Include(x => x.BlockModel)
+                            .ThenInclude(x => x.Pool)
+                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<List<BlockWorkflowEntity>> NextBlocks(Guid id, Guid workflowId)
@@ -99,6 +112,19 @@ namespace BPMS_DAL.Repositories
                          .Select(x => x.InBlock)
                          .SelectMany(x => x.BlockWorkflows)
                          .Where(x => x.WorkflowId == workflowId)
+                         .ToListAsync();
+        }
+
+        public Task<List<BlockWorkflowActivityDTO>> BlockActivity(Guid poolId, Guid workflowId)
+        {
+            return _dbSet.Include(x => x.BlockModel)
+                         .Where(x => x.WorkflowId == workflowId && x.BlockModel.PoolId == poolId)
+                         .Select(x => new BlockWorkflowActivityDTO
+                         {
+                             Active = x.Active,
+                             BlockModelId = x.BlockModelId,
+                             WorkflowId = x.WorkflowId
+                         })
                          .ToListAsync();
         }
 

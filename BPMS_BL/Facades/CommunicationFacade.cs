@@ -18,6 +18,7 @@ using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
+using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
@@ -66,6 +67,33 @@ namespace BPMS_BL.Facades
             _taskDataRepository = taskDataRepository;
             _blockWorkflowRepository = blockWorkflowRepository;
             _mapper = mapper;
+        }
+
+        public async Task<string> BlockActivity(List<BlockWorkflowActivityDTO> blocks)
+        {
+            foreach (BlockWorkflowActivityDTO block in blocks)
+            {
+                if (await _blockWorkflowRepository.Any(block.WorkflowId, block.BlockModelId))
+                {
+                    BlockWorkflowEntity changedBlock = await _blockWorkflowRepository.Bare(block.WorkflowId, block.BlockModelId);
+                    changedBlock.Active = block.Active;
+                }
+                else
+                {
+                    if (block.Active)
+                    {
+                        await _blockWorkflowRepository.Create(new BlockWorkflowEntity
+                        {
+                            Active = true,
+                            BlockModelId = block.BlockModelId,
+                            WorkflowId = block.WorkflowId
+                        });
+                    }
+                }
+            }
+
+            await _blockWorkflowRepository.Save();
+            return "";
         }
 
         public async Task<string> Message(MessageShare message)

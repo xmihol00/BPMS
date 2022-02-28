@@ -2,6 +2,9 @@
 @{
     ViewData["Title"] = "Detail Agendy";
 }
+<script>
+    const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
+</script>
 <script src="~/js/Agenda/Agenda.js"></script>
 <script src="~/js/Model/Model.js"></script>
 
