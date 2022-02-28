@@ -144,7 +144,7 @@ namespace BPMS_BL.Facades
             foreach (FileDataEntity data in message.Files)
             {
                 (taskData[data.AttributeId.Value] as IFileDataEntity).MIMEType = data.MIMEType;
-                (taskData[data.AttributeId.Value] as IFileDataEntity).Name = data.Name;
+                (taskData[data.AttributeId.Value] as IFileDataEntity).FileName = data.FileName;
             }
 
             foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)

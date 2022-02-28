@@ -12,7 +12,7 @@
     </div>
 </div>
 <form id="TaskDataFormId" class="row" action="/Task/SaveData" class="d-flex flex-wrap" method="POST" novalidate
-      oninput="InputValidator(this)", onsubmit="AjaxFormSubmit(event)">
+      oninput="InputValidator(this)", onsubmit="AjaxFormSubmit(event, null, false, false, null, () => window.location.replace('/Task/Overview'))">
     <input type="hidden" name="TaskId" value="@Model.Id" />
     <h2 class="text-center text-font mt-3">Výstupní data</h2>
     <div class="col-12 col-md-6">

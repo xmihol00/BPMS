@@ -10,7 +10,7 @@ namespace BPMS_DTOs.Task.IDataTypes
 {
     public interface ITaskFile : ITaskData
     {
-        public string? Value { get; set; }
+        public string? FileName { get; set; }
         public string FileFormats { get; set; }
     }
 }

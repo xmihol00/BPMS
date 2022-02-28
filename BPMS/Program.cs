@@ -15,6 +15,7 @@ services.AddControllersWithViews()
 
 services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
 StaticData.ThisSystemURL = builder.Configuration.GetValue<string>("SystemURL");
+StaticData.FileStore = builder.Configuration.GetValue<string>("FileStore");
 
 services.AddScoped<AgendaRepository>();
 services.AddScoped<BlockModelRepository>();
@@ -80,8 +81,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Agenda}/{action=Overview}/{id?}");
 
-StaticData.ServiceProvider = app.Services.CreateScope().ServiceProvider;
-using BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
+using BpmsDbContext context = app.Services.CreateScope().ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();
 
 app.Run();

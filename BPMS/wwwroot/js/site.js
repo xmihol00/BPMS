@@ -196,7 +196,10 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
                 DisplayResult(targetId, result, successCallback);
             }
         }
-        
+        else if (successCallback)
+        {
+            successCallback();
+        }
     })
     .fail(() => 
     {
@@ -228,7 +231,7 @@ function InputValidator(form)
     {
         if (input.type == "file")
         {
-            if (!input.files[0])
+            if (!input.files[0] && input.name)
             {
                 disabled = true;
             }

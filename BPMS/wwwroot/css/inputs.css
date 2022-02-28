@@ -71,7 +71,8 @@
   padding: 0rem 0.2rem;
 }
 
-.readonly-div + .input-label {
+.readonly-div + .input-label,
+.flex-input-group + .input-label {
   transform: translate(0rem, -82%) scale(0.95);
   color: var(--color-primary);
   padding: 0rem 0.2rem;
@@ -179,4 +180,14 @@ option {
   width: 100%;
   padding: 0.4rem 1rem;
   border: none;
+}
+
+.flex-input-group {
+  display: flex;
+  -webkit-box-shadow: inset 0px 0px 2px 1px #aaa; 
+  box-shadow: inset 0px 0px 2px 1px #aaa;
+}
+
+.flex-input-group .readonly-div {
+  padding: 0.4rem 0.5rem;
 }

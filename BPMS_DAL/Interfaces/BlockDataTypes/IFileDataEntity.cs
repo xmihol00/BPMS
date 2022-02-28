@@ -8,7 +8,7 @@ namespace BPMS_DAL.Interfaces.BlockDataTypes
 {
     public interface IFileDataEntity : ITaskDataEntity
     {
-        public string Name { get; set; }
+        public string FileName { get; set; }
         public string MIMEType { get; set; }
     }
 }

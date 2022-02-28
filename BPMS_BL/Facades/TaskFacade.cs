@@ -60,7 +60,15 @@ namespace BPMS_BL.Facades
         }
         #pragma warning restore CS8618
 
-        public async Task SaveData(IFormCollection data, IFormFileCollection files, bool save = true)
+        public async Task<UserTaskDetailPartialDTO> SaveData(IFormCollection data, IFormFileCollection files, Guid userId)
+        {
+            await SaveDataInternal(data, files);
+            await _taskDataRepository.Save();
+
+            return await UserTaskDetail(Guid.Parse(data["TaskId"]), userId);
+        }
+
+        private async Task SaveDataInternal(IFormCollection data, IFormFileCollection files)
         {
             foreach (KeyValuePair<string, StringValues> valuePair in data.Skip(1))
             {
@@ -95,10 +103,6 @@ namespace BPMS_BL.Facades
                     case ITextDataEntity textData:
                         textData.Value = valuePair.Value;
                         break;
-
-                    case IFileDataEntity fileData:
-                        // TODO
-                        break;
                     
                     case ISelectDataEntity selectData:
                         selectData.Value = valuePair.Value;
@@ -106,6 +110,12 @@ namespace BPMS_BL.Facades
                     
                     case IDateDataEntity dateData:
                         dateData.Value = DateTime.Parse(valuePair.Value);
+                        break;
+                    
+                    case IFileDataEntity fileData:
+                        File.Delete(StaticData.FileStore + fileData.Id);
+                        fileData.FileName = "";
+                        fileData.MIMEType = "";
                         break;
                 }
             }
@@ -115,19 +125,21 @@ namespace BPMS_BL.Facades
                  TaskDataEntity task = await _taskDataRepository.Detail(Guid.Parse(file.Name));
                  if (task is IFileDataEntity)
                  {
-                     
-                 }
-            }
+                     IFileDataEntity fileData = task as IFileDataEntity;
+                     fileData.MIMEType = file.ContentType;
+                     fileData.FileName = file.FileName;
 
-            if (save)
-            {
-                await _taskDataRepository.Save();
+                     using (FileStream fileStream = new FileStream(StaticData.FileStore + fileData.Id, FileMode.Create))
+                     {
+                         await file.CopyToAsync(fileStream);
+                     }
+                 }
             }
         }
 
         public async Task SolveUserTask(IFormCollection data, IFormFileCollection files)
         {
-            await SaveData(data, files, false);
+            await SaveDataInternal(data, files);
             _worflowHelper = new WorkflowHelper(_context);
 
             BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));

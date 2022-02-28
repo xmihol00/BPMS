@@ -47,16 +47,14 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveData(IFormCollection data)
         {
-            
-            await _taskFacade.SaveData(data, Request.Form.Files);
-            return Ok();
+            return PartialView("Partial/_UserTaskDetail", await _taskFacade.SaveData(data, Request.Form.Files, _userId));
         }
 
         [HttpPost]
         public async Task<IActionResult> SolveUserTask(IFormCollection data)
         {
             await _taskFacade.SolveUserTask(data, Request.Form.Files);
-            return Redirect("/Task/Overview"); // TODO
+            return Ok();
         }
     }
 }
