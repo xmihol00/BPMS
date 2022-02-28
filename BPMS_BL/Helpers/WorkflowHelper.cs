@@ -67,7 +67,7 @@ namespace BPMS_BL.Helpers
             workflow.Blocks = blocks;
 
             blocks[0].SolvedDate = DateTime.Now;
-            await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], workflow.AdministratorId);
+            await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], workflow);
         }
 
         public async Task CreateWorkflow(Guid modelId, Guid workflowId)
@@ -285,24 +285,24 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, Guid? workflowKeeperId)
+        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, WorkflowEntity workflow)
         {
             blockWorkflow.Active = true;
             if (blockWorkflow is IUserTaskWorkflowEntity)
             {
                 IUserTaskModelEntity taskModel = blockModel as IUserTaskModelEntity;
                 IUserTaskWorkflowEntity taskWorkflow = blockWorkflow as IUserTaskWorkflowEntity;
-                taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? workflowKeeperId;
+                taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? workflow.AdministratorId;
                 taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
             }
             else if (blockWorkflow is IUserTaskWorkflowEntity)
             {
                 IServiceTaskModelEntity serviceModel = blockModel as IServiceTaskModelEntity;
                 (blockWorkflow as IServiceTaskWorkflowEntity).UserId =
-                        await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflowKeeperId;
+                        await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflow.AdministratorId;
             }
 
-            await ShareActivity(blockModel.PoolId, blockWorkflow.WorkflowId, blockModel.Pool.Id);
+            await ShareActivity(blockModel.PoolId, workflow.Id, blockModel.Pool.Id);
         }
 
         public async Task StartNextTask(BlockWorkflowEntity solvedTask)
