@@ -302,7 +302,7 @@ namespace BPMS_BL.Helpers
                         await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflow.AdministratorId;
             }
 
-            await ShareActivity(blockModel.PoolId, workflow.Id, blockModel.Pool.Id);
+            await ShareActivity(blockWorkflow, workflow.Id, blockModel.Pool.ModelId);
         }
 
         public async Task StartNextTask(BlockWorkflowEntity solvedTask)
@@ -570,6 +570,25 @@ namespace BPMS_BL.Helpers
         public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)
         {
             List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(poolId, workflowId);
+            string message = JsonConvert.SerializeObject(activeBlocks);
+
+            foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
+            {
+                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCypherHelper.JsonEncrypt(address), message);
+            }
+        }
+
+        public async Task ShareActivity(BlockWorkflowEntity blockWorkflow, Guid worflowId, Guid modelId)
+        {
+            List<BlockWorkflowActivityDTO> activeBlocks = new List<BlockWorkflowActivityDTO>()
+            {
+                new BlockWorkflowActivityDTO()
+                {
+                    Active = blockWorkflow.Active,
+                    BlockModelId = blockWorkflow.BlockModelId,
+                    WorkflowId = worflowId
+                }
+            };
             string message = JsonConvert.SerializeObject(activeBlocks);
 
             foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
