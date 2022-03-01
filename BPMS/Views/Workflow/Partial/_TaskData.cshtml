@@ -1,0 +1,41 @@
+@model (IEnumerable<IGrouping<string, TaskDataDTO>> data, bool editable)
+
+@if (Model.data.Count() > 0)
+{
+    <div class="row">
+        @foreach (var group in Model.data)
+        {
+            <h6 class="col-12 mb-0 mt-2">Blok workflow: 
+                @if (String.IsNullOrEmpty(group.Key))
+                {
+                    <span class="text-placeholder">Bez názvu</span>
+                }
+                else
+                {
+                    <span class="text-prim">@group.Key</span>
+                }
+            </h6>
+            @foreach (TaskDataDTO task in group)
+            {
+                switch (task)
+                {
+                    case ITaskString taskString:
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskString.Value))
+                        break;
+
+                    case ITaskNumber taskNumber:
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskNumber.Value.ToString()))
+                        break;
+
+                    case ITaskText taskText:
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskText.Value))
+                        break;
+                }
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="text-placeholder mt-1">V této sekci nemá workflow žádná data.</div>
+}

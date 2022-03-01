@@ -1,67 +1,6 @@
 var ModalHeaderLoaded = false;
 var ModalHeader = null;
 
-function ShowModelModal(element)
-{
-    element.children[0].id = "ModelNameId";
-    let content = document.getElementById("ModelModalId");
-    content.children[0].children[0].innerHTML = element.innerHTML;
-    content.classList.remove("d-none");
-
-    let navbar = document.getElementById("PageNavId");
-    navbar.classList.add("page-navbar-transition");
-
-    let page = document.getElementById("PageContentId");
-    page.innerHTML = "";
-    page.classList.remove("d-flex");
-
-    $.ajax(
-    {
-        async: true,
-        type: "GET",
-        url: "/Model/Transition/" + element.id
-    })
-    .done((result) => 
-    {
-        if (ModalHeaderLoaded)
-        {
-            navbar.innerHTML = result.header;
-            navbar.classList.remove("page-navbar-transition");
-        }
-        else
-        {
-            ModalHeader = result.header;
-        }
-        document.getElementById("ModelNameId").innerHTML = result.info;
-        window.history.pushState({}, '', "/Model/Detail/" + element.id);
-    })
-    .fail(() => 
-    {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-    });
-
-    setTimeout(() => 
-    {
-        navbar.children[0].innerHTML = "";
-    }, 350);
-
-    setTimeout(() => 
-    {
-        ModalHeaderLoaded = true;
-        if (ModalHeader)
-        {
-            navbar.innerHTML = ModalHeader;
-            navbar.classList.remove("page-navbar-transition");
-        }
-        page.innerHTML = content.innerHTML;
-        content.innerHTML = "";
-
-        ModelAddEventListeners();
-        
-    }, 700);
-}
-
 function RoleChanged(select)
 {
     let addBtn = document.getElementById("AddRoleBtnId");

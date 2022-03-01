@@ -32,9 +32,12 @@ namespace BPMS_BL.Facades
             _systemRepository = systemRepository;
         }
 
-        public Task<object?> Overview()
+        public async Task<SystemOverviewDTO> Overview()
         {
-            throw new NotImplementedException();
+            return new SystemOverviewDTO()
+            {
+                Systems = await _systemRepository.All()
+            };
         }
     }
 }

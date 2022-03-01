@@ -233,7 +233,7 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
         }
         else if (successCallback)
         {
-            successCallback();
+            successCallback(result);
         }
     })
     .fail(() => 
@@ -368,6 +368,7 @@ function DetailTransition(element, path, blocks = false)
             DisplayActiveBlocks(result.activeBlocks);
         }
         window.history.pushState({}, '', path.replace("Partial", "") + element.id);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     })
     .fail(() => 
     {

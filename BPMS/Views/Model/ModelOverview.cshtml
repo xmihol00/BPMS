@@ -1,6 +1,6 @@
-@model SystemOverviewDTO
+@model ModelOverviewDTO
 @{
-    ViewData["Title"] = "Spolupracující systémy";
+    ViewData["Title"] = "Modely";
 }
 
 <div id="PageNavId" class="page-navbar">
@@ -20,9 +20,9 @@
     </div>
     <div id="OverviewDivId" class="container-lg">
         <div class="row">
-            @foreach (SystemAllDTO system in Model.Systems)
+            @foreach (ModelAllDTO model in Model.Models)
             {
-                @await Html.PartialAsync("Partial/_SystemCard", (system, false))
+                @await Html.PartialAsync("Partial/_ModelCard", (model, false))
             }
         </div>
     </div>

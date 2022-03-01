@@ -72,7 +72,7 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              Description = x.Description,
                              Models = x.Models
-                                       .Select(y => new ModelAllDTO
+                                       .Select(y => new ModelAllAgendaDTO
                                        {
                                            Id = y.Id,
                                            Name = y.Name,

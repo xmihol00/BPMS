@@ -21,10 +21,10 @@ namespace BPMS_DAL.Repositories
     {
         public ModelRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<ModelAllDTO>> OfAgenda(Guid id)
+        public Task<List<ModelAllAgendaDTO>> OfAgenda(Guid id)
         {
             return _dbSet.Where(x => x.AgendaId == id)
-                         .Select(x => new ModelAllDTO
+                         .Select(x => new ModelAllAgendaDTO
                          {
                              Id = x.Id,
                              Name = x.Name,
@@ -185,6 +185,22 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Where(x => x.Id == id)
                          .Select(x => x.AgendaId)
                          .FirstAsync();
+        }
+
+        public Task<List<ModelAllDTO>> All(Guid? id = null)
+        {
+            return _dbSet.Include(x => x.Agenda)
+                         .Select(x => new ModelAllDTO
+                         {
+                             AgendaId = x.AgendaId,
+                             AgendaName = x.Agenda.Name,
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                             SVG = x.SVG,
+                             State = x.State
+                         })
+                         .ToListAsync();
         }
     }
 }

@@ -179,7 +179,8 @@ option {
   display: block;
   width: 100%;
   padding: 0.4rem 1rem;
-  border: none;
+  border: solid 1px var(--color-primary);
+  border-radius: 0.25rem;
 }
 
 .flex-input-group {

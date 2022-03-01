@@ -205,5 +205,13 @@ namespace BPMS_BL.Facades
         {
             return allBlocks.Where(x => x.Key == typeof(T)).SelectMany(x => x).Cast<T>();
         }
+
+        public async Task<ModelOverviewDTO> Overview()
+        {
+            return new ModelOverviewDTO()
+            {
+                Models = await _modelRepository.All()
+            };
+        }
     }
 }

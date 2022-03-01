@@ -44,7 +44,12 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(WorkflowEditDTO dto)
         {
-            return PartialView("Partial/_WorkflowDetailInfo", await _workflowFacade.Edit(dto));
+            WorkflowInfoCardDTO infoCard = await _workflowFacade.Edit(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_WorkflowDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_WorkflowCard", (infoCard.SelectedWorkflow, true), true),
+            });
         }
     }
 }

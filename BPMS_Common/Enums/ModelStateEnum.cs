@@ -15,4 +15,34 @@ namespace BPMS_Common.Enums
         Executable,
         Waiting,
     }
+
+    public static class ModelState
+    {
+        public static string ToLabel(this ModelStateEnum value)
+        {
+            switch (value)
+            {
+                case ModelStateEnum.New:
+                    return "nový";
+                
+                case ModelStateEnum.Sharable:
+                    return "možný sdílet";
+
+                case ModelStateEnum.Incorrect:
+                    return "konfigurace";
+
+                case ModelStateEnum.Executable:
+                    return "sputitelný";
+
+                case ModelStateEnum.Shared:
+                    return "vysdílený";
+
+                case ModelStateEnum.Waiting:
+                    return "čekající";
+
+                default:
+                    return "";
+            }
+        }
+    }
 }

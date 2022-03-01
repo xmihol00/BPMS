@@ -175,7 +175,7 @@ a:hover {
   cursor: pointer;
 }
 
-.menu-btn:hover{
+.menu-btn:hover {
   font-size: 32px;
   transition: all 0.15s;
 }
@@ -251,16 +251,6 @@ a:hover {
     overflow: auto;
   }
 
-  .page-navbar-transition {
-    max-height: fit-content !important;
-    padding-top: var(--navbar-height);
-    margin: 0px -15px;
-    height: calc(100vh - 2rem - var(--footer-height));
-    z-index: 0;
-    -webkit-box-shadow: none; 
-    box-shadow: none;
-  }
-
   .page-content-modal {
     position: fixed;
     top: var(--navbar-height);
@@ -275,12 +265,7 @@ a:hover {
     margin: 0px max(calc(50vw - 600px), 1em);
   }
 
-  /*.main-content-large .page-navbar-transition {
-    margin: 0px max(calc(50vw - 700px), 1em);
-    margin-top: 10vh;
-  }*/
-
-  .page-navbar-modal .page-navbar-content, .page-navbar-transition .page-navbar-content {
+  .page-navbar-modal .page-navbar-content {
     margin-top: -60px;
   }
 
@@ -554,7 +539,7 @@ a:hover {
 }
 
 .side-overview .wf-headline {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .detail-div {

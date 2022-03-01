@@ -16,6 +16,12 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Overview()
+        {
+            return View("ModelOverview", await _modelFacade.Overview());
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Transition(Guid id)
         {
             ModelHeaderDTO header = await _modelFacade.Header(id);

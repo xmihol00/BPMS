@@ -1,0 +1,41 @@
+@model (ModelAllDTO model, bool selected)
+
+<div id="@Model.model.Id" class="col-12 col-md-6 col-lg-4 p-2 pointer onclick="DetailTransition(this, '/System/DetailPartial/', true)">    
+    <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
+        <h3 class="border-bottom text-center">@Model.model.Name</h3>
+        @if (String.IsNullOrEmpty(Model.model.Description))
+        {
+            <div class="text-placeholder mt-2 mb-1">Model nemá popis.</div>
+        }
+        else
+        {
+            <div class="mt-2 mb-1">@Model.model.Description</div>
+        }
+        @Html.Raw(Model.model.SVG)
+        <div class="d-flex mt-2">
+            @if (Model.model.AgendaId != null)
+            {
+                <a href="/Agenda/Detail/@Model.model.AgendaId" class="w-50 link-p" onclick="event.stopPropagation()">
+                    <div class="d-flex justify-content-center">
+                        <i class="fas fa-list-alt task-icon"></i>
+                    </div>
+                    <h4 class="text-center mb-0">@Model.model.AgendaName</h4>
+                </a>
+            }
+            else
+            {
+                <div class="d-flex justify-content-center w-50 mt-3">
+                    <i class="fas fa-list-alt task-icon"></i>
+                </div>
+            }
+            <div class="w-50 mt-1">
+                <div class="text-center">Stav:</div>
+                <div class="d-flex justify-content-center">
+                    <span class="badge rounded-pill text-1em @Model.model.State bg-primary">
+                        @Model.model.State.ToLabel()
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -39,6 +39,17 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<List<SystemAllDTO>> All()
+        {
+            return _dbSet.Select(x => new SystemAllDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL
+                         })
+                         .ToListAsync();
+        }
+
         public Task<Guid> IdFromUrl(string systemURL)
         {
             return _dbSet.Where(x => x.URL == systemURL)

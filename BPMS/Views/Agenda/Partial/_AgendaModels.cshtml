@@ -1,4 +1,4 @@
-@model List<ModelAllDTO> 
+@model List<ModelAllAgendaDTO> 
 
 <div class="d-flex justify-content-around">
     <h3 class="text-center text-font mb-0">Modely agendy</h3>
@@ -7,9 +7,9 @@
 
 @if (Model.Count > 0)
 {
-    @foreach (ModelAllDTO modl in Model)
+    @foreach (ModelAllAgendaDTO modl in Model)
     {
-        <div id="@modl.Id" class="shadow-box p-3 m-3 my-card bradius-card hover-card pointer" onclick="ShowModelModal(this)">
+        <div class="shadow-box p-3 m-3 my-card bradius-card hover-card pointer" onclick="window.location.href = '/Model/Detail/@modl.Id'">
             <div>
                 <h3 class="text-center border-bottom">@modl.Name</h3>
             </div>

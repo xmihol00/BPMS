@@ -16,7 +16,7 @@ namespace BPMS_DTOs.Agenda
         public Guid AdministratorId { get; set; }
         public string AdministratorName { get; set; } = string.Empty;
         public string AdministratorEmail { get; set; } = string.Empty;
-        public List<ModelAllDTO> Models { get; set; } = new List<ModelAllDTO>();
+        public List<ModelAllAgendaDTO> Models { get; set; } = new List<ModelAllAgendaDTO>();
         public List<RoleDetailDTO> Roles { get; set; } = new List<RoleDetailDTO>();
         public List<SystemAllDTO> Systems { get; set; } = new List<SystemAllDTO>();
         public List<WorkflowAllAgendaDTO> Workflows { get; set; } = new List<WorkflowAllAgendaDTO>();

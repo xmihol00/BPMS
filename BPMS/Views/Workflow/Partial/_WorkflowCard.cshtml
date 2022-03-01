@@ -17,14 +17,15 @@
                     <div class="mt-2">@Model.workflow.Description</div>
                 }
                 <div class="d-flex justify-content-around mt-3">
-                    <div>
-                        Stav:
-                        <span class="badge rounded-pill text-1em ms-1 @Model.workflow.State">
+                    <div class="d-flex flex-wrap justify-content-center">
+                        <div class="text-center mx-1">Stav:</div>
+                        <div class="badge rounded-pill text-1em @Model.workflow.State mx-1">
                             @Model.workflow.State.ToLabel()
-                        </span>
+                        </div>
                     </div>
-                    <div class="my-auto">
-                        Správce: <b>@Model.workflow.AdministratorName</b>
+                    <div class="my-auto d-flex flex-wrap justify-content-center">
+                        <div class="text-center mx-1">Správce:</div>
+                        <b class="mx-1">@Model.workflow.AdministratorName</b>
                     </div>
                 </div>
                 <div class="row mt-3">
