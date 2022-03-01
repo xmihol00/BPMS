@@ -2,6 +2,10 @@
 @{
     ViewData["title"] = "Workflow";
 }
+<script src="~/js/Workflow/Workflow.js"></script>
+<script>
+    const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
+</script>
 
 <div id="PageNavId" class="page-navbar">
     <h1 class="mt-1 text-font text-center page-navbar-content">@ViewData["title"]</h1>
@@ -11,17 +15,12 @@
         <div class="loading-content"></div>
     </div>
     <div id="OverviewDivId" class="container-lg">
-        @if (Model.Workflows.Count > 0)
-        {
+        <div class="row">
             @foreach (WorkflowAllDTO workflow in Model.Workflows)
             {
-                <a href="/Workflow/Detail/@workflow.Id">@workflow.Name</a>
+                @await Html.PartialAsync("Partial/_WorkflowCard", (workflow, false))   
             }
-        }
-        else
-        {
-            <div class="text-placeholder my-2">Nebyla nalezena žádná workflow.</div>
-        }
+        </div>
     </div>
     <div id="OverviewNavId" class="overview-nav">
 

@@ -1,0 +1,51 @@
+@model (WorkflowAllDTO workflow, bool selected)
+
+<div id="@Model.workflow.Id" class="col-12 p-2 pointer" onclick="DetailTransition(this, '/Workflow/DetailPartial/', true)">
+    <div class="shadow-box p-3 my-card bradius-card hover-card @(Model.selected ? "selected-card" : "")">
+        <div id="@Model.workflow.Id" class="row">
+            <div class="col-12 col-lg-6 my-auto">
+                @Html.Raw(Model.workflow.SVG)
+            </div>
+            <div class="col-12 col-lg-6">
+                <h3 class="text-center border-bottom wf-headline">@Model.workflow.Name</h3>
+                @if (String.IsNullOrEmpty(Model.workflow.Description))
+                {
+                    <div class="text-placeholder mt-2">Workflow nemá popis.</div>
+                }
+                else
+                {
+                    <div class="mt-2">@Model.workflow.Description</div>
+                }
+                <div class="d-flex justify-content-around mt-3">
+                    <div>
+                        Stav:
+                        <span class="badge rounded-pill text-1em ms-1 @Model.workflow.State">
+                            @Model.workflow.State.ToLabel()
+                        </span>
+                    </div>
+                    <div class="my-auto">
+                        Správce: <b>@Model.workflow.AdministratorName</b>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <a href="/Agenda/Detail/@Model.workflow.AgendaId" class="w-100 link-p" onclick="event.stopPropagation()">
+                            <div class="d-flex justify-content-center">
+                                <i class="fas fa-list-alt mx-auto task-icon"></i>
+                            </div>
+                            <h4 class="text-center mb-0">@Model.workflow.AgendaName</h4>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="/Model/Detail/@Model.workflow.ModelId" class="w-100 link-p" onclick="event.stopPropagation()">
+                            <div class="d-flex justify-content-center">
+                                <i class="fas fa-clone mx-auto task-icon"></i>
+                            </div>
+                            <h4 class="text-center mb-0">@Model.workflow.ModelName</h4>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 @model (ServiceAllDTO dto, bool selected)
 
-<div id="@Model.dto.Id" class="col-12 col-md-6 col-lg-4 p-2" onclick="ServiceDetail(this)">    
+<div id="@Model.dto.Id" class="col-12 col-md-6 col-lg-4 p-2" onclick="DetailTransition(this, '/Service/EditPartial/')">    
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
         <h3 class="border-bottom text-center">@Model.dto.Name</h3>
         <div class="text-url text-center">@Model.dto.URL</div>

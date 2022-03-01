@@ -1,0 +1,19 @@
+@model WorkflowDetailPartialDTO
+
+<div id="WorkflowInfoId">
+    @await Html.PartialAsync("Partial/_WorkflowDetailInfo", Model)
+</div>
+<div class="row mt-2">
+    <div id="WorkflowModelId" class="col-12">
+        @Html.Raw(Model.SVG)
+    </div>
+    <h2 class="text-center text-font mt-2">Data workflow</h2>
+    <h3 class="text-font mb-0">Zadána pro splnění úkolu</h3>
+    @await Html.PartialAsync("Partial/_TaskData", (Model.OutputData, false))
+    <hr class="my-2">
+    <h3 class="text-font mb-0">Zadána pro volání webových služeb</h3>
+    @await Html.PartialAsync("Partial/_TaskData", (Model.InputServiceData, false))
+    <hr class="my-2">
+    <h3 class="text-font mb-0">Získaná voláním webové služeb</h3>
+    @await Html.PartialAsync("Partial/_TaskData", (Model.OutputServiceData, false))
+</div>

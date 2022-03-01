@@ -6,7 +6,8 @@
 @if (Model != null)
 {
     <h4 class="mb-3">Zadejte testovací data</h4>
-    <form id="ServiceTestFormId" method="post" action="/Service/Test" oninput="InputValidator(this)" onsubmit="AjaxFormSubmit(event, 'OutputInputId')">
+    <form id="ServiceTestFormId" method="post" action="/Service/Test" oninput="InputValidator(this)" 
+          onsubmit="AjaxFormSubmit(event, 'OutputInputId', false, false, null, ScrollGenerate)">
         <input type="hidden" name="ServiceId" value="@Model.ServiceId" /> 
         @foreach (DataSchemaAllDTO schema in Model.Schemas)
         {

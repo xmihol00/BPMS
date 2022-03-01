@@ -38,7 +38,8 @@
         <button form="UploadModelFormId" type="submit" class="butn btn-s" disabled>Nahrát</button>
     </div>
 </form>
-<form id="EditAgendaId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/Edit" onsubmit="AjaxFormSubmit(event, 'AgendaInfoId', true)">
+<form id="EditAgendaId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/Edit" onsubmit="AjaxFormSubmit(event, 'AgendaInfoId', true)"
+      oninput="InputValidator(this)">
     <input type="hidden" name="Id" value="@Model.Id">
     <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
         <h2 class="mb-0">Editace agendy</h2>
@@ -48,7 +49,7 @@
         <div class="col-12 mt-1">
             <label class="input">
                 <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
-                <span id="AgendaNameLabelId" class="input-label">Název</span>
+                <span class="input-label">Název</span>
             </label>
         </div>
         <div class="col-12 mt-3">

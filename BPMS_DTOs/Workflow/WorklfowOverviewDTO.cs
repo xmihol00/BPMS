@@ -11,5 +11,6 @@ namespace BPMS_DTOs.Workflow
     public class WorkflowOverviewDTO
     {
         public List<WorkflowAllDTO> Workflows { get; set; } = new List<WorkflowAllDTO>();
+        public List<WorkflowActiveBlocksDTO> ActiveBlocks { get; set; } = new List<WorkflowActiveBlocksDTO>();
     }
 }

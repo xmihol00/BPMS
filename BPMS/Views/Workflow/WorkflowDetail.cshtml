@@ -1,0 +1,24 @@
+@model WorkflowDetailDTO
+@{
+    ViewData["title"] = "Detail workflow";
+}
+<script src="~/js/Task/Task.js"></script>
+
+<div id="PageNavId" class="page-navbar">
+    @await Html.PartialAsync("Partial/_WorkflowDetailHeader", Model)
+</div>
+<div id="PageContentId" class="d-flex pt-3">
+    <div id="DetailDivId" class="detail-div container-lg">
+        @await Html.PartialAsync("Partial/_WorkflowDetail", Model)
+    </div>
+    <div id="OverviewDivId" class="container-lg side-overview">
+        <div class="row">
+            @await Html.PartialAsync("Partial/_WorkflowCard", (Model.SelectedWorkflow, true))
+            @foreach (WorkflowAllDTO task in Model.OtherWorkflows)
+            {
+                @await Html.PartialAsync("Partial/_WorkflowCard", (task, false))
+            }
+        </div>
+    </div>
+    <div class="overview-nav overview-nav-hide"></div>
+</div>

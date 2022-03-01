@@ -116,6 +116,10 @@ a:hover {
   font-size: 1em;
 }
 
+.text-large {
+  font-size: 1.25em;
+}
+
 .text-right {
   text-align: right;
 }
@@ -436,7 +440,7 @@ a:hover {
 }
 
 .hover-card:hover {
-  transform: scale(1.015); 
+  transform: scale(1.01); 
 }
 
 .selected-card {
@@ -496,16 +500,32 @@ a:hover {
   color: var(--color-active);
 }
 
+.Active {
+  background-color: var(--color-active);
+}
+
 .wf-paused {
   color: var(--color-paused);
+}
+
+.Paused, .Waiting {
+  background-color: var(--color-paused);
 }
 
 .wf-finished {
   color: var(--color-finished);
 }
 
+.Finished {
+  background-color: var(--color-finished);
+}
+
 .wf-canceled {
   color: var(--color-canceled);
+}
+
+.Canceled {
+  background-color: var(--color-canceled);
 }
 
 .wf-count {
@@ -517,14 +537,24 @@ a:hover {
 }
 
 .side-overview {
-  width: 325px !important;
+  width: max(calc(100vw - 1320px - var(--side-bar-small-width)), 324px) !important;
   transition: all 1.0s;
   margin-right: 0px;
   margin-left: 10px;
+  max-width: 420px;
 }
 
 .side-overview .col-12 {
-  width: 325px !important;
+  width: max(calc(100vw - 1320px - var(--side-bar-small-width)), 324px);
+  max-width: 424px;
+}
+
+.side-overview .col-12 .col-12 {
+  width: 100%;
+}
+
+.side-overview .wf-headline {
+  margin-top: 0.5rem;
 }
 
 .detail-div {
@@ -752,5 +782,3 @@ a:hover {
   font-weight: bold;
   word-break: break-all;
 }
-
-

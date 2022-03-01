@@ -13,8 +13,42 @@ window.addEventListener('DOMContentLoaded', () =>
         icon.parentNode.addEventListener("click", HistoryBack);
     }
 
+    if (typeof ActiveBlocks != "undefined")
+    {
+        DisplayActiveBlocks(ActiveBlocks);
+    }
+
     ResizeTextAreas(document);
 });
+
+function DisplayActiveBlocks(activeBlocks)
+{
+    if (Array.isArray(activeBlocks))
+    {
+        for (let ele of activeBlocks)
+        {
+            let workflow = document.querySelector(`[id='${ele.id}']`);
+            for (let blockId of ele.blockIds)
+            {
+                let block = workflow.querySelector(`[id='${blockId}']`);
+                let target = block.children[0].children[0];
+                target.style.stroke = "green";
+                target.style.fill = "#abfffd";
+            }
+        }
+    }
+    else
+    {
+        let workflow = document.querySelector(`[id='WorkflowModelId']`);
+        for (let blockId of activeBlocks.blockIds)
+        {
+            let block = workflow.querySelector(`[id='${blockId}']`);
+            let target = block.children[0].children[0];
+            target.style.stroke = "green";
+            target.style.fill = "#abfffd";
+        }
+    }
+}
 
 function ResizeTextAreas(element, modal = false)
 {
@@ -27,14 +61,15 @@ function ResizeTextAreas(element, modal = false)
 
 function ResizeTextArea(event, modal = false)
 {
-    let aditional = modal ? 26 : 0;
+    let aditional = modal ? 50 : 0;
     let textarea = event.target || event;
     if (textarea.scrollHeight < 60)
     {
         textarea.style.height = "60px";
     }
-    else
+    else if (textarea.scrollHeight > textarea.clientHeight)
     {
+
         textarea.style.height = `${textarea.scrollHeight + aditional}px`;
     }
 }
@@ -294,4 +329,49 @@ function GetAjaxRequest(url, targetId)
 function LoadingImageHtml()
 {
     return "<div class='loading-content'></div>"
+}
+
+function DetailTransition(element, path, blocks = false)
+{
+    for (let card of document.getElementsByClassName("selected-card"))
+    {
+        card.classList.remove("selected-card");
+    }
+
+    let detailDiv = document.getElementById("DetailDivId");
+    let topEle = element.parentNode.parentNode;
+    let overviewDiv = document.getElementById("OverviewNavId");
+    topEle.classList.add("side-overview");
+    detailDiv.classList.add("container-lg");
+    detailDiv.classList.remove("d-none");
+
+    if (overviewDiv)
+    {
+        overviewDiv.classList.add("overview-nav-hide");
+    }
+    
+    element.children[0].classList.add("selected-card");
+    element.parentElement.prepend(element);
+
+    $.ajax(
+    {
+        async: true,
+        type: "GET",
+        url: path + element.id
+    })
+    .done((result) => 
+    {
+        document.getElementById("PageNavId").innerHTML = result.header;
+        detailDiv.innerHTML = result.detail;
+        if (blocks)
+        {
+            DisplayActiveBlocks(result.activeBlocks);
+        }
+        window.history.pushState({}, '', path.replace("Partial", "") + element.id);
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
 }

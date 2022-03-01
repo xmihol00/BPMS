@@ -1,6 +1,6 @@
 @model (TaskAllDTO task, bool selected)
 
-<div id="@Model.task.Id" class="col-12 col-md-6 col-lg-4 pointer p-2" onclick="TaskDetail(this)">
+<div id="@Model.task.Id" class="col-12 col-md-6 col-lg-4 pointer p-2" onclick="DetailTransition(this, '/Task/UserDetailPartial/', false)">
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
         <h3 class="border-bottom text-center">@Model.task.TaskName</h3>
         @if (String.IsNullOrEmpty(Model.task.Description))

@@ -52,6 +52,8 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.Workflows)
                             .ThenInclude(x => x.Model)
                          .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Administrator)
+                         .Include(x => x.Workflows)
                             .ThenInclude(x => x.Blocks)
                          .Include(x => x.Systems)
                          .Include(x => x.AgendaRoles)
@@ -85,7 +87,9 @@ namespace BPMS_DAL.Repositories
                                              Id = y.Id,
                                              Name = y.Name,
                                              State = y.State,
-                                             SVG = y.Model.SVG
+                                             SVG = y.Model.SVG,
+                                             AdministratorEmail = y.Administrator.Email,
+                                             AdministratorName = $"{y.Administrator.Name} {y.Administrator.Surname}"
                                          })
                                          .ToList(),
                             Roles = x.AgendaRoles
