@@ -40,6 +40,17 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> UserDetailPartial(Guid id)
+        {
+            UserTaskDetailPartialDTO dto = await _taskFacade.UserTaskDetailPartial(id, _userId);
+            return Ok(new
+            {
+                detail = await this.RenderViewAsync("Partial/_UserTaskDetail", dto, true),
+                header = await this.RenderViewAsync("Partial/_UserTaskHeader", dto, true),
+            });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ServiceDetail(Guid id)
         {
             return View("ServiceTaskDetail", await _taskFacade.ServiceTaskDetail(id, _userId));

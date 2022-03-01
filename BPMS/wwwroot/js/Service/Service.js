@@ -3,6 +3,11 @@ var HiddenButtons = null;
 
 function ServiceDetail(element)
 {
+    for (let card of document.getElementsByClassName("selected-card"))
+    {
+        card.classList.remove("selected-card");
+    }
+    
     let detailDiv = document.getElementById("DetailDivId");
     let topEle = element.parentNode.parentNode;
     let overviewDiv = document.getElementById("OverviewNavId");

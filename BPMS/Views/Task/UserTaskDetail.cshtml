@@ -13,6 +13,11 @@
     </div>
     <div id="OverviewDivId" class="container-lg side-overview">
         <div class="row">
+            @await Html.PartialAsync("Partial/_TaskCard", (Model.SelectedTask, true))
+            @foreach (TaskAllDTO task in Model.OtherTasks)
+            {
+                @await Html.PartialAsync("Partial/_TaskCard", (task, false))
+            }
         </div>
     </div>
     <div class="overview-nav overview-nav-hide"></div>

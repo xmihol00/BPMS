@@ -7,6 +7,7 @@ using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.ModelBlocks;
+using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Interfaces.ModelBlocks;
@@ -167,14 +168,23 @@ namespace BPMS_BL.Facades
         {
             return new TaskOverviewDTO()
             {
-                Tasks = await _taskRepository.Overview(userId)
+                Tasks = await _taskRepository.All(userId)
             };
         }
 
         public async Task<UserTaskDetailDTO> UserTaskDetail(Guid id, Guid userId)
         {
+            UserTaskDetailDTO detail = await UserTaskDetailPartial(id, userId);
+            detail.OtherTasks = await _taskRepository.All(userId, id);
+            detail.SelectedTask = await _taskRepository.Selected(id, userId);
+
+            return detail;
+        }
+
+        public async Task<UserTaskDetailDTO> UserTaskDetailPartial(Guid id, Guid userId)
+        {
             UserTaskDetailDTO detail = await _taskRepository.UserDetail(id, userId);
-            var entity = await _taskRepository.Detail(id);
+            UserTaskWorkflowEntity entity = await _taskRepository.Detail(id);
             
             List<TaskDataDTO> inputData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTaskData(id))

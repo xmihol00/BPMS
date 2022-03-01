@@ -38,7 +38,11 @@ function AgendaDetail(element)
     topEle.classList.add("side-overview");
     detailDiv.classList.add("container-lg");
     detailDiv.classList.remove("d-none");
-    overviewDiv.classList.add("overview-nav-hide");
+
+    if (overviewDiv)
+    {
+        overviewDiv.classList.add("overview-nav-hide");
+    }
     
     element.children[0].classList.add("selected-card");
     element.parentElement.prepend(element);
@@ -53,7 +57,6 @@ function AgendaDetail(element)
     {
         document.getElementById("PageNavId").innerHTML = result.header;
         detailDiv.innerHTML = result.detail;
-        console.log(result.activeBlocks);
         DisplayActiveBlocks(result.activeBlocks);
         window.history.pushState({}, '', "/Agenda/Detail/" + element.id);
     })

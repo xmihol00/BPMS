@@ -25,12 +25,12 @@ namespace BPMS_DAL.Repositories
             _serviceTasks = context.Set<ServiceTaskWorkflowEntity>();
         }
 
-        public async Task<List<TaskAllDTO>> Overview(Guid userId)
+        public async Task<List<TaskAllDTO>> All(Guid userId, Guid? id = null)
         {
             List<TaskAllDTO> tasks = await _serviceTasks.Include(x => x.BlockModel)
                                                         .Include(x => x.Workflow)
                                                            .ThenInclude(x => x.Agenda)
-                                                        .Where(x => x.UserId == userId && x.Active == true)
+                                                        .Where(x => x.UserId == userId && x.Active == true && x.Id != id)
                                                         .Select(x => new TaskAllDTO
                                                         {
                                                            AgendaId = x.Workflow.AgendaId,
@@ -48,7 +48,7 @@ namespace BPMS_DAL.Repositories
             tasks.AddRange(await _userTasks.Include(x => x.BlockModel)
                                            .Include(x => x.Workflow)
                                               .ThenInclude(x => x.Agenda)
-                                           .Where(x => x.UserId == userId && x.Active == true)
+                                           .Where(x => x.UserId == userId && x.Active == true && x.Id != id)
                                            .Select(x => new TaskAllDTO
                                            {
                                               AgendaId = x.Workflow.AgendaId,
@@ -66,6 +66,51 @@ namespace BPMS_DAL.Repositories
                                                 .ThenBy(x => x.SolveDate)
                                            .ToListAsync());
             return tasks;
+        }
+
+        public async Task<TaskAllDTO> Selected(Guid id, Guid userId)
+        {
+            if (await _serviceTasks.AnyAsync(x => x.Id == id))
+            {
+                return await _serviceTasks.Include(x => x.BlockModel)
+                                          .Include(x => x.Workflow)
+                                             .ThenInclude(x => x.Agenda)
+                                          .Where(x => x.UserId == userId && x.Id == id)
+                                          .Select(x => new TaskAllDTO
+                                          {
+                                             AgendaId = x.Workflow.AgendaId,
+                                             AgendaName = x.Workflow.Agenda.Name,
+                                             Description = x.BlockModel.Description,
+                                             Id = x.Id,
+                                             Priority = TaskPriorityEnum.Urgent,
+                                             TaskName = x.BlockModel.Name,
+                                             WorkflowId = x.WorkflowId,
+                                             WorkflowName = x.Workflow.Name,
+                                             Type = TaskTypeEnum.UserTask
+                                          })
+                                          .FirstAsync();
+            }
+            else
+            {
+                return await _userTasks.Include(x => x.BlockModel)
+                                       .Include(x => x.Workflow)
+                                          .ThenInclude(x => x.Agenda)
+                                       .Where(x => x.UserId == userId && x.Id == id)
+                                       .Select(x => new TaskAllDTO
+                                       {
+                                          AgendaId = x.Workflow.AgendaId,
+                                          AgendaName = x.Workflow.Agenda.Name,
+                                          Description = x.BlockModel.Description,
+                                          SolveDate = x.SolveDate,
+                                          Id = x.Id,
+                                          Priority = x.Priority,
+                                          TaskName = x.BlockModel.Name,
+                                          WorkflowId = x.WorkflowId,
+                                          WorkflowName = x.Workflow.Name,
+                                          Type = TaskTypeEnum.UserTask
+                                       })
+                                       .FirstAsync();
+            }
         }
 
         public Task<BlockWorkflowEntity> Bare(Guid workflowId, Guid blockModelId)

@@ -10,6 +10,7 @@ namespace BPMS_DTOs.Task
 {
     public class UserTaskDetailDTO : UserTaskDetailPartialDTO
     {
-        
+        public List<TaskAllDTO> OtherTasks { get; set; } = new List<TaskAllDTO>();
+        public TaskAllDTO SelectedTask { get; set; } = new TaskAllDTO();        
     }
 }

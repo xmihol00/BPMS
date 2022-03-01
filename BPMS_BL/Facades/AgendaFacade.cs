@@ -53,7 +53,7 @@ namespace BPMS_BL.Facades
             AgendaDetailDTO dto = await _agendaRepository.Detail(id);
             
             dto.AllAgendas = await _agendaRepository.All(id);
-            dto.SelectedAgenda = await _agendaRepository.SelectedAgenda(id);
+            dto.SelectedAgenda = await _agendaRepository.Selected(id);
             
             return dto;
         }

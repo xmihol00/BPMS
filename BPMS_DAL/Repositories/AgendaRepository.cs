@@ -117,7 +117,7 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<AgendaAllDTO> SelectedAgenda(Guid id)
+        public Task<AgendaAllDTO> Selected(Guid id)
         {
             return _dbSet.Include(x => x.Models)
                          .Include(x => x.Systems)
