@@ -58,6 +58,25 @@ namespace BPMS_BL.Facades
             return detail;
         }
 
+        public async Task<WorkflowDetailInfoDTO> Edit(WorkflowEditDTO dto)
+        {
+            WorkflowEntity workflow = await _workflowRepository.BareAdmin(dto.Id);
+            workflow.Description = dto.Description ?? "";
+            workflow.Name = dto.Name;
+            workflow.State = dto.State;
+
+            await _workflowRepository.Save();
+            return new WorkflowDetailInfoDTO()
+            {
+                AdministratorEmail = workflow.Administrator.Email,
+                AdministratorName = $"{workflow.Administrator.Name} {workflow.Administrator.Surname}",
+                Description = workflow.Description,
+                Id = workflow.Id,
+                Name = workflow.Name,
+                State = workflow.State
+            };
+        }
+
         public async Task<WorkflowDetailDTO> Detail(Guid id)
         {
             WorkflowDetailDTO detail = await DetailPartial(id);

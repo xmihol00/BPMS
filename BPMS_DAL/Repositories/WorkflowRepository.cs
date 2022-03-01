@@ -161,6 +161,12 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
+        public Task<WorkflowEntity> BareAdmin(Guid id)
+        {
+            return _dbSet.Include(x => x.Administrator)
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<WorkflowEntity?> WaitingOrDefault(Guid modelId)
         {
             return _dbSet.FirstOrDefaultAsync(x => x.ModelId == modelId && x.State == WorkflowStateEnum.Waiting);

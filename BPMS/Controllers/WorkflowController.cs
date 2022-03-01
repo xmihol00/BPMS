@@ -40,5 +40,11 @@ namespace BPMS.Controllers
                 activeBlocks = dto.ActiveBlocks
             });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(WorkflowEditDTO dto)
+        {
+            return PartialView("Partial/_WorkflowDetailInfo", await _workflowFacade.Edit(dto));
+        }
     }
 }
