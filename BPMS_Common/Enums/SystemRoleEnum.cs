@@ -14,4 +14,31 @@ namespace BPMS_Common.Enums
         ServiceKeeper,
         TaskSolver,
     }
+
+    public static class SystemRole
+    {
+        public static string ToLabel(this SystemRoleEnum value)
+        {
+            switch (value)
+            {
+                case SystemRoleEnum.Admin:
+                    return "Administrátor";
+                
+                case SystemRoleEnum.AgendaKeeper:
+                    return "Správce agendy";
+                
+                case SystemRoleEnum.ServiceKeeper:
+                    return "Správce webových služeb";
+                
+                case SystemRoleEnum.TaskSolver:
+                    return "Řešitel úkolů";
+
+                case SystemRoleEnum.WorkflowKeeper:
+                    return "Správce workflow";
+                
+                default:
+                    return "";
+            }
+        }
+    }
 }

@@ -72,5 +72,13 @@ namespace BPMS_BL.Facades
 
             return (principal, authProperties);
         }
+
+        public async Task<UserOverviewDTO> Overview()
+        {
+            return new UserOverviewDTO
+            {
+                Users = await _userRepository.All()
+            };
+        }
     }
 }

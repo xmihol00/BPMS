@@ -5,36 +5,33 @@
 <script src="~/js/Agenda/Agenda.js"></script>
 <script src="~/js/Model/Model.js"></script>
 
-@if (Model != null)
-{
-    <div id="PageNavId" class="page-navbar">
-        <div class="d-flex justify-content-between px-4 page-navbar-content">
-            <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
-            <h1 class="my-auto text-font">Agendy</h1>
-            <div class="my-auto">
-                <button class="butn btn-p" 
-                        onclick="ShowModal('CreateAgendaFormId', '/Agenda/CreateModal', 'CreateAgendaFormId')">Vytvořit</button>
-            </div>
+<div id="PageNavId" class="page-navbar">
+    <div class="d-flex justify-content-between px-4 page-navbar-content">
+        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+        <h1 class="my-auto text-font">Agendy</h1>
+        <div class="my-auto">
+            <button class="butn btn-p" 
+                    onclick="ShowModal('CreateAgendaFormId', '/Agenda/CreateModal', 'CreateAgendaFormId')">Vytvořit</button>
         </div>
-        <form id="CreateAgendaFormId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create"
-              oninput="InputValidator(this)">
-            <div class="loading-content"></div>
-        </form>
     </div>
-    <div id="PageContentId" class="d-flex pt-3">
-        <div id="DetailDivId" class="d-none detail-div">
-            <div class="loading-content"></div>
+    <form id="CreateAgendaFormId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create"
+            oninput="InputValidator(this)">
+        <div class="loading-content"></div>
+    </form>
+</div>
+<div id="PageContentId" class="d-flex pt-3">
+    <div id="DetailDivId" class="d-none detail-div">
+        <div class="loading-content"></div>
+    </div>
+    <div id="OverviewDivId" class="container-lg">
+        <div class="row">
+            @foreach (AgendaAllDTO agenda in Model.Agendas)
+            {
+                @await Html.PartialAsync("Partial/_AgendaCard", (agenda, false))
+            }
         </div>
-        <div id="OverviewDivId" class="container-lg">
-            <div class="row">
-                @foreach (AgendaAllDTO agenda in Model.Agendas)
-                {
-                    @await Html.PartialAsync("Partial/_AgendaCard", (agenda, false))
-                }
-            </div>
-        </div>
-        <div id="OverviewNavId" class="overview-nav">
+    </div>
+    <div id="OverviewNavId" class="overview-nav">
 
-        </div>
     </div>
-}
+</div>

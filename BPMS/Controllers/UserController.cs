@@ -15,5 +15,10 @@ namespace BPMS.Controllers
         {
             _userFacade = userFacade;
         }
+
+        public async Task<IActionResult> Overview()
+        {
+            return View("UserOverview", await _userFacade.Overview());
+        }
     }
 }

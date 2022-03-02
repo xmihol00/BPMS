@@ -1,0 +1,20 @@
+@model (UserAllDTO user, bool selected)
+
+<div id="@Model.user.Id" class="col-12 col-md-6 col-lg-4 p-2" onclick="DetailTransition(this, '/User/DetailPartial/')">    
+    <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
+        <h3 class="border-bottom text-center">@Model.user.FullName</h3>
+        <div class="d-flex justify-content-center">
+            <div class="vertical-justify-center me-2">Role:</div>
+            <div class="text-bold ms-2">
+                @if (Model.user.Roles.Count == 0)
+                {
+                    <div class="text-secondary text-italic text-normal">Uživatel nemá přiřazenou roli</div>
+                }
+                @foreach (SystemRoleEnum value in Model.user.Roles)
+                {
+                    <div>@value.ToLabel()</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

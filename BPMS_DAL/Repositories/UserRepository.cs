@@ -54,5 +54,18 @@ namespace BPMS_DAL.Repositories
                          })
                          .FirstAsync();
         }
+
+        public Task<List<UserAllDTO>> All(Guid? id = null)
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Where(x => x.Id != id)
+                         .Select(x => new UserAllDTO
+                         {
+                             FullName = $"{x.Name} {x.Surname}",
+                             Id = x.Id,
+                             Roles = x.SystemRoles.Select(x => x.Role).ToList()
+                         })
+                         .ToListAsync();
+        }
     }
 }
