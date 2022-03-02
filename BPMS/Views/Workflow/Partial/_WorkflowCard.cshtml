@@ -1,6 +1,6 @@
 @model (WorkflowAllDTO workflow, bool selected)
 
-<div id="@Model.workflow.Id" class="col-12 p-2 pointer" onclick="DetailTransition(this, '/Workflow/DetailPartial/', true)">
+<div id="@Model.workflow.Id" class="col-12 p-2 pointer" onclick="DetailTransition(this, '/Workflow/DetailPartial/', true, AddEventListeners)">
     <div class="shadow-box p-3 my-card bradius-card hover-card @(Model.selected ? "selected-card" : "")">
         <div id="@Model.workflow.Id" class="row">
             <div class="col-12 col-lg-6 my-auto">

@@ -3,5 +3,63 @@
     string action = Model is IUserTaskWorkflowConfigDTO ? "EditUserTask" : Model is IServiceTaskWorkflowConfigDTO ? "EditServiceTask" : "Edit";
 }
 
-<form id="BlockEditFormId" class="row mt-1" action="/BlockWorkfow/@action" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
-</form>
+<div class="row">
+    <div class="col-12 col-lg-6 mt-3">
+        <label class="input">
+            <div class="readonly-div">@Model.Name</div>
+            <span class="input-label">Název</span>
+        </label>
+    </div>
+    <div class="col-12 col-lg-6 mt-3">
+        <label class="input">
+            @if (Model.SolvedDate == DateTime.MinValue)
+            {
+                <div class="readonly-div text-secondary text-italic">Nevyřešeno</div>
+            }
+            else
+            {
+                <div class="readonly-div">@Model.SolvedDate.ToLocalTime()</div>
+            }
+            <span class="input-label">Datum vyřešení</span>
+        </label>
+    </div>
+    @if (Model is IServiceTaskWorkflowConfigDTO)
+    {
+        <div class="col-12 col-lg-6 mt-3">
+            <label class="input">
+                <div class="readonly-div">@Model.Description</div>
+                <span class="input-label">Popis</span>
+            </label>
+        </div>
+        @await Html.PartialAsync("Partial/_ServiceTaskConfig", Model)
+    }
+    else
+    {
+        <div class="col-12 mt-3">
+            <label class="input">
+                <div class="readonly-div">@Model.Description</div>
+                <span class="input-label">Popis</span>
+            </label>
+        </div>
+    }
+</div>
+@if (Model is ITaskWorkflowConfigDTO)
+{
+    <hr class="mt-3 mb-0">
+    <form id="BlockEditFormId" class="row" action="/BlockWorkflow/@action" onsubmit="AjaxFormSubmit(event, null, true)" novalidate
+          oninput="InputValidator(this)">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        @await Html.PartialAsync("Partial/_TaskConfig", Model)
+        @if (Model is IUserTaskWorkflowConfigDTO)
+        {
+            @await Html.PartialAsync("Partial/_UserTaskConfig", Model)
+        }
+        <div class="d-flex justify-content-center mt-3 mb-1">
+            <button form="BlockEditFormId" type="submit" class="butn btn-s">Upravit</button>
+        </div>
+    </form>
+}
+else
+{
+    <div class="py-1"></div>
+}

@@ -399,3 +399,11 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });
 }
+
+function HideModelHeader()
+{
+    setTimeout(() => 
+    {
+        document.getElementById("BlockConfigTargetId").innerHTML = LoadingImageHtml();
+    }, HideDelay);
+}

@@ -47,14 +47,6 @@ function ShowPoolDetail(poolId)
     PoolId = poolId;
 }
 
-function HideModelHeader()
-{
-    setTimeout(() => 
-    {
-        document.getElementById("BlockConfigTargetId").innerHTML = LoadingImageHtml();
-    }, HideDelay);
-}
-
 function ShowAddAttrib()
 {
     document.getElementById("AttribCreateFormId").classList.remove("d-none");

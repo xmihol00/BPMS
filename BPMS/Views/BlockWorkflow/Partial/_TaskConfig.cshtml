@@ -1,0 +1,29 @@
+@model ITaskWorkflowConfigDTO
+
+<div class="col-12 mt-3">
+    <label class="input">
+        <select required class="input-select" name="UserId">
+            @if (Model.CurrentUserId == null)
+            {
+                <option value="" selected>Nevybrán</option>
+            }
+            else
+            {
+                <option value="">Nevybrán</option>
+            }
+
+            @foreach (UserIdNameDTO user in Model.UserIdNames)
+            {
+                @if (user.Id == Model.CurrentUserId)
+                {
+                    <option value="@user.Id" selected>@user.FullName</option>
+                }
+                else
+                {
+                    <option value="@user.Id">@user.FullName</option>
+                }
+            }
+        </select>
+        <span class="input-label">Řešitel</span>
+    </label>
+</div>

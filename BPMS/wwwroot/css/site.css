@@ -22,6 +22,7 @@
   --color-prio-high: #fc6a00;
   --color-prio-urgent: #cf0000;
   --color-state-new: #444;
+  --color-secondary: #6c757d;
 }
 
 html {

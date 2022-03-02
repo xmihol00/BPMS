@@ -72,18 +72,26 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<BlockWorkflowEntity> Bare(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
+        }
+
+        public Task<Guid?> TaskUserId<T>(Guid id, DbSet<T> set) where T : TaskWorkflowEntity
+        {
+            return set.Where(x => x.Id == id)
+                      .Select(x => x.UserId)
+                      .FirstOrDefaultAsync();
+        }
+
         public Task<Guid?> ServiceTaskUserId(Guid id)
         {
-            return _tasks.Where(x => x.Id == id)
-                         .Select(x => x.UserId)
-                         .FirstOrDefaultAsync();
+            return TaskUserId(id, _serviceTasks);
         }
 
         public Task<Guid?> UserTaskUserId(Guid id)
         {
-            return _tasks.Where(x => x.Id == id)
-                         .Select(x => x.UserId)
-                         .FirstOrDefaultAsync();
+            return TaskUserId(id, _userTasks);
         }
 
         public async Task<TaskAllDTO> Selected(Guid id, Guid userId)
@@ -136,10 +144,10 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.WorkflowId == workflowId && x.BlockModelId == blockModelId);
         }
 
-        public Task<BlockWorkflowEntity> BareWorkflow(Guid id)
+        public Task<BlockWorkflowEntity> BareWorkflow(Guid blockId, Guid workflowId)
         {
             return _dbSet.Include(x => x.Workflow)
-                         .FirstAsync(x => x.Id == id);
+                         .FirstAsync(x => x.BlockModelId == blockId && x.WorkflowId == workflowId);
         }
 
         public Task<bool> Any(Guid workflowId, Guid blockModelId)

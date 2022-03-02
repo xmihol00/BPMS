@@ -1,109 +1,107 @@
 @model BlockModelConfigDTO
 
-@if (Model != null)
-{
-    <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
-        <input type="hidden" name="Id" value="@Model.Id" />
+<form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="col-12 mb-3">
+        <label class="input">
+            <input required name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
+            <span class="input-label">Název</span>
+        </label>
+    </div>
+    <div class="col-12 mb-2">
+        <label class="input mb-2">
+            <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
+            <span class="input-label">Popis</span>
+        </label>
+    </div>
+    @if (Model is IServiceConfig)
+    {
         <div class="col-12 mb-3">
+            @await Html.PartialAsync("Partial/_ServiceConfig", Model)
+        </div>
+    }
+    @if (Model is IRoleConfig)
+    {
+        <div class="col-12 mb-3">
+            @await Html.PartialAsync("Partial/_RoleConfig", Model)
+        </div>
+    }
+    <div class="d-flex justify-content-center mb-1">
+        @if (Model is IAttributesConfig)
+        {
+            <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
+        }
+        <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s">Upravit</button>
+    </div>
+</form>
+<form id="AttribCreateFormId" class="d-none mt-2 position-relative" method="post" action="/BlockModel/CreateEditAttribute" 
+        onsubmit="AjaxFormSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
+    <div class="vertical-justify-center config-buttons">
+        <button type="submit" form="AttribCreateFormId" id="CreateAttBtnId" class="butn butn-sm btn-s mb-1" disabled><i class="fas fa-check"></i></button>
+        <button type="button" id="CancelAttBtnId" class="butn butn-sm btn-d mt-1" onclick="CancelAddAttrib()"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="IdId" name="Id" value="" />
+    <input type="hidden" name="BlockId" value="@Model.Id" />
+    <h5 id="HeadlineId">Tvorba atributu</h5>
+    <div class="row">
+        <div class="col-4">
             <label class="input">
-                <input required name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
+                <input required id="NameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
                 <span class="input-label">Název</span>
             </label>
         </div>
-        <div class="col-12 mb-2">
-            <label class="input mb-2">
-                <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
+        <div class="col-4">
+            <label class="input">
+                <select id="TypeId" class="input-select" name="Type" oninput="AttribTypeChange(this)"> 
+                    @foreach (AttributeTypeEnum enumVal in Enum.GetValues(typeof(AttributeTypeEnum)))
+                    {
+                        <option value="@enumVal">@enumVal.ToLabel()</option>   
+                    }
+                </select>
+                <span class="input-label">Typ</span>
+            </label>
+        </div>  
+        <div class="col-4 vertical-justify-center justify-content-center">
+            <div class="d-flex justify-content-center">
+                <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" checked/>
+                <span class="label-checkbox">Povinný</span>
+            </div>
+        </div>
+        <div class="col-6 mt-3">
+            <label class="input">
+                <textarea id="DescrId" name="Description" class="input-field" type="text" placeholder=" "></textarea>
                 <span class="input-label">Popis</span>
             </label>
         </div>
-        @if (Model is IServiceConfig)
-        {
-            <div class="col-12 mb-3">
-                @await Html.PartialAsync("Partial/_ServiceConfig", Model)
-            </div>
-        }
-        @if (Model is IRoleConfig)
-        {
-            <div class="col-12 mb-3">
-                @await Html.PartialAsync("Partial/_RoleConfig", Model)
-            </div>
-        }
-        <div class="d-flex justify-content-center mb-1">
-            @if (Model is IAttributesConfig)
-            {
-                <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
-            }
-            <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s">Upravit</button>
-        </div>
-    </form>
-    <form id="AttribCreateFormId" class="d-none mt-2 position-relative" method="post" action="/BlockModel/CreateEditAttribute" 
-          onsubmit="AjaxFormSubmit(event, 'BlockConfigTargetId')" oninput="InputValidator(this)">
-        <div class="vertical-justify-center config-buttons">
-            <button type="submit" form="AttribCreateFormId" id="CreateAttBtnId" class="butn butn-sm btn-s mb-1" disabled><i class="fas fa-check"></i></button>
-            <button type="button" id="CancelAttBtnId" class="butn butn-sm btn-d mt-1" onclick="CancelAddAttrib()"><i class="fas fa-times"></i></button>
-        </div>
-        <input type="hidden" id="IdId" name="Id" value="" />
-        <input type="hidden" name="BlockId" value="@Model.Id" />
-        <h5 id="HeadlineId">Tvorba atributu</h5>
-        <div class="row">
-            <div class="col-4">
-                <label class="input">
-                    <input required id="NameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
-                    <span class="input-label">Název</span>
-                </label>
-            </div>
-            <div class="col-4">
-                <label class="input">
-                    <select id="TypeId" class="input-select" name="Type" oninput="AttribTypeChange(this)"> 
-                        @foreach (AttributeTypeEnum enumVal in Enum.GetValues(typeof(AttributeTypeEnum)))
-                        {
-                            <option value="@enumVal">@enumVal.ToLabel()</option>   
-                        }
-                    </select>
-                    <span class="input-label">Typ</span>
-                </label>
-            </div>  
-            <div class="col-4 vertical-justify-center justify-content-center">
-                <div class="d-flex justify-content-center">
-                    <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" checked/>
-                    <span class="label-checkbox">Povinný</span>
-                </div>
-            </div>
-            <div class="col-6 mt-3">
-                <label class="input">
-                    <textarea id="DescrId" name="Description" class="input-field" type="text" placeholder=" "></textarea>
-                    <span class="input-label">Popis</span>
-                </label>
-            </div>
-            <div id="SpecDivId" class="col-5 mt-3">
-                <div class="vertical-justify-center">
-                    Tento typ atributu nemá specifikaci.
-                </div>
+        <div id="SpecDivId" class="col-5 mt-3">
+            <div class="vertical-justify-center">
+                Tento typ atributu nemá specifikaci.
             </div>
         </div>
-    </form>
-    @if (Model is IRecievedMessageConfig)
-    {
-        @await Html.PartialAsync("Partial/_RecieveEventConfig", Model)
-    }
-
-    @if (Model is IAttributesConfig)
-    {   
-        @await Html.PartialAsync("Partial/_AttributesConfig", (Model as IAttributesConfig, Model is IRecievedMessageConfig))
-    }
-
-    @if (Model is IServiceInputAttributes)
-    {
-        @await Html.PartialAsync("Partial/_ServiceInputAttributesConfig", Model)
-    }
-    
-    @if (Model is IInputAttributesConfig)
-    {
-        @await Html.PartialAsync("Partial/_InputAttributesConfig", Model)
-    }
-
-    @if (Model is IServiceOutputAttributes)
-    {
-        @await Html.PartialAsync("Partial/_ServiceOutputAttributesConfig", Model)
-    }
+    </div>
+</form>
+@if (Model is IRecievedMessageConfig)
+{
+    @await Html.PartialAsync("Partial/_RecieveEventConfig", Model)
 }
+
+@if (Model is IAttributesConfig)
+{   
+    @await Html.PartialAsync("Partial/_AttributesConfig", (Model as IAttributesConfig, Model is IRecievedMessageConfig))
+}
+
+@if (Model is IServiceInputAttributes)
+{
+    @await Html.PartialAsync("Partial/_ServiceInputAttributesConfig", Model)
+}
+
+@if (Model is IInputAttributesConfig)
+{
+    @await Html.PartialAsync("Partial/_InputAttributesConfig", Model)
+}
+
+@if (Model is IServiceOutputAttributes)
+{
+    @await Html.PartialAsync("Partial/_ServiceOutputAttributesConfig", Model)
+}
+

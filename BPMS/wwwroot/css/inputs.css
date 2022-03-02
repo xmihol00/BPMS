@@ -65,15 +65,11 @@
 .input-field:focus + .input-label, 
 .input-select:not(:empty) + .input-label, 
 .input-field:not(:placeholder-shown) + .input-label, 
-.input-file-chosen {
-  transform: translate(0.25rem, -82%) scale(0.95);
-  color: var(--color-primary);
-  padding: 0rem 0.2rem;
-}
-
+.input-file-chosen,
 .readonly-div + .input-label,
-.flex-input-group + .input-label {
-  transform: translate(0rem, -82%) scale(0.95);
+.flex-input-group + .input-label, 
+.input-field[type=date] + .input-label {
+  transform: translate(0.25rem, -82%) scale(0.95);
   color: var(--color-primary);
   padding: 0rem 0.2rem;
 }
@@ -178,9 +174,15 @@ option {
 .readonly-div {
   display: block;
   width: 100%;
-  padding: 0.4rem 1rem;
+  padding: 0.4rem 0.5rem;
   border: solid 1px var(--color-primary);
   border-radius: 0.25rem;
+}
+
+.readonly-div:empty::before {
+  content: "Nevyplněno";
+  color: var(--color-secondary);
+  font-style: italic;
 }
 
 .flex-input-group {
