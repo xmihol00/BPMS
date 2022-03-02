@@ -9,7 +9,7 @@ using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockModel.ConfigTypes
+namespace BPMS_DTOs.BlockModel.IConfigTypes
 {
     public interface IServiceOutputAttributes
     {

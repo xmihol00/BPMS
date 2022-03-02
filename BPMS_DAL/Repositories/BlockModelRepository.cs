@@ -14,6 +14,7 @@ using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DTOs.BlockModel.ShareTypes;
 using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.Task;
+using BPMS_DTOs.User;
 
 namespace BPMS_DAL.Repositories
 {
@@ -21,12 +22,14 @@ namespace BPMS_DAL.Repositories
     {
         private readonly DbSet<ServiceTaskModelEntity> _serviceTasks;
         private readonly DbSet<UserTaskModelEntity> _userTasks;
+        private readonly DbSet<TaskModelEntity> _tasks;
         private readonly DbSet<RecieveEventModelEntity> _recieveEvens;
         public BlockModelRepository(BpmsDbContext context) : base(context) 
         {
             _serviceTasks = context.Set<ServiceTaskModelEntity>();
             _userTasks = context.Set<UserTaskModelEntity>();
             _recieveEvens = context.Set<RecieveEventModelEntity>();
+            _tasks = context.Set<TaskModelEntity>();
         }
 
         public Task<BlockModelEntity> Config(Guid id)
@@ -36,6 +39,14 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.InFlows)
                              .ThenInclude(x => x.OutBlock)
                          .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<string> ServiceName(Guid id)
+        {
+            return _serviceTasks.Include(x => x.Service)
+                                .Where(x => x.Id == id)
+                                .Select(x => x.Service.Name)
+                                .FirstAsync();
         }
 
         public Task<BlockModelEntity> PreviousFlow(Guid id)
@@ -59,6 +70,42 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              Specification = x.Specification,
                              Type = x.Type,
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<List<UserIdNameDTO>> UserIdNamesUser(Guid id, Guid agendaId)
+        {
+            return _tasks.Include(x => x.Role)
+                            .ThenInclude(x => x.AgendaRoles)
+                                .ThenInclude(x => x.UserRoles)
+                                    .ThenInclude(x => x.User)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Role.AgendaRoles)
+                         .Where(x => x.AgendaId == agendaId)
+                         .SelectMany(x => x.UserRoles)
+                         .Select(x => new UserIdNameDTO
+                         {
+                             FullName = $"{x.User.Name} {x.User.Surname}",
+                             Id = x.UserId
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<List<UserIdNameDTO>> UserIdNamesService(Guid id, Guid agendaId)
+        {
+            return _tasks.Include(x => x.Role)
+                            .ThenInclude(x => x.AgendaRoles)
+                                .ThenInclude(x => x.UserRoles)
+                                    .ThenInclude(x => x.User)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Role.AgendaRoles)
+                         .Where(x => x.AgendaId == agendaId)
+                         .SelectMany(x => x.UserRoles)
+                         .Select(x => new UserIdNameDTO
+                         {
+                             FullName = $"{x.User.Name} {x.User.Surname}",
+                             Id = x.UserId
                          })
                          .ToListAsync();
         }

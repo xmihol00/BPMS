@@ -3,6 +3,7 @@ using BPMS_BL.Facades;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockModel;
+using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

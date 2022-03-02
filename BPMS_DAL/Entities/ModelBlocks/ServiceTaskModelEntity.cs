@@ -9,15 +9,13 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Entities.ModelBlocks
 {
-    public class ServiceTaskModelEntity : BlockModelEntity, IServiceTaskModelEntity, IAttributes
+    public class ServiceTaskModelEntity : TaskModelEntity, IServiceTaskModelEntity, IAttributes
     {
         public ServiceTaskModelEntity() : base() {}
         public ServiceTaskModelEntity(PoolEntity pool) : base(pool) { }
 
         public Guid? ServiceId { get; set; }
         public ServiceEntity? Service { get; set; }
-        public Guid? RoleId { get; set; }
-        public SolvingRoleEntity? Role { get; set; }
         public ServiceStateEnum State { get; set; }
         public List<BlockModelDataSchemaEntity> Blocks { get; set; } = new List<BlockModelDataSchemaEntity>();
     }

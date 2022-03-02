@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockModel
+namespace BPMS_DTOs.BlockWorkflow
 {
     public class BlockWorkflowActivityDTO
     {

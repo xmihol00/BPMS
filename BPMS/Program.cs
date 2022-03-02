@@ -1,4 +1,3 @@
-
 using BPMS_BL.Facades;
 using BPMS_BL.Profiles;
 using BPMS_Common;
@@ -52,8 +51,10 @@ services.AddScoped<UserFacade>();
 services.AddScoped<TaskFacade>();
 services.AddScoped<WorkflowFacade>();
 services.AddScoped<SystemFacade>();
+services.AddScoped<BlockWorkflowFacade>();
 
-services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile));
+services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile),
+                       typeof(BlockWorkflowProfile));
 
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>

@@ -2,6 +2,8 @@ using AutoMapper;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.BlockWorkflow;
+using BPMS_DTOs.BlockWorkflow.IConfigTypes;
 using BPMS_DTOs.Task;
 using BPMS_DTOs.Workflow;
 
@@ -10,11 +12,13 @@ namespace BPMS_BL.Facades
     public class WorkflowFacade
     {
         private readonly WorkflowRepository _workflowRepository;
+        private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly IMapper _mapper;
 
-        public WorkflowFacade(WorkflowRepository workflowRepository, IMapper mapper)
+        public WorkflowFacade(WorkflowRepository workflowRepository, BlockWorkflowRepository blockWorkflowRepository, IMapper mapper)
         {
             _workflowRepository = workflowRepository;
+            _blockWorkflowRepository = blockWorkflowRepository;
             _mapper = mapper;
         }
 

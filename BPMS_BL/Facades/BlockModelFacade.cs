@@ -16,6 +16,7 @@ using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
+using BPMS_DTOs.BlockModel.IConfigTypes;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.Service;
@@ -233,7 +234,7 @@ namespace BPMS_BL.Facades
 
         private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
         {
-            BlockModelConfigDTO dto = new RecieveEventConfigDTO();
+            BlockModelConfigDTO dto = new RecieveEventModelConfigDTO();
             (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(recieveEvent.Id);
             (dto as IRecievedMessageConfig).Message = await RecievedMessage(recieveEvent);
             return dto;
@@ -241,7 +242,7 @@ namespace BPMS_BL.Facades
 
         private async Task<BlockModelConfigDTO> SendEventConfig(ISendEventModelEntity sendEvent)
         {
-            BlockModelConfigDTO dto = new SendEventConfigDTO();
+            BlockModelConfigDTO dto = new SendEventModelConfigDTO();
             (dto as IInputAttributesConfig).InputAttributes = 
                     await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
             return dto;
@@ -249,7 +250,7 @@ namespace BPMS_BL.Facades
 
         private async Task<BlockModelConfigDTO> UserTaskConfig(IUserTaskModelEntity userTask)
         {
-            BlockModelConfigDTO dto = new UserTaskConfigDTO();
+            BlockModelConfigDTO dto = new UserTaskModelConfigDTO();
             (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(userTask.Id);
             (dto as IInputAttributesConfig).InputAttributes = 
                     await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
@@ -274,7 +275,7 @@ namespace BPMS_BL.Facades
 
         private async Task<BlockModelConfigDTO> ServiceTaskConfig(IServiceTaskModelEntity serviceTask)
         {
-            BlockModelConfigDTO dto = new ServiceTaskConfigDTO();
+            BlockModelConfigDTO dto = new ServiceTaskModelConfigDTO();
             IServiceConfig service = dto as IServiceConfig;
             service.CurrentService = serviceTask.ServiceId;
             service.Services.Add(new ServiceIdNameDTO

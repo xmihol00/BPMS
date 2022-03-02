@@ -7,10 +7,10 @@ using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockModel.ConfigTypes
+namespace BPMS_DTOs.BlockModel.IConfigTypes
 {
-    public interface IAttributesConfig
+    public interface IRecievedMessageConfig
     {
-        public List<BlockAttributeDTO> Attributes { get; set; }
+        public RecievedMessageDTO Message { get; set; }
     }
 }

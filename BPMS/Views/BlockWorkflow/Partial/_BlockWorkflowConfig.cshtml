@@ -1,0 +1,7 @@
+@model BlockWorkflowConfigDTO
+@{
+    string action = Model is IUserTaskWorkflowConfigDTO ? "EditUserTask" : Model is IServiceTaskWorkflowConfigDTO ? "EditServiceTask" : "Edit";
+}
+
+<form id="BlockEditFormId" class="row mt-1" action="/BlockWorkfow/@action" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
+</form>

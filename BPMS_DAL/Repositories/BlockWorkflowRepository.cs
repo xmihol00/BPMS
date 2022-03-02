@@ -12,6 +12,7 @@ using BPMS_DTOs.Task;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DTOs.BlockModel;
+using BPMS_DTOs.BlockWorkflow;
 
 namespace BPMS_DAL.Repositories
 {
@@ -19,10 +20,13 @@ namespace BPMS_DAL.Repositories
     {
         private readonly DbSet<UserTaskWorkflowEntity> _userTasks;
         private readonly DbSet<ServiceTaskWorkflowEntity> _serviceTasks;
+        private readonly DbSet<TaskWorkflowEntity> _tasks;
+        
         public BlockWorkflowRepository(BpmsDbContext context) : base(context) 
         {
             _userTasks = context.Set<UserTaskWorkflowEntity>();
             _serviceTasks = context.Set<ServiceTaskWorkflowEntity>();
+            _tasks = context.Set<TaskWorkflowEntity>();
         }
 
         public async Task<List<TaskAllDTO>> All(Guid userId, Guid? id = null)
@@ -66,6 +70,20 @@ namespace BPMS_DAL.Repositories
                                                 .ThenBy(x => x.SolveDate)
                                            .ToListAsync());
             return tasks;
+        }
+
+        public Task<Guid?> ServiceTaskUserId(Guid id)
+        {
+            return _tasks.Where(x => x.Id == id)
+                         .Select(x => x.UserId)
+                         .FirstOrDefaultAsync();
+        }
+
+        public Task<Guid?> UserTaskUserId(Guid id)
+        {
+            return _tasks.Where(x => x.Id == id)
+                         .Select(x => x.UserId)
+                         .FirstOrDefaultAsync();
         }
 
         public async Task<TaskAllDTO> Selected(Guid id, Guid userId)
@@ -116,6 +134,12 @@ namespace BPMS_DAL.Repositories
         public Task<BlockWorkflowEntity> Bare(Guid workflowId, Guid blockModelId)
         {
             return _dbSet.FirstAsync(x => x.WorkflowId == workflowId && x.BlockModelId == blockModelId);
+        }
+
+        public Task<BlockWorkflowEntity> BareWorkflow(Guid id)
+        {
+            return _dbSet.Include(x => x.Workflow)
+                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<bool> Any(Guid workflowId, Guid blockModelId)

@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_DTOs.BlockAttribute;
-using BPMS_DTOs.Role;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockModel.ConfigTypes
+namespace BPMS_DTOs.BlockModel.IConfigTypes
 {
-    public interface IRoleConfig
+    public interface IAttributesConfig
     {
-        public List<RoleAllDTO> Roles { get; set; }
-        public Guid? CurrentRole { get; set; }
+        public List<BlockAttributeDTO> Attributes { get; set; }
     }
 }

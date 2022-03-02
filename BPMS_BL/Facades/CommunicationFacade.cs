@@ -12,6 +12,7 @@ using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockModel;
+using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;

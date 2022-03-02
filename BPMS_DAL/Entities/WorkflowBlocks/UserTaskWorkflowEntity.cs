@@ -8,10 +8,8 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_DAL.Entities.WorkflowBlocks
 {
-    public class UserTaskWorkflowEntity : BlockWorkflowEntity, IUserTaskWorkflowEntity
+    public class UserTaskWorkflowEntity : TaskWorkflowEntity, IUserTaskWorkflowEntity
     {
-        public Guid? UserId { get; set; }
-        public UserEntity? User { get; set; }
         public DateTime SolveDate { get; set; }
         public TaskPriorityEnum Priority { get; set; }
     }

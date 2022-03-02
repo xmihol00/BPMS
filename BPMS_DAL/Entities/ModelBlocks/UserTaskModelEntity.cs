@@ -8,13 +8,11 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Entities.ModelBlocks
 {
-    public class UserTaskModelEntity : BlockModelEntity, IUserTaskModelEntity, IAttributes
+    public class UserTaskModelEntity : TaskModelEntity, IUserTaskModelEntity, IAttributes
     {
         public UserTaskModelEntity() : base() {}
         public UserTaskModelEntity(PoolEntity pool) : base(pool) { }
 
-        public Guid? RoleId { get; set; }
-        public SolvingRoleEntity? Role { get; set; }
         public TimeSpan Difficulty { get; set; }
     }
 }
