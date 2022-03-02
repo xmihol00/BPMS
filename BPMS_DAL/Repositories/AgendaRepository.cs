@@ -144,7 +144,7 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<AgendaEntity> DetailBase(Guid id)
+        public Task<AgendaEntity> BareAdmin(Guid id)
         {
             return _dbSet.Include(x => x.Administrator)
                          .FirstAsync(x => x.Id == id);

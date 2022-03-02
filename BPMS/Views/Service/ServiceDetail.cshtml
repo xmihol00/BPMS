@@ -1,22 +1,15 @@
-@model ServiceEditPageDTO
+@model ServiceDetailDTO
 @{
-    if (Model.Id == Guid.Empty)
-    {
-        ViewData["Title"] = "Tvorba webové služby";
-    }
-    else
-    {
-        ViewData["Title"] = "Editace webové služby";
-    }
+    ViewData["Title"] = "Detail webové služby";
 }
 <script src="~/js/Service/Service.js"></script>
 
 <div id="PageNavId" class="page-navbar">
-    @await Html.PartialAsync("Partial/_ServiceEditHeader", Model)
+    @await Html.PartialAsync("Partial/_ServiceDetailHeader", Model)
 </div>
 <div id="PageContentId" class="d-flex pt-3">
-    <div id="OverviewDivId" class="container-lg">
-        @await Html.PartialAsync("Partial/_ServiceCreateEdit", Model)
+    <div id="DetailDivId" class="container-lg">
+        @await Html.PartialAsync("Partial/_ServiceDetail", Model)
     </div>
     <div id="OverviewDivId" class="container-lg side-overview">
         <div class="row">

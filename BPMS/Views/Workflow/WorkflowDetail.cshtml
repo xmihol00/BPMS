@@ -2,6 +2,10 @@
 @{
     ViewData["title"] = "Detail workflow";
 }
+<script>
+    const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
+    const ActiveBlock = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlock)));
+</script>
 <script src="~/js/Workflow/Workflow.js"></script>
 
 <div id="PageNavId" class="page-navbar">

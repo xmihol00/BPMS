@@ -1,0 +1,8 @@
+@model ModelDetailPartialDTO
+
+<div id="DetailInfoId">
+    @await Html.PartialAsync($"Partial/_ModelDetailInfo", Model)
+</div>
+<div id="ModelSvgId" class="mt-2">
+    @Html.Raw(Model.SVG)
+</div>

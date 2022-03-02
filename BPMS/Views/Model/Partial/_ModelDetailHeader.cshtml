@@ -1,10 +1,10 @@
-@model ModelHeaderDTO
+@model ModelDetailHeaderDTO
 
 @if (Model != null)
 {
     <div class="d-flex justify-content-between px-4 page-navbar-content">
         <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
-        <h1 class="my-auto text-font">Konfigurace Modelu</h1>
+        <h1 class="my-auto text-font">Detail modelu</h1>
         <div class="my-auto">
             <button class="butn btn-p" onclick="ShowModal('EditModelId')" >Upravit</button>
             @switch (Model.State)
@@ -33,7 +33,7 @@
         </div>
     </div>
     <form id="EditModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Edit" 
-          onsubmit="AjaxFormSubmit(event, 'ModelNameId', true)" oninput="InputValidator(this)">
+          onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)" oninput="InputValidator(this)">
         <input id="ModelIdId" type="hidden" name="Id" value="@Model.Id">
         <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
             <h2 class="mb-0 text-font">Editace modelu</h2>

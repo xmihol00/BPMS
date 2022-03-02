@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Service
 {
-    public class ServiceEditPageDTO : ServiceEditPagePartialDTO
+    public class ServiceDetailDTO : ServiceDetailPartialDTO
     {
         public List<ServiceAllDTO> OtherServices { get; set; } = new List<ServiceAllDTO>();
         public ServiceAllDTO SelectedService { get; set; } = new ServiceAllDTO();

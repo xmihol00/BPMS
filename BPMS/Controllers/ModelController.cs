@@ -22,26 +22,31 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Transition(Guid id)
+        public async Task<IActionResult> Detail(Guid id)
         {
-            ModelHeaderDTO header = await _modelFacade.Header(id);
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_ModelHeader", header, true),
-                info = await this.RenderViewAsync("Partial/_ModelInfo", header, true),
-            });
+            return View("ModelDetail", await _modelFacade.Detail(id));
         }
 
         [HttpGet]
-        public async Task<IActionResult> Detail(Guid id)
+        public async Task<IActionResult> DetailPartial(Guid id)
         {
-            return View("ModelDetail", (await _modelFacade.Detail(id), ""));
+            ModelDetailPartialDTO dto = await _modelFacade.DetailPartial(id);
+            return Ok(new
+            {
+                detail = await this.RenderViewAsync("Partial/_ModelDetail", dto, true),
+                header = await this.RenderViewAsync("Partial/_ModelDetailHeader", dto, true),
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(ModelEditDTO dto)
         {
-            return PartialView("Partial/_ModelInfo", await _modelFacade.Edit(dto));
+            ModelInfoCardDTO infoCard = await _modelFacade.Edit(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_ModelDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_ModelCard", (infoCard.SelectedModel, true), true),
+            });
         }
 
         [HttpPost]

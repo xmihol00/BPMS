@@ -4,32 +4,33 @@ var PoolId = "";
 
 window.addEventListener('DOMContentLoaded', () => 
 {
-    if (window.location.pathname.startsWith("/Model/Detail"))
-    {
-        ModelAddEventListeners();
-    }
+    AddEventListeners();
 });
 
-function ModelAddEventListeners()
+function AddEventListeners()
 {
-    for (let pool of document.getElementsByClassName("bpmn-pool"))
+    let model = document.querySelector("[id='ModelSvgId']");
+    if (model)
     {
-        if (pool.classList.contains("bpmn-this-sys"))
+        for (let pool of model.getElementsByClassName("bpmn-pool"))
         {
-            for (let block of pool.getElementsByClassName("bpmn-block"))
+            if (pool.classList.contains("bpmn-this-sys"))
             {
-                block.addEventListener("click", (event) => ShowBlockDetail(event, block.id));
+                for (let block of pool.getElementsByClassName("bpmn-block"))
+                {
+                    block.addEventListener("click", (event) => ShowBlockDetail(event, block.id));
+                }
             }
-        }
-        else
-        {
-            for (let block of pool.getElementsByClassName("bpmn-block"))
+            else
             {
-                block.addEventListener("click", (event) => event.stopPropagation());
+                for (let block of pool.getElementsByClassName("bpmn-block"))
+                {
+                    block.addEventListener("click", (event) => event.stopPropagation());
+                }
             }
+    
+            pool.addEventListener("click", () => ShowPoolDetail(pool.id));
         }
-
-        pool.addEventListener("click", () => ShowPoolDetail(pool.id));
     }
 }
 

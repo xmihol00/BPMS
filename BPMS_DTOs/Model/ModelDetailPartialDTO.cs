@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Model
 {
-    public class ModelAllAgendaDTO
+    public class ModelDetailPartialDTO : ModelDetailInfoDTO
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
         public string SVG { get; set; } = string.Empty;
     }
 }

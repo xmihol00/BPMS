@@ -18,6 +18,11 @@ window.addEventListener('DOMContentLoaded', () =>
         DisplayActiveBlocks(ActiveBlocks);
     }
 
+    if (typeof ActiveBlock != "undefined")
+    {
+        DisplayActiveBlocks(ActiveBlock);
+    }
+
     ResizeTextAreas(document);
 });
 
@@ -137,7 +142,11 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, hide
                 {
                     LoadedElements.push(targetId);
                 }
-                succesCallback();
+
+                if (succesCallback)
+                {
+                    succesCallback();
+                }
             })
             .fail(() => 
             {
@@ -247,6 +256,15 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
     });        
 }
 
+function InfoCardUpdate(result)
+{
+    document.getElementById("DetailInfoId").innerHTML = result.info;
+    let sideOverview = document.getElementById("OverviewDivId").children[0];
+    let div = document.createElement("div");
+    div.innerHTML = result.card;
+    sideOverview.children[0].innerHTML = div.children[0].innerHTML;
+}
+
 function DisplayResult(targetId, result, successCallback)
 {
     let target = document.getElementById(targetId)
@@ -331,7 +349,7 @@ function LoadingImageHtml()
     return "<div class='loading-content'></div>"
 }
 
-function DetailTransition(element, path, blocks = false)
+function DetailTransition(element, path, blocks = false, succesCallback = null)
 {
     for (let card of document.getElementsByClassName("selected-card"))
     {
@@ -365,10 +383,15 @@ function DetailTransition(element, path, blocks = false)
         detailDiv.innerHTML = result.detail;
         if (blocks)
         {
-            DisplayActiveBlocks(result.activeBlocks);
+            DisplayActiveBlocks(result.activeBlocks || result.activeBlock);
         }
         window.history.pushState({}, '', path.replace("Partial", "") + element.id);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (succesCallback)
+        {
+            succesCallback(result);
+        }
     })
     .fail(() => 
     {

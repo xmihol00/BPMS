@@ -27,6 +27,7 @@ namespace BPMS_BL.Profiles
                 .ForMember(dst => dst.URL, opt => opt.MapFrom(src => src.URL.ToString()));
 
             CreateMap<HeaderCreateEditDTO, ServiceHeaderEntity>();
+            CreateMap<ServiceEntity, ServiceInfoCardDTO>();
         }
     }
 }

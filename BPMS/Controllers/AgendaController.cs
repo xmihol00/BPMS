@@ -60,7 +60,12 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(AgendaEditDTO dto)
         {
-            return PartialView("Partial/_AgendaInfo", await _agendaFacade.Edit(dto));
+            AgendaInfoCardDTO infoCard = await _agendaFacade.Edit(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_AgendaDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_AgendaCard", (infoCard.SelectedAgenda, true), true),
+            });
         }
 
         [HttpGet]

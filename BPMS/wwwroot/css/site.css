@@ -21,6 +21,7 @@
   --color-prio-medium: #007bff;
   --color-prio-high: #fc6a00;
   --color-prio-urgent: #cf0000;
+  --color-state-new: #444;
 }
 
 html {
@@ -485,8 +486,12 @@ a:hover {
   color: var(--color-active);
 }
 
-.Active {
+.Active, .Shared {
   background-color: var(--color-active);
+}
+
+.Sharable {
+  background-color: var(--primary-color);
 }
 
 .wf-paused {
@@ -501,7 +506,11 @@ a:hover {
   color: var(--color-finished);
 }
 
-.Finished {
+.New {
+  background-color: var(--color-state-new);
+}
+
+.Finished, .Executable {
   background-color: var(--color-finished);
 }
 
@@ -509,16 +518,21 @@ a:hover {
   color: var(--color-canceled);
 }
 
-.Canceled {
+.Canceled, .Incorrect {
   background-color: var(--color-canceled);
 }
 
 .wf-count {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   font-weight: 500;
   width: 2.5em;
-  margin-bottom: 0.6em;
   text-align: center;
+}
+
+.small-icon-margin {
+  margin: 0px 4px;
 }
 
 .side-overview {
@@ -761,9 +775,13 @@ a:hover {
   font-size: 2em;
 }
 
-.text-url {
+.text-url, .text-url-large {
   font-family: monospace;
   font-size: 0.9rem;
   font-weight: bold;
   word-break: break-all;
+}
+
+.text-url-large {
+  font-size: 1.2em;
 }

@@ -30,7 +30,7 @@ namespace BPMS_BL.Facades
         public async Task<WorkflowDetailDTO> DetailPartial(Guid id)
         {
             WorkflowDetailDTO detail = await _workflowRepository.Detail(id);
-            detail.ActiveBlocks = await _workflowRepository.ActiveBlocks(id);
+            detail.ActiveBlock = await _workflowRepository.ActiveBlocks(id);
 
             List<TaskDataDTO> outputData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _workflowRepository.OutputUserTasks(id))
@@ -83,6 +83,7 @@ namespace BPMS_BL.Facades
             WorkflowDetailDTO detail = await DetailPartial(id);
             detail.OtherWorkflows = await _workflowRepository.All(id);
             detail.SelectedWorkflow = await _workflowRepository.Selected(id);
+            detail.ActiveBlocks = await _workflowRepository.ActiveBlocks();
             
             return detail;
         }

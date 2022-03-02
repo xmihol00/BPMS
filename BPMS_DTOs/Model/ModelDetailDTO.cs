@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Model
 {
-    public class ModelDetailDTO : ModelHeaderDTO
+    public class ModelDetailDTO : ModelDetailPartialDTO
     {
-        public string SVG { get; set; } = string.Empty;
+        public List<ModelAllDTO> OtherModels { get; set; } = new List<ModelAllDTO>();
+        public ModelAllDTO SelectedModel { get; set; } = new ModelAllDTO();
     }
 }

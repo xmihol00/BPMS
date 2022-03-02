@@ -65,22 +65,37 @@ namespace BPMS_BL.Facades
             return entity.AgendaId;
         }
 
-        public Task<ModelDetailDTO> Detail(Guid id)
+        public async Task<ModelDetailDTO> Detail(Guid id)
         {
-            return _modelRepository.Detail(id);
+            ModelDetailDTO detail = await _modelRepository.Detail(id);
+            detail.OtherModels = await _modelRepository.All(id);
+            detail.SelectedModel = await _modelRepository.Selected(id);
+
+            return detail;
         }
 
-        public async Task<ModelInfoDTO> Edit(ModelEditDTO dto)
+        public async Task<ModelDetailPartialDTO> DetailPartial(Guid id)
         {
-            ModelEntity entity = await _modelRepository.DetailRaw(dto.Id);
+            return await _modelRepository.Detail(id);
+        }
+
+        public async Task<ModelInfoCardDTO> Edit(ModelEditDTO dto)
+        {
+            ModelEntity entity = await _modelRepository.BareAgenda(dto.Id);
             entity.Name = dto.Name;
             entity.Description = dto.Description ?? "";
-
             await _modelRepository.Save();
-            return new ModelInfoDTO 
+
+            return new ModelInfoCardDTO
             {
+                AgendaId = entity.AgendaId,
+                AgendaName = entity.Agenda?.Name,
                 Description = entity.Description,
-                Name = entity.Name
+                Id = entity.Id,
+                Name = entity.Name,
+                State = entity.State,
+                Workflow = await _modelRepository.WaitingWorklfow(dto.Id),
+                SelectedModel = await _modelRepository.Selected(entity.Id)
             };
         }
 
@@ -196,7 +211,7 @@ namespace BPMS_BL.Facades
             return run;
         }
 
-        public Task<ModelHeaderDTO> Header(Guid id)
+        public Task<ModelDetailHeaderDTO> Header(Guid id)
         {
             return _modelRepository.Header(id);
         }

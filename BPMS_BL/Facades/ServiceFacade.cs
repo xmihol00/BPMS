@@ -40,21 +40,21 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public async Task<ServiceEditPagePartialDTO> Edit(Guid id)
+        public async Task<ServiceDetailPartialDTO> Edit(Guid id)
         {
             return await EditPageDTO(id, true);
         }
 
-        public async Task<ServiceEditPagePartialDTO> EditParial(Guid id)
+        public async Task<ServiceDetailPartialDTO> DetailPartial(Guid id)
         {
             return await EditPageDTO(id, false);
         }
 
-        public async Task<ServiceEditPageDTO> CreateEdit(Guid id)
+        public async Task<ServiceDetailDTO> Detail(Guid id)
         {
             if (id == Guid.Empty)
             {
-                return new ServiceEditPageDTO();
+                return new ServiceDetailDTO();
             }
             else
             {
@@ -62,9 +62,9 @@ namespace BPMS_BL.Facades
             }
         }
 
-        private async Task<ServiceEditPageDTO> EditPageDTO(Guid id, bool otherSystems = false)
+        private async Task<ServiceDetailDTO> EditPageDTO(Guid id, bool otherSystems = false)
         {
-            ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
+            ServiceDetailDTO dto = await _serviceRepository.Edit(id);
             dto.InputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
             dto.OutputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
             dto.Headers = await _serviceHeaderRepository.All(id);
@@ -77,9 +77,9 @@ namespace BPMS_BL.Facades
             return dto;
         }
 
-        public async Task<ServiceEditPageDTO> EditPartial(Guid id)
+        public async Task<ServiceDetailDTO> EditPartial(Guid id)
         {
-            ServiceEditPageDTO dto = await _serviceRepository.Edit(id);
+            ServiceDetailDTO dto = await _serviceRepository.Edit(id);
             dto.InputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Input));
             dto.OutputAttributes = ServiceTreeHelper.CreateTree(await _serviceDataSchemaRepository.DataSchemas(id, DirectionEnum.Output));
             dto.Headers = await _serviceHeaderRepository.All(id);
@@ -202,20 +202,24 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public async Task<Guid> CreateEdit(ServiceCreateEditDTO dto)
+        public async Task<Guid> Create(ServiceCreateEditDTO dto)
         {
             ServiceEntity entity = _mapper.Map<ServiceEntity>(dto);
-            if (dto.Id == Guid.Empty)
-            {
-                await _serviceRepository.Create(entity);
-            }
-            else
-            {
-                _serviceRepository.Update(entity);
-            }
-
+            await _serviceRepository.Create(entity);
             await _serviceRepository.Save();
+
             return entity.Id;
+        }
+
+        public async Task<ServiceInfoCardDTO> Edit(ServiceCreateEditDTO dto)
+        {
+            ServiceEntity entity = _mapper.Map<ServiceEntity>(dto);
+            _serviceRepository.Update(entity);
+            await _serviceRepository.Save();
+            
+            ServiceInfoCardDTO card = _mapper.Map<ServiceInfoCardDTO>(entity);
+            card.SelectedService = await _serviceRepository.Selected(entity.Id);
+            return card;
         }
 
         public async Task<ServiceOverviewDTO> Overview()

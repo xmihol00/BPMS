@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Service
 {
-    public class ServiceEditPageHeaderDTO
+    public class ServiceInfoCardDTO : ServiceDetailHeaderDTO
     {
-        public Guid Id { get; set; }
+        public ServiceAllDTO SelectedService { get; set; } = new ServiceAllDTO();
     }
 }

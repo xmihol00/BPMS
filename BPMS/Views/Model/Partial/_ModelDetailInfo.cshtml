@@ -1,0 +1,38 @@
+@model ModelDetailInfoDTO
+
+<div class="d-flex justify-content-center">
+    <h1 class="text-font my-auto me-1">@Model.Name</h1>
+    <div class="badge rounded-pill text-large ms-1 my-auto @Model.State">
+        @Model.State.ToLabel()
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-lg-6">
+        @if (Model.AgendaId != null)
+        {
+            <a href="/Agenda/Detail/@Model.AgendaId" class="w-50 link-p">
+                <div class="d-flex justify-content-center">
+                    <i class="fas fa-list-alt task-icon"></i>
+                </div>
+                <h4 class="text-center mb-0">@Model.AgendaName</h4>
+            </a>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center w-50 mt-3">
+                <i class="fas fa-list-alt task-icon"></i>
+            </div>
+        }
+    </div>
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font my-1">Popis</h4>
+        @if (String.IsNullOrEmpty(Model.Description))
+        {
+            <div class="text-placeholder">Model nemá popis.</div>
+        }
+        else
+        {
+            @Model.Description
+        }
+    </div>
+</div>

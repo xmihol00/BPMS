@@ -25,34 +25,37 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        [Route("/Service/Create")]
-        [Route("/Service/Edit/{id}")]
-        public async Task<IActionResult> CreateEdit(Guid id)
+        public async Task<IActionResult> Detail(Guid id)
         {
-            return View("ServiceCreateEdit", await _serviceFacade.CreateEdit(id));
+            return View("ServiceDetail", await _serviceFacade.Detail(id));
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditPartial(Guid id)
+        public async Task<IActionResult> DetailPartial(Guid id)
         {
-            ServiceEditPagePartialDTO dto = await _serviceFacade.EditParial(id);
+            ServiceDetailPartialDTO dto = await _serviceFacade.DetailPartial(id);
             return Ok(new
             {
-                detail = await this.RenderViewAsync("Partial/_ServiceCreateEdit", dto, true),
-                header = await this.RenderViewAsync("Partial/_ServiceEditHeader", dto, true),
+                detail = await this.RenderViewAsync("Partial/_ServiceDetail", dto, true),
+                header = await this.RenderViewAsync("Partial/_ServiceDetailHeader", dto, true),
             });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
+        [HttpPost]
+        public async Task<IActionResult> Create(ServiceCreateEditDTO dto)
         {
-            return View("AgendaCreateEdit", await _serviceFacade.Edit(id));
+            return Redirect($"/Service/Detail/{await _serviceFacade.Create(dto)}");
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEdit(ServiceCreateEditDTO dto)
+        public async Task<IActionResult> Edit(ServiceCreateEditDTO dto)
         {
-            return Redirect($"/Service/Edit/{await _serviceFacade.CreateEdit(dto)}");
+            ServiceInfoCardDTO infoCard = await _serviceFacade.Edit(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_ServiceDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_ServiceCard", (infoCard.SelectedService, true), true),
+            });
         }
 
         [HttpPost]

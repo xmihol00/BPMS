@@ -1,0 +1,36 @@
+@model ServiceDetailPartialDTO
+
+<div id="DetailInfoId">
+    @await Html.PartialAsync("Partial/_ServiceDetailInfo", Model)
+</div>
+<h3 class="text-font text-center mt-2">Hlavičky služby</h3>
+<div id="ServiceHeadersId" class="mb-3">
+    @await Html.PartialAsync("Partial/_HeaderAll", Model.Headers)
+</div>
+@await Html.PartialAsync("Partial/_DataSchemaCreateEdit", Model.Id)
+<div class="row">
+    <div class="col-12 col-xl-6">
+        <div class="d-flex justify-content-between mb-2">
+            <h4 class="text-font mt-1 mb-0">Vstupní atributy</h4>
+            <div>
+                <button id="ServiceTestBtnId" type="button" class="butn btn-p" onclick="TestService(this, '@Model.Id')">Testovat</button>    
+                <button id="AddInputBtnId" type="button" class="butn btn-p" onclick="InputAttribAdd(this)">Přidat</button>
+            </div>
+        </div>
+        <div id="InputSchemaId">
+            @await Html.PartialAsync("Partial/_InputDataSchema", 
+                    (Model.InputAttributes as IEnumerable<IDataSchemaNode>))
+        </div>
+        <div id="TestInputId"></div>
+        <div id="OutputInputId" class="mt-3"></div>
+    </div>
+    <div class="col-12 col-xl-6">
+        <div class="d-flex justify-co ntent-between mb-2">
+            <h4 class="text-font mt-1 mb-0">Výstupní atributy</h4>
+        </div>
+        <div id="OutputSchemaId">
+            @await Html.PartialAsync("Partial/_OutputDataSchema", 
+                    (Model.OutputAttributes as IEnumerable<IDataSchemaNode>))
+        </div>
+    </div>
+</div>

@@ -11,11 +11,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Agenda
 {
-    public class AgendaDetailPartialDTO : AgendaDetailHeaderDTO
+    public class AgendaDetailPartialDTO : AgendaDetailInfoDTO
     {
-        public Guid AdministratorId { get; set; }
-        public string AdministratorName { get; set; } = string.Empty;
-        public string AdministratorEmail { get; set; } = string.Empty;
         public List<ModelAllAgendaDTO> Models { get; set; } = new List<ModelAllAgendaDTO>();
         public List<RoleDetailDTO> Roles { get; set; } = new List<RoleDetailDTO>();
         public List<SystemAllDTO> Systems { get; set; } = new List<SystemAllDTO>();

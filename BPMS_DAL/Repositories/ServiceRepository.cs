@@ -27,9 +27,9 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<ServiceEditPageDTO> Edit(Guid id)
+        public Task<ServiceDetailDTO> Edit(Guid id)
         {
-            return _dbSet.Select(x => new ServiceEditPageDTO
+            return _dbSet.Select(x => new ServiceDetailDTO
                          {
                             Description = x.Description,
                             HttpMethod = x.HttpMethod,

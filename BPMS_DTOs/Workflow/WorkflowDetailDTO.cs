@@ -13,5 +13,6 @@ namespace BPMS_DTOs.Workflow
     {
         public List<WorkflowAllDTO> OtherWorkflows { get; set; } = new List<WorkflowAllDTO>();
         public WorkflowAllDTO SelectedWorkflow { get; set; } = new WorkflowAllDTO();
+        public List<WorkflowActiveBlocksDTO> ActiveBlocks { get; set; } = new List<WorkflowActiveBlocksDTO>();
     }
 }

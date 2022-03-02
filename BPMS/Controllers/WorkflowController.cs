@@ -37,7 +37,7 @@ namespace BPMS.Controllers
             {
                 detail = await this.RenderViewAsync("Partial/_WorkflowDetail", dto, true),
                 header = await this.RenderViewAsync("Partial/_WorkflowDetailHeader", dto, true),
-                activeBlocks = dto.ActiveBlocks
+                activeBlock = dto.ActiveBlock,
             });
         }
 

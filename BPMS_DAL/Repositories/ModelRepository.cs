@@ -35,7 +35,9 @@ namespace BPMS_DAL.Repositories
 
         public Task<ModelDetailDTO> Detail(Guid id)
         {
-            return _dbSet.Select(x => new ModelDetailDTO
+            return _dbSet.Include(x => x.Agenda)
+                         .Include(x => x.Workflows)
+                         .Select(x => new ModelDetailDTO
                          {
                              Id = x.Id,
                              Description = x.Description,
@@ -48,14 +50,17 @@ namespace BPMS_DAL.Repositories
                                                        Id = x.Id,
                                                        Name = x.Name
                                                    })
-                                                   .FirstOrDefault()
+                                                   .FirstOrDefault(),
+                             AgendaId = x.AgendaId,
+                             AgendaName = x.Agenda.Name
                          })
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<ModelEntity> DetailRaw(Guid id)
+        public Task<ModelEntity> BareAgenda(Guid id)
         {
-            return _dbSet.FirstAsync(x => x.Id == id);
+            return _dbSet.Include(x => x.Agenda)
+                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<ModelEntity> DetailDeep(Guid id)
@@ -73,6 +78,36 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.Blocks)
                                 .ThenInclude(x => x.MappedAttributes)
                          .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<ModelAllDTO> Selected(Guid id)
+        {
+            return _dbSet.Include(x => x.Agenda)
+                         .Select(x => new ModelAllDTO
+                         {
+                             AgendaId = x.AgendaId,
+                             AgendaName = x.Agenda.Name,
+                             Id = x.Id,
+                             Name = x.Name,
+                             SVG = x.SVG,
+                             State = x.State
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<WorkflowRunDTO?> WaitingWorklfow(Guid id)
+        {
+            return _dbSet.Include(x => x.Workflows)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Workflows)
+                         .Where(x => x.State == WorkflowStateEnum.Waiting)
+                         .Select(x => new WorkflowRunDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name
+                         })
+                         .FirstOrDefaultAsync();
         }
 
         public Task<ModelDetailShare> Share(Guid id)
@@ -94,15 +129,14 @@ namespace BPMS_DAL.Repositories
             return _dbSet.AnyAsync(x => x.Id == id);
         }
 
-        public Task<ModelHeaderDTO> Header(Guid id)
+        public Task<ModelDetailHeaderDTO> Header(Guid id)
         {
             return _dbSet.Include(x => x.Workflows)
-                         .Select(x => new ModelHeaderDTO
+                         .Select(x => new ModelDetailHeaderDTO
                          {
                              Id = x.Id,
                              Description = x.Description,
                              Name = x.Name,
-                             State = x.State,
                              Workflow = x.Workflows.Select(y => new WorkflowRunDTO 
                                                    {
                                                        Description = x.Description,
@@ -190,11 +224,11 @@ namespace BPMS_DAL.Repositories
         public Task<List<ModelAllDTO>> All(Guid? id = null)
         {
             return _dbSet.Include(x => x.Agenda)
+                         .Where(x => x.Id != id)
                          .Select(x => new ModelAllDTO
                          {
                              AgendaId = x.AgendaId,
                              AgendaName = x.Agenda.Name,
-                             Description = x.Description,
                              Id = x.Id,
                              Name = x.Name,
                              SVG = x.SVG,

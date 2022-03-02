@@ -16,7 +16,7 @@ namespace BPMS_DTOs.Workflow
         public string AgendaName { get; set; } = string.Empty;
         public Guid ModelId { get; set; }
         public string ModelName { get; set; } = string.Empty;
-        public WorkflowActiveBlocksDTO ActiveBlocks { get; set; } = new WorkflowActiveBlocksDTO();
+        public WorkflowActiveBlocksDTO ActiveBlock { get; set; } = new WorkflowActiveBlocksDTO();
         public IEnumerable<IGrouping<string, TaskDataDTO>> OutputData { get; set; } = new List<IGrouping<string, TaskDataDTO>>();
         public IEnumerable<IGrouping<string, TaskDataDTO>> InputServiceData { get; set; } = new List<IGrouping<string, TaskDataDTO>>();
         public IEnumerable<IGrouping<string, TaskDataDTO>> OutputServiceData { get; set; } = new List<IGrouping<string, TaskDataDTO>>();

@@ -74,14 +74,23 @@ namespace BPMS_BL.Facades
             await _agendaRepository.Save();
         }
 
-        public async Task<AgendaDetailPartialDTO> Edit(AgendaEditDTO dto)
+        public async Task<AgendaInfoCardDTO> Edit(AgendaEditDTO dto)
         {
-            AgendaEntity agenda = await _agendaRepository.DetailBase(dto.Id);
+            AgendaEntity agenda = await _agendaRepository.BareAdmin(dto.Id);
             agenda.Name = dto.Name;
             agenda.Description = dto.Description ?? "";
             await _agendaRepository.Save();
 
-            return _mapper.Map<AgendaDetailPartialDTO>(agenda);
+            return new AgendaInfoCardDTO()
+            {
+                AdministratorEmail = agenda.Administrator.Email,
+                AdministratorId = agenda.AdministratorId,
+                AdministratorName = $"{agenda.Administrator.Name} {agenda.Administrator.Surname}",
+                Description = agenda.Description,
+                Id = agenda.Id,
+                Name = agenda.Name,
+                SelectedAgenda = await _agendaRepository.Selected(agenda.Id)
+            };
         }
 
         public async Task AddUserRole(Guid userId, Guid agendaRoleId)
@@ -156,9 +165,7 @@ namespace BPMS_BL.Facades
 
         public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
         {
-            AgendaDetailPartialDTO detail = await _agendaRepository.Detail(id);
-            
-            return detail;
+            return await _agendaRepository.Detail(id);
         }
 
         public async Task<List<RoleAllDTO>> AddRole(Guid agendaId)
