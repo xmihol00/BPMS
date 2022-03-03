@@ -11,6 +11,5 @@ namespace BPMS_DTOs.System
     {
         public Guid Id { get; set; }
         public string URL { get; set; } = string.Empty;
-        public byte[]? Key { get; set; }
     }
 }

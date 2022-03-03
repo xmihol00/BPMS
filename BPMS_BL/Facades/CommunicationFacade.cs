@@ -40,6 +40,7 @@ namespace BPMS_BL.Facades
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
+        private SystemEntity _system;
 
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                                    BlockModelRepository blockModelRepository, PoolRepository poolRepository, SystemRepository systemRepository, 
@@ -63,6 +64,7 @@ namespace BPMS_BL.Facades
             _blockWorkflowRepository = blockWorkflowRepository;
             _context = context;
             _mapper = mapper;
+            _system = new SystemEntity();
         }
 
         public async Task<string> BlockActivity(List<BlockWorkflowActivityDTO> blocks)
@@ -287,12 +289,21 @@ namespace BPMS_BL.Facades
             return "";   
         }
 
-        public void AuthorizeSystem(string auth)
+        public async Task<string> CreateSystem(SystemEntity system)
         {
-            SystemEntity dbSystem = _systemRepository.Bare(SymetricCipherHelper.ExtractGuid(auth));
-            SystemUrlKeyDTO authSystem = SymetricCipherHelper.JsonDecrypt<SystemUrlKeyDTO>(auth["Bearer ".Length..], dbSystem.Key);
+            await _systemRepository.Create(system);
+            await _systemAgendaRepository.Save();
+            return "";
+        }
 
-            if (authSystem.URL != dbSystem.URL)
+        public void AuthorizeSystem(string auth, string path)
+        {
+            Guid id = SymetricCipherHelper.ExtractGuid(auth);
+            _system = _systemRepository.Bare(id);
+            SystemAuthorizationDTO authSystem = 
+                SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth["Bearer ".Length..], _system.Key);
+
+            if (id == authSystem.Id && authSystem.URL != _system.URL)
             {
                 throw new UnauthorizedAccessException();
             }

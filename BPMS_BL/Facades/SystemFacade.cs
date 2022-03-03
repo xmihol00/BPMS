@@ -64,10 +64,8 @@ namespace BPMS_BL.Facades
         {
             SystemEntity entity = new SystemEntity
             {
-                Name = dto.Name,
-                Description = dto.Description,
-                URL = dto.URL,
-                Activity = SystemActivityEnum.Inactive,
+                URL = StaticData.ThisSystemURL,
+                Activity = SystemActivityEnum.InactiveAsked,
                 Key = SymetricCipherHelper.NewKey()
             };
             PoolAddressDTO address = new PoolAddressDTO
@@ -81,6 +79,11 @@ namespace BPMS_BL.Facades
             {
                 throw new Exception(); // TODO
             }
+
+            entity.Name = dto.Name;
+            entity.Description = dto.Description;
+            entity.URL = dto.URL;
+            entity.Activity = SystemActivityEnum.Inactive;
 
             await _systemRepository.Create(entity);
             await _systemRepository.Save();

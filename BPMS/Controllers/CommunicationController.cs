@@ -23,7 +23,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
             
-             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization);
+             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization, Request.Path);
         }
 
         [HttpPost]
@@ -66,6 +66,12 @@ namespace BPMS.Controllers
         public async Task<IActionResult> BlockActivity([FromBody] List<BlockWorkflowActivityDTO> blocks)
         {
             return Ok(await _communicationFacade.BlockActivity(blocks));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateSystem([FromBody] SystemEntity system)
+        {
+            return Ok(await _communicationFacade.CreateSystem(system));
         }
     }
 }

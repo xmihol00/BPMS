@@ -8,6 +8,7 @@ namespace BPMS_Common.Enums
 {
     public enum SystemActivityEnum
     {
+        InactiveAsked,
         Inactive,
         Waiting,
         Activated,
