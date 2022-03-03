@@ -1,0 +1,34 @@
+@model SystemDetailDTO
+
+<div id="DetailInfoId">
+    @await Html.PartialAsync("Partial/_SystemDetailInfo", Model)
+</div>
+<h4 class="text-center text-font mb-0">Agendy</h4>
+@if (Model.Agendas.Count > 0)
+{
+    <div class="row">
+        @foreach (AgendaAllDTO agenda in Model.Agendas)
+        {
+            @await Html.PartialAsync("../Agenda/Partial/_AgendaCard", (agenda, false))
+        }
+    </div>
+}
+else
+{
+    <div class="text-placeholder mt-2">Systém není přiřazen k žádné agendě.</div>
+}
+
+<h4 class="text-center text-font mt-3 mb-0">Modely</h4>
+@if (Model.Models.Count > 0)
+{
+    <div class="row">
+        @foreach (ModelAllDTO model in Model.Models)
+        {
+            @await Html.PartialAsync("../Model/Partial/_ModelCard", (model, false))
+        }
+    </div>
+}
+else
+{
+    <div class="text-placeholder mt-2">Systém není přiřazen k žádnému modelu.</div>
+}

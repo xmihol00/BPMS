@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.System;
 using BPMS_Common;
+using BPMS_DTOs.Agenda;
+using BPMS_Common.Enums;
 
 namespace BPMS_DAL.Repositories
 {
@@ -39,15 +41,90 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<SystemAllDTO>> All()
+        public Task<List<SystemAllDTO>> All(Guid? id = null)
+        {
+            return _dbSet.Where(x => x.Id != id)
+                         .Select(x => new SystemAllDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL,
+                             Description = x.Description
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<SystemInfoCardDTO> InfoCard(Guid id)
+        {
+            return _dbSet.Select(x => new SystemInfoCardDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL,
+                             Description = x.Description,
+                             SelectedSystem = new SystemAllDTO
+                             {
+                                 Description = x.Description,
+                                 Id = x.Id,
+                                 Name = x.Name,
+                                 URL = x.URL
+                             }
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<SystemAllDTO> Selected(Guid id)
         {
             return _dbSet.Select(x => new SystemAllDTO
                          {
                              Id = x.Id,
                              Name = x.Name,
-                             URL = x.URL
+                             URL = x.URL,
+                             Description = x.Description
                          })
-                         .ToListAsync();
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<SystemDetailDTO> Detail(Guid id)
+        {
+            return _dbSet.Include(x => x.Agendas)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.Models)
+                         .Include(x => x.Agendas)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.Systems)
+                         .Include(x => x.Agendas)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.Workflows)
+                         .Include(x => x.Agendas)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.AgendaRoles)
+                                    .ThenInclude(x => x.UserRoles)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Model)
+                         .Select(x => new SystemDetailDTO
+                         {
+                             Description = x.Description,
+                             Id = x.Id,
+                             Name = x.Name,
+                             URL = x.URL,
+                             Agendas = x.Agendas.Select(y => y.Agenda)
+                                                .Select(y => new AgendaAllDTO
+                                                {
+                                                    Id = y.Id,
+                                                    Name = y.Name,
+                                                    ActiveWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
+                                                    PausedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                                                    FinishedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                                                    CanceledWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
+                                                    ModelsCount = y.Models.Count(),
+                                                    SystemsCount = y.Systems.Count(),
+                                                    UserCount = y.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                                                    MissingRolesCount = y.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
+                                                })
+                                                .ToList()
+                         })
+                        .FirstAsync(x => x.Id == id);
         }
 
         public Task<Guid> IdFromUrl(string systemURL)

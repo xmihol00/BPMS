@@ -1,7 +1,8 @@
 @model SystemOverviewDTO
 @{
-    ViewData["Title"] = "Spolupracující systémy";
+    ViewData["Title"] = "Systémy";
 }
+<script src="~/js/System/System.js"></script>
 
 <div id="PageNavId" class="page-navbar">
     <div class="d-flex justify-content-between px-4 page-navbar-content">
@@ -32,14 +33,8 @@
             </div>
             <div class="col-12 col-lg-6 mb-3">
                 <label class="input">
-                    <input required class="input-field" type="email" placeholder=" " name="Email" value="" />
-                    <span class="input-label">E-mail</span>
-                </label>
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input class="input-field" type="tel" placeholder=" " name="PhoneNumber" value="" />
-                    <span class="input-label">Telefonní číslo</span>
+                    <textarea name="Description"></textarea>
+                    <span class="input-label">Popis</span>
                 </label>
             </div>
             <div class="d-flex justify-content-center">

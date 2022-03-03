@@ -55,7 +55,7 @@ services.AddScoped<SystemFacade>();
 services.AddScoped<BlockWorkflowFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile),
-                       typeof(BlockWorkflowProfile), typeof(UserProfile));
+                       typeof(BlockWorkflowProfile), typeof(UserProfile), typeof(SystemProfile));
 
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>

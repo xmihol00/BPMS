@@ -5,31 +5,35 @@ using System.Security.Claims;
 using System.Text;
 using System.Xml.Linq;
 using AutoMapper;
-using BPMS_Common.Enums;
-using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
-using BPMS_DAL.Entities.ModelBlocks;
-using BPMS_DAL.Interfaces;
-using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
-using BPMS_DTOs.BlockAttribute;
-using BPMS_DTOs.BlockModel;
-using BPMS_DTOs.BlockModel.ConfigTypes;
-using BPMS_DTOs.Role;
-using BPMS_DTOs.Service;
-using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
-using Microsoft.AspNetCore.Authentication;
 
 namespace BPMS_BL.Facades
 {
     public class SystemFacade
     {
         private readonly SystemRepository _systemRepository;
+        private readonly IMapper _mapper;
 
-        public SystemFacade(SystemRepository systemRepository)
+        public SystemFacade(SystemRepository systemRepository, IMapper mapper)
         {
             _systemRepository = systemRepository;
+            _mapper = mapper;
+        }
+
+        public Task<SystemDetailDTO> DetailPartial(Guid id)
+        {
+            return _systemRepository.Detail(id);
+        }
+
+        public async Task<SystemDetailDTO> Detail(Guid id)
+        {
+            SystemDetailDTO detail = await _systemRepository.Detail(id);
+            detail.OtherSystems = await _systemRepository.All(id);
+            detail.SelectedSystem = await _systemRepository.Selected(id);
+
+            return detail;
         }
 
         public async Task<SystemOverviewDTO> Overview()
@@ -38,6 +42,16 @@ namespace BPMS_BL.Facades
             {
                 Systems = await _systemRepository.All()
             };
+        }
+
+        public async Task<SystemInfoCardDTO> Edit(SystemEditDTO dto)
+        {
+            SystemEntity entity = _mapper.Map<SystemEntity>(dto);
+            _systemRepository.Update(entity);
+            _systemRepository.Entry(entity, x => x.Property(x => x.Key).IsModified = false);
+
+            await _systemRepository.Save();
+            return await _systemRepository.InfoCard(dto.Id);
         }
     }
 }

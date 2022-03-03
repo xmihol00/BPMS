@@ -1,0 +1,20 @@
+@model SystemDetailInfoDTO
+
+<h1 class="text-center text-font mb-0">@Model.Name</h1>
+<div class="row">
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font">URL systému</h4>
+        <div class="text-url text-center">@Model.URL</div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font my-1">Popis</h4>
+        @if (String.IsNullOrEmpty(Model.Description))
+        {
+            <div class="text-placeholder">Systém nemá popis.</div>
+        }
+        else
+        {
+            <p>@Model.Description</p>
+        }
+    </div>
+</div>

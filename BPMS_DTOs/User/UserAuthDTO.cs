@@ -12,7 +12,7 @@ namespace BPMS_DTOs.User
     {
         public Guid Id { get; set; }
         public string FullName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; }
         public List<SystemRoleEnum> Roles { get; set; } = new List<SystemRoleEnum>();
     }
 }

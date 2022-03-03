@@ -355,7 +355,7 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
 {
     let detailDiv = document.getElementById("DetailDivId");
 
-    if (document.location.pathname.startsWith("/User/Detail") && element.parentNode.parentNode.id != "OverviewDivId")
+    if (document.location.pathname.match(/(User|System)\/Detail/g) && element.parentNode.parentNode.id != "OverviewDivId")
     {
         window.location.href = path.replace("Partial", "") + element.id;
         return;

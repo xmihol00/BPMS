@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.User
+namespace BPMS_DTOs.System
 {
-    public class UserDetailHeaderDTO : UserDetailInfoDTO
+    public class SystemDetailInfoDTO : SystemDetailHeaderDTO
     {
-        public string? UserName { get; set; }
+        
     }
 }

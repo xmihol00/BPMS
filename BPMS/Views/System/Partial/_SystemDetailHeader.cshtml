@@ -1,0 +1,40 @@
+@model SystemDetailHeaderDTO
+
+<div class="d-flex justify-content-between px-4 page-navbar-content">
+    <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+    <h1 class="my-auto text-font">Detail systému</h1>
+    <div class="my-auto">
+        <button class="butn btn-p" onclick="ShowModal('EditSystemFormId')">Upravit</button>
+    </div>
+</div>
+<form id="EditSystemFormId" class="mx-4 mt-4 mb-3" action="/System/Edit" oninput="InputValidator(this)"
+      onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)">
+    <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+        <h2 class="mb-0 text-font">Editace systému</h2>
+        <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
+    </div>
+    <input id="IdId" type="hidden" name="Id" value="@Model.Id" />
+    <div class="row">
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
+                <span class="input-label">Název</span>
+            </label>
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="URL" value="@Model.URL" />
+                <span class="input-label">URL systému</span>
+            </label>
+        </div>
+        <div class="col-12 mb-2">
+            <label class="input">
+                <textarea class="input-field" name="Description" placeholder=" ">@Model.Description</textarea>
+                <span class="input-label">Popis</span>
+            </label>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button form="EditSystemFormId" type="submit" class="butn btn-s">Upravit</button>
+        </div>
+    </div>
+</form>

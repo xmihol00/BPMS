@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.System
 {
-    public class SystemAllDTO
+    public class SystemDetailHeaderDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
