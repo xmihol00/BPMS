@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.System
+namespace BPMS_Common.Interfaces
 {
-    public class SystemUrlKeyDTO
+    public interface IAuthInfo
     {
-        public string URL { get; set; } = string.Empty;
         public byte[]? Key { get; set; }
+        public Guid SystemId { get; set; }
     }
 }

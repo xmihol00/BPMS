@@ -403,7 +403,7 @@ namespace BPMS_BL.Helpers
                 dto.BlockId = address.BlockId;
 
                 recieved &= await CommunicationHelper.Message(address.DestinationURL, 
-                                                              SymetricCypherHelper.JsonEncrypt(address),
+                                                              SymetricCipherHelper.JsonEncrypt(address),
                                                               JsonConvert.SerializeObject(dto));
             }
 
@@ -576,7 +576,7 @@ namespace BPMS_BL.Helpers
 
             foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
-                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCypherHelper.JsonEncrypt(address), message);
+                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), message);
             }
         }
 
@@ -595,7 +595,7 @@ namespace BPMS_BL.Helpers
 
             foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
-                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCypherHelper.JsonEncrypt(address), message);
+                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), message);
             }
         }
     }

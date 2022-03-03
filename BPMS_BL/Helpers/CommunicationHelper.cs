@@ -51,6 +51,12 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
+        public static async Task<bool> CreateSystem(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/CreateSystem", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload)
         {
             using HttpClientHandler httpClientHandler = new HttpClientHandler();

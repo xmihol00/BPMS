@@ -38,6 +38,11 @@ namespace BPMS.Controllers
             });
         }
 
+        public async Task<IActionResult> Create(SystemCreateDTO dto)
+        {
+            return Redirect($"/System/Detail/{await _systemFacade.Create(dto)}");
+        }
+
         public async Task<IActionResult> Edit(SystemEditDTO dto)
         {
             SystemInfoCardDTO infoCard = await _systemFacade.Edit(dto);

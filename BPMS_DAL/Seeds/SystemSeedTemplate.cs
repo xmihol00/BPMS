@@ -23,21 +23,21 @@ namespace BPMS_DAL.Seeds
             {
                 Id = Guid.Parse("90074a51-95a3-48a9-be3a-93b8ad3109d6"),
                 Name = "Test systém 1",
-                Key = "ABCD789456",
+                Key = Encoding.ASCII.GetBytes("PeShVmYq3t6w9y$B&E)H@McQfTjWnZr4"),
                 URL = "https://localhost:5010/"
             },
             new SystemEntity()
             {
                 Id = Guid.Parse("ac0706e2-c282-49e0-99c7-5322e3235e62"),
                 Name = "Test systém 2",
-                Key = "789456ABCD",
+                Key = Encoding.ASCII.GetBytes("%D*F-JaNdRgUkXp2s5v8y/B?E(H+KbPe"),
                 URL = "https://localhost:5011/"
             },
             new SystemEntity()
             {
                 Id = Guid.Parse("87e156a0-6762-42b1-b67e-af105ed9a811"),
                 Name = "Test systém 3",
-                Key = "ABCD123456",
+                Key = Encoding.ASCII.GetBytes("eShVmYq3t6w9z$C&F)J@NcQfTjWnZr4u"),
                 URL = "https://localhost:5012/"
             }
         };

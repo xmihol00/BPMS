@@ -1,5 +1,7 @@
-﻿using BPMS_DAL.Entities;
+﻿using BPMS_Common.Enums;
+using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
+using BPMS_DAL.Entities.MessageTypes;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Seeds;
@@ -26,6 +28,7 @@ namespace BPMS_DAL
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
         public DbSet<FlowEntity>? Flows { get; set; }
+        public DbSet<MessageEntity>? Message { get; set; }
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
         public DbSet<ServiceEntity>? Services { get; set; }
@@ -44,6 +47,7 @@ namespace BPMS_DAL
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<SystemEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<SystemEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<SystemEntity>().HasIndex(x => x.URL).IsUnique(true);
 
             modelBuilder.Entity<SystemAgendaEntity>().HasKey(x => new { x.AgendaId, x.SystemId });
@@ -157,6 +161,13 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
             modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder.Entity<MessageEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<MessageEntity>().Property(x => x.Id).ValueGeneratedNever();
+            modelBuilder.Entity<MessageEntity>().HasOne(x => x.System).WithMany(x => x.Messages).HasForeignKey(x => x.SystemId);
+            modelBuilder.Entity<MessageEntity>().HasDiscriminator<MessageTypeEnum>(x => x.Type)
+                        .HasValue<MessageEntity>(MessageTypeEnum.None)
+                        .HasValue<AcceptationMessageEntity>(MessageTypeEnum.Acceptation);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

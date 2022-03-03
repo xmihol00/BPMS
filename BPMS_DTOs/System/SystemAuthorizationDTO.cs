@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.System
 {
-    public class SystemUrlKeyDTO
+    public class SystemAuthorizationDTO
     {
+        public Guid Id { get; set; }
         public string URL { get; set; } = string.Empty;
         public byte[]? Key { get; set; }
     }

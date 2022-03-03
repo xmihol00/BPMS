@@ -93,7 +93,7 @@ namespace BPMS_BL.Facades
                     foreach (PoolBlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(mappedBlock.Id))
                     {
                         await CommunicationHelper.RemoveRecieverAttribute(recieverAddress.DestinationURL, 
-                                                                          SymetricCypherHelper.JsonEncrypt(recieverAddress),
+                                                                          SymetricCipherHelper.JsonEncrypt(recieverAddress),
                                                                           id.ToString());
                     }
                 }
@@ -152,7 +152,7 @@ namespace BPMS_BL.Facades
             {
                 attrib.BlockId = recieverAddress.BlockId;
                 success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 
-                                                                          SymetricCypherHelper.JsonEncrypt(recieverAddress),
+                                                                          SymetricCipherHelper.JsonEncrypt(recieverAddress),
                                                                           JsonConvert.SerializeObject(attrib));
             }
 

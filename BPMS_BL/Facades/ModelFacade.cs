@@ -121,7 +121,7 @@ namespace BPMS_BL.Facades
             foreach (PoolDstAddressDTO pool in await _poolRepository.Addresses(id))
             {
                 shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, 
-                                                               SymetricCypherHelper.JsonEncrypt(pool), 
+                                                               SymetricCipherHelper.JsonEncrypt(pool), 
                                                                serilizedModel);
             }
 
@@ -183,7 +183,7 @@ namespace BPMS_BL.Facades
             foreach (PoolDstAddressDTO pool in pools)
             {
                 run &= await CommunicationHelper.IsModelRunable(pool.DestinationURL, 
-                                                                SymetricCypherHelper.JsonEncrypt(pool), 
+                                                                SymetricCipherHelper.JsonEncrypt(pool), 
                                                                 checkMessage);
             }
 
@@ -192,7 +192,7 @@ namespace BPMS_BL.Facades
                 foreach (PoolDstAddressDTO pool in pools)
                 {
                     run &= await CommunicationHelper.RunModel(pool.DestinationURL, 
-                                                              SymetricCypherHelper.JsonEncrypt(pool), 
+                                                              SymetricCipherHelper.JsonEncrypt(pool), 
                                                               runMessage);
                 }   
             }

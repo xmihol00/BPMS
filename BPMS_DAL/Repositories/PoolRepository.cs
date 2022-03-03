@@ -73,7 +73,8 @@ namespace BPMS_DAL.Repositories
                          {
                              Key = x.System.Key,
                              PoolId = x.Id,
-                             DestinationURL = x.System.URL
+                             DestinationURL = x.System.URL,
+                             SystemId = x.System.Id, 
                          })
                          .ToListAsync();
         }
@@ -137,6 +138,7 @@ namespace BPMS_DAL.Repositories
                            {
                                PoolId = x.PoolId,
                                DestinationURL = x.Pool.System.URL,
+                               SystemId = x.Pool.System.Id,
                                Key = x.Pool.System.Key,
                                BlockId = x.Id,
                                ModelId = x.Pool.ModelId

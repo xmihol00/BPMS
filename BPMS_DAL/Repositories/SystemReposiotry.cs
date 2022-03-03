@@ -168,9 +168,9 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
-        public bool Authorize(string url, string key)
+        public SystemEntity Bare(Guid id)
         {
-            return _dbSet.Any(x => x.URL == url && x.Key == key);
+            return _dbSet.First(x => x.Id == id);
         }
     }
 }
