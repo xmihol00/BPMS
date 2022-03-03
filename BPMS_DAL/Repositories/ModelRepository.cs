@@ -80,6 +80,13 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<string> Svg(Guid id)
+        {
+            return _dbSet.Where(x => x.Id == id)
+                         .Select(x => x.SVG)
+                         .FirstAsync();
+        }
+
         public Task<ModelAllDTO> Selected(Guid id)
         {
             return _dbSet.Include(x => x.Agenda)

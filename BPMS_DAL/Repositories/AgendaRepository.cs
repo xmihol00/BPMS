@@ -116,7 +116,16 @@ namespace BPMS_DAL.Repositories
                                                             .Select(z => z.BlockModelId)
                                                             .ToList()
                                             })
-                                            .ToList()
+                                            .ToList(),
+                            Systems = x.Systems.Select(y => y.System)
+                                               .Select(y => new SystemAllDTO
+                                                {
+                                                    Id = y.Id,
+                                                    Name = y.Name,
+                                                    URL = y.URL,
+                                                    Description = y.Description
+                                                })
+                                                .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }

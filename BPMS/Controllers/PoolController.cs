@@ -27,7 +27,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(PoolEditDTO dto)
         {
-            return PartialView("../Model/ModelDetail", (await _PoolFacade.Edit(dto), "../Model/"));
+            return PartialView("../Model/Partial/_ModelSvg", await _PoolFacade.Edit(dto));
         }
     }
 }

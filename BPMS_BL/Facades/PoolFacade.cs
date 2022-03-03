@@ -33,7 +33,7 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public async Task<ModelDetailDTO> Edit(PoolEditDTO dto)
+        public async Task<string> Edit(PoolEditDTO dto)
         {
             PoolEntity entity = await _poolRepository.DetailForEdit(dto.Id);
             entity.Name = dto.Name ?? "";
@@ -82,7 +82,7 @@ namespace BPMS_BL.Facades
             entity.Model.State = state == ModelStateEnum.Sharable ? entity.Model.State : state;
 
             await _poolRepository.Save();
-            return await _modelRepository.Detail(entity.ModelId);
+            return await _modelRepository.Svg(entity.ModelId);
         }
 
         public async Task<PoolConfigDTO> Config(Guid id)

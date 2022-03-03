@@ -298,10 +298,11 @@ namespace BPMS_BL.Facades
 
         public void AuthorizeSystem(string auth, string path)
         {
+            auth = auth["Bearer ".Length..];
             Guid id = SymetricCipherHelper.ExtractGuid(auth);
             _system = _systemRepository.Bare(id);
             SystemAuthorizationDTO authSystem = 
-                SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth["Bearer ".Length..], _system.Key);
+                SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
             if (id == authSystem.Id && authSystem.URL != _system.URL)
             {

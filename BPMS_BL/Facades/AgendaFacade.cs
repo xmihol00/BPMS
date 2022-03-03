@@ -163,9 +163,9 @@ namespace BPMS_BL.Facades
             return _userRepository.MissingInRole(agendaId, roleId);
         }
 
-        public async Task<AgendaDetailPartialDTO> DetailPartial(Guid id)
+        public Task<AgendaDetailDTO> DetailPartial(Guid id)
         {
-            return await _agendaRepository.Detail(id);
+            return _agendaRepository.Detail(id);
         }
 
         public async Task<List<RoleAllDTO>> AddRole(Guid agendaId)
