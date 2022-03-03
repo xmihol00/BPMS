@@ -71,7 +71,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.System.Id != StaticData.ThisSystemId && x.ModelId == modelId)
                          .Select(x => new PoolDstAddressDTO
                          {
-                             Key = x.System.ObtainedKey,
+                             Key = x.System.Key,
                              PoolId = x.Id,
                              DestinationURL = x.System.URL
                          })
@@ -137,7 +137,7 @@ namespace BPMS_DAL.Repositories
                            {
                                PoolId = x.PoolId,
                                DestinationURL = x.Pool.System.URL,
-                               Key = x.Pool.System.ObtainedKey,
+                               Key = x.Pool.System.Key,
                                BlockId = x.Id,
                                ModelId = x.Pool.ModelId
                            })

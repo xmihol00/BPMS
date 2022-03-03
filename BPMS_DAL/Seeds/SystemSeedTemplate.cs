@@ -24,7 +24,6 @@ namespace BPMS_DAL.Seeds
                 Id = Guid.Parse("90074a51-95a3-48a9-be3a-93b8ad3109d6"),
                 Name = "Test systém 1",
                 Key = "ABCD789456",
-                ObtainedKey = "EFGH123456",
                 URL = "https://localhost:5010/"
             },
             new SystemEntity()
@@ -32,7 +31,6 @@ namespace BPMS_DAL.Seeds
                 Id = Guid.Parse("ac0706e2-c282-49e0-99c7-5322e3235e62"),
                 Name = "Test systém 2",
                 Key = "789456ABCD",
-                ObtainedKey = "123456EFGH",
                 URL = "https://localhost:5011/"
             },
             new SystemEntity()
@@ -40,7 +38,6 @@ namespace BPMS_DAL.Seeds
                 Id = Guid.Parse("87e156a0-6762-42b1-b67e-af105ed9a811"),
                 Name = "Test systém 3",
                 Key = "ABCD123456",
-                ObtainedKey = "EFGH789456",
                 URL = "https://localhost:5012/"
             }
         };

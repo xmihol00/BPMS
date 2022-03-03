@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.User;
 using BPMS_Common.Enums;
+using BPMS_DTOs.Agenda;
+using BPMS_DTOs.Workflow;
 
 namespace BPMS_DAL.Repositories
 {
@@ -55,6 +57,29 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
+        public Task<UserInfoCardDTO> InfoCard(Guid id)
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Select(x => new UserInfoCardDTO
+                         {
+                             Email = x.Email,
+                             Id = x.Id,
+                             Name = x.Name,
+                             PhoneNumber = x.PhoneNumber,
+                             Surname = x.Surname,
+                             Roles = x.SystemRoles.Select(y => y.Role)
+                                                        .ToList(),
+                             SelectedUser = new UserAllDTO
+                                            {
+                                                FullName = $"{x.Name} {x.Surname}",
+                                                Id = x.Id,
+                                                Roles = x.SystemRoles.Select(y => y.Role)
+                                                        .ToList()
+                                            }
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<List<UserAllDTO>> All(Guid? id = null)
         {
             return _dbSet.Include(x => x.SystemRoles)
@@ -66,6 +91,90 @@ namespace BPMS_DAL.Repositories
                              Roles = x.SystemRoles.Select(x => x.Role).ToList()
                          })
                          .ToListAsync();
+        }
+
+        public Task<UserAllDTO> Selected(Guid id)
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Select(x => new UserAllDTO
+                         {
+                             FullName = $"{x.Name} {x.Surname}",
+                             Id = x.Id,
+                             Roles = x.SystemRoles.Select(x => x.Role).ToList()
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+        
+        public Task<UserDetailDTO> Detail(Guid id)
+        {
+            return _dbSet.Include(x => x.Agendas)
+                            .ThenInclude(x => x.Models)
+                         .Include(x => x.Agendas)
+                            .ThenInclude(x => x.Systems)
+                         .Include(x => x.Agendas)
+                            .ThenInclude(x => x.Workflows)
+                         .Include(x => x.Agendas)
+                            .ThenInclude(x => x.AgendaRoles)
+                                .ThenInclude(x => x.UserRoles)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Agenda)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Model)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Blocks)
+                         .Include(x => x.SystemRoles)
+                         .Select(x => new UserDetailDTO
+                         {
+                             Agendas = x.UserRoles.Select(y => y.AgendaRole.Agenda)
+                                                  .Select(y => new AgendaAllDTO
+                                                  {
+                                                      Id = y.Id,
+                                                      Name = y.Name,
+                                                      ActiveWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
+                                                      PausedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                                                      FinishedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                                                      CanceledWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
+                                                      ModelsCount = y.Models.Count(),
+                                                      SystemsCount = y.Systems.Count(),
+                                                      UserCount = y.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                                                      MissingRolesCount = y.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
+                                                  })
+                                                  .ToList(),
+                            Workflows = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active)
+                                                         .Select(y => new WorkflowAllDTO
+                                                         {
+                                                             AdministratorEmail = x.Email,
+                                                             AdministratorName = $"{x.Name} {x.Surname}",
+                                                             AgendaId = y.AgendaId,
+                                                             AgendaName = y.Agenda.Name,
+                                                             Description = y.Description,
+                                                             Id = y.Id,
+                                                             ModelId = y.ModelId,
+                                                             ModelName = y.Model.Name,
+                                                             Name = y.Name,
+                                                             State = y.State,
+                                                             SVG = y.Model.SVG
+                                                         })
+                                                         .ToList(),
+                            Roles = x.SystemRoles.Select(y => y.Role)
+                                                       .ToList(),
+                            ActiveBlocks = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active)
+                                                      .Select(y => new WorkflowActiveBlocksDTO
+                                                      {
+                                                          Id = y.Id,
+                                                          BlockIds = y.Blocks.Where(z => z.Active)
+                                                                             .Select(z => z.BlockModelId)
+                                                                             .ToList()
+                                                      })
+                                                      .ToList(),
+                            Email = x.Email,
+                            Id = x.Id,
+                            Name = x.Name,
+                            Surname = x.Surname,
+                            UserName = x.UserName,
+                            PhoneNumber = x.PhoneNumber,
+                         })
+                         .FirstAsync(x => x.Id == id);
         }
     }
 }

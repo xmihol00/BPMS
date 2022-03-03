@@ -161,7 +161,9 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, hide
 
 function HideModal()
 {
-    document.getElementById("PageNavId").classList.remove("page-navbar-modal");
+    let modal = document.getElementById("PageNavId");
+    modal.scroll(0, 0);
+    modal.classList.remove("page-navbar-modal");
     document.getElementById("ModalBackgroundId").classList.remove("modal-background-show");
     
     if (ModalContentId)
@@ -351,18 +353,29 @@ function LoadingImageHtml()
 
 function DetailTransition(element, path, blocks = false, succesCallback = null)
 {
+    let detailDiv = document.getElementById("DetailDivId");
+
+    if (document.location.pathname.startsWith("/User/Detail") && element.parentNode.parentNode.id != "OverviewDivId")
+    {
+        window.location.href = path.replace("Partial", "") + element.id;
+        return;
+    }
+    else if (document.location.pathname.includes("/Detail/"))
+    {
+        detailDiv.innerHTML = LoadingImageHtml();
+    }
+
     for (let card of document.getElementsByClassName("selected-card"))
     {
         card.classList.remove("selected-card");
     }
-
-    let detailDiv = document.getElementById("DetailDivId");
+    
     let topEle = element.parentNode.parentNode;
     let overviewDiv = document.getElementById("OverviewNavId");
     topEle.classList.add("side-overview");
     detailDiv.classList.add("container-lg");
     detailDiv.classList.remove("d-none");
-
+    
     if (overviewDiv)
     {
         overviewDiv.classList.add("overview-nav-hide");
@@ -370,7 +383,8 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
     
     element.children[0].classList.add("selected-card");
     element.parentElement.prepend(element);
-
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     $.ajax(
     {
         async: true,
@@ -386,8 +400,7 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
             DisplayActiveBlocks(result.activeBlocks || result.activeBlock);
         }
         window.history.pushState({}, '', path.replace("Partial", "") + element.id);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
+        
         if (succesCallback)
         {
             succesCallback(result);
@@ -406,4 +419,14 @@ function HideModelHeader()
     {
         document.getElementById("BlockConfigTargetId").innerHTML = LoadingImageHtml();
     }, HideDelay);
+}
+
+function CreateInput(value, name, form) 
+{
+    let element = document.createElement("input");
+    element.value = value
+    element.name = name;
+    element.type = "hidden";
+    element.setAttribute("data-gen", "");
+    form.appendChild(element);
 }

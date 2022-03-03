@@ -22,7 +22,7 @@
     <div class="col-6 mb-3">
         <label class="input">
             <select class="input-select" name="Type"> 
-                @foreach (DataTypeEnum value in Enum.GetValues(typeof(DataTypeEnum)))
+                @foreach (DataTypeEnum value in Enum.GetValues<DataTypeEnum>())
                 {
                     <option value="@value">@value.ToLabel()</option>
                 }

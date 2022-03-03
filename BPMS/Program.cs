@@ -39,6 +39,7 @@ services.AddScoped<TaskDataRepository>();
 services.AddScoped<WorkflowRepository>();
 services.AddScoped<BlockModelDataSchemaRepository>();
 services.AddScoped<TaskDataMapRepository>();
+services.AddScoped<SystemRoleRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
@@ -54,7 +55,7 @@ services.AddScoped<SystemFacade>();
 services.AddScoped<BlockWorkflowFacade>();
 
 services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile),
-                       typeof(BlockWorkflowProfile));
+                       typeof(BlockWorkflowProfile), typeof(UserProfile));
 
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>

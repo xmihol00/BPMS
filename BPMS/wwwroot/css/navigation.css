@@ -4,7 +4,8 @@
 .WorkflowController .workflow, 
 .ServiceController .service, 
 .UserController .user,
-.SystemController .system {
+.SystemController .system,
+.ModelController .model {
   color: #fff;
 }
 
@@ -13,7 +14,8 @@
 .WorkflowController .workflow::before, 
 .ServiceController .service::before, 
 .UserController .user::before,
-.SystemController .system::before {
+.SystemController .system::before,
+.ModelController .model::before {
   content: '';
   position: absolute;
   left: 0;

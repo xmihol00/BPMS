@@ -33,7 +33,7 @@
             <div class="col-12 col-md-6 mb-3">
                 <label class="input">
                     <select class="input-select" name="Type"> 
-                        @foreach (ServiceTypeEnum type in Enum.GetValues(typeof(ServiceTypeEnum)))
+                        @foreach (ServiceTypeEnum type in Enum.GetValues<ServiceTypeEnum>())
                         {
                             <option value="@type">@type</option>
                         }
@@ -44,7 +44,7 @@
             <div class="col-12 col-md-6 mb-3">
                 <label class="input">
                     <select class="input-select" name="HttpMethod"> 
-                        @foreach (HttpMethodEnum method in Enum.GetValues(typeof(HttpMethodEnum)))
+                        @foreach (HttpMethodEnum method in Enum.GetValues<HttpMethodEnum>())
                         {
                             <option value="@method">@method</option>
                         }
@@ -55,7 +55,7 @@
             <div class="col-12 col-md-6 mb-3">
                 <label class="input">
                     <select class="input-select" name="Serialization"> 
-                        @foreach (SerializationEnum serialization in Enum.GetValues(typeof(SerializationEnum)))
+                        @foreach (SerializationEnum serialization in Enum.GetValues<SerializationEnum>())
                         {
                             <option value="@serialization">@serialization.ToLabel()</option>
                         }
@@ -77,9 +77,7 @@
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">
-        <div class="d-flex justify-content-between">
-            <img src="~/loading.svg" class="loading-to-detail">
-        </div>
+        <div class="loading-content"></div>
     </div>
     <div id="OverviewDivId" class="container-lg">
         <div class="row">

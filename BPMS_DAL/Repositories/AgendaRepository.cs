@@ -21,14 +21,14 @@ namespace BPMS_DAL.Repositories
     {
         public AgendaRepository(BpmsDbContext context) : base(context) {} 
 
-        public Task<List<AgendaAllDTO>> All(Guid? apartFromId = null)
+        public Task<List<AgendaAllDTO>> All(Guid? id = null)
         {
             return _dbSet.Include(x => x.Models)
                          .Include(x => x.Systems)
                          .Include(x => x.Workflows)
                          .Include(x => x.AgendaRoles)
                             .ThenInclude(x => x.UserRoles)
-                         .Where(x => x.Id != apartFromId)
+                         .Where(x => x.Id != id)
                          .Select(x => new AgendaAllDTO 
                          {
                              Id = x.Id,

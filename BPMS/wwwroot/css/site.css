@@ -114,6 +114,11 @@ a:hover {
   font-weight: normal;
 }
 
+.text-default {
+  font-size: unset;
+  font-weight: unset;
+}
+
 .text-font {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }

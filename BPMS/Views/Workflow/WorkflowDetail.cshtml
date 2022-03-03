@@ -18,9 +18,9 @@
     <div id="OverviewDivId" class="container-lg side-overview">
         <div class="row">
             @await Html.PartialAsync("Partial/_WorkflowCard", (Model.SelectedWorkflow, true))
-            @foreach (WorkflowAllDTO task in Model.OtherWorkflows)
+            @foreach (WorkflowAllDTO workflow in Model.OtherWorkflows)
             {
-                @await Html.PartialAsync("Partial/_WorkflowCard", (task, false))
+                @await Html.PartialAsync("Partial/_WorkflowCard", (workflow, false))
             }
         </div>
     </div>

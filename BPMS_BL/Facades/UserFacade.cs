@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using AutoMapper;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
@@ -28,10 +25,14 @@ namespace BPMS_BL.Facades
     public class UserFacade
     {
         private readonly UserRepository _userRepository;
+        private readonly SystemRoleRepository _systemRoleRepository;
+        private readonly IMapper _mapper;
 
-        public UserFacade(UserRepository userRepository)
+        public UserFacade(UserRepository userRepository, SystemRoleRepository systemRoleRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _systemRoleRepository = systemRoleRepository;
+            _mapper = mapper;
         }
 
         public async Task<(ClaimsPrincipal principal, AuthenticationProperties authProperties)> Authenticate(string userName, string password)
@@ -45,6 +46,33 @@ namespace BPMS_BL.Facades
             {
                 throw new Exception();
             }
+        }
+
+        public async Task<UserInfoCardDTO> Edit(UserEditDTO dto)
+        {
+            UserEntity entity = _mapper.Map<UserEntity>(dto);
+            _userRepository.Update(entity);
+            _userRepository.Entry(entity, x => x.Property(x => x.Password).IsModified = false);
+
+            foreach (SystemRoleEnum role in dto.RemovedRoles)
+            {
+                _systemRoleRepository.Remove(new SystemRoleEntity
+                {
+                    Role = role,
+                    UserId = dto.Id
+                });
+            }
+            foreach (SystemRoleEnum role in dto.AddedRoles)
+            {
+                await _systemRoleRepository.Create(new SystemRoleEntity
+                {
+                    Role = role,
+                    UserId = dto.Id
+                });
+            }
+
+            await _userRepository.Save();
+            return await _userRepository.InfoCard(dto.Id); 
         }
 
         private (ClaimsPrincipal, AuthenticationProperties) ClaimsAndProperties(UserAuthDTO user) 
@@ -79,6 +107,20 @@ namespace BPMS_BL.Facades
             {
                 Users = await _userRepository.All()
             };
+        }
+
+        public Task<UserDetailDTO> DetailPartial(Guid id)
+        {
+            return _userRepository.Detail(id);
+        }
+
+        public async Task<UserDetailDTO> Detail(Guid id)
+        {
+            UserDetailDTO detail = await DetailPartial(id);
+            detail.OtherUsers = await _userRepository.All(id);
+            detail.SelectedUser = await _userRepository.Selected(id);
+
+            return detail;
         }
     }
 }

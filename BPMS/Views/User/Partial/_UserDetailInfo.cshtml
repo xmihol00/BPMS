@@ -1,0 +1,29 @@
+@model UserDetailInfoDTO
+
+<h1 class="text-center text-font mb-0">@Model.Name @Model.Surname</h1>
+<div class="row">
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font">Role</h4>
+        @if (Model.Roles.Count == 0)
+        {
+            <div class="text-placeholder">Uživatel nemá přiřazenou roli</div>
+        }
+        @foreach (SystemRoleEnum systemRole in Model.Roles)
+        {
+            <div class="text-bold text-center">@systemRole.ToLabel()</div>
+        }
+    </div>
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font my-1">Kontaktní údaje</h4>
+        <div class="d-flex justify-content-center">
+            <div class="me-1">
+                Telefón:<br>
+                Email:
+            </div>
+            <b class="d-block ms-1">
+                @Model.PhoneNumber<br>
+                @Model.Email
+            </b>
+        </div>
+    </div>
+</div>

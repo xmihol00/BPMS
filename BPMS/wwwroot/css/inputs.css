@@ -171,6 +171,12 @@ option {
   font-style: italic;
 }
 
+.readonly-div-file {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+}
+
 .readonly-div {
   display: block;
   width: 100%;
@@ -193,4 +199,11 @@ option {
 
 .flex-input-group .readonly-div {
   padding: 0.4rem 0.5rem;
+}
+
+.input-badge {
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: auto;
 }

@@ -1,0 +1,68 @@
+@model UserDetailHeaderDTO
+
+<div class="d-flex justify-content-between px-4 page-navbar-content">
+    <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+    <h1 class="my-auto text-font">Detail uživatele</h1>
+    <div class="my-auto">
+        <button class="butn btn-p" onclick="ShowModal('EditUserFormId')">Upravit</button>
+    </div>
+</div>
+<form id="EditUserFormId" class="mx-4 mt-4 mb-3" method="POST" action="/User/Edit" oninput="InputValidator(this)"
+      onsubmit="AjaxFormSubmit(event, null, true, false, AddRoleInputs, (result) => { InfoCardUpdate(result); RemoveRoleInpust() })">
+    <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+        <h2 class="mb-0 text-font">Editace uživatel</h2>
+        <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
+    </div>
+    <input id="IdId" type="hidden" name="Id" value="@Model.Id" />
+    <div class="row">
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
+                <span class="input-label">Jméno</span>
+            </label>
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="Surname" value="@Model.Surname" />
+                <span class="input-label">Přijmení</span>
+            </label>
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input required class="input-field" type="email" placeholder=" " name="Email" value="@Model.Email" />
+                <span class="input-label">E-mail</span>
+            </label>
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input class="input-field" type="tel" placeholder=" " name="PhoneNumber" value="@Model.PhoneNumber" />
+                <span class="input-label">Telefonní číslo</span>
+            </label>
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="UserName" value="@Model.UserName" />
+                <span class="input-label">Uživatelské jméno</span>
+            </label>
+        </div>
+        <div id="RoleColId" class="col-12 col-lg-6 mb-3 d-flex flex-wrap">
+            @foreach (SystemRoleEnum role in Model.Roles)
+            {
+                <div class="badge bg-primary rounded-pill text-default input-badge">
+                    @role.ToLabel()<i class="fas fa-times my-auto ms-2 pointer" onclick="RemoveRole(this, '@role')"></i>
+                </div>
+            }
+            @foreach (SystemRoleEnum role in Enum.GetValues<SystemRoleEnum>().Where(x => !Model.Roles.Any(y => x == y)))
+            {
+                <div class="badge bg-secondary rounded-pill text-default input-badge">
+                    @role.ToLabel()<i class="fas fa-plus my-auto ms-2 pointer" onclick="AddRole(this, '@role')"></i>
+                </div>
+            }
+        </div>
+        <div class="d-flex justify-content-center">
+            <button form="EditUserFormId" type="submit" class="butn btn-s">Upravit</button>
+        </div>
+        <div>
+        </div>
+    </div>
+</form>

@@ -49,6 +49,10 @@ namespace BPMS_DAL.Repositories
         {
             return await _context.Database.BeginTransactionAsync();
         }
-    }
 
+        public void Entry<U>(U entity, Action<EntityEntry<U>> action) where U : class
+        {
+            action(_context.Entry(entity));
+        }
+    }
 }
