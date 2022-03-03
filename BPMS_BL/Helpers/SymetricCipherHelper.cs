@@ -68,7 +68,7 @@ namespace BPMS_BL.Helpers
             guid += "-" + cipherText.Substring(32, 4);
             guid += "-" + cipherText.Substring(36, 4);
             guid += "-" + cipherText.Substring(40, 4);
-            guid += "-" + cipherText.Substring(cipherText.Length - 13);
+            guid += "-" + cipherText.Substring(cipherText.Length - 12);
 
             return Guid.Parse(guid);
         }
