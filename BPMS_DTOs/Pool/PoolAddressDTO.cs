@@ -15,8 +15,7 @@ namespace BPMS_DTOs.Pool
 {
     public class PoolAddressDTO : IAuthInfo
     {
-        [JsonProperty]
-        public static string URL { get; } = StaticData.ThisSystemURL;
+        public string URL { get; set; } = StaticData.ThisSystemURL;
 
         [JsonIgnore]
         public byte[]? Key { get; set; }

@@ -68,10 +68,11 @@ namespace BPMS_BL.Facades
                 Activity = SystemActivityEnum.InactiveAsked,
                 Key = SymetricCipherHelper.NewKey()
             };
-            PoolAddressDTO address = new PoolAddressDTO
+            PoolDstAddressDTO address = new PoolDstAddressDTO
             {
                 Key = StaticData.Key,
                 SystemId = entity.Id,
+                URL = dto.URL
             };
 
             if (!await CommunicationHelper.CreateSystem(dto.URL, SymetricCipherHelper.JsonEncrypt(address), 

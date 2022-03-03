@@ -62,15 +62,20 @@ namespace BPMS_BL.Helpers
             return crypto.Key;
         }
 
-        public static Guid ExtractGuid(string cipherText)
+        public static (Guid, string) ExtractGuid(string cipherText)
         {
+            int endIndex = cipherText.Length - 12;
             string guid = cipherText.Substring(0, 8);
             guid += "-" + cipherText.Substring(32, 4);
             guid += "-" + cipherText.Substring(36, 4);
             guid += "-" + cipherText.Substring(40, 4);
-            guid += "-" + cipherText.Substring(cipherText.Length - 12);
+            guid += "-" + cipherText.Substring(endIndex);
 
-            return Guid.Parse(guid);
+            cipherText = cipherText.Remove(endIndex);
+            cipherText = cipherText.Remove(0, 8);
+            cipherText = cipherText.Remove(32, 12);
+
+            return (Guid.Parse(guid), cipherText);
         }
     }
 }
