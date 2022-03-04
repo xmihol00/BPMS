@@ -66,7 +66,7 @@ namespace BPMS_DAL.Repositories
                          .Select(x => new AgendaDetailDTO 
                          {
                              AdministratorId = x.AdministratorId,
-                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
+                             AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}",
                              AdministratorEmail = x.Administrator.Email,
                              Id = x.Id,
                              Name = x.Name,
@@ -89,7 +89,7 @@ namespace BPMS_DAL.Repositories
                                              State = y.State,
                                              SVG = y.Model.SVG,
                                              AdministratorEmail = y.Administrator.Email,
-                                             AdministratorName = $"{y.Administrator.Name} {y.Administrator.Surname}"
+                                             AdministratorName = $"{x.Administrator.Title} {y.Administrator.Name} {y.Administrator.Surname}"
                                          })
                                          .ToList(),
                             Roles = x.AgendaRoles
@@ -101,7 +101,7 @@ namespace BPMS_DAL.Repositories
                                          Users = y.UserRoles.Select(z => new UserIdNameDTO
                                                             {
                                                                 Id = z.UserId,
-                                                                FullName = $"{z.User.Name} {z.User.Surname}",
+                                                                FullName = $"{z.User.Title} {z.User.Name} {z.User.Surname}",
                                                             })
                                                             .ToList()
                                      })

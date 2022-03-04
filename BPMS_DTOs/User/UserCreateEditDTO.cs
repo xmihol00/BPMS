@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.User
 {
-    public class UserEditDTO
+    public class UserCreateEditDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
         public string UserName { get; set; } = string.Empty;
         public List<SystemRoleEnum> RemovedRoles { get; set; } = new List<SystemRoleEnum>();
         public List<SystemRoleEnum> AddedRoles { get; set; } = new List<SystemRoleEnum>();

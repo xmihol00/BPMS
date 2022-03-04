@@ -113,7 +113,7 @@ function EditAttribute(button)
 
     element.parentNode.insertBefore(form, element);
     element.classList.add("d-none");
-    form.addEventListener("submit", (event) => AjaxFormSubmit(event, 'BlockConfigTargetId'));
+    form.addEventListener("submit", (event) => AjaxFormSubmit(event, 'AttributesConfigId', false, false, null, CancelAddAttrib));
     form.classList.add("border-bottom");
     form.classList.remove("d-none");
     InputValidator(form);
@@ -129,7 +129,7 @@ function CancelEdit(element)
 function AttribTypeChange(element)
 {
     let specDiv = element.parentNode.parentNode.parentNode.children[4];
-    if (element.value == "File" || element.value == "Selection")
+    if (element.value == "File" || element.value == "Select")
     {
         specDiv.innerHTML = CreateSpecInput(0, element.value) + AddSpecBtn(element.value);
         specDiv.children[0].children[2].remove();
@@ -152,12 +152,12 @@ function NoSpecInput()
 function AddSpecBtn(type)
 {
     return `<div class="d-flex justify-content-center">
-    <button class="butn btn-p mb-2" type="button" onclick="AddSpecInput(this, '${type}')">Přidat další ${type == "File" ? "typ souboru" : "hodnotu výběru"}</button></div>`
+    <button class="butn btn-p mt-2 mb-2" type="button" onclick="AddSpecInput(this, '${type}')">Přidat další ${type == "File" ? "typ souboru" : "hodnotu výběru"}</button></div>`
 }
 
 function CreateSpecInput(index, type, value = "")
 {
-    return `<label class="input mb-1">
+    return `<label class="input mt-3">
         <input required name="Specification[${index}]" class="input-field" type="text" placeholder=" " value="${value}" oninput="" />
         <span id="S${index}LableId" class="input-label">${index + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}</span>
         <button class="btn spec-remove" onclick="RemoveSpec(this, '${type}')" type="button"><i class="fas fa-times"></i></button>

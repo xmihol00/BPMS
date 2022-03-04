@@ -1,4 +1,5 @@
 using AutoMapper;
+using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Header;
 using BPMS_DTOs.Service;
@@ -16,8 +17,11 @@ namespace BPMS_BL.Profiles
     {
         public UserProfile()
         {
-            CreateMap<UserEditDTO, UserEntity>()
+            CreateMap<UserCreateEditDTO, UserEntity>()
                 .ForMember(dst => dst.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber == null ? "" : src.PhoneNumber));
+            
+            CreateMap<UserEntity, UserAuthDTO>()
+                .ForMember(dst => dst.Roles, opt => opt.MapFrom(src => src.SystemRoles.Select(x => x.Role).ToList()));
         }
     }
 }

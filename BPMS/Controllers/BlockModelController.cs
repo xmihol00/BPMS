@@ -26,7 +26,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEditAttribute(AttributeCreateEditDTO dto)
         {
-            return PartialView("Partial/_BlockModelConfig", await _blockModelFacade.CreateEdit(dto));
+            return PartialView("Partial/_AttributesConfig", await _blockModelFacade.CreateEdit(dto));
         }
 
         [HttpPost]

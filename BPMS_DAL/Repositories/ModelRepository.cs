@@ -204,7 +204,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.User.SystemRoles.Any(y => y.Role == SystemRoleEnum.WorkflowKeeper))
                          .Select(x => new UserIdNameDTO
                          {
-                             FullName = $"{x.User.Name} {x.User.Surname}",
+                             FullName = $"{x.User.Title} {x.User.Name} {x.User.Surname}",
                              Id = x.User.Id
                          })
                          .ToListAsync();

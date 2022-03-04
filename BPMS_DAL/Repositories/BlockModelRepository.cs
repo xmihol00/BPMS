@@ -85,7 +85,7 @@ namespace BPMS_DAL.Repositories
                       .SelectMany(x => x.UserRoles)
                       .Select(x => new UserIdNameDTO
                       {
-                          FullName = $"{x.User.Name} {x.User.Surname}",
+                          FullName = $"{x.User.Title} {x.User.Name} {x.User.Surname}",
                           Id = x.UserId
                       })
                       .ToListAsync();

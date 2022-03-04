@@ -325,6 +325,20 @@ function InputValidator(form)
     }
 }
 
+function PasswordValidator(form)
+{
+    InputValidator(form);
+    if (document.getElementById("PasswordCheckId").value != document.getElementById("PasswordId").value)
+    {
+        document.getElementById("PasswordMismatchId").classList.remove("d-none");
+        document.querySelector("[form=AccountCreateId]").disabled = true;
+    }
+    else
+    {
+        document.getElementById("PasswordMismatchId").classList.add("d-none");
+    }
+}
+
 function GetAjaxRequest(url, targetId)
 {
     $.ajax(

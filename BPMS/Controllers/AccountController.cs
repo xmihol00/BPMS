@@ -32,6 +32,18 @@ namespace BPMS.Controllers
             return View(new SignInDTO() { ReturnURL = ReturnUrl, UserName = UserName });
         }
 
+
+        [HttpGet]
+        public IActionResult Create(string ReturnUrl, string UserName)
+        {
+            if (ViewBag.Signed)
+            {
+                return Redirect(ReturnUrl ?? "/");
+            }
+
+            return View("AccountCreate", new SignInDTO() { ReturnURL = ReturnUrl, UserName = UserName });
+        }
+
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInDTO model)
         {
@@ -45,6 +57,27 @@ namespace BPMS.Controllers
             catch
             {
                 return Redirect($"/Account/SignIn?ReturnUrl={model?.ReturnURL ?? ""}&UserName={model?.UserName ?? ""}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(AccountCreateDTO dto)
+        {
+            if (ViewBag.Signed)
+            {
+                return Redirect(dto.ReturnURL ?? "/");
+            }
+
+            try
+            {
+                (ClaimsPrincipal principal, AuthenticationProperties authProperties) = await _userFacade.Create(dto);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+
+                return Redirect(dto.ReturnURL ?? "/");
+            }
+            catch
+            {
+                return Redirect($"/Account/Create?ReturnUrl={dto.ReturnURL}&UserName={dto.UserName}");
             }
         }
 

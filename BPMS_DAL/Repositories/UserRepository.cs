@@ -24,7 +24,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper))
                          .Select(x => new UserIdNameDTO 
                          {
-                             FullName = $"{x.Name} {x.Surname}",
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
                              Id = x.Id 
                          })
                          .ToListAsync();
@@ -37,7 +37,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.UserRoles.All(y => y.AgendaRole.RoleId != roleId || y.AgendaRole.AgendaId != agendaId))
                          .Select(x => new UserIdNameDTO
                          {
-                             FullName = $"{x.Name} {x.Surname}",
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
                              Id = x.Id
                          })
                          .ToListAsync();
@@ -49,12 +49,18 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.UserName == userName)
                          .Select(x => new UserAuthDTO
                          {
-                             FullName = $"{x.Name} {x.Surname}",
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
                              Id = x.Id,
                              Password = x.Password,
                              Roles = x.SystemRoles.Select(y => y.Role).ToList()
                          })
                          .FirstAsync();
+        }
+
+        public Task<UserEntity> BareRoles(string userName)
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .FirstAsync(x => x.UserName == userName);
         }
 
         public Task<UserInfoCardDTO> InfoCard(Guid id)
@@ -71,7 +77,7 @@ namespace BPMS_DAL.Repositories
                                                         .ToList(),
                              SelectedUser = new UserAllDTO
                                             {
-                                                FullName = $"{x.Name} {x.Surname}",
+                                                FullName = $"{x.Title} {x.Name} {x.Surname}",
                                                 Id = x.Id,
                                                 Roles = x.SystemRoles.Select(y => y.Role)
                                                         .ToList()
@@ -86,7 +92,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.Id != id)
                          .Select(x => new UserAllDTO
                          {
-                             FullName = $"{x.Name} {x.Surname}",
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
                              Id = x.Id,
                              Roles = x.SystemRoles.Select(x => x.Role).ToList()
                          })
@@ -98,7 +104,7 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Include(x => x.SystemRoles)
                          .Select(x => new UserAllDTO
                          {
-                             FullName = $"{x.Name} {x.Surname}",
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
                              Id = x.Id,
                              Roles = x.SystemRoles.Select(x => x.Role).ToList()
                          })
@@ -144,7 +150,7 @@ namespace BPMS_DAL.Repositories
                                                          .Select(y => new WorkflowAllDTO
                                                          {
                                                              AdministratorEmail = x.Email,
-                                                             AdministratorName = $"{x.Name} {x.Surname}",
+                                                             AdministratorName = $"{x.Title} {x.Name} {x.Surname}",
                                                              AgendaId = y.AgendaId,
                                                              AgendaName = y.Agenda.Name,
                                                              Description = y.Description,

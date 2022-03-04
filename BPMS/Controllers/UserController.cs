@@ -39,7 +39,7 @@ namespace BPMS.Controllers
             });
         }
 
-        public async Task<IActionResult> Edit(UserEditDTO dto)
+        public async Task<IActionResult> Edit(UserCreateEditDTO dto)
         {
             UserInfoCardDTO infoCard = await _userFacade.Edit(dto);
             return Ok(new
@@ -47,6 +47,11 @@ namespace BPMS.Controllers
                 info = await this.RenderViewAsync("Partial/_UserDetailInfo", infoCard, true),
                 card = await this.RenderViewAsync("Partial/_UserCard", (infoCard.SelectedUser, true), true),
             });
+        }
+
+        public async Task<IActionResult> Create(UserCreateEditDTO dto)
+        {
+            return Redirect($"/User/Detail/{await _userFacade.Create(dto)}");
         }
     }
 }

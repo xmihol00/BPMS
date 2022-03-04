@@ -10,6 +10,7 @@ using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.Account;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
@@ -48,7 +49,37 @@ namespace BPMS_BL.Facades
             }
         }
 
-        public async Task<UserInfoCardDTO> Edit(UserEditDTO dto)
+        public async Task<(ClaimsPrincipal, AuthenticationProperties)> Create(AccountCreateDTO dto)
+        {
+            UserEntity entity = await _userRepository.BareRoles(dto.UserName);
+            if (entity.Password != null || dto.Password != dto.Password)
+            {
+                throw new Exception();
+            }
+            entity.Password = PasswordHelper.HashPassword(dto.Password);
+            await _userRepository.Save();
+
+            return ClaimsAndProperties(_mapper.Map<UserAuthDTO>(entity));
+        }
+
+        public async Task<Guid> Create(UserCreateEditDTO dto)
+        {
+            UserEntity entity = _mapper.Map<UserEntity>(dto);
+
+            foreach (SystemRoleEnum role in dto.AddedRoles)
+            {
+                entity.SystemRoles.Add(new SystemRoleEntity
+                {
+                    Role = role
+                });
+            }
+
+            await _userRepository.Create(entity);
+            await _userRepository.Save();
+            return entity.Id;
+        }
+
+        public async Task<UserInfoCardDTO> Edit(UserCreateEditDTO dto)
         {
             UserEntity entity = _mapper.Map<UserEntity>(dto);
             _userRepository.Update(entity);

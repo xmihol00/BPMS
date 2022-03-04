@@ -38,7 +38,7 @@ function AddRole(btn, role)
 
 function AddRoleInputs()
 {
-    let form = document.getElementById("EditUserFormId");
+    let form = document.getElementById("CreateEditUserId");
     for (let i = 0; i < AddedRoles.length; i++) 
     {
         CreateInput(AddedRoles[i], `AddedRoles[${i}]`, form);

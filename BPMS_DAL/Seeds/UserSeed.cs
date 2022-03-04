@@ -19,6 +19,7 @@ namespace BPMS_DAL.Seeds
                 Email = "admin.system@test.cz",
                 Name = "Admin",
                 Surname = "System",
+                Title = "Ing.",
                 UserName = "admin",
                 Password = PasswordHelper.HashPassword("admin")
             },
@@ -29,6 +30,7 @@ namespace BPMS_DAL.Seeds
                 Name = "Správce",
                 Surname = "System",
                 UserName = "spravce",
+                Title = "Mgr.",
                 Password = PasswordHelper.HashPassword("spravce")
             },
             new UserEntity()

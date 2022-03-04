@@ -68,8 +68,8 @@ a:hover {
 
 .signin-fail {
   color: red; 
-  margin-top: -10px; 
-  margin-bottom: 10px
+  margin-top: -0.75rem;
+  margin-bottom: 0.25rem;
 }
 
 .sign-out-div {
@@ -729,3 +729,6 @@ a:hover {
   font-size: 2em;
 }
 
+.mt--2 {
+  margin-top: -0.5rem;
+}

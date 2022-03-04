@@ -61,7 +61,7 @@ namespace BPMS_DAL.Repositories
                              Users = x.UserRoles.Select(y => new UserIdNameDTO
                                                 {
                                                     Id = y.UserId,
-                                                    FullName = $"{y.User.Name} {y.User.Surname}",
+                                                    FullName = $"{y.User.Title} {y.User.Name} {y.User.Surname}",
                                                 })
                                                 .ToList()
                          })

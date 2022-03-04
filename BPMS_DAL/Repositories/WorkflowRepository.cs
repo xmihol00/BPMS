@@ -105,7 +105,7 @@ namespace BPMS_DAL.Repositories
                              State = x.State,
                              SVG = x.Model.SVG,
                              AdministratorEmail = x.Administrator.Email,
-                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}",
+                             AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}",
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -128,7 +128,7 @@ namespace BPMS_DAL.Repositories
                              State = x.State,
                              SVG = x.Model.SVG,
                              AdministratorEmail = x.Administrator.Email,
-                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}"
+                             AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}"
                          })
                          .ToListAsync();
         }
@@ -151,7 +151,7 @@ namespace BPMS_DAL.Repositories
                              State = x.State,
                              SVG = x.Model.SVG,
                              AdministratorEmail = x.Administrator.Email,
-                             AdministratorName = $"{x.Administrator.Name} {x.Administrator.Surname}"
+                             AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}"
                          })
                          .FirstAsync();
         }

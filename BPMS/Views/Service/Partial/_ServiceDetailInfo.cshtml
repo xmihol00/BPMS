@@ -6,28 +6,16 @@
     <div class="col-12 col-lg-6">
         <h4 class="text-center text-font my-1">Atributy služby</h4>
         <div class="row">
-            <div class="col-6 text-right px-2">
-                HTTP metoda:
-            </div>
-            <div class="col-6 px-2">
-                <b>@Model.HttpMethod</b>
-            </div>
+            <div class="col-6 text-right px-2">HTTP metoda:</div>
+            <div class="col-6 px-2"><b>@Model.HttpMethod</b></div>
         </div>
         <div class="row">
-            <div class="col-6 text-right px-2">
-                Serializace:
-            </div>
-            <div class="col-6 px-2">
-                <b>@Model.Serialization.ToLabel()</b>
-            </div>
+            <div class="col-6 text-right px-2">Serializace:</div>
+            <div class="col-6 px-2"><b>@Model.Serialization.ToLabel()</b></div>
         </div>
         <div class="row">
-            <div class="col-6 text-right px-2">
-                Typ služby:
-            </div>
-            <div class="col-6 px-2">
-                <b>@Model.Type</b>
-            </div>
+            <div class="col-6 text-right px-2">Typ služby:</div>
+            <div class="col-6 px-2"><b>@Model.Type</b></div>
         </div>
     </div>
     <div class="col-12 col-lg-6">
@@ -38,7 +26,7 @@
         }
         else
         {
-            @Model.Description
+            <div class="text-descr">@Model.Description</div>
         }
     </div>
 </div>

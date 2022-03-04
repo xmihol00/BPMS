@@ -1,0 +1,38 @@
+@model SignInDTO
+@{
+    ViewData["Title"] = "Tvorba účtu";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-center signin-position">
+        <div class="col-12 col-md-6 col-lg-4 p-2">
+            <div class="shadow-box p-3 my-card bradius-card">
+                <h2 class="border-bottom text-center">Tvorba účtu — BPMS</h2>
+                <form id="AccountCreateId" method="POST" action="/Account/Create" oninput="PasswordValidator(this)" novalidate>
+                    <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" />
+                    <label class="input mt-2 mb-3">
+                        <input required class="input-field" type="text" placeholder=" " name="UserName" value="@Model.UserName" />
+                        <span class="input-label">Přihlašovací jméno</span>
+                    </label>
+                    <label class="input mb-3">
+                        <input id="PasswordId" required class="input-field" type="password" placeholder=" " name="Password" />
+                        <span class="input-label">Heslo</span>
+                    </label>
+                    <label class="input mb-3">
+                        <input id="PasswordCheckId" required class="input-field" type="password" placeholder=" " name="PasswordCheck" />
+                        <span class="input-label">Potvrzení hesla</span>
+                    </label>
+                    <div id="PasswordMismatchId" class="signin-fail d-none">Hesla se neshodují.</div>
+                    @if (!String.IsNullOrWhiteSpace(Model.UserName))
+                    {
+                        <div class="signin-fail">Nezámé uživatelské jméno</div>
+                    }
+                    <div class="d-flex justify-content-between mx-4">
+                        <button type="submit" form="AccountCreateId" class="butn btn-s" disabled>Vytvořit</button>
+                        <a class="butn btn-p" href="/Account/SignIn">Přihlášení</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

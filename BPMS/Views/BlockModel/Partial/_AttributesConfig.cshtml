@@ -1,84 +1,72 @@
-@model (IAttributesConfig data, bool reciever)
+@model BlockModelConfigDTO
 
-<h4 class="mt-2">@(Model.reciever ? "Příchozí" : "Výstupní") atributy bloku</h4>
-@if (Model.data.Attributes.Count > 0)
-{
+<form id="AttribCreateFormId" class="d-none mt-2 position-relative" action="/BlockModel/CreateEditAttribute" 
+        onsubmit="AjaxFormSubmit(event, 'AttributesConfigId', false, false, null, CancelAddAttrib)" oninput="InputValidator(this)">
+    <div class="vertical-justify-center config-buttons">
+        <button type="submit" form="AttribCreateFormId" id="CreateAttBtnId" class="butn butn-sm btn-s mb-1" disabled><i class="fas fa-check"></i></button>
+        <button type="button" id="CancelAttBtnId" class="butn butn-sm btn-d mt-1" onclick="CancelAddAttrib()"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="IdId" name="Id" value="" />
+    <input type="hidden" name="BlockId" value="@Model.Id" />
+    <h5 id="HeadlineId">Tvorba atributu</h5>
     <div class="row">
-        <div class="col-4 text-center text-bold">
-            Název
+        <div class="col-4">
+            <label class="input">
+                <input required id="NameId" name="Name" class="input-field" type="text" placeholder=" " value="" />
+                <span class="input-label">Název</span>
+            </label>
         </div>
-        <div class="col-4 text-center text-bold">
-            Typ
-        </div>
-        <div class="col-4 text-center text-bold">
-            Povinnost
-        </div>
-        <div class="d-flex-wrap border-bottom-2 mb-1 p-0">
-            <div class="col-6 text-center text-bold">
-                Popis
+        <div class="col-4">
+            <label class="input">
+                <select id="TypeId" class="input-select" name="Type" oninput="AttribTypeChange(this)"> 
+                    @foreach (AttributeTypeEnum enumVal in Enum.GetValues<AttributeTypeEnum>())
+                    {
+                        <option value="@enumVal">@enumVal.ToLabel()</option>   
+                    }
+                </select>
+                <span class="input-label">Typ</span>
+            </label>
+        </div>  
+        <div class="col-4 vertical-justify-center justify-content-center">
+            <div class="d-flex justify-content-center">
+                <input type="checkbox" id="CompulsoryId" name="Compulsory" class="checkbox" checked/>
+                <span class="label-checkbox">Povinný</span>
             </div>
-            <div class="col-6 text-center text-bold">
-                Specifikace
+        </div>
+        <div class="col-6 mt-3">
+            <label class="input">
+                <textarea id="DescrId" name="Description" class="input-field" type="text" placeholder=" "></textarea>
+                <span class="input-label">Popis</span>
+            </label>
+        </div>
+        <div id="SpecDivId" class="col-5 mt-3">
+            <div class="vertical-justify-center">
+                Tento typ atributu nemá specifikaci.
             </div>
         </div>
-        @foreach (BlockAttributeDTO attrib in Model.data.Attributes)
-        {
-            <div id="@attrib.Id" class="d-flex-wrap mb-1 pb-1 border-bottom position-relative p-0">
-                @if (!Model.reciever)
-                {
-                    <div class="config-buttons">
-                        <button class="btn padr-icon" type="button" onclick="EditAttribute(this)"><i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn padl-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
-                    </div>
-                }
-                <div class="col-4 text-center text-bold">@attrib.Name</div>
-                <div class="col-4 text-center text-code">@attrib.Type.ToLabel()</div>
-                <div class="col-4 text-center">
-                    <span class="badge @(attrib.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
-                        <i class="fas fa-check-circle"></i>
-                    </span>
-                </div>
-                <div class="col-6 text-center mt-2">
-                    @if (String.IsNullOrEmpty(@attrib.Description))
-                    {
-                        <span class="text-placeholder">Atribut nemá popis.</span>
-                    }
-                    else
-                    {
-                        <text>@attrib.Description</text>
-                    }
-                </div>
-                <div class="col-6 d-flex justify-content-center mt-2">
-                    @if (attrib.Type == AttributeTypeEnum.File)
-                    {
-                        <ol>
-                            @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
-                            {
-                                <li>
-                                    typ souboru: <span class="text-code text-bold">@spec</span>
-                                </li>
-                            }
-                        </ol>
-                    }
-                    else if (attrib.Type == AttributeTypeEnum.Select)
-                    {
-                        <ol>
-                            @foreach (string spec in JsonConvert.DeserializeObject<List<string>>(attrib.Specification) ?? new List<string>())
-                            {
-                                <li>
-                                    hodnota výběru: <span class="text-code text-bold">@spec</span>
-                                </li>
-                            }
-                        </ol>
-                    }
-                </div>
-            </div>
-        }
     </div>
-}
-else
+</form>
+@if (Model is IRecievedMessageConfig)
 {
-    <div class="text-placeholder mb-3">
-        Blok nemá konfigurovany žádné @(Model.reciever ? "příchozí" : "výstupní") atributy.
-    </div>
+    @await Html.PartialAsync("Partial/_RecieveEventConfig", Model)
+}
+
+@if (Model is IAttributesConfig)
+{   
+    @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IAttributesConfig, Model is IRecievedMessageConfig))
+}
+
+@if (Model is IServiceInputAttributes)
+{
+    @await Html.PartialAsync("Partial/_ServiceInputAttributesConfig", Model)
+}
+
+@if (Model is IInputAttributesConfig)
+{
+    @await Html.PartialAsync("Partial/_InputAttributesConfig", Model)
+}
+
+@if (Model is IServiceOutputAttributes)
+{
+    @await Html.PartialAsync("Partial/_ServiceOutputAttributesConfig", Model)
 }

@@ -12,19 +12,12 @@
         <div class="loading-content"></div>
     </div>
     <div id="OverviewDivId" class="container-lg">
-        @if (Model.Tasks.Count > 0)
-        {
-            <div class="row">
-                @foreach (TaskAllDTO task in Model.Tasks)
-                {
-                    @await Html.PartialAsync("Partial/_TaskCard", (task, false))
-                }
-            </div>
-        }
-        else
-        {
-            <div class="text-placeholder">Nemáte žádné aktivní úkoly.</div>
-        }
+        <div class="row">
+            @foreach (TaskAllDTO task in Model.Tasks)
+            {
+                @await Html.PartialAsync("Partial/_TaskCard", (task, false))
+            }
+        </div>
     </div>
     <div id="OverviewNavId" class="overview-nav">
 
