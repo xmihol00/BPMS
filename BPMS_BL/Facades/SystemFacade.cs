@@ -65,7 +65,7 @@ namespace BPMS_BL.Facades
             SystemEntity entity = new SystemEntity
             {
                 URL = StaticData.ThisSystemURL,
-                Activity = SystemActivityEnum.InactiveAsked,
+                State = SystemStateEnum.Inactive,
                 Key = SymetricCipherHelper.NewKey()
             };
             PoolDstAddressDTO address = new PoolDstAddressDTO
@@ -84,7 +84,7 @@ namespace BPMS_BL.Facades
             entity.Name = dto.Name;
             entity.Description = dto.Description;
             entity.URL = dto.URL;
-            entity.Activity = SystemActivityEnum.Inactive;
+            entity.State = SystemStateEnum.Waiting;
 
             await _systemRepository.Create(entity);
             await _systemRepository.Save();

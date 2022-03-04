@@ -49,7 +49,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              URL = x.URL,
-                             Description = x.Description
+                             Description = x.Description,
+                             State = x.State
                          })
                          .ToListAsync();
         }
@@ -62,12 +63,14 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              URL = x.URL,
                              Description = x.Description,
+                             State = x.State,
                              SelectedSystem = new SystemAllDTO
                              {
                                  Description = x.Description,
                                  Id = x.Id,
                                  Name = x.Name,
-                                 URL = x.URL
+                                 URL = x.URL,
+                                 State = x.State
                              }
                          })
                          .FirstAsync(x => x.Id == id);
@@ -108,6 +111,7 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              URL = x.URL,
+                             State = x.State,
                              Agendas = x.Agendas.Select(y => y.Agenda)
                                                 .Select(y => new AgendaAllDTO
                                                 {

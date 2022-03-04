@@ -6,12 +6,35 @@ using System.Threading.Tasks;
 
 namespace BPMS_Common.Enums
 {
-    public enum SystemActivityEnum
+    public enum SystemStateEnum
     {
-        InactiveAsked,
         Inactive,
         Waiting,
         Activated,
         Deactivated
+    }
+
+    public static class SystemState
+    {
+        public static string ToLabel(this SystemStateEnum value)
+        {
+            switch (value)
+            {
+                default:
+                    return "";
+
+                case SystemStateEnum.Inactive:
+                    return "žádost o spojení";
+                
+                case SystemStateEnum.Waiting:
+                    return "spojení zažádáno";
+                
+                case SystemStateEnum.Activated:
+                    return "aktivní spojení";
+                
+                case SystemStateEnum.Deactivated:
+                    return "spojení deaktivováno";
+            }
+        }
     }
 }

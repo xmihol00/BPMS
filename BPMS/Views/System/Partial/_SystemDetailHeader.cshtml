@@ -1,9 +1,27 @@
 @model SystemDetailHeaderDTO
 
 <div class="d-flex justify-content-between px-4 page-navbar-content">
-    <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+    <button type="button" class="btn my-auto mr-100"><i class="fas fa-chevron-circle-left my-auto"></i></button>
     <h1 class="my-auto text-font">Detail systému</h1>
     <div class="my-auto">
+        @switch (Model.State)
+        {
+            case SystemStateEnum.Inactive:
+                <button class="butn btn-s" onclick="Activate()">Povolit a aktivovat</button>
+                break;
+            
+            case SystemStateEnum.Waiting:
+                <button class="butn btn-s" disabled title="Žádost o navázání spojení již byla odeslána.">Aktivovat</button>
+                break;
+            
+            case SystemStateEnum.Activated:
+                <button class="butn btn-d" onclick="Deactive()">Deaktivovat</button>
+                break;
+            
+            case SystemStateEnum.Deactivated:
+                <button class="butn btn-s" onclick="Activate()">Aktivovat</button>
+                break;
+        }
         <button class="butn btn-p" onclick="ShowModal('EditSystemFormId')">Upravit</button>
     </div>
 </div>

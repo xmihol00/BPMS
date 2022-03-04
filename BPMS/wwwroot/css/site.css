@@ -496,7 +496,7 @@ a:hover {
   color: var(--color-active);
 }
 
-.Active, .Shared {
+.Active, .Shared, .Activated {
   background-color: var(--color-active);
 }
 
@@ -516,7 +516,7 @@ a:hover {
   color: var(--color-finished);
 }
 
-.New {
+.New, .Inactive {
   background-color: var(--color-state-new);
 }
 
@@ -528,7 +528,7 @@ a:hover {
   color: var(--color-canceled);
 }
 
-.Canceled, .Incorrect {
+.Canceled, .Incorrect, .Deactivated {
   background-color: var(--color-canceled);
 }
 

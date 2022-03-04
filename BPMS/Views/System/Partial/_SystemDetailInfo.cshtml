@@ -1,6 +1,11 @@
 @model SystemDetailInfoDTO
 
-<h1 class="text-center text-font mb-0">@Model.Name</h1>
+<div class="d-flex justify-content-center">
+    <h1 class="text-font my-auto me-1">@Model.Name</h1>
+    <div class="badge rounded-pill text-large ms-1 my-auto @Model.State">
+        @Model.State.ToLabel()
+    </div>
+</div>
 <div class="row">
     <div class="col-12 col-lg-6">
         <h4 class="text-center text-font">URL systému</h4>
