@@ -11,6 +11,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
+using BPMS_DTOs.Account;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
@@ -390,7 +391,7 @@ namespace BPMS_BL.Helpers
             }
 
             bool recieved = true;
-            foreach (PoolBlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
+            foreach (BlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
             {
                 if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
                 {
@@ -574,7 +575,7 @@ namespace BPMS_BL.Helpers
             List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(poolId, workflowId);
             string message = JsonConvert.SerializeObject(activeBlocks);
 
-            foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
+            foreach (DstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
                 await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), message);
             }
@@ -593,7 +594,7 @@ namespace BPMS_BL.Helpers
             };
             string message = JsonConvert.SerializeObject(activeBlocks);
 
-            foreach (PoolDstAddressDTO address in await _poolRepository.Addresses(modelId))
+            foreach (DstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
                 await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), message);
             }

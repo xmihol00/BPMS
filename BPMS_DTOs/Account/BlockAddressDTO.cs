@@ -9,9 +9,9 @@ using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace BPMS_DTOs.Pool
+namespace BPMS_DTOs.Account
 {
-    public class PoolBlockAddressDTO : PoolDstAddressDTO
+    public class BlockAddressDTO : DstAddressDTO
     {
         public Guid BlockId { get; set; }
         public Guid ModelId { get; set; }

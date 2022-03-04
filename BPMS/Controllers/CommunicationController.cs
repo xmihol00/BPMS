@@ -73,5 +73,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.CreateSystem(system));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ActivateSystem()
+        {
+            return Ok(await _communicationFacade.ActivateSystem());
+        }
     }
 }

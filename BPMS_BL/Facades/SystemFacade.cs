@@ -11,6 +11,7 @@ using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.Account;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
 using Newtonsoft.Json;
@@ -54,7 +55,32 @@ namespace BPMS_BL.Facades
         {
             SystemEntity entity = _mapper.Map<SystemEntity>(dto);
             _systemRepository.Update(entity);
-            _systemRepository.Entry(entity, x => x.Property(x => x.Key).IsModified = false);
+            _systemRepository.Entry(entity, x => 
+            {
+                x.Property(x => x.Key).IsModified = false;
+                x.Property(x => x.State).IsModified = false;
+            });
+
+            await _systemRepository.Save();
+            return await _systemRepository.InfoCard(dto.Id);
+        }
+
+        public async Task<SystemInfoCardDTO> Activate(SystemActivateDTO dto)
+        {
+            SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
+            entity.Name = dto.Name;
+            entity.Description = dto.Description;
+            entity.State = SystemStateEnum.Activated;
+            DstAddressDTO address = new DstAddressDTO
+            {
+                Key = entity.Key,
+                SystemId = entity.Id,
+                URL = entity.URL
+            };
+            if (!await CommunicationHelper.ActivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address), ""))
+            {
+                throw new Exception(); // TODO
+            }
 
             await _systemRepository.Save();
             return await _systemRepository.InfoCard(dto.Id);
@@ -68,7 +94,7 @@ namespace BPMS_BL.Facades
                 State = SystemStateEnum.Inactive,
                 Key = SymetricCipherHelper.NewKey()
             };
-            PoolDstAddressDTO address = new PoolDstAddressDTO
+            DstAddressDTO address = new DstAddressDTO
             {
                 Key = StaticData.Key,
                 SystemId = StaticData.ThisSystemId,

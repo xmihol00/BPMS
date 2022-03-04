@@ -13,6 +13,7 @@ using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
+using BPMS_DTOs.Account;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
@@ -90,7 +91,7 @@ namespace BPMS_BL.Facades
             {
                 if (mappedBlock is ISendEventModelEntity)
                 {
-                    foreach (PoolBlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(mappedBlock.Id))
+                    foreach (BlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(mappedBlock.Id))
                     {
                         await CommunicationHelper.RemoveRecieverAttribute(recieverAddress.DestinationURL, 
                                                                           SymetricCipherHelper.JsonEncrypt(recieverAddress),
@@ -148,7 +149,7 @@ namespace BPMS_BL.Facades
             BlockAttributeEntity attrib = await _blockAttributeRepository.Bare(attributeId);
 
             bool success = true;
-            foreach (PoolBlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(blockId))
+            foreach (BlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(blockId))
             {
                 attrib.BlockId = recieverAddress.BlockId;
                 success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 

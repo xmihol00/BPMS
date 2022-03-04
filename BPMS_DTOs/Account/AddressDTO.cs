@@ -11,9 +11,9 @@ using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace BPMS_DTOs.Pool
+namespace BPMS_DTOs.Account
 {
-    public class PoolAddressDTO : IAuthInfo
+    public class AddressDTO : IAuthInfo
     {
         public string URL { get; set; } = StaticData.ThisSystemURL;
 

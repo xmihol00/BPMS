@@ -67,6 +67,15 @@ namespace BPMS_BL.Facades
             _system = new SystemEntity();
         }
 
+        public async Task<string> ActivateSystem()
+        {
+            _system.State = SystemStateEnum.Activated;
+            _systemRepository.Update(_system);
+            await _systemRepository.Save();
+
+            return "";
+        }
+
         public async Task<string> BlockActivity(List<BlockWorkflowActivityDTO> blocks)
         {
             foreach (BlockWorkflowActivityDTO block in blocks)

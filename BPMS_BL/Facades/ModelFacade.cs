@@ -21,6 +21,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_Common.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using BPMS_DAL;
+using BPMS_DTOs.Account;
 
 namespace BPMS_BL.Facades
 {
@@ -118,7 +119,7 @@ namespace BPMS_BL.Facades
             string serilizedModel = JsonConvert.SerializeObject(model);
             
             bool shared = true;
-            foreach (PoolDstAddressDTO pool in await _poolRepository.Addresses(id))
+            foreach (DstAddressDTO pool in await _poolRepository.Addresses(id))
             {
                 shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, 
                                                                SymetricCipherHelper.JsonEncrypt(pool), 
@@ -179,8 +180,8 @@ namespace BPMS_BL.Facades
             });
 
             bool run = true;
-            List<PoolDstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
-            foreach (PoolDstAddressDTO pool in pools)
+            List<DstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
+            foreach (DstAddressDTO pool in pools)
             {
                 run &= await CommunicationHelper.IsModelRunable(pool.DestinationURL, 
                                                                 SymetricCipherHelper.JsonEncrypt(pool), 
@@ -189,7 +190,7 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                foreach (PoolDstAddressDTO pool in pools)
+                foreach (DstAddressDTO pool in pools)
                 {
                     run &= await CommunicationHelper.RunModel(pool.DestinationURL, 
                                                               SymetricCipherHelper.JsonEncrypt(pool), 

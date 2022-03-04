@@ -52,5 +52,15 @@ namespace BPMS.Controllers
                 card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
             });
         }
+
+        public async Task<IActionResult> AddActivate(SystemActivateDTO dto)
+        {
+            SystemInfoCardDTO infoCard = await _systemFacade.Activate(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
+            });
+        }
     }
 }

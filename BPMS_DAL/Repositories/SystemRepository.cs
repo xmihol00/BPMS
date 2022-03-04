@@ -83,7 +83,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              URL = x.URL,
-                             Description = x.Description
+                             Description = x.Description,
+                             State = x.State
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -175,6 +176,11 @@ namespace BPMS_DAL.Repositories
         public SystemEntity Bare(Guid id)
         {
             return _dbSet.First(x => x.Id == id);
+        }
+
+        public Task<SystemEntity> BareAsync(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
     }
 }
