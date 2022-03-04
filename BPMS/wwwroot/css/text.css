@@ -71,3 +71,9 @@
 .text-right {
   text-align: right;
 }
+
+.empty-name:empty::before {
+  content: "Bez jména";
+  font-style: italic;
+  color: var(--color-secondary);
+}

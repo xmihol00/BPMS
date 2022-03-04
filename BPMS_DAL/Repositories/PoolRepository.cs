@@ -110,6 +110,17 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<List<PoolIdNameDTO>> Pools(Guid modelId)
+        {
+            return _dbSet.Where(x => x.ModelId == modelId)
+                         .Select(x => new PoolIdNameDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name
+                         })
+                         .ToListAsync();
+        }
+
         public Task<List<SystemPickerDTO>> OfAgenda(Guid id)
         {
             return _dbSet.Include(x => x.Model)

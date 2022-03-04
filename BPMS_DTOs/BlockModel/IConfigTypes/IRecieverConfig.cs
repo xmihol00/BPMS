@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Service;
 using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.IConfigTypes
 {
-    public interface IAttributesConfig
+    public interface IRecieverConfig
     {
-        public List<BlockAttributeDTO> Attributes { get; set; }
+        SenderRecieverConfigDTO? Sender { get; set; }
     }
 }

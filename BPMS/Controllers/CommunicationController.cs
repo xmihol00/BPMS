@@ -79,5 +79,29 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.ActivateSystem());
         }
+
+        [HttpPost] 
+        public async Task<IActionResult> SenderInfo(Guid id)
+        {
+            return Ok(await _communicationFacade.SenderInfo(id));
+        }
+
+        [HttpPost] 
+        public async Task<IActionResult> Models()
+        {
+            return Ok(await _communicationFacade.Models());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Pools(Guid id)
+        {
+            return Ok(await _communicationFacade.Pools(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SenderBlocks(Guid id)
+        {
+            return Ok(await _communicationFacade.SenderBlocks(id));
+        }
     }
 }

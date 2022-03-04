@@ -39,6 +39,8 @@ namespace BPMS_BL.Facades
         private readonly ServiceDataSchemaRepository _dataSchemaRepository;
         private readonly FlowRepository _flowRepository;
         private readonly BlockModelDataSchemaRepository _blockModelDataSchemaRepository;
+        private readonly ForeignSendEventRepository _foreignSendEventRepository;
+        private readonly ForeignRecieveEventRepository _foreignRecieveEventRepository;
         private readonly IMapper _mapper;
         private Guid _blockId;
 
@@ -46,7 +48,9 @@ namespace BPMS_BL.Facades
                                 BlockAttributeMapRepository blockAttributeMapRepository, PoolRepository poolRepository,
                                 SystemRepository systemRepository, ServiceRepository serviceRepository, 
                                 ServiceDataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
-                                BlockModelDataSchemaRepository blockModelDataSchemaRepository, IMapper mapper)
+                                BlockModelDataSchemaRepository blockModelDataSchemaRepository, 
+                                ForeignSendEventRepository foreignSendEventRepository, 
+                                ForeignRecieveEventRepository foreignRecieveEventRepository, IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
             _blockAttributeRepository = blockAttributeRepository;
@@ -57,6 +61,8 @@ namespace BPMS_BL.Facades
             _dataSchemaRepository = dataSchemaRepository;
             _flowRepository = flowRepository;
             _blockModelDataSchemaRepository = blockModelDataSchemaRepository;
+            _foreignSendEventRepository = foreignSendEventRepository;
+            _foreignRecieveEventRepository = foreignRecieveEventRepository;
             _mapper = mapper;
         }
 
@@ -235,27 +241,51 @@ namespace BPMS_BL.Facades
 
         private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
         {
-            BlockModelConfigDTO dto = new RecieveEventModelConfigDTO();
-            (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(recieveEvent.Id);
-            (dto as IRecievedMessageConfig).Message = await RecievedMessage(recieveEvent);
+            RecieveEventModelConfigDTO dto = new RecieveEventModelConfigDTO();
+            dto.OutputAttributes = await _blockAttributeRepository.Details(recieveEvent.Id);
+            if (recieveEvent.SenderId != null)
+            {
+                dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.SenderId.Value);
+                return dto;
+            }
+
+            if (recieveEvent.ForeignSenderId != null)
+            {
+                SenderRecieverAddressDTO address = await _foreignSendEventRepository.SenderAddress(recieveEvent.ForeignSenderId.Value);
+                dto.Sender = await CommunicationHelper.SenderInfo(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address),
+                                                                  address.ForeignBlockId.ToString());
+
+                return dto;
+            }
+
             return dto;
         }
 
         private async Task<BlockModelConfigDTO> SendEventConfig(ISendEventModelEntity sendEvent)
         {
-            BlockModelConfigDTO dto = new SendEventModelConfigDTO();
-            (dto as IInputAttributesConfig).InputAttributes = 
-                    await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
+            SendEventModelConfigDTO dto = new SendEventModelConfigDTO();
+            dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
+            dto.Senders = await _blockModelRepository.RecieversInfo(sendEvent.Id);
+            foreach (SenderRecieverAddressDTO address in await _blockModelRepository.RecieverAddresses(sendEvent.Id))
+            {
+                try
+                {
+                    dto.Senders.AddRange(await CommunicationHelper.RecieversInfo(address.DestinationURL, 
+                                                                                 SymetricCipherHelper.JsonEncrypt(address),
+                                                                                 address.ForeignBlockId.ToString()));
+                }
+                catch {}
+            }
+
             return dto;
         }
 
         private async Task<BlockModelConfigDTO> UserTaskConfig(IUserTaskModelEntity userTask)
         {
-            BlockModelConfigDTO dto = new UserTaskModelConfigDTO();
-            (dto as IAttributesConfig).Attributes = await _blockAttributeRepository.Details(userTask.Id);
-            (dto as IInputAttributesConfig).InputAttributes = 
-                    await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
-            (dto as IInputAttributesConfig).InputAttributes.AddRange(await _blockModelRepository.RecieveEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
+            UserTaskModelConfigDTO dto = new UserTaskModelConfigDTO();
+            dto.OutputAttributes = await _blockAttributeRepository.Details(userTask.Id);
+            dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
+            dto.InputAttributes.AddRange(await _blockModelRepository.RecieveEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
             
             IRoleConfig roleConfig = dto as IRoleConfig;
             roleConfig.CurrentRole = userTask.RoleId;
@@ -266,10 +296,8 @@ namespace BPMS_BL.Facades
             });
             roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(userTask.PoolId));
 
-            (dto as IServiceInputAttributes).ServiceInputAttributes = 
-                    await _blockModelRepository.ServiceInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
-            (dto as IServiceOutputAttributes).ServiceOutputAttributes = 
-                    await _blockModelRepository.ServiceOutputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
+            dto.ServiceInputAttributes = await _blockModelRepository.ServiceInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
+            dto.ServiceOutputAttributes = await _blockModelRepository.ServiceOutputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
 
             return dto;
         }
@@ -294,21 +322,6 @@ namespace BPMS_BL.Facades
                 Name = "Nevybrána",
             });
             roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(serviceTask.PoolId));
-
-            return dto;
-        }
-
-        private async Task<RecievedMessageDTO> RecievedMessage(IRecieveEventModelEntity entity)
-        {
-            RecievedMessageDTO dto = new RecievedMessageDTO();
-            SystemIdAgendaIdDTO ids = await _poolRepository.CurrentSystemIdAgendaId(entity.PoolId);
-            dto.CurrentSystemId = ids.SystemId;
-            dto.Editable = entity.Editable;
-            
-            if (entity.Editable)
-            {
-                dto.Systems = await _systemRepository.SystemsOfAgenda(ids.AgendaId);
-            }
 
             return dto;
         }

@@ -4,6 +4,10 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
+using BPMS_DTOs.BlockModel;
+using BPMS_DTOs.Model;
+using BPMS_DTOs.Pool;
+using Newtonsoft.Json;
 
 namespace BPMS_BL.Helpers
 {
@@ -61,6 +65,78 @@ namespace BPMS_BL.Helpers
         {
             using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ActivateSystem", auth, payload);
             return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<SenderRecieverConfigDTO> SenderInfo(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderInfo/{payload}", auth, "");
+
+            SenderRecieverConfigDTO dto = JsonConvert.DeserializeObject<SenderRecieverConfigDTO>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
+        }
+
+        public static async Task<List<SenderRecieverConfigDTO>> RecieversInfo(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RecieversInfo/{payload}", auth, "");
+
+            List<SenderRecieverConfigDTO> dto = JsonConvert.DeserializeObject<List<SenderRecieverConfigDTO>>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
+        }
+
+        public static async Task<List<ModelIdNameDTO>> Models(string systemURL, string auth)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/Models", auth, "");
+            List<ModelIdNameDTO> dto = JsonConvert.DeserializeObject<List<ModelIdNameDTO>>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
+        }
+
+        public static async Task<List<PoolIdNameDTO>> Pools(string systemURL, string auth, Guid modelId)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Pools/{modelId}", auth, "");
+            List<PoolIdNameDTO> dto = JsonConvert.DeserializeObject<List<PoolIdNameDTO>>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
+        }
+
+        public static async Task<List<BlockIdNameDTO>> SenderBlocks(string systemURL, string auth, Guid poolId)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderBlocks/{poolId}", auth, "");
+            List<BlockIdNameDTO> dto = JsonConvert.DeserializeObject<List<BlockIdNameDTO>>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
         }
 
         private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload)

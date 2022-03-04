@@ -1,7 +1,7 @@
-@model (IAttributesConfig data, bool reciever)
+@model (IOutputAttributesConfig data, bool reciever)
 
 <h4 class="mt-2">@(Model.reciever ? "Příchozí" : "Výstupní") atributy bloku</h4>
-@if (Model.data.Attributes.Count > 0)
+@if (Model.data.OutputAttributes.Count > 0)
 {
     <div class="row">
         <div class="col-4 text-center text-bold">
@@ -21,7 +21,7 @@
                 Specifikace
             </div>
         </div>
-        @foreach (BlockAttributeDTO attrib in Model.data.Attributes)
+        @foreach (BlockAttributeDTO attrib in Model.data.OutputAttributes)
         {
             <div id="@attrib.Id" class="d-flex-wrap mb-1 pb-1 border-bottom position-relative p-0">
                 @if (!Model.reciever)

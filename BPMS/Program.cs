@@ -40,6 +40,8 @@ services.AddScoped<WorkflowRepository>();
 services.AddScoped<BlockModelDataSchemaRepository>();
 services.AddScoped<TaskDataMapRepository>();
 services.AddScoped<SystemRoleRepository>();
+services.AddScoped<ForeignRecieveEventRepository>();
+services.AddScoped<ForeignSendEventRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

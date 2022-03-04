@@ -67,6 +67,26 @@ namespace BPMS_BL.Facades
             _system = new SystemEntity();
         }
 
+        public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
+        {
+            return _blockModelRepository.SenderBlocks(poolId);
+        }
+
+        public Task<List<PoolIdNameDTO>> Pools(Guid modelId)
+        {
+            return _poolRepository.Pools(modelId);
+        }
+
+        public Task<List<ModelIdNameDTO>> Models()
+        {
+            return _systemRepository.Models(_system.Id);
+        }
+
+        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
+        {
+            return _blockModelRepository.SenderInfo(id);
+        }
+
         public async Task<string> ActivateSystem()
         {
             _system.State = SystemStateEnum.Active;

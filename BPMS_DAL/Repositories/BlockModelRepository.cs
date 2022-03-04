@@ -16,6 +16,7 @@ using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.Task;
 using BPMS_DTOs.User;
 using BPMS_DAL.Entities.WorkflowBlocks;
+using BPMS_DTOs.Account;
 
 namespace BPMS_DAL.Repositories
 {
@@ -24,11 +25,14 @@ namespace BPMS_DAL.Repositories
         private readonly DbSet<ServiceTaskModelEntity> _serviceTasks;
         private readonly DbSet<UserTaskModelEntity> _userTasks;
         private readonly DbSet<RecieveEventModelEntity> _recieveEvens;
+        private readonly DbSet<SendEventModelEntity> _sendEvents;
+
         public BlockModelRepository(BpmsDbContext context) : base(context) 
         {
             _serviceTasks = context.Set<ServiceTaskModelEntity>();
             _userTasks = context.Set<UserTaskModelEntity>();
             _recieveEvens = context.Set<RecieveEventModelEntity>();
+            _sendEvents = context.Set<SendEventModelEntity>();
         }
 
         public Task<BlockModelEntity> Config(Guid id)
@@ -89,6 +93,17 @@ namespace BPMS_DAL.Repositories
                           Id = x.UserId
                       })
                       .ToListAsync();
+        }
+
+        public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
+        {
+            return _sendEvents.Where(x => x.PoolId == poolId)
+                              .Select(x => new BlockIdNameDTO
+                              {
+                                  Id = x.Id,
+                                  Name = x.Name
+                              })
+                              .ToListAsync();
         }
 
         public Task<List<UserIdNameDTO>> UserIdNamesUser(Guid id, Guid agendaId)
@@ -236,6 +251,59 @@ namespace BPMS_DAL.Repositories
                                                   .ToList()
                                 })
                                 .ToListAsync();;
+        }
+
+        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
+        {
+            return _sendEvents.Include(x => x.Pool)
+                                 .ThenInclude(x => x.Model)
+                              .Include(x => x.Pool)
+                                 .ThenInclude(x => x.System)
+                              .Where(x => x.Id == id)
+                              .Select(x => new SenderRecieverConfigDTO
+                              {
+                                  BlockName = x.Name,
+                                  Editable = false,
+                                  ModelName = x.Pool.Model.Name,
+                                  PoolName = x.Pool.Name,
+                                  SystemName = x.Pool.System.Name
+                              })
+                              .FirstAsync();
+        }
+
+        public Task<List<SenderRecieverAddressDTO>> RecieverAddresses(Guid id)
+        {
+            return _sendEvents.Include(x => x.ForeignRecievers)
+                                  .ThenInclude(x => x.System)
+                              .SelectMany(x => x.ForeignRecievers)
+                              .Select(x => new SenderRecieverAddressDTO
+                              {
+                                  DestinationURL = x.System.URL,
+                                  ForeignBlockId = x.ForeignBlockId,
+                                  Key = x.System.Key,
+                                  SystemId = x.System.Id
+                              })
+                              .ToListAsync();
+        }
+
+        public Task<List<SenderRecieverConfigDTO>> RecieversInfo(Guid id)
+        {
+            return _sendEvents.Include(x => x.Recievers)
+                                  .ThenInclude(x => x.Pool)
+                                      .ThenInclude(x => x.Model)
+                              .Include(x => x.Recievers)
+                                  .ThenInclude(x => x.Pool)
+                                      .ThenInclude(x => x.System)
+                              .Where(x => x.Id == id)
+                              .SelectMany(x => x.Recievers)
+                              .Select(x => new SenderRecieverConfigDTO
+                              {
+                                  BlockName = x.Name,
+                                  ModelName = x.Pool.Model.Name,
+                                  PoolName = x.Pool.Name,
+                                  SystemName = x.Pool.System.Name
+                              })
+                              .ToListAsync();
         }
 
         public Task<List<ServiceTaskDataSchemaDTO>> ServiceInputAttributes(Guid blockId, uint order, Guid poolId)

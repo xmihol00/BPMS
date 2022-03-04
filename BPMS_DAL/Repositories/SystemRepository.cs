@@ -11,6 +11,7 @@ using BPMS_DTOs.System;
 using BPMS_Common;
 using BPMS_DTOs.Agenda;
 using BPMS_Common.Enums;
+using BPMS_DTOs.Model;
 
 namespace BPMS_DAL.Repositories
 {
@@ -130,6 +131,22 @@ namespace BPMS_DAL.Repositories
                                                 .ToList()
                          })
                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<List<ModelIdNameDTO>> Models(Guid id)
+        {
+            return _dbSet.Include(x => x.Agendas)
+                            .ThenInclude(x => x.Agenda)
+                                .ThenInclude(x => x.Models)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Agendas)
+                         .SelectMany(x => x.Agenda.Models)
+                         .Select(x => new ModelIdNameDTO
+                         {
+                             ModelId = x.Id,
+                             Name = x.Name
+                         })
+                         .ToListAsync();
         }
 
         public Task<Guid> IdFromUrl(string systemURL)
