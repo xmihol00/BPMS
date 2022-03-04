@@ -1,7 +1,14 @@
 @model SystemDetailInfoDTO
 
 <div class="d-flex justify-content-center">
-    <h1 class="text-font my-auto me-1">@Model.Name</h1>
+        @if (String.IsNullOrEmpty(Model.Name))
+        {
+            <h1 class="text-font text-placeholder my-auto me-1">Nový systém</h1>
+        }
+        else
+        {
+            <h1 class="text-font my-auto me-1">@Model.Name</h1>
+        }
     <div class="badge rounded-pill text-large ms-1 my-auto @Model.State">
         @Model.State.ToLabel()
     </div>
@@ -19,7 +26,7 @@
         }
         else
         {
-            <p>@Model.Description</p>
+            <div class="text-descr">@Model.Description</div>
         }
     </div>
 </div>

@@ -75,7 +75,7 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = entity.URL
+                URL = StaticData.ThisSystemURL
             };
             if (!await CommunicationHelper.ActivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address), ""))
             {

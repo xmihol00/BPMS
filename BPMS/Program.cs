@@ -81,7 +81,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Agenda}/{action=Overview}/{id?}");
+    pattern: "{controller=Task}/{action=Overview}/{id?}");
 
 using BpmsDbContext context = app.Services.CreateScope().ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();

@@ -7,7 +7,7 @@
         @switch (Model.State)
         {
             case SystemStateEnum.Inactive:
-                <button class="butn btn-s" onclick="ShowModal('EditSystemFormId')">Povolit a aktivovat</button>
+                <button class="butn btn-s" onclick="ShowModal('ActivateFormId')">Povolit a aktivovat</button>
                 break;
             
             case SystemStateEnum.Waiting:
@@ -25,7 +25,7 @@
         <button class="butn btn-p" onclick="ShowModal('EditSystemFormId')">Upravit</button>
     </div>
 </div>
-<form id="EditSystemFormId" class="mx-4 mt-4 mb-3" action="/System/Edit" oninput="InputValidator(this)"
+<form id="EditSystemFormId" class="mx-4 mt-4 mb-3 d-none" action="/System/Edit" oninput="InputValidator(this)"
       onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)">
     <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
         <h2 class="mb-0 text-font">Editace systému</h2>
@@ -56,7 +56,7 @@
         </div>
     </div>
 </form>
-<form id="ActivateFormId" class="mx-4 mt-4 mb-3" action="/System/AddActivate" oninput="InputValidator(this)"
+<form id="ActivateFormId" class="mx-4 mt-4 mb-3 d-none" action="/System/AddActivate" oninput="InputValidator(this)"
       onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)">
     <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
         <h2 class="mb-0 text-font">Aktivace systému</h2>

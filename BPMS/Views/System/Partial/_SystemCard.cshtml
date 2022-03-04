@@ -17,10 +17,9 @@
         }
         else
         {
-            @Model.system.Description
+            <div class="text-descr">@Model.system.Description</div>
         }
         <div class="d-flex justify-content-center mt-2">
-            <div class="my-auto me-2">Stav:</div>
             <div class="badge rounded-pill text-1em @Model.system.State">
                 @Model.system.State.ToLabel()
             </div>
