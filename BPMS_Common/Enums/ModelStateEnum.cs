@@ -11,7 +11,7 @@ namespace BPMS_Common.Enums
         New,
         Shared,
         Incorrect,
-        Sharable,
+        Shareable,
         Executable,
         Waiting,
     }
@@ -25,7 +25,7 @@ namespace BPMS_Common.Enums
                 case ModelStateEnum.New:
                     return "nový";
                 
-                case ModelStateEnum.Sharable:
+                case ModelStateEnum.Shareable:
                     return "možný sdílet";
 
                 case ModelStateEnum.Incorrect:

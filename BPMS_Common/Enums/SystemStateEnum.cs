@@ -11,7 +11,8 @@ namespace BPMS_Common.Enums
         Inactive,
         Waiting,
         Activated,
-        Deactivated
+        Deactivated,
+        ThisSystem
     }
 
     public static class SystemState
@@ -34,6 +35,9 @@ namespace BPMS_Common.Enums
                 
                 case SystemStateEnum.Deactivated:
                     return "spojení deaktivováno";
+                
+                case SystemStateEnum.ThisSystem:
+                    return "tento systém";
             }
         }
     }

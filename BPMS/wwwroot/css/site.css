@@ -500,7 +500,7 @@ a:hover {
   background-color: var(--color-active);
 }
 
-.Sharable {
+.Shareable {
   background-color: var(--primary-color);
 }
 
@@ -520,7 +520,7 @@ a:hover {
   background-color: var(--color-state-new);
 }
 
-.Finished, .Executable {
+.Finished, .Executable, .ThisSystem {
   background-color: var(--color-finished);
 }
 

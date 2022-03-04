@@ -56,7 +56,7 @@ namespace BPMS_BL.Facades
             }
 
             entity.SystemId = dto.SystemId;
-            entity.Model.State = ModelStateEnum.Sharable;
+            entity.Model.State = ModelStateEnum.Shareable;
             ModelStateEnum state = ModelStateEnum.New;
             foreach (PoolEntity pool in entity.Model.Pools)
             {
@@ -67,19 +67,19 @@ namespace BPMS_BL.Facades
 
                 if (pool.SystemId == StaticData.ThisSystemId)
                 {
-                    if (state == ModelStateEnum.Sharable)
+                    if (state == ModelStateEnum.Shareable)
                     {
                         state = ModelStateEnum.Incorrect;
                         break;
                     }
                     else
                     {
-                        state = ModelStateEnum.Sharable;
+                        state = ModelStateEnum.Shareable;
                     }
                 }
             }
 
-            entity.Model.State = state == ModelStateEnum.Sharable ? entity.Model.State : state;
+            entity.Model.State = state == ModelStateEnum.Shareable ? entity.Model.State : state;
 
             await _poolRepository.Save();
             return await _modelRepository.Svg(entity.ModelId);

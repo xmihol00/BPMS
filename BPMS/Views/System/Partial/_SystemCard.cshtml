@@ -2,7 +2,14 @@
 
 <div id="@Model.system.Id" class="col-12 col-md-6 col-lg-4 p-2 pointer" onclick="DetailTransition(this, '/System/DetailPartial/', false)">    
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
-        <h3 class="border-bottom text-center">@Model.system.Name</h3>
+        @if (String.IsNullOrEmpty(Model.system.Name))
+        {
+            <h3 class="border-bottom text-placeholder">Nový systém</h3>
+        }
+        else
+        {
+            <h3 class="border-bottom text-center">@Model.system.Name</h3>
+        }
         <div class="text-url text-center mb-1">@Model.system.URL</div>
         @if (String.IsNullOrEmpty(Model.system.Description))
         {
