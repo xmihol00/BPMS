@@ -12,6 +12,6 @@ namespace BPMS_DTOs.BlockModel.IConfigTypes
 {
     public interface ISenderConfig
     {
-        List<SenderRecieverConfigDTO> Senders { get; set; }
+        List<SenderRecieverConfigDTO> Recievers { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using BPMS_DTOs.Pool;
 using BPMS_Common;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DTOs.Account;
+using BPMS_DTOs.BlockModel;
 
 namespace BPMS_DAL.Repositories
 {

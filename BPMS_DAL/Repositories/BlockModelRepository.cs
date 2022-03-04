@@ -253,7 +253,7 @@ namespace BPMS_DAL.Repositories
                                 .ToListAsync();;
         }
 
-        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
+        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id, bool editable)
         {
             return _sendEvents.Include(x => x.Pool)
                                  .ThenInclude(x => x.Model)
@@ -262,11 +262,11 @@ namespace BPMS_DAL.Repositories
                               .Where(x => x.Id == id)
                               .Select(x => new SenderRecieverConfigDTO
                               {
+                                  SystemName = x.Pool.System.Name,
                                   BlockName = x.Name,
-                                  Editable = false,
                                   ModelName = x.Pool.Model.Name,
                                   PoolName = x.Pool.Name,
-                                  SystemName = x.Pool.System.Name
+                                  Editable = editable
                               })
                               .FirstAsync();
         }
@@ -298,10 +298,10 @@ namespace BPMS_DAL.Repositories
                               .SelectMany(x => x.Recievers)
                               .Select(x => new SenderRecieverConfigDTO
                               {
+                                  SystemName = x.Pool.System.Name,
                                   BlockName = x.Name,
                                   ModelName = x.Pool.Model.Name,
                                   PoolName = x.Pool.Name,
-                                  SystemName = x.Pool.System.Name
                               })
                               .ToListAsync();
         }

@@ -14,6 +14,6 @@ namespace BPMS_DTOs.BlockModel
         public string BlockName { get; set;} = string.Empty;
         public string PoolName { get; set; } = string.Empty;
         public string ModelName { get; set; } = string.Empty;
-        public string SystemName { get; set; } = string.Empty; 
+        public string SystemName { get; set; } = string.Empty;
     }
 }

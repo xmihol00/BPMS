@@ -82,7 +82,7 @@ namespace BPMS_BL.Facades
             entity.Model.State = state == ModelStateEnum.Shareable ? entity.Model.State : state;
 
             await _poolRepository.Save();
-            return await _modelRepository.Svg(entity.ModelId);
+            return entity.Model.SVG;
         }
 
         public async Task<PoolConfigDTO> Config(Guid id)

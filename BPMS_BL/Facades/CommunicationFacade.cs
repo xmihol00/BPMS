@@ -84,7 +84,7 @@ namespace BPMS_BL.Facades
 
         public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
         {
-            return _blockModelRepository.SenderInfo(id);
+            return _blockModelRepository.SenderInfo(id, true);
         }
 
         public async Task<string> ActivateSystem()

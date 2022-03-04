@@ -243,12 +243,12 @@ namespace BPMS_BL.Facades
         {
             RecieveEventModelConfigDTO dto = new RecieveEventModelConfigDTO();
             dto.OutputAttributes = await _blockAttributeRepository.Details(recieveEvent.Id);
+
             if (recieveEvent.SenderId != null)
             {
-                dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.SenderId.Value);
+                dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.SenderId.Value, false);
                 return dto;
             }
-
             if (recieveEvent.ForeignSenderId != null)
             {
                 SenderRecieverAddressDTO address = await _foreignSendEventRepository.SenderAddress(recieveEvent.ForeignSenderId.Value);
@@ -265,12 +265,12 @@ namespace BPMS_BL.Facades
         {
             SendEventModelConfigDTO dto = new SendEventModelConfigDTO();
             dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
-            dto.Senders = await _blockModelRepository.RecieversInfo(sendEvent.Id);
+            dto.Recievers = await _blockModelRepository.RecieversInfo(sendEvent.Id);
             foreach (SenderRecieverAddressDTO address in await _blockModelRepository.RecieverAddresses(sendEvent.Id))
             {
                 try
                 {
-                    dto.Senders.AddRange(await CommunicationHelper.RecieversInfo(address.DestinationURL, 
+                    dto.Recievers.AddRange(await CommunicationHelper.RecieversInfo(address.DestinationURL, 
                                                                                  SymetricCipherHelper.JsonEncrypt(address),
                                                                                  address.ForeignBlockId.ToString()));
                 }

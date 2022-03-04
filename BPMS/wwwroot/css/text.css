@@ -73,7 +73,7 @@
 }
 
 .empty-name:empty::before {
-  content: "Bez jména";
+  content: "Bez názvu";
   font-style: italic;
   color: var(--color-secondary);
 }

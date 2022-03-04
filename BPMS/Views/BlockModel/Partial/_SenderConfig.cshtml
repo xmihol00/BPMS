@@ -1,0 +1,25 @@
+@model ISenderConfig
+
+<h4 class="mt-2">Příjemci</h4>
+@if (Model.Recievers.Count > 0)
+{
+    <div class="row border-bottom-2">
+        <div class="col-3 text-center text-bold">Název bloku</div>
+        <div class="col-3 text-center text-bold">Název bazénu</div>
+        <div class="col-3 text-center text-bold">Název modelu</div>
+        <div class="col-3 text-center text-bold">Název systému</div>
+    </div>
+    <div class="row mb-3">
+        @foreach (SenderRecieverConfigDTO item in Model.Recievers)
+        {
+            <div class="col-3 text-center empty-name">@item.BlockName</div>
+            <div class="col-3 text-center empty-name">@item.PoolName</div>
+            <div class="col-3 text-center empty-name">@item.ModelName</div>
+            <div class="col-3 text-center empty-name">@item.SystemName</div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-placeholder mb-3">Blok nemá nakonfigurované žádné příjemce.</div>
+}
