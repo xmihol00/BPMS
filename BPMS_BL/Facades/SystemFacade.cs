@@ -70,7 +70,7 @@ namespace BPMS_BL.Facades
             SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
             entity.Name = dto.Name;
             entity.Description = dto.Description;
-            entity.State = SystemStateEnum.Activated;
+            entity.State = SystemStateEnum.Active;
             DstAddressDTO address = new DstAddressDTO
             {
                 Key = entity.Key,

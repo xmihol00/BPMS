@@ -69,7 +69,7 @@ namespace BPMS_BL.Facades
 
         public async Task<string> ActivateSystem()
         {
-            _system.State = SystemStateEnum.Activated;
+            _system.State = SystemStateEnum.Active;
             _systemRepository.Update(_system);
             await _systemRepository.Save();
 
