@@ -71,7 +71,7 @@ namespace BPMS_BL.Facades
             PoolDstAddressDTO address = new PoolDstAddressDTO
             {
                 Key = StaticData.Key,
-                SystemId = entity.Id,
+                SystemId = StaticData.ThisSystemId,
                 URL = dto.URL
             };
 

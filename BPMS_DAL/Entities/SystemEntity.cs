@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_Common.Enums;
+using Newtonsoft.Json;
 
 namespace BPMS_DAL.Entities
 {
@@ -15,8 +16,14 @@ namespace BPMS_DAL.Entities
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public SystemStateEnum State { get; set; }
+
+        [JsonIgnore]
         public List<SystemAgendaEntity> Agendas { get; set; } = new List<SystemAgendaEntity>();
+
+        [JsonIgnore]
         public List<PoolEntity> Pools { get; set; } = new List<PoolEntity>();
+
+        [JsonIgnore]
         public List<MessageEntity> Messages { get; set; } = new List<MessageEntity>();
     }
 }

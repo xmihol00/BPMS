@@ -72,8 +72,8 @@ namespace BPMS_BL.Helpers
             guid += "-" + cipherText.Substring(endIndex);
 
             cipherText = cipherText.Remove(endIndex);
-            cipherText = cipherText.Remove(0, 8);
             cipherText = cipherText.Remove(32, 12);
+            cipherText = cipherText.Remove(0, 8);
 
             return (Guid.Parse(guid), cipherText);
         }
