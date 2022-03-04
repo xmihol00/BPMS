@@ -14,10 +14,12 @@ namespace BPMS_DAL.Entities.ModelBlocks
         public RecieveEventModelEntity() : base() {}
         public RecieveEventModelEntity(PoolEntity pool) : base(pool) { }
 
+        public bool Editable { get; set; } = false;
         public Guid? SenderId { get; set; }
 
         [JsonIgnore]
         public SendEventModelEntity? Sender { get; set; }
-        public bool Editable { get; set; } = false;
+        public Guid? ForeignSenderId { get; set; }
+        public ForeignSendEventEntity? ForeignSender { get; set; }
     }
 }

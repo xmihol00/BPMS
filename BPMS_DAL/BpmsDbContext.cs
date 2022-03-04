@@ -89,6 +89,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.Sender).WithMany(x => x.Recievers).HasForeignKey(x => x.SenderId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.ServiceTask).HasForeignKey(x => x.RoleId);
+            modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.ForeignSender).WithMany(x => x.Recievers).HasForeignKey(x => x.ForeignSenderId);
             modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
             modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
@@ -169,6 +170,13 @@ namespace BPMS_DAL
             modelBuilder.Entity<MessageEntity>().HasDiscriminator<MessageTypeEnum>(x => x.Type)
                         .HasValue<MessageEntity>(MessageTypeEnum.None)
                         .HasValue<AcceptationMessageEntity>(MessageTypeEnum.Acceptation);
+
+            modelBuilder.Entity<ForeignRecieveEventEntity>().HasKey(x => new { x.SenderId, x.SystemId });
+            modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.Sender).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SenderId);
+            modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SystemId);
+
+            modelBuilder.Entity<ForeignSendEventEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<ForeignSendEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignSenedrs).HasForeignKey(x => x.SystemId);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

@@ -25,5 +25,11 @@ namespace BPMS_DAL.Entities
 
         [JsonIgnore]
         public List<MessageEntity> Messages { get; set; } = new List<MessageEntity>();
+
+        [JsonIgnore]
+        public List<ForeignRecieveEventEntity> ForeignRecievers { get; set; } = new List<ForeignRecieveEventEntity>();
+
+        [JsonIgnore]
+        public List<ForeignSendEventEntity> ForeignSenedrs { get; set; } = new List<ForeignSendEventEntity>();
     }
 }

@@ -15,5 +15,8 @@ namespace BPMS_DAL.Entities.ModelBlocks
 
         [JsonIgnore]
         public List<RecieveEventModelEntity> Recievers { get; set; } = new List<RecieveEventModelEntity>();
+        
+        [JsonIgnore]
+        public List<ForeignRecieveEventEntity> ForeignRecievers { get; set; } = new List<ForeignRecieveEventEntity>();
     }
 }
