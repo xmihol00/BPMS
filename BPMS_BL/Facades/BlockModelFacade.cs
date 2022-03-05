@@ -1,22 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
 using BPMS_Common;
-using BPMS_Common.Enums;
-using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
-using BPMS_DAL.Entities.ModelBlocks;
-using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Account;
 using BPMS_DTOs.Agenda;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
 using BPMS_DTOs.BlockModel.IConfigTypes;
@@ -24,9 +14,7 @@ using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.Service;
-using BPMS_DTOs.ServiceDataSchema;
 using BPMS_DTOs.System;
-using BPMS_DTOs.User;
 using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
@@ -34,32 +22,34 @@ namespace BPMS_BL.Facades
     public class BlockModelFacade
     {
         private readonly BlockModelRepository _blockModelRepository;
-        private readonly BlockAttributeRepository _blockAttributeRepository;
-        private readonly BlockAttributeMapRepository _blockAttributeMapRepository;
+        private readonly AttributeRepository _attributeRepository;
+        private readonly AttributeMapRepository _attributeMapRepository;
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
         private readonly ServiceRepository _serviceRepository;
-        private readonly ServiceDataSchemaRepository _dataSchemaRepository;
+        private readonly DataSchemaRepository _dataSchemaRepository;
         private readonly FlowRepository _flowRepository;
         private readonly BlockModelDataSchemaRepository _blockModelDataSchemaRepository;
         private readonly AgendaRepository _agendaRepository;
         private readonly ForeignSendEventRepository _foreignSendEventRepository;
         private readonly ModelRepository _modelRepository;
         private readonly ForeignRecieveEventRepository _foreignRecieveEventRepository;
+        private readonly ForeignAttributeMapRepository _foreignAttributeMapRepository;
         private readonly IMapper _mapper;
         private Guid _blockId;
 
-        public BlockModelFacade(BlockModelRepository blockModelRepository, BlockAttributeRepository blockAttributeRepository,
-                                BlockAttributeMapRepository blockAttributeMapRepository, PoolRepository poolRepository,
+        public BlockModelFacade(BlockModelRepository blockModelRepository, AttributeRepository attributeRepository,
+                                AttributeMapRepository attributeMapRepository, PoolRepository poolRepository,
                                 SystemRepository systemRepository, ServiceRepository serviceRepository, 
-                                ServiceDataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
+                                DataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
                                 BlockModelDataSchemaRepository blockModelDataSchemaRepository, AgendaRepository agendaRepository,
                                 ForeignSendEventRepository foreignSendEventRepository, ModelRepository modelRepository,
-                                ForeignRecieveEventRepository foreignRecieveEventRepository, IMapper mapper)
+                                ForeignRecieveEventRepository foreignRecieveEventRepository, 
+                                ForeignAttributeMapRepository foreignAttributeMapRepository, IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
-            _blockAttributeRepository = blockAttributeRepository;
-            _blockAttributeMapRepository = blockAttributeMapRepository;
+            _attributeRepository = attributeRepository;
+            _attributeMapRepository = attributeMapRepository;
             _poolRepository = poolRepository;
             _systemRepository = systemRepository;
             _serviceRepository = serviceRepository;
@@ -70,6 +60,7 @@ namespace BPMS_BL.Facades
             _foreignSendEventRepository = foreignSendEventRepository;
             _foreignRecieveEventRepository = foreignRecieveEventRepository;
             _modelRepository = modelRepository;
+            _foreignAttributeMapRepository = foreignAttributeMapRepository;
             _mapper = mapper;
         }
 
@@ -91,17 +82,42 @@ namespace BPMS_BL.Facades
             IRecieveEventModelEntity entity = await _blockModelRepository.Bare(dto.Id) as IRecieveEventModelEntity;
             if (entity.ForeignSenderId != null)
             {
-                //await CommunicationHelper.RemoveReciever()
+                SenderRecieverAddressDTO recieverAddress = await _foreignSendEventRepository.SenderAddress(entity.ForeignSenderId.Value);
+                await CommunicationHelper.RemoveReciever(recieverAddress.DestinationURL, SymetricCipherHelper.JsonEncrypt(recieverAddress), 
+                                                         recieverAddress.SystemId, recieverAddress.ForeignBlockId);
+                _foreignSendEventRepository.Remove(await _foreignSendEventRepository.ForRemoval(entity.ForeignSenderId.Value));
+                // TODO check if all is removed
+            }
+            
+            DstAddressDTO address = await _systemRepository.Address(dto.SystemId);
+            List<AttributeEntity> attributes = await CommunicationHelper.AddReciever(address.DestinationURL, 
+                                                                                     SymetricCipherHelper.JsonEncrypt(address), 
+                                                                                     dto.Id, dto.BlockId);
+            
+            ForeignSendEventEntity foreignEntity = new ForeignSendEventEntity
+            {
+                ForeignBlockId = dto.BlockId,
+                SystemId = dto.SystemId
+            };
+            await _foreignSendEventRepository.Create(foreignEntity);
+            entity.ForeignSenderId = foreignEntity.Id;
+
+            foreach(AttributeEntity attribute in attributes)
+            {
+                ForeignAttributeMapEntity map = new ForeignAttributeMapEntity
+                {
+                    ForeignSendEventId = foreignEntity.Id,
+                    ForeignAttributeId = attribute.Id,
+                    AttributeId = Guid.NewGuid()
+                };
+
+                attribute.Id = map.AttributeId;
+                attribute.BlockId = entity.Id;
+
+                await _attributeRepository.Create(attribute);
+                await _foreignAttributeMapRepository.Create(map);
             }
 
-            if (dto.SystemId == StaticData.ThisSystemId)
-            {
-                entity.SenderId = dto.BlockId;
-            }
-            else
-            {
-                //await CommunicationHelper.AddReciever()
-            }
             await _blockModelRepository.Save();
 
             return await Config(dto.Id);
@@ -174,17 +190,17 @@ namespace BPMS_BL.Facades
 
         public async Task Remove(Guid id)
         {
-            BlockAttributeEntity attrib = new BlockAttributeEntity()
+            AttributeEntity attrib = new AttributeEntity()
             { 
                 Id = id,
-                MappedBlocks = await _blockAttributeRepository.MappedBlocks(id)
+                MappedBlocks = await _attributeRepository.MappedBlocks(id)
             };
 
             foreach (BlockModelEntity mappedBlock in attrib.MappedBlocks.Select(x => x.Block))
             {
                 if (mappedBlock is ISendEventModelEntity)
                 {
-                    foreach (BlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(mappedBlock.Id))
+                    foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(mappedBlock.Id))
                     {
                         await CommunicationHelper.RemoveRecieverAttribute(recieverAddress.DestinationURL, 
                                                                           SymetricCipherHelper.JsonEncrypt(recieverAddress),
@@ -193,56 +209,56 @@ namespace BPMS_BL.Facades
                 }
             }
 
-            _blockAttributeRepository.Remove(attrib);
-            await _blockAttributeRepository.Save();
+            _attributeRepository.Remove(attrib);
+            await _attributeRepository.Save();
         }
 
         public async Task<BlockModelConfigDTO> CreateEdit(AttributeCreateEditDTO dto)
         {
-            BlockAttributeEntity entity = _mapper.Map<BlockAttributeEntity>(dto);
+            AttributeEntity entity = _mapper.Map<AttributeEntity>(dto);
             if (dto.Id == Guid.Empty)
             {
                 entity.Id = Guid.NewGuid();
-                await _blockAttributeRepository.Create(entity);
+                await _attributeRepository.Create(entity);
             }
             else
             {
-                _blockAttributeRepository.Update(entity);
+                _attributeRepository.Update(entity);
             }
 
-            await _blockAttributeRepository.Save();
+            await _attributeRepository.Save();
             
             return await Config(dto.BlockId);
         }
 
         public async Task ToggleTaskMap(Guid blockId, Guid attributeId)
         {
-            BlockAttributeMapEntity entity = new BlockAttributeMapEntity()
+            AttributeMapEntity entity = new AttributeMapEntity()
             {
                 AttributeId = attributeId,
                 BlockId = blockId
             };
 
-            if (await _blockAttributeMapRepository.Any(blockId, attributeId))
+            if (await _attributeMapRepository.Any(blockId, attributeId))
             {
-                _blockAttributeMapRepository.Remove(entity);
+                _attributeMapRepository.Remove(entity);
             }
             else
             {   
-                await _blockAttributeMapRepository.Create(entity);
+                await _attributeMapRepository.Create(entity);
             }
 
-            await _blockAttributeMapRepository.Save();
+            await _attributeMapRepository.Save();
         }
 
         public async Task ToggleSendMap(Guid blockId, Guid attributeId)
         {
             await ToggleTaskMap(blockId, attributeId);
 
-            BlockAttributeEntity attrib = await _blockAttributeRepository.Bare(attributeId);
+            AttributeEntity attrib = await _attributeRepository.Bare(attributeId);
 
             bool success = true;
-            foreach (BlockAddressDTO recieverAddress in await _poolRepository.RecieverAddresses(blockId))
+            foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
             {
                 attrib.BlockId = recieverAddress.BlockId;
                 success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 
@@ -250,7 +266,15 @@ namespace BPMS_BL.Facades
                                                                           JsonConvert.SerializeObject(attrib));
             }
 
-            // TODO success
+            foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
+            {
+                attrib.BlockId = recieverAddress.ForeignBlockId;
+                success &= await CommunicationHelper.ToggleForeignRecieverAttribute(recieverAddress.DestinationURL, 
+                                                                                    SymetricCipherHelper.JsonEncrypt(recieverAddress),
+                                                                                    JsonConvert.SerializeObject(attrib));
+            }
+
+            // TODO check success
         }
 
         public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)
@@ -329,7 +353,7 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
         {
             RecieveEventModelConfigDTO dto = new RecieveEventModelConfigDTO();
-            dto.OutputAttributes = await _blockAttributeRepository.Details(recieveEvent.Id);
+            dto.OutputAttributes = await _attributeRepository.Details(recieveEvent.Id);
 
             if (recieveEvent.SenderId != null)
             {
@@ -356,7 +380,7 @@ namespace BPMS_BL.Facades
             SendEventModelConfigDTO dto = new SendEventModelConfigDTO();
             dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
             dto.Recievers = await _blockModelRepository.RecieversInfo(sendEvent.Id);
-            foreach (SenderRecieverAddressDTO address in await _blockModelRepository.RecieverAddresses(sendEvent.Id))
+            foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieverAddresses(sendEvent.Id))
             {
                 try
                 {
@@ -373,7 +397,7 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> UserTaskConfig(IUserTaskModelEntity userTask)
         {
             UserTaskModelConfigDTO dto = new UserTaskModelConfigDTO();
-            dto.OutputAttributes = await _blockAttributeRepository.Details(userTask.Id);
+            dto.OutputAttributes = await _attributeRepository.Details(userTask.Id);
             dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
             dto.InputAttributes.AddRange(await _blockModelRepository.RecieveEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
             

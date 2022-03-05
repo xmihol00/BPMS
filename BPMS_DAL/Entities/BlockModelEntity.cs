@@ -36,10 +36,10 @@ namespace BPMS_DAL.Entities
         public List<BlockWorkflowEntity> BlockWorkflows { get; set; } = new List<BlockWorkflowEntity>();
 
         [JsonIgnore]
-        public List<BlockAttributeEntity> Attributes { get; set; } = new List<BlockAttributeEntity>();
+        public List<AttributeEntity> Attributes { get; set; } = new List<AttributeEntity>();
 
         [JsonIgnore]
-        public List<BlockAttributeMapEntity> MappedAttributes { get; set; } = new List<BlockAttributeMapEntity>();
+        public List<AttributeMapEntity> MappedAttributes { get; set; } = new List<AttributeMapEntity>();
 
         [JsonIgnore]
         public List<BlockModelDataSchemaEntity> DataSchemas { get; set; } = new List<BlockModelDataSchemaEntity>();

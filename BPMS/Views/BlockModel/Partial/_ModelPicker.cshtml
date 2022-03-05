@@ -9,7 +9,7 @@
     }
     else
     {
-        <select required class="input-select" name="ModelId" onchange="ModelChange(this)">
+        <select required class="input-select" onchange="ModelChange(this)">
             <option value="" selected>Nevybrán</option>
             @foreach (ModelIdNameDTO modl in Model)
             {

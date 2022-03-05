@@ -14,8 +14,8 @@ namespace BPMS_DAL.Interfaces.BlockDataTypes
         public BlockWorkflowEntity? OutputTask { get; set; }
         public List<TaskDataMapEntity> InputData { get; set; }
         public Guid? AttributeId { get; set; }
-        public BlockAttributeEntity? Attribute { get; set; }
+        public AttributeEntity? Attribute { get; set; }
         public Guid? SchemaId { get; set; }
-        public ServiceDataSchemaEntity? Schema { get; set; }
+        public DataSchemaEntity? Schema { get; set; }
     }
 }

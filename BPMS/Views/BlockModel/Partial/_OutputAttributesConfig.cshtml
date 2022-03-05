@@ -21,7 +21,7 @@
                 Specifikace
             </div>
         </div>
-        @foreach (BlockAttributeDTO attrib in Model.data.OutputAttributes)
+        @foreach (AttributeDTO attrib in Model.data.OutputAttributes)
         {
             <div id="@attrib.Id" class="d-flex-wrap mb-1 pb-1 border-bottom position-relative p-0">
                 @if (!Model.reciever)

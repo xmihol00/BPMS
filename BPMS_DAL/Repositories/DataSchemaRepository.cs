@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_Common.Enums;
 
 namespace BPMS_DAL.Repositories
 {
-    public class ServiceDataSchemaRepository : BaseRepository<ServiceDataSchemaEntity>
+    public class DataSchemaRepository : BaseRepository<DataSchemaEntity>
     {
-        public ServiceDataSchemaRepository(BpmsDbContext context) : base(context) {}
+        public DataSchemaRepository(BpmsDbContext context) : base(context) {}
 
         public Task<DataSchemaDetailDTO> Detail(Guid id)
         {
@@ -65,7 +65,7 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<ServiceDataSchemaEntity>> SchemasForRemoval(Guid id)
+        public Task<List<DataSchemaEntity>> SchemasForRemoval(Guid id)
         {
             return _dbSet.AsNoTracking()
                          .Include(x => x.Service)
@@ -90,7 +90,7 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<ServiceDataSchemaEntity?> Find(Guid serviceId, string alias, Guid? parentId, DirectionEnum direction)
+        public Task<DataSchemaEntity?> Find(Guid serviceId, string alias, Guid? parentId, DirectionEnum direction)
         {
             return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && 
                                                    x.ParentId == parentId && x.Direction == direction);
@@ -120,11 +120,11 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<ServiceDataSchemaEntity>> AllWithMaps(Guid? serviceId)
+        public Task<List<DataSchemaEntity>> AllWithMaps(Guid? serviceId)
         {
             return _dbSet.Include(x => x.Blocks)
                          .Where(x => x.ServiceId == serviceId)
-                         .Select(x => new ServiceDataSchemaEntity 
+                         .Select(x => new DataSchemaEntity 
                          {
                              Type = x.Type,
                              Blocks = x.Blocks,

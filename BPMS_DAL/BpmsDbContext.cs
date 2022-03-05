@@ -22,18 +22,21 @@ namespace BPMS_DAL
         public DbSet<AgendaRoleEntity>? AgendaRoles { get; set; }
         public DbSet<TaskDataEntity>? TaskDatas { get; set; }
         public DbSet<TaskDataMapEntity>? TaskDataMaps { get; set; }
-        public DbSet<BlockAttributeEntity>? Attributes { get; set; }
-        public DbSet<BlockAttributeMapEntity>? AttributesMaps { get; set; }
+        public DbSet<AttributeEntity>? Attributes { get; set; }
+        public DbSet<AttributeMapEntity>? AttributesMaps { get; set; }
         public DbSet<BlockModelEntity>? BlockModels { get; set; }
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
         public DbSet<FlowEntity>? Flows { get; set; }
+        public DbSet<ForeignAttributeMapEntity>? ForeignAttributeMaps { get; set; }
+        public DbSet<ForeignRecieveEventEntity>? ForeignRecieveEvents { get; set; }
+        public DbSet<ForeignSendEventEntity>? ForeignSendEvents { get; set; }
         public DbSet<MessageEntity>? Message { get; set; }
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
         public DbSet<ServiceEntity>? Services { get; set; }
         public DbSet<ServiceHeaderEntity>? Headers { get; set; }
-        public DbSet<ServiceDataSchemaEntity>? ServiceSchemas { get; set; }
+        public DbSet<DataSchemaEntity>? ServiceSchemas { get; set; }
         public DbSet<SolvingRoleEntity>? SolvingRoles { get; set; }
         public DbSet<SystemAgendaEntity>? SystemAgendas { get; set; }
         public DbSet<SystemEntity>? Systems { get; set; }
@@ -89,7 +92,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.Sender).WithMany(x => x.Recievers).HasForeignKey(x => x.SenderId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.ServiceTask).HasForeignKey(x => x.RoleId);
-            modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.ForeignSender).WithMany(x => x.Recievers).HasForeignKey(x => x.ForeignSenderId);
+            modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.ForeignSender).WithOne(x => x.Reciever).HasForeignKey<RecieveEventModelEntity>(x => x.ForeignSenderId);
             modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
             modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
@@ -104,9 +107,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.DataSchema).WithMany(x => x.Blocks).HasForeignKey(x => x.DataSchemaId);
             modelBuilder.Entity<BlockModelDataSchemaEntity>().HasOne(x => x.ServiceTask).WithMany(x => x.Blocks).HasForeignKey(x => x.ServiceTaskId);
 
-            modelBuilder.Entity<BlockAttributeEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<BlockAttributeEntity>().Property(x => x.Id).ValueGeneratedNever();
-            modelBuilder.Entity<BlockAttributeEntity>().HasOne(x => x.Block).WithMany(x => x.Attributes).HasForeignKey(x => x.BlockId);
+            modelBuilder.Entity<AttributeEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<AttributeEntity>().Property(x => x.Id).ValueGeneratedNever();
+            modelBuilder.Entity<AttributeEntity>().HasOne(x => x.Block).WithMany(x => x.Attributes).HasForeignKey(x => x.BlockId);
 
             modelBuilder.Entity<FlowEntity>().HasKey(x => new { x.InBlockId, x.OutBlockId });
             modelBuilder.Entity<FlowEntity>().HasOne(x => x.InBlock).WithMany(x => x.InFlows).HasForeignKey(x => x.InBlockId).OnDelete(DeleteBehavior.ClientCascade);
@@ -118,9 +121,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Model).WithMany(x => x.Workflows).HasForeignKey(x => x.ModelId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<WorkflowEntity>().HasOne(x => x.Administrator).WithMany(x => x.Workflows).HasForeignKey(x => x.AdministratorId).OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<ServiceDataSchemaEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<ServiceDataSchemaEntity>().HasOne(x => x.Service).WithMany(x => x.DataSchemas).HasForeignKey(x => x.ServiceId);
-            modelBuilder.Entity<ServiceDataSchemaEntity>().HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<DataSchemaEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<DataSchemaEntity>().HasOne(x => x.Service).WithMany(x => x.DataSchemas).HasForeignKey(x => x.ServiceId);
+            modelBuilder.Entity<DataSchemaEntity>().HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<BlockWorkflowEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.Workflow).WithMany(x => x.Blocks).HasForeignKey(x => x.WorkflowId).OnDelete(DeleteBehavior.NoAction);
@@ -160,9 +163,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<ServiceHeaderEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<ServiceHeaderEntity>().HasOne(x => x.Service).WithMany(x => x.Headers).HasForeignKey(x => x.ServiceId);
 
-            modelBuilder.Entity<BlockAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
-            modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.ClientCascade);
-            modelBuilder.Entity<BlockAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<AttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
+            modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<MessageEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<MessageEntity>().Property(x => x.Id).ValueGeneratedNever();
@@ -171,18 +174,23 @@ namespace BPMS_DAL
                         .HasValue<MessageEntity>(MessageTypeEnum.None)
                         .HasValue<AcceptationMessageEntity>(MessageTypeEnum.Acceptation);
 
-            modelBuilder.Entity<ForeignRecieveEventEntity>().HasKey(x => new { x.SenderId, x.SystemId });
+            modelBuilder.Entity<ForeignRecieveEventEntity>().HasKey(x => new { x.SenderId, x.SystemId, x.ForeignBlockId });
             modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.Sender).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SenderId);
             modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<ForeignSendEventEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<ForeignSendEventEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<ForeignSendEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignSenedrs).HasForeignKey(x => x.SystemId);
+
+            modelBuilder.Entity<ForeignAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.ForeignSendEventId });
+            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedForeignBlocks).HasForeignKey(x => x.AttributeId);
+            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.ForeignSendEvent).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.ForeignSendEventId);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();
             modelBuilder.SeedSystems();
             modelBuilder.SeedServices();
-            modelBuilder.SeedServiceDataSchemas();
+            modelBuilder.SeedDataSchemas();
         }
     }
 }

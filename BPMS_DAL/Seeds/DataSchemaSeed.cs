@@ -9,11 +9,11 @@ using System.Text;
 
 namespace BPMS_DAL.Seeds
 {
-    public static class ServiceDataSchemaSeed
+    public static class DataSchemaSeed
     {
-        private static readonly List<ServiceDataSchemaEntity> _serviceDataSchemaSeeds = new List<ServiceDataSchemaEntity>()
+        private static readonly List<DataSchemaEntity> _dataSchemaSeeds = new List<DataSchemaEntity>()
         {
-            new ServiceDataSchemaEntity()
+            new DataSchemaEntity()
             {
                 Id = Guid.Parse("ec2873d3-4806-40f6-b4a4-a35380ebd838"),
                 Alias = "q",
@@ -25,7 +25,7 @@ namespace BPMS_DAL.Seeds
                 ParentId = null,
                 ServiceId = Guid.Parse("23bdf847-0e87-4eeb-92c3-58513ade014a")
             },
-            new ServiceDataSchemaEntity()
+            new DataSchemaEntity()
             {
                 Id = Guid.Parse("ec2873d3-4806-40f6-b454-b35380ebd838"),
                 Alias = "appid",
@@ -37,7 +37,7 @@ namespace BPMS_DAL.Seeds
                 ParentId = null,
                 ServiceId = Guid.Parse("23bdf847-0e87-4eeb-92c3-58513ade014a")
             },
-            new ServiceDataSchemaEntity()
+            new DataSchemaEntity()
             {
                 Id = Guid.Parse("ec2873d3-4877-40f6-b4a4-b35380ebd838"),
                 Alias = "lon",
@@ -49,7 +49,7 @@ namespace BPMS_DAL.Seeds
                 ParentId = null,
                 ServiceId = Guid.Parse("ec2873d3-4806-40f6-b4a4-b35380ebd828")
             },
-            new ServiceDataSchemaEntity()
+            new DataSchemaEntity()
             {
                 Id = Guid.Parse("ec2873d3-4806-40f6-b4a4-b45380ebd838"),
                 Alias = "lat",
@@ -61,7 +61,7 @@ namespace BPMS_DAL.Seeds
                 ParentId = null,
                 ServiceId = Guid.Parse("ec2873d3-4806-40f6-b4a4-b35380ebd828")
             },
-            new ServiceDataSchemaEntity()
+            new DataSchemaEntity()
             {
                 Id = Guid.Parse("ec2873d3-4806-40f6-b4a4-b35380ebd838"),
                 Alias = "appid",
@@ -75,9 +75,9 @@ namespace BPMS_DAL.Seeds
             }
         };
 
-        public static void SeedServiceDataSchemas(this ModelBuilder modelBuilder)
+        public static void SeedDataSchemas(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ServiceDataSchemaEntity>(entity => entity.HasData(_serviceDataSchemaSeeds));
+            modelBuilder.Entity<DataSchemaEntity>(entity => entity.HasData(_dataSchemaSeeds));
         }
     }
 }

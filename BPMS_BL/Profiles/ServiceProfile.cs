@@ -2,7 +2,7 @@ using AutoMapper;
 using BPMS_DAL.Entities;
 using BPMS_DTOs.Header;
 using BPMS_DTOs.Service;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace BPMS_BL.Profiles
     {
         public ServiceProfile()
         {
-            CreateMap<DataSchemaCreateEditDTO, ServiceDataSchemaEntity>()
+            CreateMap<DataSchemaCreateEditDTO, DataSchemaEntity>()
                 .ForMember(dst => dst.Alias, opt => opt.MapFrom(src => src.Alias == null ? "" : src.Alias))
                 .ForMember(dst => dst.Compulsory, opt => opt.MapFrom(src => src.Compulsory != null))
                 .ForMember(dst => dst.StaticData, opt => opt.MapFrom(src => String.IsNullOrEmpty(src.DataToggle) ? null : src.StaticData));

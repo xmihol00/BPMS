@@ -1,8 +1,8 @@
 using BPMS_BL.Facades;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.BlockWorkflow;
 using Microsoft.AspNetCore.Mvc;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using Microsoft.AspNetCore.Authorization;
 using BPMS_DTOs.BlockWorkflow.EditTypes;
 
@@ -19,7 +19,7 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        [Route("BlockWorkflow/Config/{blockId}/{workflowId}")]
+        [Route("/BlockWorkflow/Config/{blockId}/{workflowId}")]
         public async Task<IActionResult> Config(Guid blockId, Guid workflowId)
         {
             return PartialView("Partial/_BlockWorkflowConfig", await _blockWorkflowFacade.Config(blockId, workflowId));

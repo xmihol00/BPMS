@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities
 {
-    public class BlockAttributeEntity
+    public class AttributeEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
@@ -33,6 +33,9 @@ namespace BPMS_DAL.Entities
         public List<TaskDataEntity> Data { get; set; } = new List<TaskDataEntity>();
 
         [JsonIgnore]
-        public List<BlockAttributeMapEntity> MappedBlocks { get; set; } = new List<BlockAttributeMapEntity>();
+        public List<AttributeMapEntity> MappedBlocks { get; set; } = new List<AttributeMapEntity>();
+
+        [JsonIgnore]
+        public List<ForeignAttributeMapEntity> MappedForeignBlocks { get; set; } = new List<ForeignAttributeMapEntity>();
     }
 }

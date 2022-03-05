@@ -1,6 +1,6 @@
 using BPMS_Common.Enums;
 using BPMS_DTOs.BlockWorkflow.IConfigTypes;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockWorkflow.EditTypes

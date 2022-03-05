@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel
@@ -12,9 +12,6 @@ namespace BPMS_DTOs.BlockModel
     {
         public Guid Id { get; set; }
         public Guid SystemId { get; set; }
-        public Guid AgendaId { get; set; }
-        public Guid ModelId { get; set; }
-        public Guid PoolId { get; set; }
         public Guid BlockId { get; set; }
     }
 }

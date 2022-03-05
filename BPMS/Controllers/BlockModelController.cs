@@ -1,8 +1,8 @@
 using BPMS_BL.Facades;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.BlockModel;
 using Microsoft.AspNetCore.Mvc;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BPMS.Controllers
@@ -68,7 +68,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Route("BlockModel/ChangeSender/{modelId}/{blockId}")]
+        [Route("/BlockModel/ChangeSender/{modelId}/{blockId}")]
         public async Task<IActionResult> ChangeSender(Guid modelId, Guid blockId)
         {
             return PartialView("Partial/_ChangeSender", (await _blockModelFacade.ChangeSender(modelId), blockId));
@@ -81,21 +81,21 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Route("BlockModel/Models/{systemId}/{agendaId}")]
+        [Route("/BlockModel/Models/{systemId}/{agendaId}")]
         public async Task<IActionResult> Models(Guid systemId, Guid agendaId)
         {
             return PartialView("Partial/_ModelPicker", await _blockModelFacade.Models(systemId, agendaId));
         }
 
         [HttpPost]
-        [Route("BlockModel/Pools/{systemId}/{modelId}")]
+        [Route("/BlockModel/Pools/{systemId}/{modelId}")]
         public async Task<IActionResult> Pools(Guid systemId, Guid modelId)
         {
             return PartialView("Partial/_PoolPicker", await _blockModelFacade.Pools(systemId, modelId));
         }
 
         [HttpPost]
-        [Route("BlockModel/SenderBlocks/{systemId}/{poolId}")]
+        [Route("/BlockModel/SenderBlocks/{systemId}/{poolId}")]
         public async Task<IActionResult> SenderBlocks(Guid systemId, Guid poolId)
         {
             return PartialView("Partial/_BlockPicker", await _blockModelFacade.SenderBlocks(systemId, poolId));

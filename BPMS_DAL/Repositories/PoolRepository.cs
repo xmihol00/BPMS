@@ -138,25 +138,5 @@ namespace BPMS_DAL.Repositories
                           })
                           .ToListAsync();
         }
-
-        public Task<List<BlockAddressDTO>> RecieverAddresses(Guid id)
-        {
-            return _context.Set<SendEventModelEntity>()
-                           .Include(x => x.Recievers)
-                                .ThenInclude(x => x.Pool)
-                                    .ThenInclude(x => x.System)
-                           .Where(x => x.Id == id)
-                           .SelectMany(x => x.Recievers)
-                           .Select(x => new BlockAddressDTO
-                           {
-                               PoolId = x.PoolId,
-                               DestinationURL = x.Pool.System.URL,
-                               SystemId = x.Pool.System.Id,
-                               Key = x.Pool.System.Key,
-                               BlockId = x.Id,
-                               ModelId = x.Pool.ModelId
-                           })
-                           .ToListAsync();
-        }
     }
 }

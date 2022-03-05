@@ -45,9 +45,15 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleRecieverAttribute([FromBody] BlockAttributeEntity attribute)
+        public async Task<IActionResult> ToggleRecieverAttribute([FromBody] AttributeEntity attribute)
         {
             return Ok(await _communicationFacade.ToggleRecieverAttribute(attribute));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleForeignRecieverAttribute([FromBody] AttributeEntity attribute)
+        {
+            return Ok(await _communicationFacade.ToggleForeignRecieverAttribute(attribute));
         }
 
         [HttpPost]
@@ -60,6 +66,12 @@ namespace BPMS.Controllers
         public async Task<IActionResult> Message([FromBody] MessageShare message)
         {
             return Ok(await _communicationFacade.Message(message));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForeignMessage([FromBody] MessageShare message)
+        {
+            return Ok(await _communicationFacade.ForeignMessage(message));
         }
 
         [HttpPost]
@@ -108,6 +120,20 @@ namespace BPMS.Controllers
         public async Task<IActionResult> SenderBlocks(Guid id)
         {
             return Ok(await _communicationFacade.SenderBlocks(id));
+        }
+
+        [HttpPost]
+        [Route("/Communication/RemoveReciever/{foreignBlockId}/{senderId}")]
+        public async Task<IActionResult> RemoveReciever(Guid foreignBlockId, Guid senderId)
+        {
+            return Ok(await _communicationFacade.RemoveReciever(foreignBlockId, senderId));
+        }
+
+        [HttpPost]
+        [Route("/Communication/AddReciever/{foreignBlockId}/{senderId}")]
+        public async Task<IActionResult> AddReciever(Guid foreignBlockId, Guid senderId)
+        {
+            return Ok(await _communicationFacade.AddReciever(foreignBlockId, senderId));
         }
     }
 }

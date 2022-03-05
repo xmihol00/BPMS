@@ -11,11 +11,12 @@ namespace BPMS_DAL.Entities
 {
     public class ForeignSendEventEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid SystemId { get; set; }
         public SystemEntity? System { get; set; }
         public Guid ForeignBlockId { get; set; }
         public string ForeignBlockName { get; set; } = string.Empty;
-        public List<RecieveEventModelEntity> Recievers { get; set; } = new List<RecieveEventModelEntity>();
+        public RecieveEventModelEntity Reciever { get; set; } = new RecieveEventModelEntity();
+        public List<ForeignAttributeMapEntity> MappedAttributes { get; set; } = new List<ForeignAttributeMapEntity>();
     }
 }

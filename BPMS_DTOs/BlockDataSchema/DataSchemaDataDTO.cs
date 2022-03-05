@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.ServiceDataSchema
+namespace BPMS_DTOs.DataSchema
 {
     public class DataSchemaDataDTO : DataSchema, IDataSchemaData
     {

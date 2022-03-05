@@ -9,7 +9,7 @@
     }
     else
     {
-        <select required class="input-select" name="PoolId" onchange="PoolChange(this)">
+        <select required class="input-select" onchange="PoolChange(this)">
             <option value="" selected>Nevybrán</option>
             @foreach (PoolIdNameDTO pool in Model)
             {

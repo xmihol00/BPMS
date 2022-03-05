@@ -22,10 +22,10 @@ namespace BPMS_DAL.Entities
         public Guid? AttributeId { get; set; }
 
         [JsonIgnore]
-        public BlockAttributeEntity? Attribute { get; set; }
+        public AttributeEntity? Attribute { get; set; }
         public Guid? SchemaId { get; set; }
 
         [JsonIgnore]
-        public ServiceDataSchemaEntity? Schema { get; set; }
+        public DataSchemaEntity? Schema { get; set; }
     }
 }

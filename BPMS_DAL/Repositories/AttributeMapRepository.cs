@@ -10,9 +10,9 @@ using BPMS_DAL.Entities;
 
 namespace BPMS_DAL.Repositories
 {
-    public class BlockAttributeMapRepository : BaseRepository<BlockAttributeMapEntity>
+    public class AttributeMapRepository : BaseRepository<AttributeMapEntity>
     {
-        public BlockAttributeMapRepository(BpmsDbContext context) : base(context) {}
+        public AttributeMapRepository(BpmsDbContext context) : base(context) {}
 
         public Task<bool> Any(Guid blockId, Guid attributeId)
         {

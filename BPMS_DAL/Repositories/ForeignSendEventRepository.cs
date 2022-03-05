@@ -31,5 +31,33 @@ namespace BPMS_DAL.Repositories
                          })
                          .FirstAsync();
         }
+
+        public Task<List<Guid>> RecieverIds(Guid foreignBlockId, Guid systemId)
+        {
+            return _dbSet.Include(x => x.Reciever)
+                         .Where(x => x.ForeignBlockId == foreignBlockId && x.SystemId == systemId)
+                         .Select(x => x.Reciever)
+                         .Select(x => x.Id)
+                         .ToListAsync();
+        }
+
+        public Task<ForeignSendEventEntity?> Bare(Guid systemId, Guid blockId)
+        {
+            return _dbSet.FirstOrDefaultAsync(x => x.SystemId == systemId && x.ForeignBlockId == blockId);
+        }
+
+        public Task<ForeignSendEventEntity> ForRemoval(Guid id)
+        {
+            return _dbSet.Include(x => x.MappedAttributes)
+                            .ThenInclude(x => x.Attribute)
+                         .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<List<ForeignSendEventEntity>> BareReciever(Guid foreignBlockId)
+        {
+            return _dbSet.Include(x => x.Reciever)
+                         .Where(x => x.ForeignBlockId == foreignBlockId)
+                         .ToListAsync();
+        }
     }
 }

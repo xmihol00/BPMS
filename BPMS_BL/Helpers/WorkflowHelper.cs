@@ -12,12 +12,12 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.Account;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Service;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -29,8 +29,8 @@ namespace BPMS_BL.Helpers
         private readonly ModelRepository _modelRepository;
         private readonly WorkflowRepository _workflowRepository;
         private readonly AgendaRoleRepository _agendaRoleRepository;
-        private readonly BlockAttributeRepository _blockAttributeRepository;
-        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly AttributeRepository _attributeRepository;
+        private readonly DataSchemaRepository _dataSchemaRepository;
         private readonly BlockWorkflowRepository _taskRepository;
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockModelRepository _blockModelRepository;
@@ -46,8 +46,8 @@ namespace BPMS_BL.Helpers
             _modelRepository = new ModelRepository(context);
             _workflowRepository = new WorkflowRepository(context);
             _agendaRoleRepository = new AgendaRoleRepository(context);
-            _blockAttributeRepository = new BlockAttributeRepository(context);
-            _serviceDataSchemaRepository = new ServiceDataSchemaRepository(context);
+            _attributeRepository = new AttributeRepository(context);
+            _dataSchemaRepository = new DataSchemaRepository(context);
             _taskRepository = new BlockWorkflowRepository(context);
             _taskDataRepository = new TaskDataRepository(context);
             _blockModelRepository = new BlockModelRepository(context);
@@ -105,7 +105,7 @@ namespace BPMS_BL.Helpers
                     };
 
                     IServiceTaskWorkflowEntity sTask = blockWorkflow as IServiceTaskWorkflowEntity;
-                    sTask.OutputData = CrateServiceTaskData(await _serviceDataSchemaRepository.AllWithMaps(serviceTask.ServiceId), serviceTask.Id);
+                    sTask.OutputData = CrateServiceTaskData(await _dataSchemaRepository.AllWithMaps(serviceTask.ServiceId), serviceTask.Id);
                     break;
 
                 case IEndEventModelEntity:
@@ -139,7 +139,7 @@ namespace BPMS_BL.Helpers
         {
             BlockWorkflowEntity blockWorkflow = new SendEventWorkflowEntity();
 
-            foreach (BlockAttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
             {
                 TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
                 if (taskData != null)
@@ -178,7 +178,7 @@ namespace BPMS_BL.Helpers
                 }
             }
 
-            foreach (BlockAttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
             {
                 TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
                 if (taskData != null)
@@ -195,10 +195,10 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private List<TaskDataEntity> CrateServiceTaskData(List<ServiceDataSchemaEntity> dataSchemas, Guid serviceTaskId)
+        private List<TaskDataEntity> CrateServiceTaskData(List<DataSchemaEntity> dataSchemas, Guid serviceTaskId)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
-            foreach(ServiceDataSchemaEntity attrib in dataSchemas)
+            foreach(DataSchemaEntity attrib in dataSchemas)
             {
                 TaskDataEntity taskData = CreateServiceTaskData(attrib.Type);
                 taskData.SchemaId = attrib.Id;
@@ -243,10 +243,10 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private List<TaskDataEntity> CrateUserTaskData(List<BlockAttributeEntity> blockAttributes)
+        private List<TaskDataEntity> CrateUserTaskData(List<AttributeEntity> attributes)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
-            foreach(BlockAttributeEntity attribute in blockAttributes)
+            foreach(AttributeEntity attribute in attributes)
             {
                 TaskDataEntity taskData = CreateUserTaskData(attribute.Type);
                 taskData.AttributeId = attribute.Id;
@@ -391,7 +391,7 @@ namespace BPMS_BL.Helpers
             }
 
             bool recieved = true;
-            foreach (BlockAddressDTO address in await _poolRepository.RecieverAddresses(task.BlockModelId))
+            foreach (BlockAddressDTO address in await _blockModelRepository.RecieverAddresses(task.BlockModelId))
             {
                 if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
                 {
@@ -406,6 +406,14 @@ namespace BPMS_BL.Helpers
                 recieved &= await CommunicationHelper.Message(address.DestinationURL, 
                                                               SymetricCipherHelper.JsonEncrypt(address),
                                                               JsonConvert.SerializeObject(dto));
+            }
+
+            foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieversAddresses(task.BlockModelId))
+            {
+                dto.BlockId = address.ForeignBlockId;
+                recieved &= await CommunicationHelper.ForeignMessage(address.DestinationURL, 
+                                                                     SymetricCipherHelper.JsonEncrypt(address),
+                                                                     JsonConvert.SerializeObject(dto));
             }
 
             if (recieved)
@@ -514,7 +522,7 @@ namespace BPMS_BL.Helpers
         private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, Guid serviceTaskId)
         {
             Dictionary<Guid, TaskDataEntity> data = await _taskDataRepository.InputServiceTaskData(serviceTaskId);
-            IEnumerable<DataSchemaDataDTO> nodes = await _serviceDataSchemaRepository.DataSchemaToSend(serviceId);
+            IEnumerable<DataSchemaDataDTO> nodes = await _dataSchemaRepository.DataSchemaToSend(serviceId);
             foreach (DataSchemaDataDTO node in nodes)
             {
                 if (node.StaticData == null)

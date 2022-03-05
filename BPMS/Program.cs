@@ -22,9 +22,9 @@ services.AddScoped<ModelRepository>();
 services.AddScoped<PoolRepository>();
 services.AddScoped<UserRepository>();
 services.AddScoped<BlockModelRepository>();
-services.AddScoped<ServiceDataSchemaRepository>();
-services.AddScoped<BlockAttributeRepository>();
-services.AddScoped<BlockAttributeMapRepository>();
+services.AddScoped<DataSchemaRepository>();
+services.AddScoped<AttributeRepository>();
+services.AddScoped<AttributeMapRepository>();
 services.AddScoped<SystemRepository>();
 services.AddScoped<ServiceRepository>();
 services.AddScoped<ServiceHeaderRepository>();
@@ -42,6 +42,7 @@ services.AddScoped<TaskDataMapRepository>();
 services.AddScoped<SystemRoleRepository>();
 services.AddScoped<ForeignRecieveEventRepository>();
 services.AddScoped<ForeignSendEventRepository>();
+services.AddScoped<ForeignAttributeMapRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
@@ -56,7 +57,7 @@ services.AddScoped<WorkflowFacade>();
 services.AddScoped<SystemFacade>();
 services.AddScoped<BlockWorkflowFacade>();
 
-services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(BlockAttributeProfile), typeof(CommunicationProfile),
+services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(AttributeProfile), typeof(CommunicationProfile),
                        typeof(BlockWorkflowProfile), typeof(UserProfile), typeof(SystemProfile));
 
 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

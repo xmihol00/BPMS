@@ -90,7 +90,7 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.OutputTask)
                             .ThenInclude(x => x.Workflow)
                          .Where(x => x.Attribute.BlockId == blockId && x.OutputTask.Workflow.State == WorkflowStateEnum.Active)
-                         .ToDictionaryAsync(x => (Guid)x.AttributeId);
+                         .ToDictionaryAsync(x => x.AttributeId.Value);
         }
 
         public Task<FileDownloadDTO> FileForDownload(Guid id)

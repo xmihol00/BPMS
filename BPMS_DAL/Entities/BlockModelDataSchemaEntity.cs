@@ -13,7 +13,7 @@ namespace BPMS_DAL.Entities
         public Guid BlockId { get; set; }
         public BlockModelEntity? Block { get; set; }
         public Guid DataSchemaId { get; set; }
-        public ServiceDataSchemaEntity? DataSchema { get; set; }
+        public DataSchemaEntity? DataSchema { get; set; }
         public Guid ServiceTaskId { get; set; }
         public ServiceTaskModelEntity? ServiceTask { get; set; }
     }

@@ -6,7 +6,7 @@ using System.Text;
 using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 
 namespace BPMS_BL.Helpers
 {

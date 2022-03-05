@@ -3,7 +3,6 @@ using AutoMapper;
 using BPMS_BL.Helpers;
 using BPMS_Common;
 using BPMS_Common.Enums;
-using BPMS_Common.Helpers;
 using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
@@ -17,10 +16,6 @@ using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
-using BPMS_DTOs.User;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
 {
@@ -35,11 +30,14 @@ namespace BPMS_BL.Facades
         private readonly SystemAgendaRepository _systemAgendaRepository;
         private readonly WorkflowRepository _workflowRepository;
         private readonly AgendaRoleRepository _agendaRoleRepository;
-        private readonly BlockAttributeRepository _blockAttributeRepository;
-        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly AttributeRepository _attributeRepository;
+        private readonly DataSchemaRepository _dataSchemaRepository;
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
+        private readonly ForeignSendEventRepository _foreignSendEventRepository;
         private readonly AgendaRepository _agendaRepository;
+        private readonly ForeignRecieveEventRepository _foreignRecieveEventRepository;
+        private readonly ForeignAttributeMapRepository _foreignAttributeMapRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -47,10 +45,11 @@ namespace BPMS_BL.Facades
         public CommunicationFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                                    BlockModelRepository blockModelRepository, PoolRepository poolRepository, SystemRepository systemRepository, 
                                    SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
-                                   AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository,
-                                   ServiceDataSchemaRepository serviceDataSchemaRepository, TaskDataRepository taskDataRepository,
-                                   BlockWorkflowRepository blockWorkflowRepository, AgendaRepository agendaRepository, 
-                                   BpmsDbContext context, IMapper mapper)
+                                   AgendaRoleRepository agendaRoleRepository, AttributeRepository attributeRepository,
+                                   DataSchemaRepository dataSchemaRepository, TaskDataRepository taskDataRepository,
+                                   BlockWorkflowRepository blockWorkflowRepository, ForeignSendEventRepository foreignSendEventRepository,
+                                   AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
+                                   ForeignAttributeMapRepository foreignAttributeMapRepository, BpmsDbContext context, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -61,14 +60,44 @@ namespace BPMS_BL.Facades
             _systemAgendaRepository = systemAgendaRepository;
             _workflowRepository = workflowRepository;
             _agendaRoleRepository = agendaRoleRepository;
-            _blockAttributeRepository = blockAttributeRepository;
-            _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _attributeRepository = attributeRepository;
+            _dataSchemaRepository = dataSchemaRepository;
             _taskDataRepository = taskDataRepository;
             _blockWorkflowRepository = blockWorkflowRepository;
+            _foreignSendEventRepository = foreignSendEventRepository;
             _agendaRepository = agendaRepository;
+            _foreignRecieveEventRepository = foreignRecieveEventRepository;
+            _foreignAttributeMapRepository = foreignAttributeMapRepository;
             _context = context;
             _mapper = mapper;
             _system = new SystemEntity();
+        }
+
+        public async Task<string> RemoveReciever(Guid foreignBlockId, Guid senderId)
+        {
+            _foreignRecieveEventRepository.Remove(new ForeignRecieveEventEntity
+            {
+                ForeignBlockId = foreignBlockId,
+                SenderId = senderId,
+                SystemId = _system.Id
+            });
+            await _foreignRecieveEventRepository.Save();
+
+            return "";
+        }
+
+        public async Task<List<AttributeEntity?>> AddReciever(Guid foreignBlockId, Guid senderId)
+        {
+            // TODO check system access
+            await _foreignRecieveEventRepository.Create(new ForeignRecieveEventEntity
+            {
+                ForeignBlockId = foreignBlockId,
+                SenderId = senderId,
+                SystemId = _system.Id
+            });
+            await _foreignRecieveEventRepository.Save();
+
+            return await _blockModelRepository.MappedBareAttributes(senderId);
         }
 
         public Task<List<AgendaIdNameDTO>> Agednas()
@@ -131,23 +160,10 @@ namespace BPMS_BL.Facades
             await _blockWorkflowRepository.Save();
             return "";
         }
-
-        public async Task<string> Message(MessageShare message)
+        private async Task assignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData, 
+                                         List<RecieveEventWorkflowEntity> recieveEvents)
         {
-            Dictionary<Guid, TaskDataEntity> taskData;
-            List<RecieveEventWorkflowEntity> recieveEvents;
-            if (message.WorkflowId != null)
-            {
-                taskData = await _taskDataRepository.OfRecieveEvent(message.WorkflowId.Value, message.BlockId);
-                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.WorkflowId.Value, message.BlockId);
-            }
-            else
-            {
-                taskData = await _taskDataRepository.OfRecieveEvent(message.BlockId);
-                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.BlockId);
-            }
-
-             foreach (StringDataEntity data in message.Strings)
+            foreach (StringDataEntity data in message.Strings)
             {
                 (taskData[data.AttributeId.Value] as IStringDataEntity).Value = data.Value;
             }
@@ -196,11 +212,40 @@ namespace BPMS_BL.Facades
                 {
                     recieveEvent.Active = false;
                     await workflowHelper.StartNextTask(recieveEvent);
-                    await _taskDataRepository.Save();
+                    //await _taskDataRepository.Save(); // TODO
                 }
                 await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.ModelId);
             }
+        }
 
+        public async Task<string> Message(MessageShare message)
+        {
+            Dictionary<Guid, TaskDataEntity> taskData;
+            List<RecieveEventWorkflowEntity> recieveEvents;
+            if (message.WorkflowId != null)
+            {
+                taskData = await _taskDataRepository.OfRecieveEvent(message.WorkflowId.Value, message.BlockId);
+                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.WorkflowId.Value, message.BlockId);
+            }
+            else
+            {
+                taskData = await _taskDataRepository.OfRecieveEvent(message.BlockId);
+                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.BlockId);
+            }
+
+            await assignMessage(message, taskData, recieveEvents);
+            await _taskDataRepository.Save();
+
+            return "";
+        }
+
+        public async Task<string> ForeignMessage(MessageShare message)
+        {
+            foreach (Guid id in await _foreignSendEventRepository.RecieverIds(message.BlockId, _system.Id))
+            {
+                await assignMessage(message, await _taskDataRepository.OfRecieveEvent(message.BlockId), 
+                                    await _blockWorkflowRepository.RecieveEvents(message.BlockId));
+            }
             await _taskDataRepository.Save();
 
             return "";
@@ -208,28 +253,65 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RemoveRecieverAttribute(Guid id)
         {
-            _blockAttributeRepository.Remove(new BlockAttributeEntity
+            _attributeRepository.Remove(new AttributeEntity
             {
                 Id = id,
-                MappedBlocks = await _blockAttributeRepository.MappedBlocks(id)
+                MappedBlocks = await _attributeRepository.MappedBlocks(id)
             });
-            await _blockAttributeRepository.Save();
+            await _attributeRepository.Save();
 
             return "";
         }
 
-        public async Task<string> ToggleRecieverAttribute(BlockAttributeEntity attribute)
+        public async Task<string> ToggleRecieverAttribute(AttributeEntity attribute)
         {
-            if (await _blockAttributeRepository.Any(attribute.Id))
+            if (await _attributeRepository.Any(attribute.Id))
             {
-                _blockAttributeRepository.Remove(attribute);
+                _attributeRepository.Remove(attribute);
             }
             else
             {
-                await _blockAttributeRepository.Create(attribute);
+                await _attributeRepository.Create(attribute);
             }
 
-            await _blockAttributeRepository.Save();
+            await _attributeRepository.Save();
+            return "";
+        }
+
+        public async Task<string> ToggleForeignRecieverAttribute(AttributeEntity attribute)
+        {
+            List<ForeignAttributeMapEntity> maps = await _foreignAttributeMapRepository.ForeignAttribs(attribute.Id);
+            if (maps.Count > 0)
+            {
+                foreach (ForeignAttributeMapEntity map in maps)
+                {
+                    _attributeRepository.Remove(new AttributeEntity
+                    {
+                        Id = map.AttributeId
+                    });
+                    _foreignAttributeMapRepository.Remove(map);
+                }
+            }
+            else
+            {
+                Guid foreignBlockId = attribute.BlockId;
+                foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(foreignBlockId))
+                {
+                    ForeignAttributeMapEntity map = new ForeignAttributeMapEntity
+                    {
+                        ForeignAttributeId = foreignBlockId,
+                        ForeignSendEventId = even.Id,
+                        AttributeId = Guid.NewGuid()
+                    };
+
+                    attribute.Id = map.AttributeId;
+                    attribute.BlockId = even.Reciever.Id;
+                    await _attributeRepository.Create(_mapper.Map<AttributeEntity>(attribute));
+                    await _foreignAttributeMapRepository.Create(map);
+                }
+            }
+
+            await _foreignAttributeMapRepository.Save();
             return "";
         }
 

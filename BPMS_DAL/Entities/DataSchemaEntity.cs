@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities
 {
-    public class ServiceDataSchemaEntity
+    public class DataSchemaEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -18,8 +18,8 @@ namespace BPMS_DAL.Entities
         public DataTypeEnum Type { get; set; }
         public DirectionEnum Direction { get; set; }
         public Guid? ParentId { get; set; }
-        public ServiceDataSchemaEntity? Parent { get; set; }
-        public List<ServiceDataSchemaEntity> Children { get; set; } = new List<ServiceDataSchemaEntity>();
+        public DataSchemaEntity? Parent { get; set; }
+        public List<DataSchemaEntity> Children { get; set; } = new List<DataSchemaEntity>();
         public Guid ServiceId { get; set; }
         public ServiceEntity? Service { get; set; }
         public List<ConditionDataEntity> Conditions { get; set; } = new List<ConditionDataEntity>();

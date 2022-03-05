@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using BPMS_DTOs.BlockModel.IConfigTypes;
 using BPMS_DTOs.Role;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Http;
 
@@ -14,8 +14,8 @@ namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
     public class UserTaskModelConfigDTO : BlockModelConfigDTO, IOutputAttributesConfig, IInputAttributesConfig, IServiceInputAttributes, IServiceOutputAttributes, IRoleConfig
     {
-        public List<BlockAttributeDTO> OutputAttributes { get; set; } = new List<BlockAttributeDTO>();
-        public List<IGrouping<string, InputBlockAttributeDTO>> InputAttributes { get; set; } = new List<IGrouping<string, InputBlockAttributeDTO>>();
+        public List<AttributeDTO> OutputAttributes { get; set; } = new List<AttributeDTO>();
+        public List<IGrouping<string, InputAttributeDTO>> InputAttributes { get; set; } = new List<IGrouping<string, InputAttributeDTO>>();
         public List<ServiceTaskDataSchemaDTO>? ServiceOutputAttributes { get; set; }
         public List<ServiceTaskDataSchemaDTO>? ServiceInputAttributes { get; set; }
         public List<RoleAllDTO> Roles { get; set; } = new List<RoleAllDTO>();

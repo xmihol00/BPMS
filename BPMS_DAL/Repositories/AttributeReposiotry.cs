@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 
 namespace BPMS_DAL.Repositories
 {
-    public class BlockAttributeRepository : BaseRepository<BlockAttributeEntity>
+    public class AttributeRepository : BaseRepository<AttributeEntity>
     {
-        public BlockAttributeRepository(BpmsDbContext context) : base(context) {}
+        public AttributeRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<BlockAttributeDTO>> Details(Guid blockId)
+        public Task<List<AttributeDTO>> Details(Guid blockId)
         {
             return _dbSet.Where(x => x.BlockId == blockId)
-                         .Select(x => new BlockAttributeDTO
+                         .Select(x => new AttributeDTO
                          {
                              Compulsory = x.Compulsory,
                              Description = x.Description,
@@ -31,10 +31,10 @@ namespace BPMS_DAL.Repositories
         }
 
 
-        public Task<List<BlockAttributeAllDTO>> All(Guid id)
+        public Task<List<AttributeAllDTO>> All(Guid id)
         {
             return _dbSet.Where(x => x.BlockId == id)
-                         .Select(x => new BlockAttributeAllDTO
+                         .Select(x => new AttributeAllDTO
                          {
                              Id = x.Id,
                              Type = x.Type
@@ -42,12 +42,12 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> InputAttributes(Guid blockId, Guid outputId, bool compulsoryAttributes)
+        public async Task<List<IGrouping<string, InputAttributeDTO>>> InputAttributes(Guid blockId, Guid outputId, bool compulsoryAttributes)
         {
             return (await _dbSet.Include(x => x.MappedBlocks)
                          .Include(x => x.Block)
                          .Where(x => x.BlockId == outputId)
-                         .Select(x => new InputBlockAttributeDTO
+                         .Select(x => new InputAttributeDTO
                          {
                              Compulsory = x.Compulsory && compulsoryAttributes,
                              Description = x.Description,
@@ -63,7 +63,7 @@ namespace BPMS_DAL.Repositories
                          .ToList();
         }
 
-        public Task<List<BlockAttributeMapEntity>> MapsFromDifferentPool(Guid attribId, Guid poolId)
+        public Task<List<AttributeMapEntity>> MapsFromDifferentPool(Guid attribId, Guid poolId)
         {
             return _dbSet.Where(x => x.Id == attribId)
                          .Include(x => x.MappedBlocks)
@@ -78,12 +78,12 @@ namespace BPMS_DAL.Repositories
             return _dbSet.AnyAsync(x => x.Id == id);
         }
 
-        public Task<BlockAttributeEntity> Bare(Guid id)
+        public Task<AttributeEntity> Bare(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<BlockAttributeMapEntity>> MappedBlocks(Guid id)
+        public Task<List<AttributeMapEntity>> MappedBlocks(Guid id)
         {
             return _dbSet.Include(x => x.MappedBlocks)
                             .ThenInclude(x => x.Block)

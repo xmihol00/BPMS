@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockAttribute
+namespace BPMS_DTOs.Attribute
 {
-    public class InputBlockAttributeDTO
+    public class InputAttributeDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

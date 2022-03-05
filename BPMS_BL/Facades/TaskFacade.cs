@@ -17,7 +17,7 @@ using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Service;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +33,7 @@ namespace BPMS_BL.Facades
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockModelRepository _blockModelRepository;
         private readonly AgendaRoleRepository _agendaRoleRepository;
-        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly DataSchemaRepository _dataSchemaRepository;
         private readonly ServiceRepository _serviceRepository;
         private readonly WorkflowRepository _workflowRepository;
         private readonly PoolRepository _poolRepository;
@@ -44,7 +44,7 @@ namespace BPMS_BL.Facades
         #pragma warning disable CS8618
         public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository, 
                           BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, 
-                          ServiceDataSchemaRepository serviceDataSchemaRepository, ServiceRepository serviceRepository, 
+                          DataSchemaRepository dataSchemaRepository, ServiceRepository serviceRepository, 
                           WorkflowRepository workflowRepository, PoolRepository poolRepository, BpmsDbContext context,
                           IMapper mapper)
         {
@@ -52,7 +52,7 @@ namespace BPMS_BL.Facades
             _taskDataRepository = taskDataRepository;
             _blockModelRepository = blockModelRepository;
             _agendaRoleRepository = agendaRoleRepository;
-            _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _dataSchemaRepository = dataSchemaRepository;
             _serviceRepository = serviceRepository;
             _workflowRepository = workflowRepository;
             _poolRepository = poolRepository;

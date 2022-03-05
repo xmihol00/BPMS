@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
+using BPMS_DAL.Entities;
 using BPMS_DTOs.Agenda;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Model;
@@ -38,6 +39,12 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
+        public static async Task<bool> ToggleForeignRecieverAttribute(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ToggleForeignRecieverAttribute", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         public static async Task<bool> RemoveRecieverAttribute(string systemURL, string auth, string payload)
         {
             using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveRecieverAttribute/{payload}", auth, "");
@@ -47,6 +54,12 @@ namespace BPMS_BL.Helpers
         public static async Task<bool> Message(string systemURL, string auth, string payload)
         {
             using HttpResponseMessage response = await SendMessage(systemURL, "Communication/Message", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> ForeignMessage(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ForeignMessage", auth, payload);
             return response.StatusCode == HttpStatusCode.OK;
         }
 
@@ -154,16 +167,24 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<bool> RemoveReciever(string systemURL, string auth, string payload)
+        public static async Task<bool> RemoveReciever(string systemURL, string auth, Guid blockId, Guid senderId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/RemoveReciever", auth, payload);
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveReciever/{blockId}/{senderId}", auth, "");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> AddReciever(string systemURL, string auth, string payload)
+        public static async Task<List<AttributeEntity>> AddReciever(string systemURL, string auth, Guid blockId, Guid senderId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/AddReciever", auth, payload);
-            return response.StatusCode == HttpStatusCode.OK;
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/AddReciever/{blockId}/{senderId}", auth, "");
+            List<AttributeEntity> dto = JsonConvert.DeserializeObject<List<AttributeEntity>>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
         }
 
         private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload)

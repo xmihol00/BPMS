@@ -10,15 +10,12 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities
 {
-    public class BlockAttributeMapEntity
+    public class ForeignAttributeMapEntity
     {
-        public Guid BlockId { get; set; }
-
-        [JsonIgnore]
-        public BlockModelEntity? Block { get; set; }
+        public Guid ForeignSendEventId { get; set; }
+        public ForeignSendEventEntity? ForeignSendEvent { get; set; }
         public Guid AttributeId { get; set; }
-
-        [JsonIgnore]
-        public BlockAttributeEntity? Attribute { get; set; }
+        public AttributeEntity? Attribute { get; set; }
+        public Guid ForeignAttributeId { get; set; }
     }
 }

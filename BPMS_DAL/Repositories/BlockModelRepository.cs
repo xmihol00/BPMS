@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
 using BPMS_Common.Enums;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DTOs.BlockModel.ShareTypes;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.Task;
 using BPMS_DTOs.User;
 using BPMS_DAL.Entities.WorkflowBlocks;
@@ -59,14 +59,14 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<BlockAttributeDTO>> MappedAttributes(Guid? id)
+        public Task<List<AttributeDTO>> MappedAttributes(Guid? id)
         {
             return _dbSet.Include(x => x.MappedAttributes)
                             .ThenInclude(x => x.Attribute)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.MappedAttributes)
                          .Select(x => x.Attribute)
-                         .Select(x => new BlockAttributeDTO 
+                         .Select(x => new AttributeDTO 
                          {
                              Compulsory = x.Compulsory,
                              Description = x.Description,
@@ -130,6 +130,16 @@ namespace BPMS_DAL.Repositories
                                 .GroupBy(x => x.GetType());
         }
 
+        public  Task<List<AttributeEntity?>> MappedBareAttributes(Guid id)
+        {
+            return _dbSet.Include(x => x.MappedAttributes)
+                             .ThenInclude(x => x.Attribute)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.MappedAttributes)
+                         .Select(x => x.Attribute)
+                         .ToListAsync();
+        }
+
         public Task<List<RecieveEventShareDTO>> ShareRecieveEvents(Guid modelId)
         {
             return _context.Set<RecieveEventModelEntity>()
@@ -174,7 +184,7 @@ namespace BPMS_DAL.Repositories
             return _serviceTasks.FirstAsync(x => x.Id == id);
         }
 
-        public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> MappedInputAttributes(Guid blockId, Guid? id, string blockName, bool compulsoryAttributes)
+        public async Task<List<IGrouping<string, InputAttributeDTO>>> MappedInputAttributes(Guid blockId, Guid? id, string blockName, bool compulsoryAttributes)
         {
             return (await _dbSet.Include(x => x.MappedAttributes)
                             .ThenInclude(x => x.Attribute)
@@ -182,7 +192,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.MappedAttributes)
                          .Select(x => x.Attribute)
-                         .Select(x => new InputBlockAttributeDTO 
+                         .Select(x => new InputAttributeDTO 
                          {
                              Compulsory = x.Compulsory && compulsoryAttributes,
                              Description = x.Description,
@@ -277,10 +287,11 @@ namespace BPMS_DAL.Repositories
                               .FirstAsync();
         }
 
-        public Task<List<SenderRecieverAddressDTO>> RecieverAddresses(Guid id)
+        public Task<List<SenderRecieverAddressDTO>> ForeignRecieverAddresses(Guid id)
         {
             return _sendEvents.Include(x => x.ForeignRecievers)
                                   .ThenInclude(x => x.System)
+                              .Where(x => x.Id == id)
                               .SelectMany(x => x.ForeignRecievers)
                               .Select(x => new SenderRecieverAddressDTO
                               {
@@ -337,13 +348,13 @@ namespace BPMS_DAL.Repositories
                                 .ToListAsync();
         }
 
-        public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> TaskInputAttributes(Guid blockId, uint order, Guid poolId)
+        public async Task<List<IGrouping<string, InputAttributeDTO>>> TaskInputAttributes(Guid blockId, uint order, Guid poolId)
         {
             return (await _userTasks.Include(x => x.Attributes)
                                        .ThenInclude(x => x.MappedBlocks)
                                     .Where(x => x.PoolId == poolId && x.Order < order)
                                     .SelectMany(x => x.Attributes)
-                                    .Select(x => new InputBlockAttributeDTO
+                                    .Select(x => new InputAttributeDTO
                                     {
                                         BlockName = x.Block.Name,
                                         Compulsory = x.Compulsory,
@@ -358,13 +369,13 @@ namespace BPMS_DAL.Repositories
                                     .ToList();
         }
 
-        public async Task<List<IGrouping<string, InputBlockAttributeDTO>>> RecieveEventAttribures(Guid blockId, uint order, Guid poolId)
+        public async Task<List<IGrouping<string, InputAttributeDTO>>> RecieveEventAttribures(Guid blockId, uint order, Guid poolId)
         {
             return (await _recieveEvens.Include(x => x.Attributes)
                                           .ThenInclude(x => x.MappedBlocks)
                                        .Where(x => x.PoolId == poolId && x.Order < order)
                                        .SelectMany(x => x.Attributes)
-                                       .Select(x => new InputBlockAttributeDTO
+                                       .Select(x => new InputAttributeDTO
                                        {
                                            BlockName = x.Block.Name,
                                            Compulsory = x.Compulsory,
@@ -379,10 +390,45 @@ namespace BPMS_DAL.Repositories
                                        .ToList();
         }
 
+        public Task<List<SenderRecieverAddressDTO>> ForeignRecieversAddresses(Guid id)
+        {
+            return _sendEvents.Include(x => x.ForeignRecievers)
+                                 .ThenInclude(x => x.System)
+                              .Where(x => x.Id == id)
+                              .SelectMany(x => x.ForeignRecievers)
+                              .Select(x => new SenderRecieverAddressDTO
+                              {
+                                  DestinationURL = x.System.URL,
+                                  ForeignBlockId = x.ForeignBlockId,
+                                  Key = x.System.Key,
+                                  SystemId = x.SystemId
+                              })
+                              .ToListAsync();
+        }
+
         public Task<bool> IsInModel(Guid blockModelId, Guid modelId)
         {
             return _dbSet.Include(x => x.Pool)
                          .AnyAsync(x => x.Id == blockModelId && x.Pool.ModelId == modelId);
+        }
+
+        public Task<List<BlockAddressDTO>> RecieverAddresses(Guid id)
+        {
+            return _sendEvents.Include(x => x.Recievers)
+                                .ThenInclude(x => x.Pool)
+                                    .ThenInclude(x => x.System)
+                              .Where(x => x.Id == id)
+                              .SelectMany(x => x.Recievers)
+                              .Select(x => new BlockAddressDTO
+                              {
+                                  PoolId = x.PoolId,
+                                  DestinationURL = x.Pool.System.URL,
+                                  SystemId = x.Pool.System.Id,
+                                  Key = x.Pool.System.Key,
+                                  BlockId = x.Id,
+                                  ModelId = x.Pool.ModelId
+                              })
+                              .ToListAsync();
         }
     }
 }

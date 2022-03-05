@@ -1,8 +1,8 @@
 using BPMS_BL.Facades;
-using BPMS_DTOs.ServiceDataSchema;
+using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.Pool;
 using Microsoft.AspNetCore.Mvc;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BPMS.Controllers

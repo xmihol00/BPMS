@@ -34,15 +34,15 @@ namespace BPMS_BL.Facades
         private readonly PoolRepository _poolRepository;
         private readonly WorkflowRepository _workflowRepository;
         private readonly AgendaRoleRepository _agendaRoleRepository;
-        private readonly BlockAttributeRepository _blockAttributeRepository;
-        private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
+        private readonly AttributeRepository _attributeRepository;
+        private readonly DataSchemaRepository _dataSchemaRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
 
         public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                            BlockModelRepository blockModelRepository, PoolRepository poolRepository, WorkflowRepository workflowRepository,
-                           AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository, 
-                           ServiceDataSchemaRepository serviceDataSchemaRepository, BpmsDbContext context, IMapper mapper)
+                           AgendaRoleRepository agendaRoleRepository, AttributeRepository attributeRepository, 
+                           DataSchemaRepository dataSchemaRepository, BpmsDbContext context, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -51,8 +51,8 @@ namespace BPMS_BL.Facades
             _poolRepository = poolRepository;
             _workflowRepository = workflowRepository;
             _agendaRoleRepository = agendaRoleRepository;
-            _blockAttributeRepository = blockAttributeRepository;
-            _serviceDataSchemaRepository = serviceDataSchemaRepository;
+            _attributeRepository = attributeRepository;
+            _dataSchemaRepository = dataSchemaRepository;
             _context = context;
             _mapper = mapper;
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using BPMS_DAL.Entities;
-using BPMS_DTOs.BlockAttribute;
+using BPMS_DTOs.Attribute;
 
 namespace BPMS_DAL.Repositories
 {

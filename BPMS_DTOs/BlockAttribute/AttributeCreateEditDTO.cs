@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockAttribute
+namespace BPMS_DTOs.Attribute
 {
     public class AttributeCreateEditDTO
     {
