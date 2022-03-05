@@ -278,7 +278,7 @@ function DisplayResult(targetId, result, successCallback)
     }
 }
 
-function InputValidator(form)
+function InputValidator(form, select = false)
 {
     let disabled = false;
 
@@ -293,9 +293,10 @@ function InputValidator(form)
         }
         else if (input.classList.contains("input-select"))
         {
-            if (input.options.length == 0)
+            if (input.options.length == 0 || (select && !input.value))
             {
                 disabled = true;
+                break;
             }
         }
         else if (!input.value || !input.value.trim())

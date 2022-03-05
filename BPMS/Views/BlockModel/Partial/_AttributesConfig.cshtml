@@ -49,7 +49,12 @@
 
 @if (Model is IRecieverConfig)
 {
-    @await Html.PartialAsync("Partial/_RecieverConfig", Model)
+    <form id="SenderChangeFormId" class="d-none mt-2" action="/BlockModel/SenderChange" 
+        onsubmit="AjaxFormSubmit(event, 'AttributesConfigId', false, false, null, CancelAddAttrib)" oninput="InputValidator(this, true)">
+    </form>
+    <div id="RecieverId">
+        @await Html.PartialAsync("Partial/_RecieverConfig", Model)
+    </div>
 }
 @if (Model is ISenderConfig)
 {

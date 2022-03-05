@@ -87,9 +87,15 @@ namespace BPMS.Controllers
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Models()
+        public async Task<IActionResult> Agednas()
         {
-            return Ok(await _communicationFacade.Models());
+            return Ok(await _communicationFacade.Agednas());
+        }
+
+        [HttpPost] 
+        public async Task<IActionResult> Models(Guid id)
+        {
+            return Ok(await _communicationFacade.Models(id));
         }
 
         [HttpPost]

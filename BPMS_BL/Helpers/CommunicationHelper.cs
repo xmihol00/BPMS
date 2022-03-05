@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
+using BPMS_DTOs.Agenda;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
@@ -97,9 +98,23 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<List<ModelIdNameDTO>> Models(string systemURL, string auth)
+        internal static async Task<List<AgendaIdNameDTO>> Agendas(string systemURL, string auth)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/Models", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/Agendas", auth, "");
+            List<AgendaIdNameDTO> dto = JsonConvert.DeserializeObject<List<AgendaIdNameDTO>>(await response.Content.ReadAsStringAsync());
+            if (dto != null)
+            {
+                return dto;
+            }
+            else
+            {
+                throw new Exception(); // TODO
+            }
+        }
+
+        public static async Task<List<ModelIdNameDTO>> Models(string systemURL, string auth, Guid agendaId)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Models/{agendaId}", auth, "");
             List<ModelIdNameDTO> dto = JsonConvert.DeserializeObject<List<ModelIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -137,6 +152,18 @@ namespace BPMS_BL.Helpers
             {
                 throw new Exception(); // TODO
             }
+        }
+
+        public static async Task<bool> RemoveReciever(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/RemoveReciever", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> AddReciever(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/AddReciever", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
         private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload)

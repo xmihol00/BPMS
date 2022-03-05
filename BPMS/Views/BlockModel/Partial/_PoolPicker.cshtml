@@ -1,0 +1,24 @@
+@model List<PoolIdNameDTO>
+
+<label class="input mt-3">
+    @if (Model.Count == 0)
+    {
+        <select required class="input-select" disabled>
+            <option value="" selected>Nevybrán</option>
+        </select>
+    }
+    else
+    {
+        <select required class="input-select" name="PoolId" onchange="PoolChange(this)">
+            <option value="" selected>Nevybrán</option>
+            @foreach (PoolIdNameDTO pool in Model)
+            {
+                <option value="@pool.Id" class="empty-name">@pool.Name</option>
+            }
+        </select>
+    }
+    <span class="input-label">Bazén</span>
+</label>
+<div id="BlockPickerId">
+    @await Html.PartialAsync("Partial/_BlockPicker", new List<BlockIdNameDTO>())
+</div>

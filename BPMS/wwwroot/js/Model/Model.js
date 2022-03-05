@@ -52,14 +52,23 @@ function ShowAddAttrib()
     document.getElementById("AttribCreateFormId").classList.remove("d-none");
     document.getElementById("NewAttBtnId").classList.add("d-none");
     document.getElementById("EditBtnId").classList.add("d-none");
+    let senderBtn = document.getElementById("ChangeSenderBtnId");
+    if (senderBtn)
+    {
+        senderBtn.classList.add("d-none");
+    }
 }
 
 function CancelAddAttrib()
 {
     document.getElementById("AttribCreateFormId").classList.add("d-none");
-
     document.getElementById("NewAttBtnId").classList.remove("d-none");
     document.getElementById("EditBtnId").classList.remove("d-none");
+    let senderBtn = document.getElementById("ChangeSenderBtnId");
+    if (senderBtn)
+    {
+        senderBtn.classList.remove("d-none");
+    }
 }
 
 function EditAttribute(button)
@@ -145,8 +154,8 @@ function AttribTypeChange(element)
 function NoSpecInput()
 {
     return `<div class="vertical-justify-center">
-    Tento typ atributu nemá specifikaci.
-</div>`;
+                Tento typ atributu nemá specifikaci.
+            </div>`;
 }
 
 function AddSpecBtn(type)
@@ -408,4 +417,110 @@ function RemoveModel()
 function ValidateStart()
 {
     InputValidator(document.getElementById("RunModelId"));
+}
+
+function ShowSenderChange()
+{
+    document.getElementById("NewAttBtnId").classList.add("d-none");
+    document.getElementById("EditBtnId").classList.add("d-none");
+    document.getElementById("ChangeSenderBtnId").classList.add("d-none");   
+}
+
+function ChangeSender(id)
+{
+    let modelId = document.getElementById("ModelIdId").value;
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/ChangeSender/${modelId}/${id}`
+    })
+    .done((result) => 
+    {
+        let form = document.getElementById("SenderChangeFormId");
+        form.innerHTML = result;
+        form.classList.remove("d-none");
+        ShowSenderChange();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function SystemChange(select)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Agendas/${select.value}`
+    })
+    .done((result) => 
+    {
+        document.getElementById("AgendaPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });   
+}
+
+function AgendaChange(select)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Models/${document.getElementById("SystemIdId").value}/${select.value}`
+    })
+    .done((result) => 
+    {
+        document.getElementById("ModelPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });   
+}
+
+function ModelChange(select)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Pools/${document.getElementById("SystemIdId").value}/${select.value}`
+    })
+    .done((result) => 
+    {
+        document.getElementById("PoolPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });   
+}
+
+function PoolChange(select)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/SenderBlocks/${document.getElementById("SystemIdId").value}/${select.value}`
+    })
+    .done((result) => 
+    {
+        document.getElementById("BlockPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });   
 }

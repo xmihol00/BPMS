@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
+using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
@@ -14,10 +15,12 @@ using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Account;
+using BPMS_DTOs.Agenda;
 using BPMS_DTOs.BlockAttribute;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockModel.ConfigTypes;
 using BPMS_DTOs.BlockModel.IConfigTypes;
+using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.Service;
@@ -39,7 +42,9 @@ namespace BPMS_BL.Facades
         private readonly ServiceDataSchemaRepository _dataSchemaRepository;
         private readonly FlowRepository _flowRepository;
         private readonly BlockModelDataSchemaRepository _blockModelDataSchemaRepository;
+        private readonly AgendaRepository _agendaRepository;
         private readonly ForeignSendEventRepository _foreignSendEventRepository;
+        private readonly ModelRepository _modelRepository;
         private readonly ForeignRecieveEventRepository _foreignRecieveEventRepository;
         private readonly IMapper _mapper;
         private Guid _blockId;
@@ -48,8 +53,8 @@ namespace BPMS_BL.Facades
                                 BlockAttributeMapRepository blockAttributeMapRepository, PoolRepository poolRepository,
                                 SystemRepository systemRepository, ServiceRepository serviceRepository, 
                                 ServiceDataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
-                                BlockModelDataSchemaRepository blockModelDataSchemaRepository, 
-                                ForeignSendEventRepository foreignSendEventRepository, 
+                                BlockModelDataSchemaRepository blockModelDataSchemaRepository, AgendaRepository agendaRepository,
+                                ForeignSendEventRepository foreignSendEventRepository, ModelRepository modelRepository,
                                 ForeignRecieveEventRepository foreignRecieveEventRepository, IMapper mapper)
         {
             _blockModelRepository = blockModelRepository;
@@ -61,9 +66,91 @@ namespace BPMS_BL.Facades
             _dataSchemaRepository = dataSchemaRepository;
             _flowRepository = flowRepository;
             _blockModelDataSchemaRepository = blockModelDataSchemaRepository;
+            _agendaRepository = agendaRepository;
             _foreignSendEventRepository = foreignSendEventRepository;
             _foreignRecieveEventRepository = foreignRecieveEventRepository;
+            _modelRepository = modelRepository;
             _mapper = mapper;
+        }
+
+        public async Task<List<AgendaIdNameDTO>> Agendas(Guid systemId)
+        {
+            if (systemId == StaticData.ThisSystemId)
+            {
+                return await _agendaRepository.Agendas();
+            }
+            else
+            {
+                DstAddressDTO address = await _systemRepository.Address(systemId);
+                return await CommunicationHelper.Agendas(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address));
+            }
+        }
+
+        public async Task<BlockModelConfigDTO> SenderChange(SenderChangeDTO dto)
+        {
+            IRecieveEventModelEntity entity = await _blockModelRepository.Bare(dto.Id) as IRecieveEventModelEntity;
+            if (entity.ForeignSenderId != null)
+            {
+                //await CommunicationHelper.RemoveReciever()
+            }
+
+            if (dto.SystemId == StaticData.ThisSystemId)
+            {
+                entity.SenderId = dto.BlockId;
+            }
+            else
+            {
+                //await CommunicationHelper.AddReciever()
+            }
+            await _blockModelRepository.Save();
+
+            return await Config(dto.Id);
+        }
+
+        public async Task<List<BlockIdNameDTO>> SenderBlocks(Guid systemId, Guid poolId)
+        {
+            if (systemId == StaticData.ThisSystemId)
+            {
+                return await _blockModelRepository.SenderBlocks(poolId);
+            }
+            else
+            {
+                DstAddressDTO address = await _systemRepository.Address(systemId);
+                return await CommunicationHelper.SenderBlocks(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), poolId);
+            }
+        }
+
+        public async Task<List<PoolIdNameDTO>> Pools(Guid systemId, Guid modelId)
+        {
+            if (systemId == StaticData.ThisSystemId)
+            {
+                return await _poolRepository.Pools(modelId);
+            }
+            else
+            {
+                DstAddressDTO address = await _systemRepository.Address(systemId);
+                return await CommunicationHelper.Pools(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), modelId);
+            }
+        }
+
+        public async Task<List<ModelIdNameDTO>> Models(Guid systemId, Guid agendaId)
+        {
+            if (systemId == StaticData.ThisSystemId)
+            {
+                return await _modelRepository.Models(agendaId);
+            }
+            else
+            {
+                DstAddressDTO address = await _systemRepository.Address(systemId);
+                return await CommunicationHelper.Models(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), agendaId);
+            }
+        }
+
+        public async Task<List<SystemIdNameDTO>> ChangeSender(Guid modelId)
+        {
+            List<SystemIdNameDTO> systems = await _systemRepository.ThisSystemIdName();
+            systems.AddRange(await _modelRepository.Systems(modelId));
+            return systems;
         }
 
         public async Task Edit(BlockModelEditDTO dto)
@@ -246,18 +333,21 @@ namespace BPMS_BL.Facades
 
             if (recieveEvent.SenderId != null)
             {
-                dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.SenderId.Value, false);
-                return dto;
+                dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.SenderId.Value);
             }
-            if (recieveEvent.ForeignSenderId != null)
+            else if (recieveEvent.ForeignSenderId != null)
             {
                 SenderRecieverAddressDTO address = await _foreignSendEventRepository.SenderAddress(recieveEvent.ForeignSenderId.Value);
                 dto.Sender = await CommunicationHelper.SenderInfo(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address),
                                                                   address.ForeignBlockId.ToString());
 
-                return dto;
+            }
+            else
+            {
+                dto.Sender = new SenderRecieverConfigDTO();
             }
 
+            dto.Sender.Editable = recieveEvent.Editable;
             return dto;
         }
 

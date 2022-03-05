@@ -66,5 +66,45 @@ namespace BPMS.Controllers
             await _blockModelFacade.Remove(id);
             return Ok();
         }
+
+        [HttpPost]
+        [Route("BlockModel/ChangeSender/{modelId}/{blockId}")]
+        public async Task<IActionResult> ChangeSender(Guid modelId, Guid blockId)
+        {
+            return PartialView("Partial/_ChangeSender", (await _blockModelFacade.ChangeSender(modelId), blockId));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Agendas(Guid id)
+        {
+            return PartialView("Partial/_AgendaPicker", await _blockModelFacade.Agendas(id));
+        }
+
+        [HttpPost]
+        [Route("BlockModel/Models/{systemId}/{agendaId}")]
+        public async Task<IActionResult> Models(Guid systemId, Guid agendaId)
+        {
+            return PartialView("Partial/_ModelPicker", await _blockModelFacade.Models(systemId, agendaId));
+        }
+
+        [HttpPost]
+        [Route("BlockModel/Pools/{systemId}/{modelId}")]
+        public async Task<IActionResult> Pools(Guid systemId, Guid modelId)
+        {
+            return PartialView("Partial/_PoolPicker", await _blockModelFacade.Pools(systemId, modelId));
+        }
+
+        [HttpPost]
+        [Route("BlockModel/SenderBlocks/{systemId}/{poolId}")]
+        public async Task<IActionResult> SenderBlocks(Guid systemId, Guid poolId)
+        {
+            return PartialView("Partial/_BlockPicker", await _blockModelFacade.SenderBlocks(systemId, poolId));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SenderChange(SenderChangeDTO dto)
+        {
+            return PartialView("Partial/_AttributesConfig", await _blockModelFacade.SenderChange(dto));
+        }
     }
 }

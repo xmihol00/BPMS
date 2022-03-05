@@ -12,6 +12,8 @@ using BPMS_Common;
 using BPMS_DTOs.Agenda;
 using BPMS_Common.Enums;
 using BPMS_DTOs.Model;
+using BPMS_DTOs.Account;
+using BPMS_DTOs.Pool;
 
 namespace BPMS_DAL.Repositories
 {
@@ -133,20 +135,26 @@ namespace BPMS_DAL.Repositories
                         .FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<ModelIdNameDTO>> Models(Guid id)
+        public Task<List<SystemIdNameDTO>> ThisSystemIdName()
         {
-            return _dbSet.Include(x => x.Agendas)
-                            .ThenInclude(x => x.Agenda)
-                                .ThenInclude(x => x.Models)
-                         .Where(x => x.Id == id)
-                         .SelectMany(x => x.Agendas)
-                         .SelectMany(x => x.Agenda.Models)
-                         .Select(x => new ModelIdNameDTO
+            return _dbSet.Where(x => x.Id == StaticData.ThisSystemId)
+                         .Select(x => new SystemIdNameDTO
                          {
-                             ModelId = x.Id,
+                             Id = x.Id,
                              Name = x.Name
                          })
                          .ToListAsync();
+        }
+
+        public Task<DstAddressDTO> Address(Guid systemId)
+        {
+            return _dbSet.Select(x => new DstAddressDTO
+                         {
+                             DestinationURL = x.URL,
+                             Key = x.Key,
+                             SystemId = x.Id
+                         })
+                         .FirstAsync(x => x.SystemId == systemId);
         }
 
         public Task<Guid> IdFromUrl(string systemURL)

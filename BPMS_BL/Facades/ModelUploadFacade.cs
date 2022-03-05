@@ -386,6 +386,7 @@ namespace BPMS_BL.Facades
                 {
                     if (sourceBlock is ISendEventModelEntity && destinationBlock is IRecieveEventModelEntity)
                     {
+                        (destinationBlock as IRecieveEventModelEntity).Editable = false;
                         (destinationBlock as IRecieveEventModelEntity).SenderId = sourceBlock.Id;
                         return;
                     }

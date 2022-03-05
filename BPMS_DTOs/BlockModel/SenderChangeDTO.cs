@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel
 {
-    public class BlockModelShareDTO
+    public class SenderChangeDTO
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
+        public Guid SystemId { get; set; }
+        public Guid AgendaId { get; set; }
+        public Guid ModelId { get; set; }
         public Guid PoolId { get; set; }
+        public Guid BlockId { get; set; }
     }
 }

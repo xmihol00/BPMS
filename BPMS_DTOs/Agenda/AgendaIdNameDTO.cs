@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BPMS_DTOs.ServiceDataSchema;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.BlockModel
+namespace BPMS_DTOs.Agenda
 {
-    public class BlockModelShareDTO
+    public class AgendaIdNameDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public Guid PoolId { get; set; }
     }
 }

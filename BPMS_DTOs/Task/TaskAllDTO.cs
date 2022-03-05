@@ -12,7 +12,7 @@ namespace BPMS_DTOs.Task
     {
         public Guid Id { get; set; }
         public string TaskName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public Guid WorkflowId { get; set; }
         public string WorkflowName { get; set; } = string.Empty;
         public Guid AgendaId { get; set; }

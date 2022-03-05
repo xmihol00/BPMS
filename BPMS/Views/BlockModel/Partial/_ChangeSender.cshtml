@@ -1,0 +1,20 @@
+@model (List<SystemIdNameDTO> systems, Guid blockId)
+
+<input type="hidden" name="Id" value="@Model.blockId" />
+<h4 class="mb-0">Změna odesílatele</h4>
+<label class="input mt-3">
+    <select id="SystemIdId" required class="input-select" name="SystemId" onchange="SystemChange(this)">
+        <option value="" selected>Nevybrán</option>
+        @foreach (SystemIdNameDTO system in Model.systems)
+        {
+            <option value="@system.Id">@system.Name</option>
+        }
+    </select>
+    <span class="input-label">Systém</span>
+</label>
+<div id="AgendaPickerId">
+    @await Html.PartialAsync("Partial/_AgendaPicker", new List<AgendaIdNameDTO>())
+</div>
+<div class="d-flex justify-content-center mt-3">
+    <button type="submit" form="SenderChangeFormId" class="butn btn-s" disabled>Změnit</button>
+</div>

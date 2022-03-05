@@ -14,6 +14,7 @@ using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DTOs.User;
 using BPMS_DTOs.Workflow;
+using BPMS_DTOs.System;
 
 namespace BPMS_DAL.Repositories
 {
@@ -100,6 +101,32 @@ namespace BPMS_DAL.Repositories
                              State = x.State
                          })
                          .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<List<ModelIdNameDTO>> Models(Guid agendaId)
+        {
+            return _dbSet.Where(x => x.AgendaId == agendaId)
+                         .Select(x => new ModelIdNameDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<List<SystemIdNameDTO>> Systems(Guid id)
+        {
+            return _dbSet.Include(x => x.Agenda)
+                            .ThenInclude(x => x.Systems)
+                                .ThenInclude(x => x.System)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.Agenda.Systems)
+                         .Select(x => new SystemIdNameDTO
+                         {
+                             Id = x.SystemId,
+                             Name = x.System.Name
+                         })
+                         .ToListAsync();
         }
 
         public Task<WorkflowRunDTO?> WaitingWorklfow(Guid id)

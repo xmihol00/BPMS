@@ -10,7 +10,7 @@ namespace BPMS_DTOs.Model
 {
     public class ModelIdNameDTO
     {
-        public Guid ModelId { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 }

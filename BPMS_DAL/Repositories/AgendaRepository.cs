@@ -130,6 +130,28 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<List<AgendaIdNameDTO>> Agendas()
+        {
+            return _dbSet.Select(x => new AgendaIdNameDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name
+                         })
+                         .ToListAsync();
+        }
+
+        public Task<List<AgendaIdNameDTO>> AgendasSystem(Guid systemId)
+        {
+            return _dbSet.Include(x => x.Systems)
+                         .Where(x => x.Systems.Any(x => x.SystemId == systemId))
+                         .Select(x => new AgendaIdNameDTO
+                         {
+                             Id = x.Id,
+                             Name = x.Name
+                         })
+                         .ToListAsync();
+        }
+
         public Task<AgendaAllDTO> Selected(Guid id)
         {
             return _dbSet.Include(x => x.Models)

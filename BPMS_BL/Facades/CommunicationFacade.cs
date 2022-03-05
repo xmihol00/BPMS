@@ -11,6 +11,7 @@ using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
+using BPMS_DTOs.Agenda;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Model;
@@ -38,6 +39,7 @@ namespace BPMS_BL.Facades
         private readonly ServiceDataSchemaRepository _serviceDataSchemaRepository;
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
+        private readonly AgendaRepository _agendaRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -47,7 +49,8 @@ namespace BPMS_BL.Facades
                                    SystemAgendaRepository systemAgendaRepository, WorkflowRepository workflowRepository,
                                    AgendaRoleRepository agendaRoleRepository, BlockAttributeRepository blockAttributeRepository,
                                    ServiceDataSchemaRepository serviceDataSchemaRepository, TaskDataRepository taskDataRepository,
-                                   BlockWorkflowRepository blockWorkflowRepository, BpmsDbContext context, IMapper mapper)
+                                   BlockWorkflowRepository blockWorkflowRepository, AgendaRepository agendaRepository, 
+                                   BpmsDbContext context, IMapper mapper)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -62,9 +65,15 @@ namespace BPMS_BL.Facades
             _serviceDataSchemaRepository = serviceDataSchemaRepository;
             _taskDataRepository = taskDataRepository;
             _blockWorkflowRepository = blockWorkflowRepository;
+            _agendaRepository = agendaRepository;
             _context = context;
             _mapper = mapper;
             _system = new SystemEntity();
+        }
+
+        public Task<List<AgendaIdNameDTO>> Agednas()
+        {
+            return _agendaRepository.AgendasSystem(_system.Id);
         }
 
         public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
@@ -77,14 +86,14 @@ namespace BPMS_BL.Facades
             return _poolRepository.Pools(modelId);
         }
 
-        public Task<List<ModelIdNameDTO>> Models()
+        public Task<List<ModelIdNameDTO>> Models(Guid agendaId)
         {
-            return _systemRepository.Models(_system.Id);
+            return _modelRepository.Models(agendaId);
         }
 
         public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
         {
-            return _blockModelRepository.SenderInfo(id, true);
+            return _blockModelRepository.SenderInfo(id);
         }
 
         public async Task<string> ActivateSystem()

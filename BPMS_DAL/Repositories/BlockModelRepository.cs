@@ -17,6 +17,7 @@ using BPMS_DTOs.Task;
 using BPMS_DTOs.User;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DTOs.Account;
+using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Repositories
 {
@@ -104,6 +105,11 @@ namespace BPMS_DAL.Repositories
                                   Name = x.Name
                               })
                               .ToListAsync();
+        }
+
+        public Task<BlockModelEntity> Bare(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
 
         public Task<List<UserIdNameDTO>> UserIdNamesUser(Guid id, Guid agendaId)
@@ -253,7 +259,7 @@ namespace BPMS_DAL.Repositories
                                 .ToListAsync();;
         }
 
-        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id, bool editable)
+        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
         {
             return _sendEvents.Include(x => x.Pool)
                                  .ThenInclude(x => x.Model)
@@ -266,7 +272,7 @@ namespace BPMS_DAL.Repositories
                                   BlockName = x.Name,
                                   ModelName = x.Pool.Model.Name,
                                   PoolName = x.Pool.Name,
-                                  Editable = editable
+                                  Editable = true
                               })
                               .FirstAsync();
         }

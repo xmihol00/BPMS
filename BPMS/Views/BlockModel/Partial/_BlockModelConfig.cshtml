@@ -33,7 +33,7 @@
         }
         @if (Model is IRecieverConfig && (Model as IRecieverConfig).Sender.Editable)
         {
-            <button type="button" id="ChangeSenderBtnId" class="butn btn-p" onclick="ChangeSender()">Změnit odesílatele</button>
+            <button type="button" id="ChangeSenderBtnId" class="butn btn-p" onclick="ChangeSender('@Model.Id')">Změnit odesílatele</button>
         }
         <button type="submit" form="BlockEditFormId" id="EditBtnId" class="butn btn-s">Upravit</button>
     </div>

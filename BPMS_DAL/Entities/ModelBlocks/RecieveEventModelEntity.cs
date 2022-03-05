@@ -14,7 +14,7 @@ namespace BPMS_DAL.Entities.ModelBlocks
         public RecieveEventModelEntity() : base() {}
         public RecieveEventModelEntity(PoolEntity pool) : base(pool) { }
 
-        public bool Editable { get; set; } = false;
+        public bool Editable { get; set; } = true;
         public Guid? SenderId { get; set; }
 
         [JsonIgnore]
