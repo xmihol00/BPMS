@@ -105,9 +105,9 @@ namespace BPMS.Controllers
         }
         
         [HttpPost] 
-        public async Task<IActionResult> RecieversInfo(Guid id)
+        public async Task<IActionResult> ForeignRecieverInfo(Guid id)
         {
-            return Ok(await _communicationFacade.RecieversInfo(id));
+            return Ok(await _communicationFacade.ForeignRecieverInfo(id));
         }
 
         [HttpPost] 

@@ -323,6 +323,20 @@ namespace BPMS_DAL.Repositories
                               .ToListAsync();
         }
 
+        public Task<SenderRecieverConfigDTO> ForeignRecieverInfo(Guid id)
+        {
+            return _dbSet.Include(x => x.Pool)
+                            .ThenInclude(x => x.Model)
+                         .Where(x => x.Id == id)
+                         .Select(x => new SenderRecieverConfigDTO
+                         {
+                             BlockName = x.Name,
+                             ModelName = x.Pool.Model.Name,
+                             PoolName = x.Pool.Name,
+                         })
+                         .FirstAsync();
+        }
+
         public Task<List<ServiceTaskDataSchemaDTO>> ServiceInputAttributes(Guid blockId, uint order, Guid poolId)
         {
             return _serviceTasks.Include(x => x.Service)

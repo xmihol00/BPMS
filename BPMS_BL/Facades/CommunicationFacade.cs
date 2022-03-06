@@ -125,9 +125,9 @@ namespace BPMS_BL.Facades
             return _blockModelRepository.SenderInfo(id);
         }
 
-        public Task<List<SenderRecieverConfigDTO>> RecieversInfo(Guid id)
+        public Task<SenderRecieverConfigDTO> ForeignRecieverInfo(Guid id)
         {
-            return _blockModelRepository.RecieversInfo(id);
+            return _blockModelRepository.ForeignRecieverInfo(id);
         }
 
         public async Task<string> ActivateSystem()
