@@ -9,13 +9,15 @@ using BPMS_DTOs.Workflow;
 
 namespace BPMS_BL.Facades
 {
-    public class WorkflowFacade
+    public class WorkflowFacade : BaseFacade
     {
         private readonly WorkflowRepository _workflowRepository;
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly IMapper _mapper;
 
-        public WorkflowFacade(WorkflowRepository workflowRepository, BlockWorkflowRepository blockWorkflowRepository, IMapper mapper)
+        public WorkflowFacade(WorkflowRepository workflowRepository, BlockWorkflowRepository blockWorkflowRepository, 
+                              FilterRepository filterRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _workflowRepository = workflowRepository;
             _blockWorkflowRepository = blockWorkflowRepository;

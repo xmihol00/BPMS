@@ -20,27 +20,35 @@ using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.System;
 using BPMS_DTOs.User;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using BPMS_BL.Helpers;
 
 namespace BPMS_BL.Facades
 {
-    public class UserFacade
+    public class UserFacade : BaseFacade
     {
         private readonly UserRepository _userRepository;
         private readonly SystemRoleRepository _systemRoleRepository;
         private readonly IMapper _mapper;
 
-        public UserFacade(UserRepository userRepository, SystemRoleRepository systemRoleRepository, IMapper mapper)
+        public UserFacade(UserRepository userRepository, SystemRoleRepository systemRoleRepository, FilterRepository filterRepository,
+                          IMapper mapper)
+        : base(filterRepository)
         {
             _userRepository = userRepository;
             _systemRoleRepository = systemRoleRepository;
             _mapper = mapper;
         }
 
-        public async Task<(ClaimsPrincipal principal, AuthenticationProperties authProperties)> Authenticate(string userName, string password)
+        public async Task<(ClaimsPrincipal principal, AuthenticationProperties authProperties)> Authenticate(string userName, string password, HttpResponse response)
         {
             UserAuthDTO user = await _userRepository.Authenticate(userName);
             if (PasswordHelper.Authenticate(user.Password, password))
             {
+                foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>())
+                {
+                    CookieHelper.SetCookie(value, !user.Filters.Contains(value), response);
+                }
                 return ClaimsAndProperties(user);
             }
             else

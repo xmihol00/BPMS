@@ -43,6 +43,7 @@ services.AddScoped<SystemRoleRepository>();
 services.AddScoped<ForeignRecieveEventRepository>();
 services.AddScoped<ForeignSendEventRepository>();
 services.AddScoped<ForeignAttributeMapRepository>();
+services.AddScoped<FilterRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

@@ -17,7 +17,7 @@ using BPMS_DTOs.User;
 
 namespace BPMS_BL.Facades
 {
-    public class PoolFacade
+    public class PoolFacade : BaseFacade
     {
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
@@ -25,7 +25,8 @@ namespace BPMS_BL.Facades
         private readonly IMapper _mapper;
 
         public PoolFacade(PoolRepository PoolRepository, SystemRepository systemRepository, ModelRepository modelRepository,
-                          IMapper mapper)
+                          FilterRepository filterRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _poolRepository = PoolRepository;
             _systemRepository = systemRepository;

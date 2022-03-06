@@ -13,6 +13,7 @@ namespace BPMS.Controllers
         private readonly WorkflowFacade _workflowFacade;
 
         public WorkflowController(WorkflowFacade workflowFacade)
+        : base(workflowFacade)
         {
             _workflowFacade = workflowFacade;
         }

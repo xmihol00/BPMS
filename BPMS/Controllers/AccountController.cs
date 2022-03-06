@@ -17,6 +17,7 @@ namespace BPMS.Controllers
         private readonly UserFacade _userFacade;
 
         public AccountController(UserFacade userFacade)
+        : base(userFacade)
         {
             _userFacade = userFacade;
         }
@@ -49,7 +50,8 @@ namespace BPMS.Controllers
         {
             try
             {
-                (ClaimsPrincipal principal, AuthenticationProperties authProperties) = await _userFacade.Authenticate(model.UserName, model.Password);
+                (ClaimsPrincipal principal, AuthenticationProperties authProperties) = 
+                    await _userFacade.Authenticate(model.UserName, model.Password, HttpContext.Response);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
                 return Redirect(model.ReturnURL ?? "/");

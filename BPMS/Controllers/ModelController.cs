@@ -11,6 +11,7 @@ namespace BPMS.Controllers
         private readonly ModelFacade _modelFacade;
 
         public ModelController(ModelFacade modelFacade)
+        : base(modelFacade)
         {
             _modelFacade = modelFacade;
         }

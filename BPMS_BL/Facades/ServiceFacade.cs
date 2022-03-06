@@ -22,7 +22,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Facades
 {
-    public class ServiceFacade
+    public class ServiceFacade : BaseFacade
     {
         private readonly DataSchemaRepository _dataSchemaRepository;
         private readonly ServiceRepository _serviceRepository;
@@ -32,7 +32,8 @@ namespace BPMS_BL.Facades
         private readonly IMapper _mapper;
 
         public ServiceFacade(DataSchemaRepository dataSchemaRepository, ServiceRepository serviceRepository, 
-                             ServiceHeaderRepository serviceHeaderRepository, IMapper mapper)
+                             ServiceHeaderRepository serviceHeaderRepository, FilterRepository filterRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _dataSchemaRepository = dataSchemaRepository;
             _serviceRepository = serviceRepository;

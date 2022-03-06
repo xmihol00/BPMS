@@ -11,6 +11,7 @@ namespace BPMS.Controllers
         private readonly ModelUploadFacade _modelUploadFacade;
 
         public ModelUploadController(ModelUploadFacade modelUploadFacade)
+        : base(modelUploadFacade)
         {
             _modelUploadFacade = modelUploadFacade;
         }

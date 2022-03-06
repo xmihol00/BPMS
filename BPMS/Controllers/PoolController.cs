@@ -13,6 +13,7 @@ namespace BPMS.Controllers
         private readonly PoolFacade _PoolFacade;
 
         public PoolController(PoolFacade PoolFacade)
+        : base(PoolFacade)
         {
             _PoolFacade = PoolFacade;
         }

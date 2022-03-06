@@ -445,3 +445,39 @@ function CreateInput(value, name, form)
     element.setAttribute("data-gen", "");
     form.appendChild(element);
 }
+
+function FilterChanges(event, path)
+{
+    let target = event.target;
+    if (target.classList.contains("filter-div"))
+    {
+        let dto = {};
+        dto.Filter = target.id;
+        dto.Removed = target.classList.contains("filter-div-sel");
+
+        $.ajax(
+        {
+            async: true,
+            type: "POST",
+            url: path,
+            data: dto
+        })
+        .done((result) => 
+        {
+            document.getElementById("OverviewDivId").innerHTML = result;
+            if (dto.Removed)
+            {
+                target.classList.remove("filter-div-sel");
+            }
+            else
+            {
+                target.classList.add("filter-div-sel");
+            }
+        })
+        .fail(() => 
+        {
+            // TODO
+            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        });
+    }
+}

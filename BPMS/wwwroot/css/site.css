@@ -532,11 +532,11 @@ a:hover {
 }
 
 .overview-nav {
-  width: 225px;
+  width: max(calc(100vw - 1320px - var(--side-bar-small-width)), 324px);
+  max-width: 424px;
   margin-left: 10px;
   transition: all 1.0s;
   overflow: hidden;
-  height: 80vh;
 }
 
 .overview-nav-hide {
@@ -731,4 +731,27 @@ a:hover {
 
 .mt--2 {
   margin-top: -0.5rem;
+}
+
+.filter-div {
+  padding: 0.5rem 0.5rem;
+  font-size: 1.2rem;
+  color: var(--color-inactive);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.filter-div:hover {
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.filter-div-sel {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.filter-div-sel:hover {
+  color: var(--color-inactive);
 }

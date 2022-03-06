@@ -128,7 +128,7 @@ namespace BPMS_BL.Helpers
                     blockWorkflow = new BlockWorkflowEntity();
                     break;
             }
-            blockWorkflow.Active = false;
+            blockWorkflow.State = BlockWorkflowStateEnum.Inactive;
             blockWorkflow.BlockModelId = blockModel.Id;
 
             return blockWorkflow;
@@ -297,7 +297,7 @@ namespace BPMS_BL.Helpers
 
         private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, WorkflowEntity workflow)
         {
-            blockWorkflow.Active = true;
+            blockWorkflow.State = BlockWorkflowStateEnum.Active;
             if (blockWorkflow is IUserTaskWorkflowEntity)
             {
                 IUserTaskModelEntity taskModel = blockModel as IUserTaskModelEntity;
@@ -352,7 +352,7 @@ namespace BPMS_BL.Helpers
             }
             else
             {
-                task.Active = true;
+                task.State = BlockWorkflowStateEnum.Active;
             }
         }
 
@@ -426,12 +426,12 @@ namespace BPMS_BL.Helpers
 
             if (recieved)
             {
-                task.Active = false;
+                task.State = BlockWorkflowStateEnum.Inactive;
                 await StartNextTask(task);
             }
             else
             {
-                task.Active = true;
+                task.State = BlockWorkflowStateEnum.Active;
             }
         }
 
@@ -455,11 +455,11 @@ namespace BPMS_BL.Helpers
                 await MapRequestResult(result, serviceTask.Id);
 
                 await StartNextTask(task);
-                serviceTask.Active = false;
+                serviceTask.State = BlockWorkflowStateEnum.Inactive;
             }
             catch
             {
-                serviceTask.Active = true;
+                serviceTask.State = BlockWorkflowStateEnum.Active;
                 serviceTask.UserId = await _agendaRoleRepository.LeastBussyUser(serviceTaskModel.RoleId ?? Guid.Empty) ??
                                                                                 serviceTask.Workflow.AdministratorId;
             }
@@ -579,7 +579,7 @@ namespace BPMS_BL.Helpers
         private async Task NextUserTask(BlockWorkflowEntity task)
         {
             IUserTaskWorkflowEntity userTask = task as IUserTaskWorkflowEntity;
-            userTask.Active = true;
+            userTask.State = BlockWorkflowStateEnum.Active;
             UserTaskModelEntity userTaskModel = await _blockModelRepository.UserTaskForSolve(userTask.BlockModelId);
             userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty.TotalDays);
             userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
@@ -603,7 +603,7 @@ namespace BPMS_BL.Helpers
             {
                 new BlockWorkflowActivityDTO()
                 {
-                    Active = blockWorkflow.Active,
+                    State = blockWorkflow.State,
                     BlockModelId = blockWorkflow.BlockModelId,
                     WorkflowId = worflowId
                 }

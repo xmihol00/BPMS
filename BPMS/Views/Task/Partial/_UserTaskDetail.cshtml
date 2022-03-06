@@ -11,16 +11,33 @@
         @await Html.PartialAsync("Partial/_TaskData", (Model.OutputServiceData, false))
     </div>
 </div>
-<form id="TaskDataFormId" class="row" action="/Task/SaveData" class="d-flex flex-wrap" method="POST" novalidate
-      oninput="InputValidator(this)", onsubmit="AjaxFormSubmit(event, null, false, false, null, () => window.location.replace('/Task/Overview'))">
-    <input type="hidden" name="TaskId" value="@Model.Id" />
-    <h2 class="text-center text-font mt-3 mb-0">Výstupní data</h2>
-    <div class="col-12 col-md-6">
-        <h3 class="text-center text-font mb-0">Pro vypracování úkolu</h3>
-        @await Html.PartialAsync("Partial/_TaskData", (Model.OutputData, true))
+@if (Model.State == BlockWorkflowStateEnum.Active)
+{
+    <form id="TaskDataFormId" class="row" action="/Task/SaveData" class="d-flex flex-wrap" method="POST" novalidate
+        oninput="InputValidator(this)", onsubmit="AjaxFormSubmit(event, null, false, false, null, () => window.location.replace('/Task/Overview'))">
+        <input type="hidden" name="TaskId" value="@Model.Id" />
+        <h2 class="text-center text-font mt-3 mb-0">Výstupní data</h2>
+        <div class="col-12 col-md-6">
+            <h3 class="text-center text-font mb-0">Pro vypracování úkolu</h3>
+            @await Html.PartialAsync("Partial/_TaskData", (Model.OutputData, true))
+        </div>
+        <div class="col-12 col-md-6">
+            <h3 class="text-center text-font mb-0">Pro volání služby</h3>
+            @await Html.PartialAsync("Partial/_TaskData", (Model.InputServiceData, true))
+        </div>
+    </form>
+}
+else
+{
+    <div class="row">
+        <h2 class="text-center text-font mt-3 mb-0">Výstupní data</h2>
+        <div class="col-12 col-md-6">
+            <h3 class="text-center text-font mb-0">Pro vypracování úkolu</h3>
+            @await Html.PartialAsync("Partial/_TaskData", (Model.OutputData, false))
+        </div>
+        <div class="col-12 col-md-6">
+            <h3 class="text-center text-font mb-0">Pro volání služby</h3>
+            @await Html.PartialAsync("Partial/_TaskData", (Model.InputServiceData, false))
+        </div>
     </div>
-    <div class="col-12 col-md-6">
-        <h3 class="text-center text-font mb-0">Pro volání služby</h3>
-        @await Html.PartialAsync("Partial/_TaskData", (Model.InputServiceData, true))
-    </div>
-</form>
+}

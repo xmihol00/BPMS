@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BPMS_Common.Enums;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_DAL.Entities
@@ -10,7 +11,7 @@ namespace BPMS_DAL.Entities
     public class BlockWorkflowEntity : IBlockWorkflowEntity
     {
         public Guid Id { get; set; }
-        public bool Active { get; set; } = false;
+        public BlockWorkflowStateEnum State { get; set; }
         public DateTime SolvedDate { get; set; }
         public Guid WorkflowId { get; set; }
         public WorkflowEntity? Workflow { get; set; }

@@ -1,0 +1,7 @@
+@model List<AgendaAllDTO>
+<div class="row">
+    @foreach (AgendaAllDTO agenda in Model)
+    {
+        @await Html.PartialAsync("Partial/_AgendaCard", (agenda, false))
+    }
+</div>

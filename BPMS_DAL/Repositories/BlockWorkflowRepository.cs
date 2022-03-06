@@ -34,7 +34,7 @@ namespace BPMS_DAL.Repositories
             List<TaskAllDTO> tasks = await _serviceTasks.Include(x => x.BlockModel)
                                                         .Include(x => x.Workflow)
                                                            .ThenInclude(x => x.Agenda)
-                                                        .Where(x => x.UserId == userId && x.Active == true && x.Id != id)
+                                                        .Where(x => x.UserId == userId && x.State == BlockWorkflowStateEnum.Active && x.Id != id)
                                                         .Select(x => new TaskAllDTO
                                                         {
                                                            AgendaId = x.Workflow.AgendaId,
@@ -52,7 +52,7 @@ namespace BPMS_DAL.Repositories
             tasks.AddRange(await _userTasks.Include(x => x.BlockModel)
                                            .Include(x => x.Workflow)
                                               .ThenInclude(x => x.Agenda)
-                                           .Where(x => x.UserId == userId && x.Active == true && x.Id != id)
+                                           .Where(x => x.UserId == userId && x.State == BlockWorkflowStateEnum.Active && x.Id != id)
                                            .Select(x => new TaskAllDTO
                                            {
                                               AgendaId = x.Workflow.AgendaId,
@@ -64,7 +64,7 @@ namespace BPMS_DAL.Repositories
                                               TaskName = x.BlockModel.Name,
                                               WorkflowId = x.WorkflowId,
                                               WorkflowName = x.Workflow.Name,
-                                              Type = TaskTypeEnum.UserTask
+                                              Type = TaskTypeEnum.UserTask,
                                            })
                                            .OrderBy(x => x.Priority)
                                                 .ThenBy(x => x.SolveDate)
@@ -202,7 +202,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.WorkflowId == workflowId && x.BlockModel.PoolId == poolId)
                          .Select(x => new BlockWorkflowActivityDTO
                          {
-                             Active = x.Active,
+                             State = x.State,
                              BlockModelId = x.BlockModelId,
                              WorkflowId = x.WorkflowId
                          })
@@ -249,6 +249,7 @@ namespace BPMS_DAL.Repositories
                                  WorkflowName = x.Workflow.Name,
                                  SolveDate = x.SolveDate,
                                  TaskName = x.BlockModel.Name,
+                                 State = x.State
                              })
                              .FirstAsync(x => x.Id == id);
         }

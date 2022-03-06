@@ -13,18 +13,12 @@ namespace BPMS.Controllers
     public class TaskController : BaseController
     {
         private readonly TaskFacade _taskFacade;
-        private Guid _userId;
+        
 
         public TaskController(TaskFacade taskFacade)
+        : base(taskFacade)
         {
             _taskFacade = taskFacade;
-        }
-
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            base.OnActionExecuting(context);
-
-            _userId = ViewBag.Id;
         }
 
         [HttpGet]

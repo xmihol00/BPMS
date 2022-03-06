@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using BPMS_BL.Facades;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -7,6 +8,14 @@ namespace BPMS.Controllers
 {
     public class BaseController : Controller
     {
+        protected Guid _userId;
+        protected readonly BaseFacade _baseFacade;
+
+        public BaseController(BaseFacade baseFacade)
+        {
+            _baseFacade = baseFacade;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -57,7 +66,8 @@ namespace BPMS.Controllers
                     }
                     else if (claim.Type == ClaimTypes.NameIdentifier)
                     {
-                        ViewBag.Id = Guid.Parse(claim.Value);
+                        _userId = Guid.Parse(claim.Value);
+                        ViewBag.Id = _userId;
                     }                    
                 }
             }

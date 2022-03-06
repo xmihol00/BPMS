@@ -18,12 +18,13 @@ using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
 {
-    public class SystemFacade
+    public class SystemFacade : BaseFacade
     {
         private readonly SystemRepository _systemRepository;
         private readonly IMapper _mapper;
 
-        public SystemFacade(SystemRepository systemRepository, IMapper mapper)
+        public SystemFacade(SystemRepository systemRepository, FilterRepository filterRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _systemRepository = systemRepository;
             _mapper = mapper;

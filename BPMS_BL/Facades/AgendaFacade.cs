@@ -10,6 +10,7 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Agenda;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
@@ -18,7 +19,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BPMS_BL.Facades
 {
-    public class AgendaFacade
+    public class AgendaFacade : BaseFacade
     {
         private readonly AgendaRepository _agendaRepository;
         private readonly UserRepository _userRepository;
@@ -33,8 +34,9 @@ namespace BPMS_BL.Facades
 
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
                             SolvingRoleRepository solvingRoleRepository, AgendaRoleRepository agendaRoleRepository, 
-                            BlockModelRepository blockModelRepository, SystemRepository systemRepository,
+                            BlockModelRepository blockModelRepository, SystemRepository systemRepository, FilterRepository filterRepository,
                             SystemAgendaRepository systemAgendaRepository, UserRoleRepository userRoleRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _agendaRepository = agendaRepository;
             _userRepository = userRepository;
@@ -46,6 +48,31 @@ namespace BPMS_BL.Facades
             _systemAgendaRepository = systemAgendaRepository;
             _userRoleRepository = userRoleRepository;
             _mapper = mapper;
+        }
+
+        public async Task<List<AgendaAllDTO>> Filter(FilterDTO dto, Guid userId)
+        {
+            try
+            {
+                FilterEntity entity = new FilterEntity
+                {
+                    Filter = dto.Filter,
+                    UserId = userId
+                };
+
+                if (dto.Removed)
+                {
+                    _filterRepository.Remove(entity);
+                }
+                else
+                {
+                    await _filterRepository.Create(entity);
+                }
+                await _filterRepository.Save();
+            }
+            catch { }
+
+            return await _agendaRepository.All();
         }
 
         public async Task<AgendaDetailDTO> Detail(Guid id)

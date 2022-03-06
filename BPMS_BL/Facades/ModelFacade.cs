@@ -25,7 +25,7 @@ using BPMS_DTOs.Account;
 
 namespace BPMS_BL.Facades
 {
-    public class ModelFacade
+    public class ModelFacade : BaseFacade
     {
         private readonly ModelRepository _modelRepository;
         private readonly UserRepository _userRepository;
@@ -42,7 +42,9 @@ namespace BPMS_BL.Facades
         public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                            BlockModelRepository blockModelRepository, PoolRepository poolRepository, WorkflowRepository workflowRepository,
                            AgendaRoleRepository agendaRoleRepository, AttributeRepository attributeRepository, 
-                           DataSchemaRepository dataSchemaRepository, BpmsDbContext context, IMapper mapper)
+                           FilterRepository filterRepository, DataSchemaRepository dataSchemaRepository, BpmsDbContext context, 
+                           IMapper mapper)
+        : base(filterRepository)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;

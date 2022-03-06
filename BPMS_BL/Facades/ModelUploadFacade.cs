@@ -15,7 +15,7 @@ using BPMS_Common;
 
 namespace BPMS_BL.Facades
 {
-    public class ModelUploadFacade
+    public class ModelUploadFacade : BaseFacade
     {
         private readonly ModelRepository _modelRepository;
         private readonly PoolRepository _poolRepository;
@@ -31,7 +31,9 @@ namespace BPMS_BL.Facades
         private ModelEntity _model = new ModelEntity();
         private uint _order = 0;
 
-        public ModelUploadFacade(ModelRepository modelRepository, PoolRepository poolRepository, BlockModelRepository blockModelRepository)
+        public ModelUploadFacade(ModelRepository modelRepository, PoolRepository poolRepository, BlockModelRepository blockModelRepository,
+                                 FilterRepository filterRepository)
+        : base(filterRepository)
         {
             _modelRepository = modelRepository;
             _poolRepository = poolRepository;

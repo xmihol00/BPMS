@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 
 namespace BPMS_BL.Facades
 {
-    public class BlockModelFacade
+    public class BlockModelFacade : BaseFacade
     {
         private readonly BlockModelRepository _blockModelRepository;
         private readonly AttributeRepository _attributeRepository;
@@ -44,8 +44,9 @@ namespace BPMS_BL.Facades
                                 DataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
                                 BlockModelDataSchemaRepository blockModelDataSchemaRepository, AgendaRepository agendaRepository,
                                 ForeignSendEventRepository foreignSendEventRepository, ModelRepository modelRepository,
-                                ForeignRecieveEventRepository foreignRecieveEventRepository, 
+                                ForeignRecieveEventRepository foreignRecieveEventRepository, FilterRepository filterRepository,
                                 ForeignAttributeMapRepository foreignAttributeMapRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _blockModelRepository = blockModelRepository;
             _attributeRepository = attributeRepository;

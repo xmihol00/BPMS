@@ -27,7 +27,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BPMS_BL.Facades
 {
-    public class TaskFacade
+    public class TaskFacade : BaseFacade
     {
         private readonly BlockWorkflowRepository _taskRepository;
         private readonly TaskDataRepository _taskDataRepository;
@@ -45,8 +45,9 @@ namespace BPMS_BL.Facades
         public TaskFacade(BlockWorkflowRepository taskRepository, TaskDataRepository taskDataRepository, 
                           BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, 
                           DataSchemaRepository dataSchemaRepository, ServiceRepository serviceRepository, 
-                          WorkflowRepository workflowRepository, PoolRepository poolRepository, BpmsDbContext context,
-                          IMapper mapper)
+                          WorkflowRepository workflowRepository, PoolRepository poolRepository, FilterRepository filterRepository,
+                          BpmsDbContext context, IMapper mapper)
+        : base(filterRepository)
         {
             _taskRepository = taskRepository;
             _taskDataRepository = taskDataRepository;
@@ -151,7 +152,7 @@ namespace BPMS_BL.Facades
             BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
             await _worflowHelper.StartNextTask(solvedTask);
 
-            solvedTask.Active = false;
+            solvedTask.State = BlockWorkflowStateEnum.Solved;
             solvedTask.SolvedDate = DateTime.Now;
 
             await _taskRepository.Save();

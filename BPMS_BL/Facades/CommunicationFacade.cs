@@ -19,7 +19,7 @@ using BPMS_DTOs.System;
 
 namespace BPMS_BL.Facades
 {
-    public class CommunicationFacade
+    public class CommunicationFacade : BaseFacade
     {
         private readonly ModelRepository _modelRepository;
         private readonly UserRepository _userRepository;
@@ -49,7 +49,9 @@ namespace BPMS_BL.Facades
                                    DataSchemaRepository dataSchemaRepository, TaskDataRepository taskDataRepository,
                                    BlockWorkflowRepository blockWorkflowRepository, ForeignSendEventRepository foreignSendEventRepository,
                                    AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
-                                   ForeignAttributeMapRepository foreignAttributeMapRepository, BpmsDbContext context, IMapper mapper)
+                                   ForeignAttributeMapRepository foreignAttributeMapRepository, FilterRepository filterRepository,
+                                   BpmsDbContext context, IMapper mapper)
+        : base(filterRepository)
         {
             _userRepository = userRepository;
             _modelRepository = modelRepository;
@@ -146,15 +148,15 @@ namespace BPMS_BL.Facades
                 if (await _blockWorkflowRepository.Any(block.WorkflowId, block.BlockModelId))
                 {
                     BlockWorkflowEntity changedBlock = await _blockWorkflowRepository.Bare(block.WorkflowId, block.BlockModelId);
-                    changedBlock.Active = block.Active;
+                    changedBlock.State = block.State;
                 }
                 else
                 {
-                    if (block.Active)
+                    if (block.State == BlockWorkflowStateEnum.Active)
                     {
                         await _blockWorkflowRepository.Create(new BlockWorkflowEntity
                         {
-                            Active = true,
+                            State = BlockWorkflowStateEnum.Active,
                             BlockModelId = block.BlockModelId,
                             WorkflowId = block.WorkflowId
                         });
@@ -213,9 +215,9 @@ namespace BPMS_BL.Facades
             {
                 WorkflowHelper workflowHelper = new WorkflowHelper(_context);
                 recieveEvent.Delivered = true;
-                if (recieveEvent.Active)
+                if (recieveEvent.State == BlockWorkflowStateEnum.Active)
                 {
-                    recieveEvent.Active = false;
+                    recieveEvent.State = BlockWorkflowStateEnum.Solved;
                     await workflowHelper.StartNextTask(recieveEvent);
                     //await _taskDataRepository.Save(); // TODO
                 }

@@ -191,9 +191,12 @@ namespace BPMS_BL.Helpers
             switch (_serialization)
             {
                 case SerializationEnum.JSON:
-                    _builder.Append("{");
-                    SerilizeJSON(_data);
-                    _builder.Append("}");
+                    if (_data.Count() > 0)
+                    {
+                        _builder.Append("{");
+                        SerilizeJSON(_data);
+                        _builder.Append("}");
+                    }
                     break;
                 
                 case SerializationEnum.URL:

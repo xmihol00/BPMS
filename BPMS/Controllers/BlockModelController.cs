@@ -13,6 +13,7 @@ namespace BPMS.Controllers
         private readonly BlockModelFacade _blockModelFacade;
 
         public BlockModelController(BlockModelFacade blockModelFacade)
+        : base(blockModelFacade)
         {
             _blockModelFacade = blockModelFacade;
         }

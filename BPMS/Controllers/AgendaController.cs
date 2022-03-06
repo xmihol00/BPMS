@@ -1,10 +1,14 @@
 ﻿using BPMS_BL.Facades;
+using BPMS_BL.Helpers;
+using BPMS_Common.Enums;
 using BPMS_DTOs.Agenda;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 
 namespace BPMS.Controllers
@@ -15,14 +19,30 @@ namespace BPMS.Controllers
         private readonly AgendaFacade _agendaFacade;
 
         public AgendaController(AgendaFacade agendaFacade)
+        : base(agendaFacade)
         {
             _agendaFacade = agendaFacade;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            ViewData[FilterTypeEnum.AgendaKeeper.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaKeeper.ToString()] != null;
+            ViewData[FilterTypeEnum.AgendaActiveWF.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaActiveWF.ToString()] != null;
+            ViewData[FilterTypeEnum.AgendaNoRole.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaNoRole.ToString()] != null;
+            ViewData[FilterTypeEnum.AgendaRole.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaRole.ToString()] != null;
         }
 
         [HttpGet]
         public async Task<IActionResult> Overview()
         {
             return View("AgendaOverview", await _agendaFacade.Overview());
+        }
+
+        public async Task<IActionResult> Filter(FilterDTO dto)
+        {
+            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+            return PartialView("Partial/_AgendaOverview", await _agendaFacade.Filter(dto, _userId));
         }
 
         [HttpGet]

@@ -46,13 +46,15 @@ namespace BPMS_DAL.Repositories
         public Task<UserAuthDTO> Authenticate(string userName)
         {
             return _dbSet.Include(x => x.SystemRoles)
+                         .Include(x => x.Fitlers)
                          .Where(x => x.UserName == userName)
                          .Select(x => new UserAuthDTO
                          {
                              FullName = $"{x.Title} {x.Name} {x.Surname}",
                              Id = x.Id,
                              Password = x.Password,
-                             Roles = x.SystemRoles.Select(y => y.Role).ToList()
+                             Roles = x.SystemRoles.Select(y => y.Role).ToList(),
+                             Filters = x.Fitlers.Select(x => x.Filter).ToList()
                          })
                          .FirstAsync();
         }
@@ -168,7 +170,7 @@ namespace BPMS_DAL.Repositories
                                                       .Select(y => new WorkflowActiveBlocksDTO
                                                       {
                                                           Id = y.Id,
-                                                          BlockIds = y.Blocks.Where(z => z.Active)
+                                                          BlockIds = y.Blocks.Where(z => z.State == BlockWorkflowStateEnum.Active)
                                                                              .Select(z => z.BlockModelId)
                                                                              .ToList()
                                                       })

@@ -29,7 +29,7 @@ namespace BPMS_DAL.Repositories
                          {
                              Id = x.Id,
                              BlockIds = x.Blocks
-                                         .Where(y => y.Active)
+                                         .Where(y => y.State == BlockWorkflowStateEnum.Active)
                                          .Select(y => y.BlockModelId)
                                          .ToList()
                          })
@@ -43,7 +43,7 @@ namespace BPMS_DAL.Repositories
                          .Select(x => new WorkflowActiveBlocksDTO
                          {
                              BlockIds = x.Blocks
-                                         .Where(y => y.Active)
+                                         .Where(y => y.State == BlockWorkflowStateEnum.Active)
                                          .Select(y => y.BlockModelId)
                                          .ToList()
                          })

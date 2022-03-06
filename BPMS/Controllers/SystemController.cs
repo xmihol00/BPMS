@@ -13,6 +13,7 @@ namespace BPMS.Controllers
         private readonly SystemFacade _systemFacade;
 
         public SystemController(SystemFacade systemFacade)
+        : base(systemFacade)
         {
             _systemFacade = systemFacade;
         }

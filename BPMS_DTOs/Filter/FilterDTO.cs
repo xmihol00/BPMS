@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.Task
+namespace BPMS_DTOs.Filter
 {
-    public class UserTaskDetailHeaderDTO
+    public class FilterDTO
     {
-        public Guid Id { get; set; }
-        public BlockWorkflowStateEnum State { get; set; }
+        public FilterTypeEnum Filter { get; set; }
+        public bool Removed { get; set; }
     }
 }

@@ -14,5 +14,6 @@ namespace BPMS_DTOs.User
         public string FullName { get; set; } = string.Empty;
         public string? Password { get; set; }
         public List<SystemRoleEnum> Roles { get; set; } = new List<SystemRoleEnum>();
+        public List<FilterTypeEnum> Filters { get; set; } = new List<FilterTypeEnum>();
     }
 }

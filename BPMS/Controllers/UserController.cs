@@ -13,6 +13,7 @@ namespace BPMS.Controllers
         private readonly UserFacade _userFacade;
 
         public UserController(UserFacade userFacade)
+        : base(userFacade)
         {
             _userFacade = userFacade;
         }

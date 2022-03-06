@@ -12,14 +12,15 @@ using BPMS_DTOs.Task;
 
 namespace BPMS_BL.Facades
 {
-    public class BlockWorkflowFacade
+    public class BlockWorkflowFacade : BaseFacade
     {
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly BlockModelRepository _blockModelRepository;
         private readonly IMapper _mapper;
 
         public BlockWorkflowFacade(BlockWorkflowRepository blockWorkflowRepository, BlockModelRepository blockModelRepository,
-                                   IMapper mapper)
+                                   FilterRepository filterRepository, IMapper mapper)
+        : base(filterRepository)
         {
             _blockWorkflowRepository = blockWorkflowRepository;
             _blockModelRepository = blockModelRepository;

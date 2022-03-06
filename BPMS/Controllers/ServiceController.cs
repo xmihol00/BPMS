@@ -14,6 +14,7 @@ namespace BPMS.Controllers
         private readonly ServiceFacade _serviceFacade;
 
         public ServiceController(ServiceFacade serviceFacade)
+        : base(serviceFacade)
         {
             _serviceFacade = serviceFacade;
         }
