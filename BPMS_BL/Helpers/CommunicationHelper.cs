@@ -102,10 +102,9 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<List<SenderRecieverConfigDTO>> RecieversInfo(string systemURL, string auth, string payload)
+        public static async Task<List<SenderRecieverConfigDTO>> RecieversInfo(string systemURL, string auth, Guid blockId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RecieversInfo/{payload}", auth, "");
-
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RecieversInfo/{blockId}", auth, "");
             List<SenderRecieverConfigDTO> dto = JsonConvert.DeserializeObject<List<SenderRecieverConfigDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {

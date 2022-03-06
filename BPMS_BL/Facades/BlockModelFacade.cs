@@ -391,7 +391,7 @@ namespace BPMS_BL.Facades
                 {
                     List<SenderRecieverConfigDTO> senderRecievers = await CommunicationHelper.RecieversInfo(address.DestinationURL, 
                                                                                    SymetricCipherHelper.JsonEncrypt(address),
-                                                                                   address.ForeignBlockId.ToString());
+                                                                                   address.ForeignBlockId);
                     senderRecievers.ForEach(x => x.SystemName = address.SystemName);
                     dto.Recievers.AddRange(senderRecievers);
                 }
