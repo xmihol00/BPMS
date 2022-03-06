@@ -298,7 +298,8 @@ namespace BPMS_DAL.Repositories
                                   DestinationURL = x.System.URL,
                                   ForeignBlockId = x.ForeignBlockId,
                                   Key = x.System.Key,
-                                  SystemId = x.System.Id
+                                  SystemId = x.System.Id,
+                                  SystemName = x.System.Name
                               })
                               .ToListAsync();
         }
