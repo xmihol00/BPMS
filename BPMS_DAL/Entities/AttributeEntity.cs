@@ -36,6 +36,6 @@ namespace BPMS_DAL.Entities
         public List<AttributeMapEntity> MappedBlocks { get; set; } = new List<AttributeMapEntity>();
 
         [JsonIgnore]
-        public List<ForeignAttributeMapEntity> MappedForeignBlocks { get; set; } = new List<ForeignAttributeMapEntity>();
+        public ForeignAttributeMapEntity? MappedForeignBlock { get; set; }
     }
 }

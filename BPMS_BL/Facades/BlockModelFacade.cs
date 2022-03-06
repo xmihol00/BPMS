@@ -203,8 +203,13 @@ namespace BPMS_BL.Facades
                     foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(mappedBlock.Id))
                     {
                         await CommunicationHelper.RemoveRecieverAttribute(recieverAddress.DestinationURL, 
-                                                                          SymetricCipherHelper.JsonEncrypt(recieverAddress),
-                                                                          id.ToString());
+                                                                          SymetricCipherHelper.JsonEncrypt(recieverAddress), id);
+                    }
+
+                    foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(mappedBlock.Id))
+                    {
+                        await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress.DestinationURL,
+                                                                                 SymetricCipherHelper.JsonEncrypt(recieverAddress), id);
                     }
                 }
             }

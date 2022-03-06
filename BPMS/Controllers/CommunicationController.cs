@@ -63,6 +63,12 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> RemoveForeignRecieverAttribute(Guid id)
+        {
+            return Ok(await _communicationFacade.RemoveForeignRecieverAttribute(id));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Message([FromBody] MessageShare message)
         {
             return Ok(await _communicationFacade.Message(message));

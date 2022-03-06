@@ -160,7 +160,7 @@ namespace BPMS_BL.Facades
             await _blockWorkflowRepository.Save();
             return "";
         }
-        private async Task assignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData, 
+        private async Task AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData, 
                                          List<RecieveEventWorkflowEntity> recieveEvents)
         {
             foreach (StringDataEntity data in message.Strings)
@@ -233,7 +233,7 @@ namespace BPMS_BL.Facades
                 recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.BlockId);
             }
 
-            await assignMessage(message, taskData, recieveEvents);
+            await AssignMessage(message, taskData, recieveEvents);
             await _taskDataRepository.Save();
 
             return "";
@@ -243,7 +243,7 @@ namespace BPMS_BL.Facades
         {
             foreach (Guid id in await _foreignSendEventRepository.RecieverIds(message.BlockId, _system.Id))
             {
-                await assignMessage(message, await _taskDataRepository.OfRecieveEvent(message.BlockId), 
+                await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId), 
                                     await _blockWorkflowRepository.RecieveEvents(message.BlockId));
             }
             await _taskDataRepository.Save();
@@ -258,6 +258,17 @@ namespace BPMS_BL.Facades
                 Id = id,
                 MappedBlocks = await _attributeRepository.MappedBlocks(id)
             });
+            await _attributeRepository.Save();
+
+            return "";
+        }
+
+        public async Task<string> RemoveForeignRecieverAttribute(Guid id)
+        {
+            foreach (AttributeEntity attribute in await _foreignAttributeMapRepository.ForRemoval(id))
+            {
+                _attributeRepository.Remove(attribute);
+            }
             await _attributeRepository.Save();
 
             return "";

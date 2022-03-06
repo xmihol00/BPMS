@@ -45,9 +45,15 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> RemoveRecieverAttribute(string systemURL, string auth, string payload)
+        public static async Task<bool> RemoveRecieverAttribute(string systemURL, string auth, Guid id)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveRecieverAttribute/{payload}", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveRecieverAttribute/{id}", auth, "");
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> RemoveForeignRecieverAttribute(string systemURL, string auth, Guid id)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveForeignRecieverAttribute/{id}", auth, "");
             return response.StatusCode == HttpStatusCode.OK;
         }
 

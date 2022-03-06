@@ -183,7 +183,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<ForeignSendEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignSenedrs).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.ForeignSendEventId });
-            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedForeignBlocks).HasForeignKey(x => x.AttributeId);
+            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithOne(x => x.MappedForeignBlock).HasForeignKey<ForeignAttributeMapEntity>(x => x.AttributeId);
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.ForeignSendEvent).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.ForeignSendEventId);
 
             modelBuilder.SeedUsers();

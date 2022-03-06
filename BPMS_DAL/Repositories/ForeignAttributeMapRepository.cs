@@ -20,5 +20,14 @@ namespace BPMS_DAL.Repositories
             return _dbSet.Where(x => x.ForeignAttributeId == foreignAttributeId)
                          .ToListAsync();
         }
+
+        public Task<List<AttributeEntity?>> ForRemoval(Guid foreignAttributeId)
+        {
+            return _dbSet.Include(x => x.Attribute)
+                            .ThenInclude(x => x.MappedBlocks)
+                         .Where(x => x.ForeignAttributeId == foreignAttributeId)
+                         .Select(x => x.Attribute)
+                         .ToListAsync();
+        }
     }
 }

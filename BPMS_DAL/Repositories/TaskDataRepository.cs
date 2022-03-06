@@ -93,6 +93,17 @@ namespace BPMS_DAL.Repositories
                          .ToDictionaryAsync(x => x.AttributeId.Value);
         }
 
+        public Task<Dictionary<Guid, TaskDataEntity>> OfForeignRecieveEvent(Guid blockId)
+        {
+            return _dbSet.Include(x => x.Attribute)
+                         .Include(x => x.OutputTask)
+                            .ThenInclude(x => x.Workflow)
+                         .Include(x => x.Attribute)
+                            .ThenInclude(x => x.MappedForeignBlock)
+                         .Where(x => x.Attribute.BlockId == blockId && x.OutputTask.Workflow.State == WorkflowStateEnum.Active)
+                         .ToDictionaryAsync(x => x.Attribute.MappedForeignBlock.ForeignAttributeId);
+        }
+
         public Task<FileDownloadDTO> FileForDownload(Guid id)
         {
             return _context.Set<FileDataEntity>()
