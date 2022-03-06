@@ -369,7 +369,7 @@ namespace BPMS_BL.Facades
                 SenderRecieverAddressDTO address = await _foreignSendEventRepository.SenderAddress(recieveEvent.ForeignSenderId.Value);
                 dto.Sender = await CommunicationHelper.SenderInfo(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address),
                                                                   address.ForeignBlockId.ToString());
-
+                dto.Sender.SystemName = address.SystemName;
             }
             else
             {

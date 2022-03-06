@@ -18,5 +18,8 @@ namespace BPMS_DTOs.Account
         
         [JsonIgnore]
         public string DestinationURL { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        public string SystemName { get; set; } = string.Empty;
     }
 }
