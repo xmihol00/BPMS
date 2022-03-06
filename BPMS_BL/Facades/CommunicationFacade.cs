@@ -310,12 +310,11 @@ namespace BPMS_BL.Facades
             }
             else
             {
-                Guid foreignBlockId = attribute.BlockId;
-                foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(foreignBlockId))
+                foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
                 {
                     ForeignAttributeMapEntity map = new ForeignAttributeMapEntity
                     {
-                        ForeignAttributeId = foreignBlockId,
+                        ForeignAttributeId = attribute.Id,
                         ForeignSendEventId = even.Id,
                         AttributeId = Guid.NewGuid()
                     };

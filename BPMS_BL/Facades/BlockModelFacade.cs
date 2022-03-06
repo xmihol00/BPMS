@@ -84,7 +84,7 @@ namespace BPMS_BL.Facades
             {
                 SenderRecieverAddressDTO recieverAddress = await _foreignSendEventRepository.SenderAddress(entity.ForeignSenderId.Value);
                 await CommunicationHelper.RemoveReciever(recieverAddress.DestinationURL, SymetricCipherHelper.JsonEncrypt(recieverAddress), 
-                                                         dto.BlockId, recieverAddress.ForeignBlockId);
+                                                         dto.Id, recieverAddress.ForeignBlockId);
                 _foreignSendEventRepository.Remove(await _foreignSendEventRepository.ForRemoval(entity.ForeignSenderId.Value));
                 // TODO check if all is removed
             }

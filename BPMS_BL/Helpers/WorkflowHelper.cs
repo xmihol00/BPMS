@@ -119,10 +119,9 @@ namespace BPMS_BL.Helpers
                 case ISendEventModelEntity:
                     blockWorkflow = CreateSendEvent(blockModel);
                     break;
-                
+
                 case IRecieveEventModelEntity:
-                    blockWorkflow = new RecieveEventWorkflowEntity();
-                    blockWorkflow.OutputData = CrateUserTaskData(blockModel.Attributes);
+                    blockWorkflow = CreateRecieveEvent(blockModel);
                     break;
 
                 default:
@@ -132,6 +131,15 @@ namespace BPMS_BL.Helpers
             blockWorkflow.Active = false;
             blockWorkflow.BlockModelId = blockModel.Id;
 
+            return blockWorkflow;
+        }
+
+        private BlockWorkflowEntity CreateRecieveEvent(BlockModelEntity blockModel)
+        {
+            IRecieveEventModelEntity recieveEvent = blockModel as IRecieveEventModelEntity;
+            RecieveEventWorkflowEntity blockWorkflow = new RecieveEventWorkflowEntity();
+            blockWorkflow.OutputData = CrateUserTaskData(blockModel.Attributes);
+            blockWorkflow.Delivered = recieveEvent.SenderId == null && recieveEvent.ForeignSenderId == null;
             return blockWorkflow;
         }
 

@@ -55,10 +55,10 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<ForeignSendEventEntity>> BareReciever(Guid foreignBlockId)
+        public Task<List<ForeignSendEventEntity>> BareReciever(Guid recieverId)
         {
             return _dbSet.Include(x => x.Reciever)
-                         .Where(x => x.ForeignBlockId == foreignBlockId)
+                         .Where(x => x.Reciever.Id == recieverId)
                          .ToListAsync();
         }
     }
