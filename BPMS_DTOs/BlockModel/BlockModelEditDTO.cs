@@ -12,7 +12,7 @@ namespace BPMS_DTOs.BlockModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public Guid? ServiceId { get; set; }
         public Guid? RoleId { get; set; }
     }

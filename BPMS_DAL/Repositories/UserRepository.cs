@@ -18,7 +18,7 @@ namespace BPMS_DAL.Repositories
     {
         public UserRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<UserIdNameDTO>> CreateModal()
+        public Task<List<UserIdNameDTO>> Create()
         {
             return _dbSet.Include(x => x.SystemRoles)
                          .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper))

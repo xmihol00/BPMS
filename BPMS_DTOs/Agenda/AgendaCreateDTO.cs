@@ -10,6 +10,7 @@ namespace BPMS_DTOs.Agenda
     public class AgendaCreateDTO
     {
         public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public Guid AdministratorId { get; set; }
     }
 }

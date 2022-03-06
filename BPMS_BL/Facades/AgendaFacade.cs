@@ -66,7 +66,10 @@ namespace BPMS_BL.Facades
             };
         }
 
-        public Task<List<UserIdNameDTO>> CreateModal() => _userRepository.CreateModal();
+        public Task<List<UserIdNameDTO>> Create()
+        {
+            return _userRepository.Create();
+        }
 
         public async Task Create(AgendaCreateDTO dto)
         {

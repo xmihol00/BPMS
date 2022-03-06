@@ -45,9 +45,9 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateModal()
+        public async Task<IActionResult> Create()
         {
-            return PartialView("Partial/_AgendaCreateModal", await _agendaFacade.CreateModal());
+            return PartialView("Partial/_AgendaCreate", await _agendaFacade.Create());
         }
 
         [HttpPost]

@@ -12,7 +12,7 @@ namespace BPMS_DTOs.Attribute
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public string Specification { get; set; } = string.Empty;
         public bool Compulsory { get; set; }
         public AttributeTypeEnum Type { get; set; }

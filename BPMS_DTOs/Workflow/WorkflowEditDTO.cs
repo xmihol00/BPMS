@@ -12,7 +12,7 @@ namespace BPMS_DTOs.Workflow
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public WorkflowStateEnum State { get; set; }
         public string Note { get; set; } = string.Empty;
     }

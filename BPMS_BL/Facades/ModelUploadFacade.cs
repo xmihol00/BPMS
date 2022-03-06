@@ -150,13 +150,8 @@ namespace BPMS_BL.Facades
             return null;
         }
 
-        private void ChangeSvg(string elementId, Guid newId, string? className = null, bool assignParent = false)
+        private void ChangeSvg(string? elementId, Guid newId, string? className = null, bool assignParent = false)
         {
-            if (elementId == "")
-            {
-                throw new ParsingException("Soubor BPMN je poškozený, blok neobsauje ID.");
-            }
-            
             try
             {
                 XElement svgElement = _svg.Descendants().First(x => x.Attribute("data-element-id")?.Value == elementId);
@@ -220,9 +215,13 @@ namespace BPMS_BL.Facades
             foreach (XElement element in collaboration.Elements().Where(x => x.Name.LocalName == "participant"))
             {
                 PoolEntity pool = new PoolEntity(_model);
-                pool.Name = element.Attribute("name")?.Value ?? "";
-                ChangeSvg(element.Attribute("id")?.Value ?? "", pool.Id, "bpmn-pool bpmn-not-config", true);
-                _poolsDict[element.Attribute("processRef")?.Value ?? ""] = pool;
+                pool.Name = element.Attribute("name")?.Value;
+                if (pool.Name == null)
+                {
+                    throw new ParsingException("Nepojmenovaný bazén.");
+                }
+                ChangeSvg(element.Attribute("id")?.Value, pool.Id, "bpmn-pool bpmn-not-config", true);
+                _poolsDict[element.Attribute("processRef")?.Value] = pool;
             }
 
             foreach (XElement element in collaboration.Elements().Where(x => x.Name.LocalName == "messageFlow"))
@@ -319,8 +318,12 @@ namespace BPMS_BL.Facades
                     throw new ParsingException("Nepodporaovaný BPMN prvek.");
             }
 
-            blockModel.Name = block.Attribute("name")?.Value ?? "";
-            string id = block.Attribute("id")?.Value ?? "";
+            blockModel.Name = block.Attribute("name")?.Value;
+            if (blockModel.Name == null)
+            {
+                throw new ParsingException("Nepojmenovaný blok.");
+            }
+            string? id = block.Attribute("id")?.Value;
             ChangeSvg(id, blockModel.Id, "bpmn-block");
             _blocksDict[id] = blockModel; 
         }

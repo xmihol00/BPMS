@@ -13,7 +13,7 @@ namespace BPMS_DTOs.Pool
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public Guid ModelId { get; set; }
         public string SystemURL { get; set; } = string.Empty;
     }

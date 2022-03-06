@@ -12,7 +12,7 @@ namespace BPMS_DAL.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public WorkflowStateEnum State { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
