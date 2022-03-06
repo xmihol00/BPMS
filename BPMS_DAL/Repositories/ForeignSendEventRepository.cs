@@ -51,6 +51,7 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.MappedAttributes)
                             .ThenInclude(x => x.Attribute)
+                                .ThenInclude(x => x.MappedBlocks)
                          .FirstAsync(x => x.Id == id);
         }
 
