@@ -389,9 +389,11 @@ namespace BPMS_BL.Facades
             {
                 try
                 {
-                    dto.Recievers.AddRange(await CommunicationHelper.RecieversInfo(address.DestinationURL, 
-                                                                                 SymetricCipherHelper.JsonEncrypt(address),
-                                                                                 address.ForeignBlockId.ToString()));
+                    List<SenderRecieverConfigDTO> senderRecievers = await CommunicationHelper.RecieversInfo(address.DestinationURL, 
+                                                                                   SymetricCipherHelper.JsonEncrypt(address),
+                                                                                   address.ForeignBlockId.ToString());
+                    senderRecievers.ForEach(x => x.SystemName = address.SystemName);
+                    dto.Recievers.AddRange(senderRecievers);
                 }
                 catch {}
             }

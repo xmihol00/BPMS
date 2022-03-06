@@ -103,6 +103,12 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.SenderInfo(id));
         }
+        
+        [HttpPost] 
+        public async Task<IActionResult> RecieversInfo(Guid id)
+        {
+            return Ok(await _communicationFacade.RecieversInfo(id));
+        }
 
         [HttpPost] 
         public async Task<IActionResult> Agendas()
