@@ -100,7 +100,7 @@ namespace BPMS_BL.Facades
             return await _blockModelRepository.MappedBareAttributes(senderId);
         }
 
-        public Task<List<AgendaIdNameDTO>> Agednas()
+        public Task<List<AgendaIdNameDTO>> Agendas()
         {
             return _agendaRepository.AgendasSystem(_system.Id);
         }

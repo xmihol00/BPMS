@@ -105,9 +105,9 @@ namespace BPMS.Controllers
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Agednas()
+        public async Task<IActionResult> Agendas()
         {
-            return Ok(await _communicationFacade.Agednas());
+            return Ok(await _communicationFacade.Agendas());
         }
 
         [HttpPost] 
