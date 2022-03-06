@@ -246,11 +246,8 @@ namespace BPMS_BL.Facades
 
         public async Task<string> ForeignMessage(MessageShare message)
         {
-            foreach (Guid id in await _foreignSendEventRepository.RecieverIds(message.BlockId, _system.Id))
-            {
-                await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId), 
-                                    await _blockWorkflowRepository.RecieveEvents(message.BlockId));
-            }
+            await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId), 
+                                await _blockWorkflowRepository.RecieveEvents(message.BlockId));
             await _taskDataRepository.Save();
 
             return "";

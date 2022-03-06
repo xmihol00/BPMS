@@ -39,7 +39,7 @@
                     </span>
                 </div>
                 <div class="col-6 text-center mt-2">
-                    @if (String.IsNullOrEmpty(@attrib.Description))
+                    @if (String.IsNullOrEmpty(attrib.Description))
                     {
                         <span class="text-placeholder">Atribut nemá popis.</span>
                     }
@@ -70,6 +70,10 @@
                                 </li>
                             }
                         </ol>
+                    }
+                    else
+                    {
+                        <span class="text-placeholder">Atribut nemá specifikaci.</span>
                     }
                 </div>
             </div>
