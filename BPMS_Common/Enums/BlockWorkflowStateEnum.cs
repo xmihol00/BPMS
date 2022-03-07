@@ -8,8 +8,10 @@ namespace BPMS_Common.Enums
 {
     public enum BlockWorkflowStateEnum
     {
-        Inactive,
+        NotStarted,
         Active,
         Solved,
+        Paused,
+        Canceled
     }
 }

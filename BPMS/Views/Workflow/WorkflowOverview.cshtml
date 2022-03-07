@@ -15,14 +15,13 @@
         <div class="loading-content"></div>
     </div>
     <div id="OverviewDivId" class="container-lg">
-        <div class="row">
-            @foreach (WorkflowAllDTO workflow in Model.Workflows)
-            {
-                @await Html.PartialAsync("Partial/_WorkflowCard", (workflow, false))   
-            }
-        </div>
+        @await Html.PartialAsync("Partial/_WorkflowOverview", Model.Workflows)
     </div>
-    <div id="OverviewNavId" class="overview-nav">
-
+    <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Workflow/Filter', true)">
+        <h2 class="text-font text-center mt-4 border-bottom mb-1">Filtrování</h2>
+        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("Workflow")))
+        {
+            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
+        }
     </div>
 </div>

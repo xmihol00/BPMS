@@ -11,6 +11,8 @@ namespace BPMS_DAL.Repositories
 {
     public class BaseRepository<T> where T : class
     {
+        public bool[]? Filters { get; set; }
+        public Guid UserId { get; set; }
         protected readonly BpmsDbContext _context;
         protected readonly DbSet<T> _dbSet;
 

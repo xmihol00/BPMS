@@ -19,9 +19,6 @@ namespace BPMS_DAL.Repositories
 {
     public class AgendaRepository : BaseRepository<AgendaEntity>
     {
-        public bool[]? Filters { get; set; }
-        public Guid UserId { get; set; }
-
         public AgendaRepository(BpmsDbContext context) : base(context) {} 
 
         public Task<List<AgendaAllDTO>> All(Guid? id = null)
@@ -44,9 +41,13 @@ namespace BPMS_DAL.Repositories
                     query = query.Where(x => x.AgendaRoles.Any(y => y.UserRoles.Any(z => z.UserId == UserId)));
                 }
 
-                if (Filters[((int)FilterTypeEnum.AgendaActiveWF)])
+                if (Filters[((int)FilterTypeEnum.AgendaPausedWF)] || Filters[((int)FilterTypeEnum.AgendaActiveWF)] ||
+                    Filters[((int)FilterTypeEnum.AgendaFinishedWF)] || Filters[((int)FilterTypeEnum.AgendaCanceledWF)])
                 {
-                    query = query.Where(x => x.Workflows.Any(y => y.State == WorkflowStateEnum.Active));
+                    query = query.Where(x => (Filters[((int)FilterTypeEnum.AgendaPausedWF)] && x.Workflows.Any(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting)) ||
+                                             (Filters[((int)FilterTypeEnum.AgendaActiveWF)] && x.Workflows.Any(y => y.State == WorkflowStateEnum.Active)) ||
+                                             (Filters[((int)FilterTypeEnum.AgendaFinishedWF)] && x.Workflows.Any(y => y.State == WorkflowStateEnum.Finished)) ||
+                                             (Filters[((int)FilterTypeEnum.AgendaCanceledWF)] && x.Workflows.Any(y => y.State == WorkflowStateEnum.Canceled)));
                 }
             }
 

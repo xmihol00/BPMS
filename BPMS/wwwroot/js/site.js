@@ -28,29 +28,32 @@ window.addEventListener('DOMContentLoaded', () =>
 
 function DisplayActiveBlocks(activeBlocks)
 {
-    if (Array.isArray(activeBlocks))
+    if (activeBlocks)
     {
-        for (let ele of activeBlocks)
+        if (Array.isArray(activeBlocks))
         {
-            let workflow = document.querySelector(`[id='${ele.id}']`);
-            for (let blockId of ele.blockIds)
+            for (let ele of activeBlocks)
+            {
+                let workflow = document.querySelector(`[id='${ele.id}']`);
+                for (let blockId of ele.blockIds)
+                {
+                    let block = workflow.querySelector(`[id='${blockId}']`);
+                    let target = block.children[0].children[0];
+                    target.style.stroke = "green";
+                    target.style.fill = "#abfffd";
+                }
+            }
+        }
+        else
+        {
+            let workflow = document.querySelector(`[id='WorkflowModelId']`);
+            for (let blockId of activeBlocks.blockIds)
             {
                 let block = workflow.querySelector(`[id='${blockId}']`);
                 let target = block.children[0].children[0];
                 target.style.stroke = "green";
                 target.style.fill = "#abfffd";
             }
-        }
-    }
-    else
-    {
-        let workflow = document.querySelector(`[id='WorkflowModelId']`);
-        for (let blockId of activeBlocks.blockIds)
-        {
-            let block = workflow.querySelector(`[id='${blockId}']`);
-            let target = block.children[0].children[0];
-            target.style.stroke = "green";
-            target.style.fill = "#abfffd";
         }
     }
 }
@@ -446,7 +449,7 @@ function CreateInput(value, name, form)
     form.appendChild(element);
 }
 
-function FilterChanges(event, path)
+function FilterChanges(event, path, blocks = false)
 {
     let target = event.target;
     if (target.classList.contains("filter-div"))
@@ -464,7 +467,16 @@ function FilterChanges(event, path)
         })
         .done((result) => 
         {
-            document.getElementById("OverviewDivId").innerHTML = result;
+            if (blocks)
+            {
+                document.getElementById("OverviewDivId").innerHTML = result.overview;
+                DisplayActiveBlocks(result.activeBlocks);
+            }
+            else
+            {
+                document.getElementById("OverviewDivId").innerHTML = result;
+            }
+
             if (dto.Removed)
             {
                 target.classList.remove("filter-div-sel");

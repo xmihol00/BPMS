@@ -10,6 +10,7 @@ namespace BPMS.Controllers
     {
         protected Guid _userId;
         protected readonly BaseFacade _baseFacade;
+        protected bool[] _filters = new bool[Enum.GetValues<FilterTypeEnum>().Count()];
 
         public BaseController(BaseFacade baseFacade)
         {
@@ -71,6 +72,13 @@ namespace BPMS.Controllers
                     }                    
                 }
             }
+
+            foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>())
+            {
+                _filters[((int)value)] = context.HttpContext.Request.Cookies[value.ToString()] != null;
+            }
+
+            ViewBag.Filters = _filters;
         }
     }
 }

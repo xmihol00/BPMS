@@ -24,20 +24,26 @@
                 <span id="ModelNameLabelId" class="input-label">Název</span>
             </label>
         </div>
-        <div class="col-12 col-md-6 mt-3">
+        <div class="col-12 mt-3 mb-2">
+            <label class="input mb-2">
+                <textarea class="input-field" type="text" placeholder=" " name="Description"></textarea>
+                <span class="input-label">Popis</span>
+            </label>
+        </div>
+        <div class="col-12 col-md-6 mb-3">
             <label class="input">
                 <input required class="input-file" type="file" onchange="FileSelected(this)" name="BPMN" accept=".bpmn"/>
                 <span class="input-label pointer">Soubor BPMN</span>
             </label>
         </div>
-        <div class="col-12 col-md-6 mt-3">
+        <div class="col-12 col-md-6 mb-3">
             <label class="input">
                 <input required class="input-file" type="file" onchange="FileSelected(this)" name="SVG" accept=".svg" />
                 <span class="input-label pointer">Soubor SVG</span>
             </label>
         </div>
     </div>
-    <div class="d-flex justify-content-center mt-3 mb-1">
+    <div class="d-flex justify-content-center mb-1">
         <button form="UploadModelFormId" type="submit" class="butn btn-s" disabled>Nahrát</button>
     </div>
 </form>

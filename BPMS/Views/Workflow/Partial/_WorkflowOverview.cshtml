@@ -1,0 +1,8 @@
+@model List<WorkflowAllDTO>
+
+<div class="row">
+    @foreach (WorkflowAllDTO workflow in Model)
+    {
+        @await Html.PartialAsync("Partial/_WorkflowCard", (workflow, false))   
+    }
+</div>

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.IO;
 using System;
 using BPMS_Common;
+using BPMS_DTOs.Filter;
+using BPMS_BL.Helpers;
 
 namespace BPMS.Controllers
 {
@@ -19,6 +21,20 @@ namespace BPMS.Controllers
         : base(taskFacade)
         {
             _taskFacade = taskFacade;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+
+            _taskFacade.SetFilters(_filters, _userId);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Filter(FilterDTO dto)
+        {
+            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+            return PartialView("Partial/_TaskOverview", await _taskFacade.Filter(dto));
         }
 
         [HttpGet]

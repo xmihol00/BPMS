@@ -11,6 +11,7 @@ namespace BPMS_DTOs.Model
     {
         public Guid AgendaId { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public IFormFile? BPMN { get; set; }
         public IFormFile? SVG { get; set; }
     }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
+using BPMS_BL.Helpers;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
@@ -54,32 +55,13 @@ namespace BPMS_BL.Facades
         {
             _agendaRepository.Filters = filters;
             _agendaRepository.UserId = userId;
+            _userId = userId;
         }
 
-        public async Task<List<AgendaAllDTO>> Filter(FilterDTO dto, Guid userId)
+        public async Task<List<AgendaAllDTO>> Filter(FilterDTO dto)
         {
-            try
-            {
-                FilterEntity entity = new FilterEntity
-                {
-                    Filter = dto.Filter,
-                    UserId = userId
-                };
-
-                if (dto.Removed)
-                {
-                    _filterRepository.Remove(entity);
-                    _agendaRepository.Filters[((int)entity.Filter)] = false;
-                }
-                else
-                {
-                    await _filterRepository.Create(entity);
-                    _agendaRepository.Filters[((int)entity.Filter)] = true;
-                }
-                await _filterRepository.Save();
-            }
-            catch { }
-
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _agendaRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _agendaRepository.All();
         }
 

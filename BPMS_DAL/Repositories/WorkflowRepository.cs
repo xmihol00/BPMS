@@ -112,25 +112,43 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<WorkflowAllDTO>> All(Guid? id = null)
         {
-            return _dbSet.Include(x => x.Model)
-                         .Include(x => x.Agenda)
-                         .Include(x => x.Administrator)
-                         .Where(x => x.Id != id)
-                         .Select(x => new WorkflowAllDTO
-                         {
-                             AgendaId = x.AgendaId,
-                             AgendaName = x.Agenda.Name,
-                             Description = x.Description,
-                             Id = x.Id,
-                             ModelId = x.ModelId,
-                             ModelName = x.Model.Name,
-                             Name = x.Name,
-                             State = x.State,
-                             SVG = x.Model.SVG,
-                             AdministratorEmail = x.Administrator.Email,
-                             AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}"
-                         })
-                         .ToListAsync();
+            IQueryable<WorkflowEntity> query = _dbSet.Include(x => x.Model)
+                                                     .Include(x => x.Agenda)
+                                                     .Include(x => x.Administrator)
+                                                     .Where(x => x.Id != id);
+
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.WorkflowKeeper)])
+                {
+                    query = query.Where(x => x.AdministratorId == UserId);
+                }
+
+                if (Filters[((int)FilterTypeEnum.WorkflowActive)] || Filters[((int)FilterTypeEnum.WorkflowPaused)] ||
+                    Filters[((int)FilterTypeEnum.WorkflowFinished)] || Filters[((int)FilterTypeEnum.WorkflowCanceled)])
+                {
+                    query = query.Where(x => (Filters[((int)FilterTypeEnum.WorkflowActive)] && x.State == WorkflowStateEnum.Active) ||
+                                             (Filters[((int)FilterTypeEnum.WorkflowPaused)] && (x.State == WorkflowStateEnum.Paused || x.State == WorkflowStateEnum.Waiting)) ||
+                                             (Filters[((int)FilterTypeEnum.WorkflowFinished)] && x.State == WorkflowStateEnum.Finished) ||
+                                             (Filters[((int)FilterTypeEnum.WorkflowCanceled)] && x.State == WorkflowStateEnum.Canceled));
+                }
+            }
+
+            return query.Select(x => new WorkflowAllDTO
+                        {
+                            AgendaId = x.AgendaId,
+                            AgendaName = x.Agenda.Name,
+                            Description = x.Description,
+                            Id = x.Id,
+                            ModelId = x.ModelId,
+                            ModelName = x.Model.Name,
+                            Name = x.Name,
+                            State = x.State,
+                            SVG = x.Model.SVG,
+                            AdministratorEmail = x.Administrator.Email,
+                            AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}"
+                        })
+                        .ToListAsync();
         }
 
         public Task<WorkflowAllDTO> Selected(Guid id)

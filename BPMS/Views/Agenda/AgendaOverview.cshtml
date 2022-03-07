@@ -28,9 +28,9 @@
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Agenda/Filter')">
         <h2 class="text-font text-center mt-4 border-bottom mb-1">Filtrování</h2>
-        <div id="@FilterTypeEnum.AgendaKeeper" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaKeeper)] ? "filter-div-sel" : "")">Správcuji</div>
-        <div id="@FilterTypeEnum.AgendaRole" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaRole)] ? "filter-div-sel" : "")">Zastávám roli</div>
-        <div id="@FilterTypeEnum.AgendaActiveWF" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaActiveWF)] ? "filter-div-sel" : "")">Aktivní worklfow</div>
-        <div id="@FilterTypeEnum.AgendaNoRole" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaNoRole)] ? "filter-div-sel" : "")">Nepřiřazená role</div>
+        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("Agenda")))
+        {
+            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
+        }
     </div>
 </div>

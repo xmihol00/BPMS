@@ -39,10 +39,19 @@ namespace BPMS_BL.Helpers
                     return CreateGetRequest();
                 
                 case HttpMethodEnum.POST:
-                    return CreatePostRequest();
+                    return CreateBodyRequest("POST ");
+                
+                case HttpMethodEnum.PATCH:
+                    return CreateBodyRequest("PATCH ");
+                
+                case HttpMethodEnum.PUT:
+                    return CreateBodyRequest("PUT ");
+                
+                case HttpMethodEnum.DELETE:
+                    return CreateBodyRequest("DELETE ");
 
                 default:
-                    return "";
+                    throw new NotImplementedException();
             }
         }
 
@@ -54,7 +63,16 @@ namespace BPMS_BL.Helpers
                     return await SendGetRequest();
 
                 case HttpMethodEnum.POST:
-                    return await SendPostRequest();
+                    return await SendBodyRequest(HttpMethod.Post);
+                
+                case HttpMethodEnum.PUT:
+                    return await SendBodyRequest(HttpMethod.Put);
+                
+                case HttpMethodEnum.PATCH:
+                    return await SendBodyRequest(HttpMethod.Patch);
+                
+                case HttpMethodEnum.DELETE:
+                    return await SendBodyRequest(HttpMethod.Delete);
 
                 default:
                     throw new NotImplementedException();
@@ -86,21 +104,35 @@ namespace BPMS_BL.Helpers
             return _builder.ToString();
         }
 
-        private string CreatePostRequest()
+        private string CreateBodyRequest(string method)
         {
-            _builder.Append("POST ");
-            _builder.Append(_url.AbsolutePath);
-            _builder.Append(" HTTP/1.1\r\nHost: ");
-            _builder.Append(_url.DnsSafeHost);
-            _builder.Append("\r\nContent-Type: ");
-            _builder.Append(_service.Serialization.ToMIME());
-            GenerateHeaders();
-            _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
-            string header = _builder.ToString();
-            _builder.Clear();
-            SerilizeData();
+            _builder.Append(method);
+            if (_service.Serialization == SerializationEnum.Replace)
+            {
+                SerilizeData();
+                Uri url = new Uri(_service.URL);
+                _builder.Append(url.PathAndQuery);
+                _builder.Append(" HTTP/1.1\r\nHost: ");
+                _builder.Append(url.DnsSafeHost);
+                GenerateHeaders();
+                _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
+                return _builder.ToString();
+            }
+            else
+            {
+                _builder.Append(_url.AbsolutePath);
+                _builder.Append(" HTTP/1.1\r\nHost: ");
+                _builder.Append(_url.DnsSafeHost);
+                _builder.Append("\r\nContent-Type: ");
+                _builder.Append(_service.Serialization.ToMIME());
+                GenerateHeaders();
+                _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
+                string header = _builder.ToString();
 
-            return header + JToken.Parse(_builder.ToString()).ToString();
+                _builder.Clear();
+                SerilizeData();
+                return header + JToken.Parse(_builder.ToString()).ToString();
+            }
         }
 
         private void GenerateHeaders()
@@ -153,13 +185,13 @@ namespace BPMS_BL.Helpers
             return await CreateResult(await client.SendAsync(request));
         }
 
-        private async Task<ServiceCallResultDTO> SendPostRequest()
+        private async Task<ServiceCallResultDTO> SendBodyRequest(HttpMethod method)
         {
             SerilizeData();
             using HttpClient client = new HttpClient();
-            using HttpRequestMessage request = new HttpRequestMessage // TODO
+            using HttpRequestMessage request = new HttpRequestMessage
             {
-                Method = HttpMethod.Post,
+                Method = method,
                 RequestUri = _url, 
                 Content = new StringContent(_builder.ToString())
                 {
@@ -246,7 +278,7 @@ namespace BPMS_BL.Helpers
 
         private void SerilizeXML()
         {
-            return;
+            throw new NotImplementedException();
         }
 
         private void SerilizeURL()

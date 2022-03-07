@@ -1,8 +1,11 @@
 using BPMS_BL.Facades;
+using BPMS_BL.Helpers;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Header;
 using BPMS_DTOs.Workflow;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json.Linq;
 
 namespace BPMS.Controllers
@@ -16,6 +19,13 @@ namespace BPMS.Controllers
         : base(workflowFacade)
         {
             _workflowFacade = workflowFacade;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+
+            _workflowFacade.SetFilters(_filters, _userId);
         }
 
         [HttpGet]
@@ -39,6 +49,18 @@ namespace BPMS.Controllers
                 detail = await this.RenderViewAsync("Partial/_WorkflowDetail", dto, true),
                 header = await this.RenderViewAsync("Partial/_WorkflowDetailHeader", dto, true),
                 activeBlock = dto.ActiveBlock,
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Filter(FilterDTO dto)
+        {
+            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+            WorkflowOverviewDTO overview = await _workflowFacade.Filter(dto);
+            return Ok(new
+            {
+                overview = await this.RenderViewAsync("Partial/_WorkflowOverview", overview.Workflows, true),
+                activeBlocks = overview.ActiveBlocks,
             });
         }
 

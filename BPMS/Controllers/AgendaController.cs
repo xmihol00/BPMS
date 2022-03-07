@@ -28,14 +28,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            bool[] filters = new bool[Enum.GetValues<FilterTypeEnum>().Count()];
-            filters[((int)FilterTypeEnum.AgendaKeeper)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaKeeper.ToString()] != null;
-            filters[((int)FilterTypeEnum.AgendaActiveWF)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaActiveWF.ToString()] != null;
-            filters[((int)FilterTypeEnum.AgendaNoRole)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaNoRole.ToString()] != null;
-            filters[((int)FilterTypeEnum.AgendaRole)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaRole.ToString()] != null;
-
-            ViewBag.Filters = filters;
-            _agendaFacade.SetFilters(filters, _userId);
+            _agendaFacade.SetFilters(_filters, _userId);
         }
 
         [HttpGet]
@@ -44,10 +37,11 @@ namespace BPMS.Controllers
             return View("AgendaOverview", await _agendaFacade.Overview());
         }
 
+        [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
             CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_AgendaOverview", await _agendaFacade.Filter(dto, _userId));
+            return PartialView("Partial/_AgendaOverview", await _agendaFacade.Filter(dto));
         }
 
         [HttpGet]

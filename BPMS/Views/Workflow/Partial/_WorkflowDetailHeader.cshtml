@@ -23,7 +23,7 @@
         </div>
         <div class="col-6 mt-1">
             <label class="input">
-                <select required class="input-select" name="State" oninput="RoleChanged(this)">
+                <select required class="input-select" name="State">
                     @if (Model.State == WorkflowStateEnum.Finished || Model.State == WorkflowStateEnum.Waiting)
                     {
                         <option value="@Model.State" selected>@Model.State.ToLabel()</option>

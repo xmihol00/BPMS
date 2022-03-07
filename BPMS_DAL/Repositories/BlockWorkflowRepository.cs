@@ -29,46 +29,75 @@ namespace BPMS_DAL.Repositories
             _tasks = context.Set<TaskWorkflowEntity>();
         }
 
-        public async Task<List<TaskAllDTO>> All(Guid userId, Guid? id = null)
+        public async Task<List<TaskAllDTO>> All(Guid? id = null)
         {
-            List<TaskAllDTO> tasks = await _serviceTasks.Include(x => x.BlockModel)
-                                                        .Include(x => x.Workflow)
-                                                           .ThenInclude(x => x.Agenda)
-                                                        .Where(x => x.UserId == userId && x.State == BlockWorkflowStateEnum.Active && x.Id != id)
-                                                        .Select(x => new TaskAllDTO
-                                                        {
-                                                           AgendaId = x.Workflow.AgendaId,
-                                                           AgendaName = x.Workflow.Agenda.Name,
-                                                           Description = x.BlockModel.Description,
-                                                           Id = x.Id,
-                                                           Priority = TaskPriorityEnum.Urgent,
-                                                           TaskName = x.BlockModel.Name,
-                                                           WorkflowId = x.WorkflowId,
-                                                           WorkflowName = x.Workflow.Name,
-                                                           Type = TaskTypeEnum.UserTask
-                                                        })
-                                                        .ToListAsync();
+            
+            IQueryable<ServiceTaskWorkflowEntity> serviceQuery = 
+                _serviceTasks.Include(x => x.BlockModel)
+                             .Include(x => x.Workflow)
+                                .ThenInclude(x => x.Agenda)
+                             .Where(x => x.UserId == UserId && x.Id != id);
+            
+            IQueryable<UserTaskWorkflowEntity> taskQuery = 
+                _userTasks.Include(x => x.BlockModel)
+                          .Include(x => x.Workflow)
+                              .ThenInclude(x => x.Agenda)
+                          .Where(x => x.UserId == UserId && x.Id != id);
+                    
+            
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.TaskActive)] || Filters[((int)FilterTypeEnum.TaskPaused)] ||
+                    Filters[((int)FilterTypeEnum.TaskSolved)] || Filters[((int)FilterTypeEnum.TaskCanceled)])
+                {
+                    serviceQuery = 
+                        serviceQuery.Where(x => (Filters[((int)FilterTypeEnum.TaskActive)] && x.State == BlockWorkflowStateEnum.Active) ||
+                                                (Filters[((int)FilterTypeEnum.TaskPaused)] && (x.State == BlockWorkflowStateEnum.Paused) ||
+                                                (Filters[((int)FilterTypeEnum.TaskSolved)] && x.State == BlockWorkflowStateEnum.Solved) ||
+                                                (Filters[((int)FilterTypeEnum.TaskCanceled)] && x.State == BlockWorkflowStateEnum.Canceled)));
+                    taskQuery = 
+                        taskQuery.Where(x => (Filters[((int)FilterTypeEnum.TaskActive)] && x.State == BlockWorkflowStateEnum.Active) ||
+                                             (Filters[((int)FilterTypeEnum.TaskPaused)] && (x.State == BlockWorkflowStateEnum.Paused) ||
+                                             (Filters[((int)FilterTypeEnum.TaskSolved)] && x.State == BlockWorkflowStateEnum.Solved) ||
+                                             (Filters[((int)FilterTypeEnum.TaskCanceled)] && x.State == BlockWorkflowStateEnum.Canceled)));
+                }
+                else
+                {
+                    serviceQuery = serviceQuery.Where(x => x.State != BlockWorkflowStateEnum.Canceled);
+                    taskQuery = taskQuery.Where(x => x.State != BlockWorkflowStateEnum.Canceled);
+                }
+            }
+
+            List<TaskAllDTO> tasks = await serviceQuery.Select(x => new TaskAllDTO
+                                                       {
+                                                          AgendaId = x.Workflow.AgendaId,
+                                                          AgendaName = x.Workflow.Agenda.Name,
+                                                          Description = x.BlockModel.Description,
+                                                          Id = x.Id,
+                                                          Priority = TaskPriorityEnum.Urgent,
+                                                          TaskName = x.BlockModel.Name,
+                                                          WorkflowId = x.WorkflowId,
+                                                          WorkflowName = x.Workflow.Name,
+                                                          Type = TaskTypeEnum.UserTask
+                                                       })
+                                                       .ToListAsync();
                                                      
-            tasks.AddRange(await _userTasks.Include(x => x.BlockModel)
-                                           .Include(x => x.Workflow)
-                                              .ThenInclude(x => x.Agenda)
-                                           .Where(x => x.UserId == userId && x.State == BlockWorkflowStateEnum.Active && x.Id != id)
-                                           .Select(x => new TaskAllDTO
-                                           {
-                                              AgendaId = x.Workflow.AgendaId,
-                                              AgendaName = x.Workflow.Agenda.Name,
-                                              Description = x.BlockModel.Description,
-                                              SolveDate = x.SolveDate,
-                                              Id = x.Id,
-                                              Priority = x.Priority,
-                                              TaskName = x.BlockModel.Name,
-                                              WorkflowId = x.WorkflowId,
-                                              WorkflowName = x.Workflow.Name,
-                                              Type = TaskTypeEnum.UserTask,
-                                           })
-                                           .OrderBy(x => x.Priority)
-                                                .ThenBy(x => x.SolveDate)
-                                           .ToListAsync());
+            tasks.AddRange(await taskQuery.Select(x => new TaskAllDTO
+                                          {
+                                             AgendaId = x.Workflow.AgendaId,
+                                             AgendaName = x.Workflow.Agenda.Name,
+                                             Description = x.BlockModel.Description,
+                                             SolveDate = x.SolveDate,
+                                             Id = x.Id,
+                                             Priority = x.Priority,
+                                             TaskName = x.BlockModel.Name,
+                                             WorkflowId = x.WorkflowId,
+                                             WorkflowName = x.Workflow.Name,
+                                             Type = TaskTypeEnum.UserTask,
+                                          })
+                                          .OrderBy(x => x.Priority)
+                                               .ThenBy(x => x.SolveDate)
+                                          .ToListAsync());
             return tasks;
         }
 

@@ -11,5 +11,7 @@ namespace BPMS_Common.Enums
         GET,
         POST,
         PUT,
+        PATCH,
+        DELETE
     }
 }

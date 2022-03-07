@@ -128,7 +128,7 @@ namespace BPMS_BL.Helpers
                     blockWorkflow = new BlockWorkflowEntity();
                     break;
             }
-            blockWorkflow.State = BlockWorkflowStateEnum.Inactive;
+            blockWorkflow.State = BlockWorkflowStateEnum.NotStarted;
             blockWorkflow.BlockModelId = blockModel.Id;
 
             return blockWorkflow;
@@ -426,7 +426,7 @@ namespace BPMS_BL.Helpers
 
             if (recieved)
             {
-                task.State = BlockWorkflowStateEnum.Inactive;
+                task.State = BlockWorkflowStateEnum.NotStarted;
                 await StartNextTask(task);
             }
             else
@@ -455,7 +455,7 @@ namespace BPMS_BL.Helpers
                 await MapRequestResult(result, serviceTask.Id);
 
                 await StartNextTask(task);
-                serviceTask.State = BlockWorkflowStateEnum.Inactive;
+                serviceTask.State = BlockWorkflowStateEnum.NotStarted;
             }
             catch
             {

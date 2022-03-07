@@ -1,9 +1,11 @@
 using AutoMapper;
+using BPMS_BL.Helpers;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.BlockWorkflow.IConfigTypes;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Task;
 using BPMS_DTOs.Workflow;
 
@@ -24,13 +26,30 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _workflowRepository.Filters = filters;
+            _workflowRepository.UserId = userId;
+            _userId = userId;
+        }
+
         public async Task<WorkflowOverviewDTO> Overview()
         {
-            return new WorkflowOverviewDTO()
+            WorkflowOverviewDTO overview = new WorkflowOverviewDTO()
             {
                 Workflows = await _workflowRepository.All(),
-                ActiveBlocks = await _workflowRepository.ActiveBlocks()
             };
+
+            if (_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowActive)] ||
+                (!_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowActive)] &&
+                 !_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowPaused)] &&
+                 !_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowFinished)] &&
+                 !_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowCanceled)]))
+            {
+                overview.ActiveBlocks = await _workflowRepository.ActiveBlocks();
+            }
+
+            return overview;
         }
 
         public async Task<WorkflowDetailDTO> DetailPartial(Guid id)
@@ -62,6 +81,27 @@ namespace BPMS_BL.Facades
             detail.OutputServiceData = outputServiceData.GroupBy(x => x.BlockName);
 
             return detail;
+        }
+
+        public async Task<WorkflowOverviewDTO> Filter(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _workflowRepository.Filters[((int)dto.Filter)] = !dto.Removed;
+            WorkflowOverviewDTO overview = new WorkflowOverviewDTO()
+            {
+                Workflows = await _workflowRepository.All(),
+            };
+
+            if (_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowActive)] ||
+                (!_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowActive)] &&
+                 !_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowPaused)] &&
+                 !_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowFinished)] &&
+                 !_workflowRepository.Filters[((int)FilterTypeEnum.WorkflowCanceled)]))
+            {
+                overview.ActiveBlocks = await _workflowRepository.ActiveBlocks();
+            }
+
+            return overview;
         }
 
         public async Task<WorkflowInfoCardDTO> Edit(WorkflowEditDTO dto)

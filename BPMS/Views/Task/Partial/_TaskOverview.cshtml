@@ -1,0 +1,7 @@
+@model List<TaskAllDTO>
+<div class="row">
+    @foreach (TaskAllDTO task in Model)
+    {
+        @await Html.PartialAsync("Partial/_TaskCard", (task, false))
+    }
+</div>

@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using BPMS_DTOs.Filter;
 
 namespace BPMS_BL.Facades
 {
@@ -169,14 +170,20 @@ namespace BPMS_BL.Facades
         {
             return new TaskOverviewDTO()
             {
-                Tasks = await _taskRepository.All(userId)
+                Tasks = await _taskRepository.All()
             };
+        }
+
+        public async Task<List<TaskAllDTO>> Filter(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            return await _taskRepository.All();
         }
 
         public async Task<UserTaskDetailDTO> UserTaskDetail(Guid id, Guid userId)
         {
             UserTaskDetailDTO detail = await UserTaskDetailPartial(id, userId);
-            detail.OtherTasks = await _taskRepository.All(userId, id);
+            detail.OtherTasks = await _taskRepository.All(id);
             detail.SelectedTask = await _taskRepository.Selected(id, userId);
 
             return detail;
@@ -225,6 +232,13 @@ namespace BPMS_BL.Facades
             FileDownloadDTO file = await _taskDataRepository.FileForDownload(id);
             file.Data = await File.ReadAllBytesAsync(StaticData.FileStore + id);
             return file;
+        }
+
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _taskRepository.Filters = filters;
+            _taskRepository.UserId = userId;
+            _userId = userId;
         }
     }
 }
