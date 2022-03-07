@@ -3,9 +3,9 @@
 <div id="DetailInfoId">
     @await Html.PartialAsync("Partial/_ServiceDetailInfo", Model)
 </div>
-<h3 class="text-font text-center mt-2">Hlavičky služby</h3>
+<h3 class="text-font text-center mt-2 mb-0">Hlavičky služby</h3>
 <div id="ServiceHeadersId" class="mb-3">
-    @await Html.PartialAsync("Partial/_HeaderAll", Model.Headers)
+    @await Html.PartialAsync("Partial/_ServiceHeaders", Model.Headers)
 </div>
 @await Html.PartialAsync("Partial/_DataSchemaCreateEdit", Model.Id)
 <div class="row">

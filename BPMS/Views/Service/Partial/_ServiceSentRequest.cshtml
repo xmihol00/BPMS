@@ -3,7 +3,7 @@
 <h4>Odpověď na odeslaný dotaz</h4>
 @if (Model.Serialization != null)
 {
-    <div id="ResponseTextId" class="verbatim mb-2">@Model.RecievedData</div>
+    <div id="ResponseTextId" class="verbatim mb-2 ps-3">@Model.RecievedData</div>
     <div class="d-flex justify-content-center">
         <button id="GenerateBtnId" data-id="@Model.ServiceId" data-type="@Model.Serialization" class="butn btn-p"
                 onclick="GenerateOutAttributes(this)">Vygenerovat výstupní atributy</button>

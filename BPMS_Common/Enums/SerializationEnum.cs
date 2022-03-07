@@ -11,6 +11,7 @@ namespace BPMS_Common.Enums
         JSON,
         XML,
         URL,
+        Replace
     }
 
     public static class Serialization
@@ -20,14 +21,17 @@ namespace BPMS_Common.Enums
             switch (value)
             {
                 case SerializationEnum.JSON:
-                    return "JSON";
+                    return "application/json";
                 
                 case SerializationEnum.XML:
-                    return "XML";
+                    return "text/xml";
                 
                 case SerializationEnum.URL:
-                    return "Zakódování do URL";
+                    return "application/x-www-form-urlencoded";
                 
+                case SerializationEnum.Replace:
+                    return "nahradit v URL";
+
                 default:
                     return "";
             }

@@ -1,10 +1,5 @@
 @model List<ModelAllAgendaDTO> 
 
-<div class="d-flex justify-content-around">
-    <h3 class="text-center text-font mb-0">Modely agendy</h3>
-    <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
-</div>
-
 @if (Model.Count > 0)
 {
     @foreach (ModelAllAgendaDTO modl in Model)
@@ -19,5 +14,5 @@
 }
 else
 {
-    <div class="text-secondary text-center text-italic mt-3">Agenda nemá žádné modely.</div>
+    <div class="text-secondary text-center text-italic">Agenda nemá žádné modely.</div>
 }

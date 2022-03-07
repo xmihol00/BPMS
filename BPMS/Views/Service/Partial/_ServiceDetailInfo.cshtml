@@ -1,4 +1,4 @@
-@model ServiceDetailHeaderDTO
+@model ServiceDetailInfoDTO
 
 <h1 class="text-font text-center mb-1">@Model.Name</h1>
 <div class="row">
@@ -16,6 +16,10 @@
         <div class="row">
             <div class="col-6 text-right px-2">Typ služby:</div>
             <div class="col-6 px-2"><b>@Model.Type</b></div>
+        </div>
+        <div class="row">
+            <div class="col-6 text-right px-2">Autentizace:</div>
+            <div class="col-6 px-2"><b>@Model.AuthType.ToLabel()</b></div>
         </div>
     </div>
     <div class="col-12 col-lg-6">

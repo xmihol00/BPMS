@@ -4,34 +4,34 @@
     <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto mr-100"></i></button>
     <h1 class="my-auto text-font">Detail webové služby</h1>
     <div class="my-auto">
-        <button type="button" class="butn btn-p" onclick="ShowCreateHeaderModal('HeaderModalId')">Nová hlavička</button>
+        <button type="button" class="butn btn-p" onclick="ShowCreateHeaderModal('HeaderFormId')">Nová hlavička</button>
         <button type="button" class="butn btn-p" onclick="ShowModal('EditFormId')">Upravit</button>
     </div>
 </div>
-<form id="HeaderModalId" class="mx-4 mt-4 mb-3 d-none" action="/Service/CreateEditHeader"
-        onsubmit="AjaxFormSubmit(event, 'ServiceHeadersId', true)" oninput="InputValidator(this)">
+<form id="HeaderFormId" class="mx-4 mt-4 mb-3 d-none" action="/Service/CreateEditHeader"
+      onsubmit="AjaxFormSubmit(event, 'ServiceHeadersId', true)" oninput="InputValidator(this)">
     <input type="hidden" name="ServiceId" value="@Model.Id">
-    <input type="hidden" name="Id" value="">
+    <input type="hidden" id="HeaderId" name="Id" value="">
     <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-        <h2 class="mb-0">Tvorba hlavičky webové služby</h2>
+        <h2 id="HeaderHeadId" class="mb-0">Tvorba hlavičky webové služby</h2>
         <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
     </div>
     <div class="row">
         <div class="col-6">
             <label class="input">
-                <input required class="input-field" type="text" placeholder=" " name="Name" />
+                <input required id="HeaderNameId" class="input-field" type="text" placeholder=" " name="Name" />
                 <span class="input-label">Název</span>
             </label>
         </div>
         <div class="col-6">
             <label class="input">
-                <input required class="input-field" type="text" placeholder=" " name="Value" />
+                <input required id="HeaderValueId" class="input-field" type="text" placeholder=" " name="Value" />
                 <span class="input-label">Hodnota</span>
             </label>
         </div>
     </div>
     <div class="d-flex justify-content-center mt-3">
-        <button form="HeaderModalId" type="submit" class="butn btn-s" disabled>Vytvořit</button>
+        <button id="CreateEditBtnId" form="HeaderFormId" type="submit" class="butn btn-s" disabled>Vytvořit</button>
     </div>
 </form>
 <form id="EditFormId" class="mx-4 mt-4 mb-3 d-none" method="POST" action="/Service/Edit/" oninput="InputValidator(this)"
@@ -48,7 +48,7 @@
                 <span id="URLLabelId" class="input-label">URL služby</span>
             </label>
         </div>
-        <div class="col-12 col-md-6 mb-3">
+        <div class="col-12 mb-3">
             <label class="input">
                 <input required name="Name" class="input-field" type="text" placeholder=" " value="@Model.Name" />
                 <span class="input-label">Název</span>
@@ -106,6 +106,36 @@
                     }
                 </select>
                 <span class="input-label">Serializace dat</span>
+            </label>
+        </div>
+        <div class="col-12 col-md-6 mb-3">
+            <label class="input">
+                <select class="input-select" name="AuthType" onchange="AuthChange(this)"> 
+                    @foreach (ServiceAuthEnum auth in Enum.GetValues<ServiceAuthEnum>())
+                    {
+                        if (auth == Model.AuthType)
+                        {
+                            <option value="@auth" selected>@auth.ToLabel()</option>
+                        }
+                        else
+                        {
+                            <option value="@auth">@auth.ToLabel()</option>
+                        }
+                    }
+                </select>
+                <span class="input-label">Autentizace</span>
+            </label>
+        </div>
+        <div id="AppIdId" class="col-12 col-md-6 mb-3 @(Model.AuthType == ServiceAuthEnum.Basic ? "" : "d-none")">
+            <label class="input">
+                <input name="AppId" class="input-field" type="text" placeholder=" " value="@Model.AppId"/>
+                <span class="input-label">Identifikátor</span>
+            </label>
+        </div>
+        <div id="AppSecretId" class="col-12 mb-3 @(Model.AuthType == ServiceAuthEnum.Basic ? "col-md-6" : "") @(Model.AuthType == ServiceAuthEnum.None ? "d-none" : "")">
+            <label class="input">
+                <input name="AppSecret" class="input-field" type="password" placeholder=" "/>
+                <span class="input-label">Nový klíč</span>
             </label>
         </div>
         <div class="col-12 mb-2">

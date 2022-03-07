@@ -24,7 +24,7 @@
                     <span id="URLLabelId" class="input-label">URL služby</span>
                 </label>
             </div>
-            <div class="col-12 col-md-6 mb-3">
+            <div class="col-12 mb-3">
                 <label class="input">
                     <input required name="Name" class="input-field" type="text" placeholder=" " />
                     <span class="input-label">Název</span>
@@ -61,6 +61,29 @@
                         }
                     </select>
                     <span class="input-label">Serializace dat</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <select class="input-select" name="AuthType" onchange="AuthChange(this)"> 
+                        @foreach (ServiceAuthEnum auth in Enum.GetValues<ServiceAuthEnum>())
+                        {
+                            <option value="@auth">@auth.ToLabel()</option>
+                        }
+                    </select>
+                    <span class="input-label">Autentizace</span>
+                </label>
+            </div>
+            <div id="AppIdId" class="col-12 col-md-6 mb-3 d-none">
+                <label class="input">
+                    <input name="AppId" class="input-field" type="text" placeholder=" "/>
+                    <span class="input-label">Identifikátor</span>
+                </label>
+            </div>
+            <div id="AppSecretId" class="col-12 col-md-6 mb-3 d-none">
+                <label class="input">
+                    <input name="AppSecret" class="input-field" type="password" placeholder=" "/>
+                    <span class="input-label">Klíč</span>
                 </label>
             </div>
             <div class="col-12 mb-2">

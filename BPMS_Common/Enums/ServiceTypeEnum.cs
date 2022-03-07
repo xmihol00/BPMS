@@ -9,6 +9,5 @@ namespace BPMS_Common.Enums
     public enum ServiceTypeEnum
     {
         REST,
-        SOAP
     }
 }

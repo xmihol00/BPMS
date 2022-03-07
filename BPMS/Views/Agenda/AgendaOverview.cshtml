@@ -28,9 +28,9 @@
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Agenda/Filter')">
         <h2 class="text-font text-center mt-4 border-bottom mb-1">Filtrování</h2>
-        <div id="@FilterTypeEnum.AgendaKeeper" class="filter-div @((bool)ViewData[FilterTypeEnum.AgendaKeeper.ToString()] ? "filter-div-sel" : "")">Správcuji</div>
-        <div id="@FilterTypeEnum.AgendaRole" class="filter-div @((bool)ViewData[FilterTypeEnum.AgendaRole.ToString()] ? "filter-div-sel" : "")">Zastávám roli</div>
-        <div id="@FilterTypeEnum.AgendaActiveWF" class="filter-div @((bool)ViewData[FilterTypeEnum.AgendaActiveWF.ToString()] ? "filter-div-sel" : "")">Aktivní worklfow</div>
-        <div id="@FilterTypeEnum.AgendaNoRole" class="filter-div @((bool)ViewData[FilterTypeEnum.AgendaNoRole.ToString()] ? "filter-div-sel" : "")">Nepřiřazená role</div>
+        <div id="@FilterTypeEnum.AgendaKeeper" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaKeeper)] ? "filter-div-sel" : "")">Správcuji</div>
+        <div id="@FilterTypeEnum.AgendaRole" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaRole)] ? "filter-div-sel" : "")">Zastávám roli</div>
+        <div id="@FilterTypeEnum.AgendaActiveWF" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaActiveWF)] ? "filter-div-sel" : "")">Aktivní worklfow</div>
+        <div id="@FilterTypeEnum.AgendaNoRole" class="filter-div @(ViewBag.Filters[((int)FilterTypeEnum.AgendaNoRole)] ? "filter-div-sel" : "")">Nepřiřazená role</div>
     </div>
 </div>

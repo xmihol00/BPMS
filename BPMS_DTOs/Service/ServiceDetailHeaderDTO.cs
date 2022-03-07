@@ -10,14 +10,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Service
 {
-    public class ServiceDetailHeaderDTO
+    public class ServiceDetailHeaderDTO : ServiceDetailInfoDTO
     {
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public ServiceTypeEnum Type { get; set; }
-        public SerializationEnum Serialization { get; set; }
-        public HttpMethodEnum HttpMethod { get; set; }
-        public string URL { get; set; } = string.Empty;
-        public Guid Id { get; set; }
+        public string? AppId { get; set; }
     }
 }

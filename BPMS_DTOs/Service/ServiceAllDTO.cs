@@ -15,6 +15,7 @@ namespace BPMS_DTOs.Service
         public ServiceTypeEnum Type { get; set; }
         public SerializationEnum Serialization { get; set; }
         public HttpMethodEnum HttpMethod { get; set; }
+        public ServiceAuthEnum AuthType { get; set; }
         public string URL { get; set; } = string.Empty;
     }
 }

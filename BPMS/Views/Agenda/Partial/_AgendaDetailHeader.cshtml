@@ -1,9 +1,12 @@
 @model AgendaDetailHeaderDTO
 
 <div class="d-flex justify-content-between px-4 page-navbar-content">
-    <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+    <button type="button" class="btn my-auto mr-100"><i class="fas fa-chevron-circle-left my-auto"></i></button>
     <h1 class="my-auto text-font">Detail agendy</h1>
     <div class="my-auto">
+        <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
+        <button type="button" class="butn btn-p my-auto" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
+        <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
         <button class="butn btn-p" onclick="ShowModal('EditAgendaId')">Upravit</button>
     </div>
 </div>

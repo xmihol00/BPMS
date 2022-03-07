@@ -99,7 +99,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEditHeader(HeaderCreateEditDTO dto)
         {
-            return PartialView("Partial/_HeaderAll", await _serviceFacade.CreateEditHeader(dto));
+            return PartialView("Partial/_ServiceHeaders", await _serviceFacade.CreateEditHeader(dto));
         }
 
         [HttpPost]

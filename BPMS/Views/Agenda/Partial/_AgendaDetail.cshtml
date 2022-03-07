@@ -10,22 +10,17 @@
     </div>
     <div class="row">
         <div class="col-12 col-lg-6">
-            <div class="d-flex justify-content-around mb-3">
-                <h3 class="text-center text-font mb-0">Řešitelské role</h3>
-                <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
-            </div>
-            <div id="AgendaRolesId" class="row">
+            <h3 class="text-center text-font">Řešitelské role</h3>
+            <div id="AgendaRolesId" class="row mt-3">
                 @await Html.PartialAsync("Partial/_AgendaRoles", Model.Roles)
             </div>
-            <div class="d-flex justify-content-around mb-3">
-                <h3 class="text-font my-1">Spolupracující systémy</h3>
-                <button type="button" class="butn btn-p my-auto" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
-            </div>
+            <h3 class="text-font text-center">Spolupracující systémy</h3>
             <div id="AgendaSystemsId">
                 @await Html.PartialAsync("Partial/_AgendaSystems", Model.Systems)
             </div>
         </div>
         <div class="col-12 col-lg-6">
+            <h3 class="text-center text-font">Modely agendy</h3>
             @await Html.PartialAsync("Partial/_AgendaModels", Model.Models)
         </div>
     </div>

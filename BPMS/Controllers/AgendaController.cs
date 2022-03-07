@@ -27,10 +27,15 @@ namespace BPMS.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
-            ViewData[FilterTypeEnum.AgendaKeeper.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaKeeper.ToString()] != null;
-            ViewData[FilterTypeEnum.AgendaActiveWF.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaActiveWF.ToString()] != null;
-            ViewData[FilterTypeEnum.AgendaNoRole.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaNoRole.ToString()] != null;
-            ViewData[FilterTypeEnum.AgendaRole.ToString()] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaRole.ToString()] != null;
+
+            bool[] filters = new bool[Enum.GetValues<FilterTypeEnum>().Count()];
+            filters[((int)FilterTypeEnum.AgendaKeeper)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaKeeper.ToString()] != null;
+            filters[((int)FilterTypeEnum.AgendaActiveWF)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaActiveWF.ToString()] != null;
+            filters[((int)FilterTypeEnum.AgendaNoRole)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaNoRole.ToString()] != null;
+            filters[((int)FilterTypeEnum.AgendaRole)] = context.HttpContext.Request.Cookies[FilterTypeEnum.AgendaRole.ToString()] != null;
+
+            ViewBag.Filters = filters;
+            _agendaFacade.SetFilters(filters, _userId);
         }
 
         [HttpGet]

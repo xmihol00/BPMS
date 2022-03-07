@@ -17,6 +17,9 @@ namespace BPMS_DAL.Entities
         public SerializationEnum Serialization { get; set; }
         public HttpMethodEnum HttpMethod { get; set; }
         public string URL { get; set; } = string.Empty;
+        public ServiceAuthEnum AuthType { get; set; }
+        public string? AppId { get; set; }
+        public string? AppSecret { get; set; }
         public List<ServiceTaskModelEntity> ServiceTasks { get; set; } = new List<ServiceTaskModelEntity>();
         public List<DataSchemaEntity> DataSchemas { get; set; } = new List<DataSchemaEntity>();
         public List<ServiceHeaderEntity> Headers { get; set; } = new List<ServiceHeaderEntity>();

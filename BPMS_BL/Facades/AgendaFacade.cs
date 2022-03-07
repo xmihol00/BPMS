@@ -50,6 +50,12 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _agendaRepository.Filters = filters;
+            _agendaRepository.UserId = userId;
+        }
+
         public async Task<List<AgendaAllDTO>> Filter(FilterDTO dto, Guid userId)
         {
             try
@@ -63,10 +69,12 @@ namespace BPMS_BL.Facades
                 if (dto.Removed)
                 {
                     _filterRepository.Remove(entity);
+                    _agendaRepository.Filters[((int)entity.Filter)] = false;
                 }
                 else
                 {
                     await _filterRepository.Create(entity);
+                    _agendaRepository.Filters[((int)entity.Filter)] = true;
                 }
                 await _filterRepository.Save();
             }

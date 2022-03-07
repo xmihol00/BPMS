@@ -83,7 +83,7 @@ function DataSchemaSubmit(event, targetId)
         HiddenButtons.classList.remove("d-none");
     }
     event.target.classList.add("d-none");
-    document.getElementById("CreateFormId").after(event.target);
+    document.getElementById("EditFormId").after(event.target);
     AjaxFormSubmit(event, targetId);
 }
 
@@ -251,13 +251,26 @@ function GenerateOutAttributes(btn)
 
 function ShowCreateHeaderModal()
 {
-    let form = document.getElementById("HeaderModalId");
-    for (let input of form.getElementsByClassName("input-field"))
-    {
-        input.value = "";
-    }
-    InputValidator(form);
-    ShowModal("HeaderModalId");
+    document.getElementById("HeaderHeadId").innerText = "Tvorba hlavičky webové služby";
+    document.getElementById("HeaderId").value = null;
+    document.getElementById("CreateEditBtnId").innerText = "Vytvořit";
+    document.getElementById("HeaderNameId").value = "";
+    document.getElementById("HeaderValueId").value = "";
+
+    InputValidator(document.getElementById("HeaderFormId"));
+    ShowModal("HeaderFormId");
+}
+
+function EditHeader(btn)
+{
+    let row = btn.parentNode.parentNode;
+    document.getElementById("HeaderHeadId").innerText = "Editace hlavičky webové služby";
+    document.getElementById("HeaderId").value = row.id;
+    document.getElementById("HeaderNameId").value = row.children[0].innerText;
+    document.getElementById("HeaderValueId").value = row.children[1].innerText;
+    document.getElementById("CreateEditBtnId").innerText = "Upravit";
+    InputValidator(document.getElementById("HeaderFormId"));
+    ShowModal("HeaderFormId");
 }
 
 function RemoveHeader(btn)
@@ -284,3 +297,25 @@ function ScrollGenerate()
     document.getElementById("GenerateBtnId").scrollIntoView();
 }
 
+function AuthChange(select)
+{
+    if (select.value == "None")
+    {
+        document.getElementById("AppIdId").classList.add("d-none");
+        document.getElementById("AppSecretId").classList.add("d-none");
+    }
+    else if (select.value == "Basic")
+    {
+        document.getElementById("AppIdId").classList.remove("d-none");
+        let secret = document.getElementById("AppSecretId");
+        secret.classList.remove("d-none");
+        secret.classList.add("col-md-6");
+    }
+    else
+    {
+        document.getElementById("AppIdId").classList.add("d-none");
+        let secret = document.getElementById("AppSecretId");
+        secret.classList.remove("d-none");
+        secret.classList.remove("col-md-6");
+    }
+}

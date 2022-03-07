@@ -19,30 +19,51 @@ namespace BPMS_DAL.Repositories
 {
     public class AgendaRepository : BaseRepository<AgendaEntity>
     {
+        public bool[]? Filters { get; set; }
+        public Guid UserId { get; set; }
+
         public AgendaRepository(BpmsDbContext context) : base(context) {} 
 
         public Task<List<AgendaAllDTO>> All(Guid? id = null)
         {
-            return _dbSet.Include(x => x.Models)
-                         .Include(x => x.Systems)
-                         .Include(x => x.Workflows)
-                         .Include(x => x.AgendaRoles)
-                            .ThenInclude(x => x.UserRoles)
-                         .Where(x => x.Id != id)
-                         .Select(x => new AgendaAllDTO 
-                         {
-                             Id = x.Id,
-                             Name = x.Name,
-                             ActiveWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
-                             PausedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
-                             FinishedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
-                             CanceledWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
-                             ModelsCount = x.Models.Count(),
-                             SystemsCount = x.Systems.Count(),
-                             UserCount = x.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
-                             MissingRolesCount = x.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
-                         })
-                         .ToListAsync();
+            IQueryable<AgendaEntity> query = _dbSet.Include(x => x.Models)
+                                                   .Include(x => x.Systems)
+                                                   .Include(x => x.Workflows)
+                                                   .Include(x => x.AgendaRoles)
+                                                      .ThenInclude(x => x.UserRoles)
+                                                   .Where(x => x.Id != id);
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.AgendaKeeper)])
+                {
+                    query = query.Where(x => x.AdministratorId == UserId);
+                }
+
+                if (Filters[((int)FilterTypeEnum.AgendaRole)])
+                {
+                    query = query.Where(x => x.AgendaRoles.Any(y => y.UserRoles.Any(z => z.UserId == UserId)));
+                }
+
+                if (Filters[((int)FilterTypeEnum.AgendaActiveWF)])
+                {
+                    query = query.Where(x => x.Workflows.Any(y => y.State == WorkflowStateEnum.Active));
+                }
+            }
+
+            return query.Select(x => new AgendaAllDTO 
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            ActiveWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
+                            PausedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                            FinishedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                            CanceledWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
+                            ModelsCount = x.Models.Count(),
+                            SystemsCount = x.Systems.Count(),
+                            UserCount = x.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                            MissingRolesCount = x.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
+                        })
+                        .ToListAsync();
         }
 
         public Task<AgendaDetailDTO> Detail(Guid id)

@@ -22,33 +22,18 @@ namespace BPMS_BL.Helpers
     public class WebServiceHelper
     {
         private readonly StringBuilder _builder = new StringBuilder();
-        private readonly IEnumerable<IDataSchemaData> _data;
-        private readonly SerializationEnum _serialization;
         private readonly Uri _url;
-        private readonly HttpMethodEnum _method;
-        private readonly List<HeaderRequestDTO> _headers;
+        private readonly ServiceRequestDTO _service;
 
         public WebServiceHelper(ServiceRequestDTO service)
         {
-            _data = service.Nodes;
-            _serialization = service.Serialization;
+            _service = service;
             _url = new Uri(service.URL);
-            _method = service.HttpMethod;
-            _headers = service.Headers;
-        }
-
-        public WebServiceHelper(IEnumerable<IDataSchemaData> data, SerializationEnum serialization, Uri url, HttpMethodEnum method)
-        {
-            _data = data;
-            _serialization = serialization;
-            _url = url;
-            _method = method;
-            _headers = new List<HeaderRequestDTO>();
         }
 
         public string GenerateRequest()
         {
-            switch (_method)
+            switch (_service.HttpMethod)
             {
                 case HttpMethodEnum.GET:
                     return CreateGetRequest();
@@ -63,7 +48,7 @@ namespace BPMS_BL.Helpers
 
         public async Task<ServiceCallResultDTO> SendRequest()
         {
-            switch (_method)
+            switch (_service.HttpMethod)
             {
                 case HttpMethodEnum.GET:
                     return await SendGetRequest();
@@ -79,12 +64,23 @@ namespace BPMS_BL.Helpers
         private string CreateGetRequest()
         {
             _builder.Append("GET ");
-            _builder.Append(_url.AbsolutePath);
-            SerilizeData();
-            _builder.Append(" HTTP/1.1\r\nHost: ");
-            _builder.Append(_url.DnsSafeHost);
-            _builder.Append("\r\nContent-Type: ");
-            _builder.Append(_serialization.ToMIME());
+            if (_service.Serialization == SerializationEnum.Replace)
+            {
+                SerilizeData();
+                Uri url = new Uri(_service.URL);
+                _builder.Append(url.PathAndQuery);
+                _builder.Append(" HTTP/1.1\r\nHost: ");
+                _builder.Append(url.DnsSafeHost);
+            }
+            else
+            {
+                _builder.Append(_url.PathAndQuery);
+                SerilizeData();
+                _builder.Append(" HTTP/1.1\r\nHost: ");
+                _builder.Append(_url.DnsSafeHost);
+                _builder.Append("\r\nContent-Type: ");
+                _builder.Append(_service.Serialization.ToMIME());
+            }
             GenerateHeaders();
             _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n");
             return _builder.ToString();
@@ -97,7 +93,7 @@ namespace BPMS_BL.Helpers
             _builder.Append(" HTTP/1.1\r\nHost: ");
             _builder.Append(_url.DnsSafeHost);
             _builder.Append("\r\nContent-Type: ");
-            _builder.Append(_serialization.ToMIME());
+            _builder.Append(_service.Serialization.ToMIME());
             GenerateHeaders();
             _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
             string header = _builder.ToString();
@@ -109,7 +105,7 @@ namespace BPMS_BL.Helpers
 
         private void GenerateHeaders()
         {
-            foreach(HeaderRequestDTO header in _headers)
+            foreach(HeaderRequestDTO header in _service.Headers)
             {
                 _builder.Append("\r\n");
                 _builder.Append(header.Name);
@@ -121,7 +117,16 @@ namespace BPMS_BL.Helpers
         private void GenerateHeaders(HttpRequestHeaders headers)
         {
             headers.Add("Accept", "application/json, text/xml, application/xml");
-            foreach(HeaderRequestDTO header in _headers)
+            if (_service.AuthType == ServiceAuthEnum.Basic)
+            {
+                headers.Add("Authorization", $"Basic {_service.AppId}:{_service.AppSecret}");
+            }
+            else
+            {
+                headers.Add("Authorization", $"Bearer {_service.AppSecret}");
+            }
+
+            foreach(HeaderRequestDTO header in _service.Headers)
             {
                 headers.Add(header.Name, header.Value);
             }
@@ -134,8 +139,15 @@ namespace BPMS_BL.Helpers
             HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri(_url.ToString() + _builder.ToString()), 
             };
+            if (_service.Serialization == SerializationEnum.Replace)
+            {
+                request.RequestUri = new Uri(_service.URL);
+            }
+            else
+            {
+                request.RequestUri = new Uri(_url.ToString() + _builder.ToString());
+            }
             GenerateHeaders(request.Headers);
 
             return await CreateResult(await client.SendAsync(request));
@@ -152,11 +164,10 @@ namespace BPMS_BL.Helpers
                 Content = new StringContent(_builder.ToString())
                 {
                     Headers = { 
-                        ContentType = new MediaTypeHeaderValue(_serialization.ToMIME())
+                        ContentType = new MediaTypeHeaderValue(_service.Serialization.ToMIME())
                     }
                 }
             };
-
             GenerateHeaders(request.Headers);
 
             return await CreateResult(await client.SendAsync(request));
@@ -188,13 +199,13 @@ namespace BPMS_BL.Helpers
 
         private void SerilizeData()
         {
-            switch (_serialization)
+            switch (_service.Serialization)
             {
                 case SerializationEnum.JSON:
-                    if (_data.Count() > 0)
+                    if (_service.Nodes.Count() > 0)
                     {
                         _builder.Append("{");
-                        SerilizeJSON(_data);
+                        SerilizeJSON(_service.Nodes);
                         _builder.Append("}");
                     }
                     break;
@@ -207,8 +218,29 @@ namespace BPMS_BL.Helpers
                     SerilizeXML();
                     break;
                 
+                case SerializationEnum.Replace:
+                    SerilizeUrlReplace(_service.Nodes);
+                    break;
+                
                 default:
                     return;
+            }
+        }
+
+        private void SerilizeUrlReplace(IEnumerable<IDataSchemaData> data)
+        {
+            foreach (DataSchemaDataDTO schema in data)
+            {
+                string search = "{{" + (String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias) + "}}";
+
+                if (schema.Type == DataTypeEnum.Object)
+                {
+                    SerilizeUrlReplace(schema.Children as IEnumerable<IDataSchemaData>);
+                }
+                else
+                {
+                    _service.URL = _service.URL.Replace(search, schema.Data);
+                }
             }
         }
 
@@ -220,7 +252,7 @@ namespace BPMS_BL.Helpers
         private void SerilizeURL()
         {
             _builder.Append("?");
-            foreach (DataSchemaDataDTO schema in _data)
+            foreach (DataSchemaDataDTO schema in _service.Nodes)
             {
                 if (schema.Type != DataTypeEnum.Object && schema.Type != DataTypeEnum.Array)
                 {

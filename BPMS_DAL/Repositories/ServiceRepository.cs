@@ -22,14 +22,16 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              Serialization = x.Serialization,
                              Type = x.Type,
-                             URL = x.URL
+                             URL = x.URL,
+                             AuthType = x.AuthType
                          })
                          .ToListAsync();
         }
 
-        public Task<ServiceDetailDTO> Edit(Guid id)
+        public Task<ServiceDetailDTO> Detail(Guid id)
         {
-            return _dbSet.Select(x => new ServiceDetailDTO
+            return _dbSet.Include(x => x.Headers)
+                         .Select(x => new ServiceDetailDTO
                          {
                             Description = x.Description,
                             HttpMethod = x.HttpMethod,
@@ -38,6 +40,15 @@ namespace BPMS_DAL.Repositories
                             Serialization = x.Serialization,
                             Type = x.Type,
                             URL = x.URL,
+                            AppId = x.AppId,
+                            AuthType = x.AuthType,
+                            Headers = x.Headers.Select(y => new HeaderAllDTO
+                                               {
+                                                   Id = y.Id,
+                                                   Name = y.Name,
+                                                   Value = y.Value
+                                               })
+                                               .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -52,6 +63,9 @@ namespace BPMS_DAL.Repositories
                              Type = x.Type,
                              Serialization = x.Serialization,
                              URL = x.URL,
+                             AppId = x.AppId,
+                             AppSecret = x.AppSecret,
+                             AuthType = x.AuthType,
                              Headers = x.Headers.Select(y => new HeaderRequestDTO
                                                 {
                                                     Name = y.Name,
@@ -81,9 +95,15 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              Serialization = x.Serialization,
                              Type = x.Type,
-                             URL = x.URL
+                             URL = x.URL,
+                             AuthType = x.AuthType
                          })
                          .FirstAsync(x => x.Id == id);
+        }
+
+        public Task<ServiceEntity> Bare(Guid id)
+        {
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
     }
 }
