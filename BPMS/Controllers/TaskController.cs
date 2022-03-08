@@ -84,7 +84,7 @@ namespace BPMS.Controllers
         public async Task<IActionResult> DownloadFile(Guid id)
         {
             FileDownloadDTO file = await _taskFacade.DownloadFile(id);
-            return File(file.Data ?? new byte[1], file.MIMEType, file.FileName);
+            return File(file.Data ?? new byte[1], file.MIMEType ?? string.Empty, file.FileName);
         }
 
         [HttpPost]
