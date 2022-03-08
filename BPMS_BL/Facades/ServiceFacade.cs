@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using BPMS_DTOs.Filter;
 
 namespace BPMS_BL.Facades
 {
@@ -39,6 +40,20 @@ namespace BPMS_BL.Facades
             _serviceRepository = serviceRepository;
             _serviceHeaderRepository = serviceHeaderRepository;
             _mapper = mapper;
+        }
+
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _serviceRepository.Filters = filters;
+            _serviceRepository.UserId = userId;
+            _userId = userId;
+        }
+
+        public async Task<List<ServiceAllDTO>> Filter(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _serviceRepository.Filters[((int)dto.Filter)] = !dto.Removed;
+            return await _serviceRepository.All();
         }
 
         public async Task<ServiceDetailDTO> DetailPartial(Guid id)
@@ -266,19 +281,38 @@ namespace BPMS_BL.Facades
 
         private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, IFormCollection data)
         {
-            IEnumerable<DataSchemaDataDTO> nodes = await _dataSchemaRepository.DataSchemaToSend(serviceId);
+            List<DataSchemaDataDTO> arrayNodes = new List<DataSchemaDataDTO>();
+            List<DataSchemaDataDTO> nodes = await _dataSchemaRepository.DataSchemaToSend(serviceId);
             foreach (DataSchemaDataDTO node in nodes)
             {
-                if (node.StaticData == null)
+                if (node.Type > DataTypeEnum.Object)
                 {
-                    node.Data = data[$"{node.Id}"].FirstOrDefault();    
+                    string value = null;
+                    int i = 0;
+                    while ((value = data[$"{node.Id}_{++i}"].FirstOrDefault()) != null)
+                    {
+                        arrayNodes.Add(new DataSchemaDataDTO
+                        {
+                            ParentId = node.Id,
+                            Data = value,
+                            Type = node.Type - 4
+                        });
+                    }
                 }
                 else
                 {
-                    node.Data = node.StaticData;
+                    if (node.StaticData == null)
+                    {
+                        node.Data = data[$"{node.Id}"].FirstOrDefault();
+                    }
+                    else
+                    {
+                        node.Data = node.StaticData;
+                    }
                 }
             }
 
+            nodes.AddRange(arrayNodes);
             return ServiceTreeHelper.CreateTree<DataSchemaDataDTO>(nodes);
         }
 

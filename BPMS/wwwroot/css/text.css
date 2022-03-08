@@ -77,3 +77,7 @@
   font-style: italic;
   color: var(--color-secondary);
 }
+
+.text-prim {
+  color: var(--color-primary);
+}

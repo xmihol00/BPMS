@@ -27,6 +27,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> ShareModel([FromBody] ModelDetailShare dto)
         {
             return Ok(await _communicationFacade.ShareModel(dto));
@@ -69,12 +70,14 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Message([FromBody] MessageShare message)
         {
             return Ok(await _communicationFacade.Message(message));
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> ForeignMessage([FromBody] MessageShare message)
         {
             return Ok(await _communicationFacade.ForeignMessage(message));

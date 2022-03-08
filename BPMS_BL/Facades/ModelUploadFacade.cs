@@ -117,7 +117,7 @@ namespace BPMS_BL.Facades
                 {
                     _currentPool = pools[0];
                     _currentPool.SystemId = StaticData.ThisSystemId;
-                    _model.State = ModelStateEnum.Shared;
+                    _model.State = ModelStateEnum.Executable;
                 }
                 
                 foreach (PoolEntity pool in pools)
@@ -128,7 +128,7 @@ namespace BPMS_BL.Facades
             else
             {
                 _currentPool.SystemId = StaticData.ThisSystemId;
-                _model.State = ModelStateEnum.Shared;
+                _model.State = ModelStateEnum.Executable;
                 await _poolRepository.Create(_currentPool);
             }
 
@@ -137,7 +137,7 @@ namespace BPMS_BL.Facades
                 await _blockModelRepository.Create(blockModel);
             }
 
-            if (_model.State == ModelStateEnum.Shared)
+            if (_model.State == ModelStateEnum.Executable)
             {
                 XElement svgPool = _svg.Descendants().First(x => x.Attribute("id")?.Value == _currentPool.Id.ToString());
                 XAttribute attribute = svgPool.Attribute("class");

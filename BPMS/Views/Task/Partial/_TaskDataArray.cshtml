@@ -1,0 +1,49 @@
+@model ITaskArray
+
+<div class="col-12 mt-3">
+    <div class="d-flex justify-content-between">
+        <div>
+            pole: <span class="text-prim text-bold ms-1">@Model.Name</span>
+        </div>
+        <button type="button" class="butn btn-p float-end" onclick="AddArrayInput(this, '@Model.Type')">Přidat hodnotu</button>
+    </div>
+    <div id="@Model.Id" class="row">
+        @foreach (TaskDataDTO? task in Model.Values)
+        {
+            switch (task)
+            {
+                case ITaskString taskString:
+                    @await Html.PartialAsync("Partial/_TaskDataString", taskString)
+                    break;
+
+                case ITaskNumber taskNumber:
+                    @await Html.PartialAsync("Partial/_TaskDataNumber", taskNumber)
+                    break;
+
+                case ITaskText taskText:
+                    @await Html.PartialAsync("Partial/_TaskDataText", taskText)
+                    break;
+                
+                case ITaskBool taskBool:
+                    @await Html.PartialAsync("Partial/_TaskDataBool", taskBool)
+                    break;
+                
+                case ITaskDate taskDate:
+                    @await Html.PartialAsync("Partial/_TaskDataDate", taskDate)
+                    break;
+                
+                case ITaskSelect taskSelect:
+                    @await Html.PartialAsync("Partial/_TaskDataSelect", taskSelect)
+                    break;
+                
+                case ITaskFile taskFile:
+                    @await Html.PartialAsync("Partial/_TaskDataFile", taskFile)
+                    break;
+                
+                case ITaskArray taskArray:
+                    @await Html.PartialAsync("Partial/_TaskDataArray", taskArray)
+                    break;
+            }
+        }
+    </div>
+</div>

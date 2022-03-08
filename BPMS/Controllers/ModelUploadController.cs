@@ -17,6 +17,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Upload(ModelCreateDTO dto)
         {
             await _modelUploadFacade.Upload(dto);

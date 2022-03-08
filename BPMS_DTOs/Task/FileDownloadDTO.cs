@@ -11,8 +11,8 @@ namespace BPMS_DTOs.Task
 {
     public class FileDownloadDTO
     {
-        public string FileName { get; set; } = string.Empty;
-        public string MIMEType { get; set; } = string.Empty;
-        public byte[] Data { get; set; } = new byte[1];
+        public string? FileName { get; set; }
+        public string? MIMEType { get; set; }
+        public byte[]? Data { get; set; }
     }
 }

@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Task.DataTypes
 {
-    public class TaskArrayDTO : TaskDataDTO, ITaskData
+    public class TaskArrayDTO : TaskDataDTO, ITaskData, ITaskArray
     {
-        public List<TaskDataDTO>? Values { get; set; }
+        public List<TaskDataDTO> Values { get; set; } = new List<TaskDataDTO>();
+        public DataTypeEnum Type { get; set; }
     }
 }

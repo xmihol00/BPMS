@@ -286,7 +286,7 @@ namespace BPMS_BL.Helpers
             _builder.Append("?");
             foreach (DataSchemaDataDTO schema in _service.Nodes)
             {
-                if (schema.Type != DataTypeEnum.Object && schema.Type != DataTypeEnum.Array)
+                if (schema.Type < DataTypeEnum.Object)
                 {
                     _builder.Append(HttpUtility.UrlEncode(String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias));
                     _builder.Append("=");
@@ -297,13 +297,20 @@ namespace BPMS_BL.Helpers
             _builder.Length = _builder.Length - 1;
         }
 
-        private void SerilizeJSON(IEnumerable<IDataSchemaData> data)
+        private void SerilizeJSON(IEnumerable<IDataSchemaData> data, bool array = false)
         {
             foreach (DataSchemaDataDTO schema in data)
             {
-                _builder.Append("\"");
-                _builder.Append(String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias);
-                _builder.Append("\":");
+                if (!array)
+                {
+                    _builder.Append("\"");
+                    _builder.Append(String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias);
+                    _builder.Append("\":");
+                }
+                else if (schema.Data == null)
+                {
+                    continue;
+                }
 
                 switch (schema.Type)
                 {
@@ -325,8 +332,15 @@ namespace BPMS_BL.Helpers
                         _builder.Append(",");
                         break;
                     
-                    case DataTypeEnum.Array:
-                        throw new NotImplementedException();
+                    case DataTypeEnum.ArrayString:
+                    case DataTypeEnum.ArrayNumber:
+                    case DataTypeEnum.ArrayBool:
+                    case DataTypeEnum.ArrayObject:
+                    case DataTypeEnum.ArrayArray:
+                        _builder.Append("[");
+                        SerilizeJSON(schema.Children as IEnumerable<IDataSchemaData>, true);
+                        _builder.Append("],");
+                        break;
                 }
             }
 

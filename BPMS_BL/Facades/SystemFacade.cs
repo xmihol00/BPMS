@@ -12,6 +12,7 @@ using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Account;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
 using Newtonsoft.Json;
@@ -28,6 +29,20 @@ namespace BPMS_BL.Facades
         {
             _systemRepository = systemRepository;
             _mapper = mapper;
+        }
+
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _systemRepository.Filters = filters;
+            _systemRepository.UserId = userId;
+            _userId = userId;
+        }
+
+        public async Task<List<SystemAllDTO>> Filter(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _systemRepository.Filters[((int)dto.Filter)] = !dto.Removed;
+            return await _systemRepository.All();
         }
 
         public Task<SystemDetailDTO> DetailPartial(Guid id)

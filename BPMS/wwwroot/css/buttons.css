@@ -106,3 +106,7 @@ a.butn:hover {
 .btn-remove:hover {
     color: rgb(255, 0, 0);
 }
+
+.fa-times:hover {
+    color: rgb(255, 0, 0);
+}

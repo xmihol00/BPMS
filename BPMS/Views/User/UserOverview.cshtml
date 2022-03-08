@@ -74,14 +74,13 @@
         <div class="loading-content"></div>
     </div>
     <div id="OverviewDivId" class="container-lg">
-        <div class="row">
-            @foreach (UserAllDTO user in Model.Users)
-            {
-                @await Html.PartialAsync("Partial/_UserCard", (user, false))
-            }
-        </div>
+        @await Html.PartialAsync("Partial/_UserOverview", Model.Users)
     </div>
-    <div id="OverviewNavId" class="overview-nav">
-
+    <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/User/Filter')">
+        <h2 class="text-font text-center mt-4 border-bottom mb-1">Filtrování</h2>
+        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("User")))
+        {
+            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
+        }
     </div>
 </div>

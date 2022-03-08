@@ -9,26 +9,21 @@
             <button class="butn btn-p" onclick="ShowModal('EditModelId')" >Upravit</button>
             @switch (Model.State)
             {  
-                case ModelStateEnum.New:
+                case ModelStateEnum.Incorrect:
                     <button class="butn btn-s" title="Nejdříve je nutné přiřadit systémy bazénům modelu." disabled>Sdílet</button>
                     break;
-                
-                case ModelStateEnum.Incorrect:
-                    <button class="butn btn-s" title="Právě jeden bazén modelu musí být přiřazen tomuto systému." disabled>Sdílet</button>
-                    break;
-                
+
                 case ModelStateEnum.Shareable:
                     <button class="butn btn-s" onclick="ShareModel(this)">Sdílet</button>
                     break;
                 
-                case ModelStateEnum.Shared: @*TODO remove*@
                 case ModelStateEnum.Executable:
-                case ModelStateEnum.Waiting:
                     <button class="butn btn-s" onclick="ShowModal('RunModelId', '/Model/Run/@Model.Id', 'RunModelTargetId', true, null, ValidateStart)">Spustit</button>
                     break;
                 
-                    @*<button class="butn btn-s" title="Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy." disabled>Spustit</button>
-                    break;*@
+                case ModelStateEnum.Waiting:
+                    <button class="butn btn-s" title="Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy." disabled>Spustit</button>
+                    break;
             }
         </div>
     </div>

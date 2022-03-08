@@ -90,15 +90,29 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<UserAllDTO>> All(Guid? id = null)
         {
-            return _dbSet.Include(x => x.SystemRoles)
-                         .Where(x => x.Id != id)
-                         .Select(x => new UserAllDTO
-                         {
-                             FullName = $"{x.Title} {x.Name} {x.Surname}",
-                             Id = x.Id,
-                             Roles = x.SystemRoles.Select(x => x.Role).ToList()
-                         })
-                         .ToListAsync();
+            IQueryable<UserEntity> query = _dbSet.Include(x => x.SystemRoles)
+                                                 .Where(x => x.Id != id);
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.UserAdmin)] || Filters[((int)FilterTypeEnum.UserAgendaKeeper)] ||
+                    Filters[((int)FilterTypeEnum.UserWorkflowKeeper)] || Filters[((int)FilterTypeEnum.UserServiceKeeper)] ||
+                    Filters[((int)FilterTypeEnum.UserTaskSolver)])
+                {
+                    query = query.Where(x => (Filters[((int)FilterTypeEnum.UserAdmin)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.Admin)) ||
+                                             (Filters[((int)FilterTypeEnum.UserAgendaKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper)) ||
+                                             (Filters[((int)FilterTypeEnum.UserWorkflowKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.WorkflowKeeper)) ||
+                                             (Filters[((int)FilterTypeEnum.UserServiceKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.ServiceKeeper)) ||
+                                             (Filters[((int)FilterTypeEnum.UserTaskSolver)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.TaskSolver)));
+                }
+            }
+                         
+            return query.Select(x => new UserAllDTO
+                        {
+                            FullName = $"{x.Title} {x.Name} {x.Surname}",
+                            Id = x.Id,
+                            Roles = x.SystemRoles.Select(x => x.Role).ToList()
+                        })
+                        .ToListAsync();
         }
 
         public Task<UserAllDTO> Selected(Guid id)

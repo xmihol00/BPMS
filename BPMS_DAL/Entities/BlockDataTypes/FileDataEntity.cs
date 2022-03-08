@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
 {
     public class FileDataEntity : TaskDataEntity, IFileDataEntity
     {
-        public string FileName { get; set; } = string.Empty;
-        public string MIMEType { get; set; } = string.Empty;
+        public string? FileName { get; set; }
+        public string? MIMEType { get; set; }
+
+        [NotMapped]
+        public byte[]? Data { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace BPMS_BL.Helpers
             IEnumerable<T> nodes = allNodes.Where(x => x.ParentId == parentId);
             foreach (T node in nodes)
             {
-                if (node.Type == DataTypeEnum.Object)
+                if (node.Type >= DataTypeEnum.Object)
                 {
                     node.Children = CreateTree(allNodes, node.Id);
                 }

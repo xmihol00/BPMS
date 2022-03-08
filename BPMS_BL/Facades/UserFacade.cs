@@ -22,6 +22,7 @@ using BPMS_DTOs.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using BPMS_BL.Helpers;
+using BPMS_DTOs.Filter;
 
 namespace BPMS_BL.Facades
 {
@@ -38,6 +39,20 @@ namespace BPMS_BL.Facades
             _userRepository = userRepository;
             _systemRoleRepository = systemRoleRepository;
             _mapper = mapper;
+        }
+
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _userRepository.Filters = filters;
+            _userRepository.UserId = userId;
+            _userId = userId;
+        }
+
+        public async Task<List<UserAllDTO>> Filter(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _userRepository.Filters[((int)dto.Filter)] = !dto.Removed;
+            return await _userRepository.All();
         }
 
         public async Task<(ClaimsPrincipal principal, AuthenticationProperties authProperties)> Authenticate(string userName, string password, HttpResponse response)

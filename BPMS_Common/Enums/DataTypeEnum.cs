@@ -8,11 +8,15 @@ namespace BPMS_Common.Enums
 {
     public enum DataTypeEnum
     {
-        Object,
         String,
         Number,
         Bool,
-        Array
+        Object,
+        ArrayString,
+        ArrayNumber,
+        ArrayBool,
+        ArrayObject,
+        ArrayArray,
     }
 
     public static class DataType
@@ -33,8 +37,20 @@ namespace BPMS_Common.Enums
                 case DataTypeEnum.String:
                     return "řetězec";
                 
-                case DataTypeEnum.Array:
-                    return "pole";
+                case DataTypeEnum.ArrayString:
+                    return "pole řetězců";
+
+                case DataTypeEnum.ArrayBool:
+                    return "pole booleovských hodnota";
+
+                case DataTypeEnum.ArrayNumber:
+                    return "pole čísel";
+
+                case DataTypeEnum.ArrayObject:
+                    return "pole objektů";
+                
+                case DataTypeEnum.ArrayArray:
+                    return "pole polí";
                 
                 default:
                     return "";

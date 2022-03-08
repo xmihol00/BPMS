@@ -257,18 +257,31 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<ModelAllDTO>> All(Guid? id = null)
         {
-            return _dbSet.Include(x => x.Agenda)
-                         .Where(x => x.Id != id)
-                         .Select(x => new ModelAllDTO
-                         {
-                             AgendaId = x.AgendaId,
-                             AgendaName = x.Agenda.Name,
-                             Id = x.Id,
-                             Name = x.Name,
-                             SVG = x.SVG,
-                             State = x.State
-                         })
-                         .ToListAsync();
+            IQueryable<ModelEntity> query = _dbSet.Include(x => x.Agenda)
+                                                  .Where(x => x.Id != id);
+
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.ModelIncorrect)] || Filters[((int)FilterTypeEnum.ModelSharable)] ||
+                    Filters[((int)FilterTypeEnum.ModelExecutable)] || Filters[((int)FilterTypeEnum.ModelWaiting)])
+                {
+                    query = query.Where(x => (Filters[((int)FilterTypeEnum.ModelIncorrect)] && x.State == ModelStateEnum.Incorrect) ||
+                                             (Filters[((int)FilterTypeEnum.ModelSharable)] && x.State == ModelStateEnum.Shareable) ||
+                                             (Filters[((int)FilterTypeEnum.ModelExecutable)] && x.State == ModelStateEnum.Executable) ||
+                                             (Filters[((int)FilterTypeEnum.ModelWaiting)] && x.State == ModelStateEnum.Waiting));
+                }
+            }
+
+            return query.Select(x => new ModelAllDTO
+                        {
+                            AgendaId = x.AgendaId,
+                            AgendaName = x.Agenda.Name,
+                            Id = x.Id,
+                            Name = x.Name,
+                            SVG = x.SVG,
+                            State = x.State
+                        })
+                        .ToListAsync();
         }
     }
 }

@@ -55,11 +55,13 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<Dictionary<Guid, TaskDataEntity>> InputServiceTaskData(Guid taskId)
+        public async Task<Dictionary<Guid, IGrouping<Guid, TaskDataEntity>>> InputServiceTaskData(Guid taskId)
         {
-            return _dbSet.Include(x => x.Schema)
-                         .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Input)
-                         .ToDictionaryAsync(x => x.SchemaId.Value);
+            return (await _dbSet.Include(x => x.Schema)
+                               .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Input)
+                               .ToListAsync())
+                               .GroupBy(x => x.Schema.Id)
+                               .ToDictionary(x => x.Key);
         }
 
         public Task<TaskDataEntity> Detail(Guid id)
@@ -82,6 +84,12 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.OutputTask.WorkflowId == workflowId && x.Attribute.BlockId == blockId &&
                                      x.OutputTask.Workflow.State == WorkflowStateEnum.Active)
                          .ToDictionaryAsync(x => (Guid)x.AttributeId);
+        }
+
+        public Task<TaskDataEntity> BareSchema(Guid id)
+        {
+            return _dbSet.Include(x => x.Schema)
+                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<Dictionary<Guid, TaskDataEntity>> OfRecieveEvent(Guid blockId)
@@ -114,6 +122,12 @@ namespace BPMS_DAL.Repositories
                                MIMEType = x.MIMEType
                            })
                            .FirstAsync();
+        }
+
+        public Task<List<TaskDataEntity>> OfArray(Guid id, Guid? dataSchemaId)
+        {
+            return _dbSet.Where(x => x.Id != id && x.SchemaId == dataSchemaId)
+                         .ToListAsync();
         }
     }
 }

@@ -1,7 +1,10 @@
 using BPMS_BL.Facades;
+using BPMS_BL.Helpers;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BPMS.Controllers
 {
@@ -14,6 +17,20 @@ namespace BPMS.Controllers
         : base(modelFacade)
         {
             _modelFacade = modelFacade;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+
+            _modelFacade.SetFilters(_filters, _userId);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Filter(FilterDTO dto)
+        {
+            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+            return PartialView("Partial/_ModelOverview", await _modelFacade.Filter(dto));
         }
 
         [HttpGet]

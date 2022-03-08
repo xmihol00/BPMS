@@ -107,7 +107,24 @@ namespace BPMS_BL.Facades
         public async Task<WorkflowInfoCardDTO> Edit(WorkflowEditDTO dto)
         {
             WorkflowEntity workflow = await _workflowRepository.BareAdmin(dto.Id);
-            workflow.Description = dto.Description ?? "";
+            if (workflow.State == WorkflowStateEnum.Active && dto.State != WorkflowStateEnum.Active)
+            {
+                BlockWorkflowStateEnum state = dto.State == WorkflowStateEnum.Paused ? BlockWorkflowStateEnum.Paused : BlockWorkflowStateEnum.Canceled;
+                foreach (BlockWorkflowEntity block in await _blockWorkflowRepository.AllOfState(dto.Id, BlockWorkflowStateEnum.Active))
+                {
+                    block.State = state;
+                }
+            }
+            else if (workflow.State == WorkflowStateEnum.Paused && dto.State != WorkflowStateEnum.Paused)
+            {
+                BlockWorkflowStateEnum state = dto.State == WorkflowStateEnum.Active ? BlockWorkflowStateEnum.Active : BlockWorkflowStateEnum.Canceled;
+                foreach (BlockWorkflowEntity block in await _blockWorkflowRepository.AllOfState(dto.Id, BlockWorkflowStateEnum.Paused))
+                {
+                    block.State = state;
+                }
+            }
+
+            workflow.Description = dto.Description;
             workflow.Name = dto.Name;
             workflow.State = dto.State;
             await _workflowRepository.Save();

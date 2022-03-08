@@ -25,6 +25,8 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BPMS_DTOs.Filter;
+using BPMS_DTOs.Task.DataTypes;
+using BPMS_DTOs.Task.IDataTypes;
 
 namespace BPMS_BL.Facades
 {
@@ -69,6 +71,37 @@ namespace BPMS_BL.Facades
             await _taskDataRepository.Save();
 
             return await UserTaskDetail(Guid.Parse(data["TaskId"]), userId);
+        }
+
+        public async Task<TaskDataDTO> AddToArray(Guid taskDataId, DataTypeEnum type)
+        {
+            TaskDataEntity array = await _taskDataRepository.BareSchema(taskDataId);
+            TaskDataEntity entity;
+            switch (type)
+            {
+                case DataTypeEnum.String:
+                    entity = new StringDataEntity();
+                    break;
+                
+                case DataTypeEnum.Bool:
+                    entity = new BoolDataEntity();
+                    break;
+                
+                case DataTypeEnum.Number:
+                    entity = new NumberDataEntity();
+                    break;
+                                
+                default:
+                    entity = new ArrayDataEntity();
+                    break;
+            }
+            entity.SchemaId = array.SchemaId;
+            entity.OutputTaskId = array.OutputTaskId;
+
+            await _taskDataRepository.Create(entity);
+            await _taskDataRepository.Save();
+
+            return _mapper.Map(entity, entity.GetType(), typeof(TaskDataDTO)) as TaskDataDTO ?? new TaskDataDTO();
         }
 
         private async Task SaveDataInternal(IFormCollection data, IFormFileCollection files)
@@ -122,8 +155,8 @@ namespace BPMS_BL.Facades
                     
                     case IFileDataEntity fileData:
                         File.Delete(StaticData.FileStore + fileData.Id);
-                        fileData.FileName = "";
-                        fileData.MIMEType = "";
+                        fileData.FileName = null;
+                        fileData.MIMEType = null;
                         break;
                 }
             }
@@ -212,13 +245,25 @@ namespace BPMS_BL.Facades
             List<TaskDataDTO> outputServiceData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _taskDataRepository.MappedServiceTasks(id))
             {
+                TaskDataDTO mapped = _mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO;
+                if (data is IArrayDataEntity)
+                {
+                    int i = 0;
+                    foreach (TaskDataEntity arrayData in await _taskDataRepository.OfArray(data.Id, data.SchemaId))
+                    {
+                        TaskDataDTO mappedArray = _mapper.Map(arrayData, arrayData.GetType(), typeof(TaskDataDTO)) as TaskDataDTO;
+                        mappedArray.Name += $" - {++i}. hodnota";
+                        (mapped as ITaskArray).Values.Add(mappedArray);
+                    }
+                }
+                
                 if (data.Schema.Direction == DirectionEnum.Input)
                 {
-                    inputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+                    inputServiceData.Add(mapped);
                 }
                 else
                 {
-                    outputServiceData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
+                    outputServiceData.Add(mapped);
                 }
             }
             detail.InputServiceData = inputServiceData.GroupBy(x => x.BlockName);
@@ -239,6 +284,12 @@ namespace BPMS_BL.Facades
             _taskRepository.Filters = filters;
             _taskRepository.UserId = userId;
             _userId = userId;
+        }
+
+        public struct TaskArrayCount
+        {
+            public TaskArrayDTO task;
+            public int count;
         }
     }
 }

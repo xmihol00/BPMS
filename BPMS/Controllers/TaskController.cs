@@ -8,6 +8,7 @@ using System;
 using BPMS_Common;
 using BPMS_DTOs.Filter;
 using BPMS_BL.Helpers;
+using BPMS_Common.Enums;
 
 namespace BPMS.Controllers
 {
@@ -83,7 +84,14 @@ namespace BPMS.Controllers
         public async Task<IActionResult> DownloadFile(Guid id)
         {
             FileDownloadDTO file = await _taskFacade.DownloadFile(id);
-            return File(file.Data, file.MIMEType, file.FileName);
+            return File(file.Data ?? new byte[1], file.MIMEType, file.FileName);
+        }
+
+        [HttpPost]
+        [Route("/Task/AddToArray/{taskDataId}/{type}")]
+        public async Task<IActionResult> AddToArray(Guid taskDataId, DataTypeEnum type)
+        {
+            return PartialView($"Partial/_TaskData{type}", await _taskFacade.AddToArray(taskDataId, type));
         }
     }
 }

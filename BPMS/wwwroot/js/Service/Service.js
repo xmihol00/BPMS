@@ -28,6 +28,8 @@ function ResetForm(form, direction, btn, parentId = "")
     document.getElementById("DirectionId").value = direction;
     document.getElementById("IdId").value = "";
     document.getElementById("NameId").value = "";
+    document.getElementById("DataToogleId").classList.remove("d-none");
+    document.getElementById("CompulsoryDivId").classList.remove("d-none");
     let alias = document.getElementById("AliasId");
     alias.value = "";
     alias.readOnly = false;
@@ -44,6 +46,7 @@ function ResetForm(form, direction, btn, parentId = "")
     form.classList.remove("d-none");
     btn.classList.add("d-none");
     HiddenButtons = btn;
+
     form.onsubmit = (event) => DataSchemaSubmit(event, `${direction}SchemaId`);
     InputValidator(form);
 }
@@ -90,13 +93,19 @@ function DataSchemaSubmit(event, targetId)
 function ToggleStaticData(checkbox)
 {
     let input = document.getElementById("StaticDataId");
+    let type = document.getElementById("SchemaTypeId");
+    let compulsory = document.getElementById("CompulsoryDivId");
     if (checkbox.checked)
     {
         input.classList.remove("d-none");
+        type.disabled = true;
+        compulsory.classList.add("d-none");
     }
     else
     {
         input.classList.add("d-none");
+        compulsory.classList.remove("d-none");
+        type.disabled = false;
     }
 }
 
@@ -133,6 +142,20 @@ function EditAtrribute(form, btn, disabled)
             }
         }
     }
+   
+    let select = document.getElementById("SchemaTypeId");
+    staticDataDiv = document.getElementById("DataToogleId");
+    compulsoryDiv = document.getElementById("CompulsoryDivId");
+    if (select.value == "Object" || select.value.startsWith("Array"))
+    {
+        staticDataDiv.classList.add("d-none");
+        compulsoryDiv.classList.add("d-none");
+    }
+    else
+    {
+        staticDataDiv.classList.remove("d-none");
+        compulsoryDiv.classList.remove("d-none");
+    }
     
     let indputDiv = document.getElementById("StaticDataId");
     let dataCh = document.getElementById("DataChId");
@@ -142,10 +165,12 @@ function EditAtrribute(form, btn, disabled)
         indputDiv.classList.remove("d-none");
         indputDiv.children[0].value = staticData;
         dataCh.checked = true;
+        document.getElementById("CompulsoryDivId").classList.add("d-none");
     }
     else
     {
         indputDiv.classList.add("d-none");
+        document.getElementById("CompulsoryDivId").classList.remove("d-none");
         dataCh.checked = false;
     }
     
@@ -317,5 +342,88 @@ function AuthChange(select)
         let secret = document.getElementById("AppSecretId");
         secret.classList.remove("d-none");
         secret.classList.remove("col-md-6");
+    }
+}
+
+function SchemaTypeChange(select)
+{
+    let staticData = document.getElementById("DataToogleId");
+    let compulsory = document.getElementById("CompulsoryDivId");
+    if (select.value == "Object" || select.value.startsWith("Array"))
+    {
+        staticData.classList.add("d-none");
+        compulsory.classList.add("d-none");
+    }
+    else
+    {
+        staticData.classList.remove("d-none");
+        compulsory.classList.remove("d-none");
+    }
+}
+
+function GenerateArrays(form)
+{
+    for (let array of form.querySelectorAll("[name='array']"))
+    {
+        i = 0;
+        for (let input of array.children)
+        {
+
+            input.children[0].name = `${array.id}_${++i}`;
+        }
+    }
+}
+
+function AddArrayInput(btn, type)
+{
+    let target = btn.parentNode.children[3];
+    let tmp = document.createElement("div");
+    tmp.innerHTML = CreateArrayInput(target.children.length + 1, type, btn.parentNode.children[1].innerText);
+    target.appendChild(tmp.children[0]);
+}
+
+function CreateArrayInput(index, type, text)
+{
+    if (type == "ArrayString")
+    {
+        type = "text";
+    }
+    else if (type == "ArrayNumber")
+    {
+        type = "number"
+    }
+    else
+    {
+        if (type == "ArrayBool")
+        {
+            return `<label class="input mt-3">
+                        <select class="input-select"> 
+                            <option value="true">ano (true)</option>
+                            <option value="false">ne (false)</option>
+                        </select>
+                        <span class="input-label">${text} - ${index}. hodnota</span>
+                        <button class="btn array-remove" onclick="RemoveArrayInput(this)" type="button"><i class="fas fa-times"></i></button>
+                    </label>`
+        }
+        return "";
+    }
+
+    return `<label class="input mt-3">
+                <input class="input-field" type="${type}" placeholder=" "/>
+                <span class="input-label">${text} - ${index}. hodnota</span>
+                <button class="btn array-remove" onclick="RemoveArrayInput(this)" type="button"><i class="fas fa-times"></i></button>
+            </label>`
+}
+
+function RemoveArrayInput(btn)
+{
+    let parent = btn.parentNode;
+    let parentParent = parent.parentNode;
+    let name = parentParent.parentNode.children[1].innerText;
+    i = 0;
+    parent.remove();
+    for (let input of parentParent.children)
+    {
+        input.children[1].innerText = `${name} - ${++i}. hodnota`;
     }
 }

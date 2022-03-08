@@ -29,3 +29,27 @@ function RemoveFile(btn)
     fileLabel.setAttribute("data-title", parent.children[0].getAttribute("data-title"));
     parent.children[0].remove();
 }
+
+function AddArrayInput(btn, type)
+{
+    let target = btn.parentNode.parentNode.children[1];
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Task/AddToArray/${target.id}/${type}`,
+    })
+    .done((result) => 
+    {
+        let tmp = document.createElement("div");
+        tmp.innerHTML = result;
+        tmp.children[0].children[0].children[1].innerText += ` - ${target.children.length + 1}. hodnota`;
+        target.appendChild(tmp.children[0]);
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    }); 
+}

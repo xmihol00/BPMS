@@ -46,16 +46,31 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<SystemAllDTO>> All(Guid? id = null)
         {
-            return _dbSet.Where(x => x.Id != id)
-                         .Select(x => new SystemAllDTO
-                         {
-                             Id = x.Id,
-                             Name = x.Name,
-                             URL = x.URL,
-                             Description = x.Description,
-                             State = x.State
-                         })
-                         .ToListAsync();
+            IQueryable<SystemEntity> query = _dbSet.Where(x => x.Id != id);
+
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.SystemActive)] || Filters[((int)FilterTypeEnum.SystemInactive)] ||
+                    Filters[((int)FilterTypeEnum.SystemWaiting)] || Filters[((int)FilterTypeEnum.SystemDeactivated)] ||
+                    Filters[((int)FilterTypeEnum.SystemThisSystem)])
+                {
+                    query = query.Where(x => (Filters[((int)FilterTypeEnum.SystemInactive)] && x.State == SystemStateEnum.Inactive) ||
+                                             (Filters[((int)FilterTypeEnum.SystemActive)] && x.State == SystemStateEnum.Active) ||
+                                             (Filters[((int)FilterTypeEnum.SystemDeactivated)] && x.State == SystemStateEnum.Deactivated) ||
+                                             (Filters[((int)FilterTypeEnum.SystemThisSystem)] && x.State == SystemStateEnum.ThisSystem) ||
+                                             (Filters[((int)FilterTypeEnum.SystemWaiting)] && x.State == SystemStateEnum.Waiting));
+                }
+            }             
+                         
+            return query.Select(x => new SystemAllDTO
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            URL = x.URL,
+                            Description = x.Description,
+                            State = x.State
+                        })
+                        .ToListAsync();
         }
 
         public Task<SystemInfoCardDTO> InfoCard(Guid id)

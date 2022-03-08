@@ -173,8 +173,7 @@ namespace BPMS_BL.Facades
         public async Task Edit(BlockModelEditDTO dto)
         {
             BlockModelEntity block = await _blockModelRepository.Detail(dto.Id);
-            block.Name = dto.Name;
-            block.Description = dto.Description ?? "";
+            block.Description = dto.Description;
 
             if (block is IServiceTaskModelEntity)
             {

@@ -10,6 +10,7 @@ namespace BPMS_DTOs.Task.IDataTypes
 {
     public interface ITaskArray : ITaskData
     {
-        public List<TaskDataDTO>? Values { get; set; }
+        public List<TaskDataDTO> Values { get; set; }
+        public DataTypeEnum Type { get; set; }
     }
 }

@@ -611,6 +611,12 @@ a:hover {
   right: 2px;
 }
 
+.array-remove {
+  position: absolute;
+  top: 0;
+  right: 0.75rem;
+}
+
 .padr-icon {
   padding-right: 0.1rem !important;
 }

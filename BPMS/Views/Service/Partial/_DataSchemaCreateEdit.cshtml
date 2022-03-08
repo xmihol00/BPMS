@@ -21,7 +21,7 @@
     </div>
     <div class="col-6 mb-3">
         <label class="input">
-            <select class="input-select" name="Type"> 
+            <select id="SchemaTypeId" class="input-select" name="Type" onclick="SchemaTypeChange(this)"> 
                 @foreach (DataTypeEnum value in Enum.GetValues<DataTypeEnum>())
                 {
                     <option value="@value">@value.ToLabel()</option>
@@ -30,13 +30,13 @@
             <span class="input-label">Typ</span>
         </label>
     </div>  
-    <div class="col-3 vertical-justify-center mb-3">
+    <div id="CompulsoryDivId" class="col-3 vertical-justify-center mb-3">
         <label class="d-flex justify-content-center">
             <input id="CompulsoryId" type="checkbox" name="Compulsory" class="checkbox" checked/>
             <span class="label-checkbox">Povinný</span>
         </label>
     </div>
-    <div class="col-3 vertical-justify-center mb-3">
+    <div id="DataToogleId" class="col-3 vertical-justify-center mb-3">
         <label class="d-flex justify-content-center">
             <input id="DataChId" name="DataToggle" type="checkbox" class="checkbox" onchange="ToggleStaticData(this)"/>
             <span  class="label-checkbox">Data</span>

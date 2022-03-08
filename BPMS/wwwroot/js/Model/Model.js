@@ -167,7 +167,7 @@ function AddSpecBtn(type)
 function CreateSpecInput(index, type, value = "")
 {
     return `<label class="input mt-3">
-        <input required name="Specification[${index}]" class="input-field" type="text" placeholder=" " value="${value}" oninput="" />
+        <input required name="Specification[${index}]" class="input-field" type="text" placeholder=" " value="${value}" />
         <span id="S${index}LableId" class="input-label">${index + 1}. ${type == "File" ? "typ souboru" : "hodnota výběru"}</span>
         <button class="btn spec-remove" onclick="RemoveSpec(this, '${type}')" type="button"><i class="fas fa-times"></i></button>
     </label>`

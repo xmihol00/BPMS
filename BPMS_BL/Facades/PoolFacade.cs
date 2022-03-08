@@ -58,12 +58,12 @@ namespace BPMS_BL.Facades
 
             entity.SystemId = dto.SystemId;
             entity.Model.State = ModelStateEnum.Shareable;
-            ModelStateEnum state = ModelStateEnum.New;
+            ModelStateEnum state = ModelStateEnum.Incorrect;
             foreach (PoolEntity pool in entity.Model.Pools)
             {
                 if (pool.SystemId == null)
                 {
-                    entity.Model.State = ModelStateEnum.New;
+                    entity.Model.State = ModelStateEnum.Incorrect;
                 }
 
                 if (pool.SystemId == StaticData.ThisSystemId)

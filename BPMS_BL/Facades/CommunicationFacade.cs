@@ -207,8 +207,10 @@ namespace BPMS_BL.Facades
 
             foreach (FileDataEntity data in message.Files)
             {
-                (taskData[data.AttributeId.Value] as IFileDataEntity).MIMEType = data.MIMEType;
-                (taskData[data.AttributeId.Value] as IFileDataEntity).FileName = data.FileName;
+                IFileDataEntity file = taskData[data.AttributeId.Value] as IFileDataEntity;
+                file.MIMEType = data.MIMEType;
+                file.FileName = data.FileName;
+                await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, file.Data);
             }
 
             foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)
@@ -337,7 +339,7 @@ namespace BPMS_BL.Facades
             }
 
             ModelEntity model = _mapper.Map<ModelEntity>(dto);
-            model.State = ModelStateEnum.Shared;
+            model.State = ModelStateEnum.Executable;
             XDocument svg = XDocument.Parse(dto.SVG, LoadOptions.PreserveWhitespace);
             
             List<Guid> targetAgendas = await _systemRepository.Agendas(dto.SenderURL);

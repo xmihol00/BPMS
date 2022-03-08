@@ -245,6 +245,13 @@ namespace BPMS_BL.Helpers
                 
                 case DataTypeEnum.Bool:
                     return new BoolDataEntity();
+                
+                case DataTypeEnum.ArrayString:
+                case DataTypeEnum.ArrayBool:
+                case DataTypeEnum.ArrayNumber:
+                case DataTypeEnum.ArrayObject:
+                case DataTypeEnum.ArrayArray:
+                    return new ArrayDataEntity();
                                 
                 default:
                     return new TaskDataEntity();
@@ -382,6 +389,13 @@ namespace BPMS_BL.Helpers
                     
                     case IFileDataEntity:
                         dto.Files = group.Cast<FileDataEntity>();
+                        foreach (IFileDataEntity file in dto.Files)
+                        {
+                            if (file.FileName != null)
+                            {
+                                file.Data = await File.ReadAllBytesAsync(StaticData.FileStore + file.Id);
+                            }
+                        }
                         break;
 
                     case IBoolDataEntity:
@@ -529,13 +543,33 @@ namespace BPMS_BL.Helpers
 
         private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, Guid serviceTaskId)
         {
-            Dictionary<Guid, TaskDataEntity> data = await _taskDataRepository.InputServiceTaskData(serviceTaskId);
-            IEnumerable<DataSchemaDataDTO> nodes = await _dataSchemaRepository.DataSchemaToSend(serviceId);
+            Dictionary<Guid, IGrouping<Guid, TaskDataEntity>> data = await _taskDataRepository.InputServiceTaskData(serviceTaskId);
+            List<DataSchemaDataDTO> nodes = await _dataSchemaRepository.DataSchemaToSend(serviceId);
+            List<DataSchemaDataDTO> additional = new List<DataSchemaDataDTO>();
             foreach (DataSchemaDataDTO node in nodes)
             {
                 if (node.StaticData == null)
                 {
-                    node.Data = StringDataOfTask(data.GetValueOrDefault(node.Id));    
+                    if (node.Type > DataTypeEnum.Object)
+                    {
+                        TaskDataEntity array = data[node.Id].First(x => x is IArrayDataEntity);
+                        foreach (TaskDataEntity arrayData in data[node.Id])
+                        {
+                            if (arrayData.Id != array.Id)
+                            {
+                                additional.Add(new DataSchemaDataDTO
+                                {
+                                    Data = StringDataOfTask(arrayData),
+                                    ParentId = array.SchemaId,
+                                    Type = arrayData.Schema.Type
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        node.Data = StringDataOfTask(data.GetValueOrDefault(node.Id)?.First());
+                    }
                 }
                 else
                 {
@@ -548,6 +582,7 @@ namespace BPMS_BL.Helpers
                 }
             }
 
+            nodes.AddRange(additional);
             return ServiceTreeHelper.CreateTree<DataSchemaDataDTO>(nodes);
         }
 

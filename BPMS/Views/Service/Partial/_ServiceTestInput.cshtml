@@ -6,8 +6,8 @@
 @if (Model != null)
 {
     <h4 class="text-font mb-3">Zadejte testovací data</h4>
-    <form id="ServiceTestFormId" method="post" action="/Service/Test" oninput="InputValidator(this)" 
-          onsubmit="AjaxFormSubmit(event, 'OutputInputId', false, false, null, ScrollGenerate)">
+    <form id="ServiceTestFormId" method="post" action="/Service/Test" oninput="InputValidator(this)" novalidate
+          onsubmit="AjaxFormSubmit(event, 'OutputInputId', false, false, GenerateArrays(this), ScrollGenerate)">
         <input type="hidden" name="ServiceId" value="@Model.ServiceId" /> 
         @foreach (DataSchemaAllDTO schema in Model.Schemas)
         {
@@ -15,36 +15,39 @@
             {
                 case DataTypeEnum.Number:
                 case DataTypeEnum.String:
-                    @if (schema.Compulsory)
-                    {
-                        disabled = true;
-                        <label class="input mb-3">
-                            <input required name="@schema.Id" class="input-field" type="@schema.Type.ToHtmlType()" 
-                                   placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
-                            <span class="input-label">
-                                @schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")
-                            </span>
-                        </label>
-                    }
-                    else
-                    {
-                        <label class="input mb-3">
-                            <input name="@schema.Id" class="input-field" type="@schema.Type.ToHtmlType()" placeholder=" "
-                                   placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
-                            <span class="input-label">
-                                @schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")
-                            </span>
-                        </label>
-                    }
+                    disabled |= schema.Compulsory;
+                    <label class="input mb-3">
+                        <input @(schema.Compulsory ? "required" : "") name="@schema.Id" class="input-field" type="@schema.Type.ToHtmlType()" 
+                               placeholder=" " value="@schema.StaticData" @(schema.StaticData == null ? "" : "disabled") />
+                        <span class="input-label">
+                            @schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")
+                        </span>
+                    </label>
                     break;
                 
                 case DataTypeEnum.Bool:
-                    <label class="d-flex justify-content-center mb-3">
-                        <input name="@schema.Id" type="checkbox" class="checkbox" checked/>
-                        <span class="label-checkbox">@schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")</span>
+                    disabled |= schema.Compulsory;
+                    <label class="input mb-3">
+                        <select @(schema.Compulsory ? "required" : "") class="input-select" name="@schema.Id"> 
+                            <option value="" class="text-secondary text-italic" selected>nevybráno</option>
+                            <option value="true">ano (true)</option>
+                            <option value="false">ne (false)</option>
+                        </select>
+                        <span class="input-label">@schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")</span>
                     </label>
                     break;
-            }
+                
+                case DataTypeEnum.ArrayString:
+                case DataTypeEnum.ArrayNumber:
+                case DataTypeEnum.ArrayBool:
+                    <div class="mb-3">
+                        <span>pole:</span>
+                        <span class="text-prim text-bold ms-1">@schema.Name @(String.IsNullOrEmpty(schema.Alias) ? "" : $"({schema.Alias})")</span>
+                        <button type="button" class="butn btn-p float-end" onclick="AddArrayInput(this, '@schema.Type')">Přidat hodnotu</button>
+                        <div id="@schema.Id" name="array"></div>
+                    </div>
+                    break;
+            }       
         }
         <div class="d-flex justify-content-center">
             <input type="submit" form="ServiceTestFormId" class="butn btn-s" value="Generovat dotaz" onclick="SetFormAction(this, '/Service/Generate')" disabled="@disabled" />

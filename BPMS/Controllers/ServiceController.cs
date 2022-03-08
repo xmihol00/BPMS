@@ -5,6 +5,9 @@ using BPMS_DTOs.DataSchema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Mvc.Filters;
+using BPMS_DTOs.Filter;
+using BPMS_BL.Helpers;
 
 namespace BPMS.Controllers
 {
@@ -17,6 +20,20 @@ namespace BPMS.Controllers
         : base(serviceFacade)
         {
             _serviceFacade = serviceFacade;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+
+            _serviceFacade.SetFilters(_filters, _userId);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Filter(FilterDTO dto)
+        {
+            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+            return PartialView("Partial/_ServiceOverview", await _serviceFacade.Filter(dto));
         }
 
         [HttpGet]

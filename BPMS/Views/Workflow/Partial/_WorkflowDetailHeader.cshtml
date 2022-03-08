@@ -24,7 +24,8 @@
         <div class="col-6 mt-1">
             <label class="input">
                 <select required class="input-select" name="State">
-                    @if (Model.State == WorkflowStateEnum.Finished || Model.State == WorkflowStateEnum.Waiting)
+                    @if (Model.State == WorkflowStateEnum.Finished || Model.State == WorkflowStateEnum.Waiting ||
+                         Model.State == WorkflowStateEnum.Canceled)
                     {
                         <option value="@Model.State" selected>@Model.State.ToLabel()</option>
                     }
@@ -39,12 +40,6 @@
                         <option value="@Model.State" selected>@Model.State.ToLabel()</option>
                         <option value="@WorkflowStateEnum.Active">@WorkflowStateEnum.Active.ToLabel()</option>
                         <option value="@WorkflowStateEnum.Canceled">@WorkflowStateEnum.Canceled.ToLabel()</option>
-                    }
-                    else if (Model.State == WorkflowStateEnum.Canceled)
-                    {
-                        <option value="@Model.State" selected>@Model.State.ToLabel()</option>
-                        <option value="@WorkflowStateEnum.Active">@WorkflowStateEnum.Active.ToLabel()</option>
-                        <option value="@WorkflowStateEnum.Paused">@WorkflowStateEnum.Paused.ToLabel()</option>
                     }
                 </select>
                 <span class="input-label">Stav</span>

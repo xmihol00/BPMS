@@ -22,6 +22,7 @@ using BPMS_Common.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using BPMS_DAL;
 using BPMS_DTOs.Account;
+using BPMS_DTOs.Filter;
 
 namespace BPMS_BL.Facades
 {
@@ -57,6 +58,20 @@ namespace BPMS_BL.Facades
             _dataSchemaRepository = dataSchemaRepository;
             _context = context;
             _mapper = mapper;
+        }
+
+        public void SetFilters(bool[] filters, Guid userId)
+        {
+            _modelRepository.Filters = filters;
+            _modelRepository.UserId = userId;
+            _userId = userId;
+        }
+
+        public async Task<List<ModelAllDTO>> Filter(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _modelRepository.Filters[((int)dto.Filter)] = !dto.Removed;
+            return await _modelRepository.All();
         }
 
         public async Task<Guid?> Remove(Guid id)
@@ -130,7 +145,7 @@ namespace BPMS_BL.Facades
 
             if (shared)
             {
-                _modelRepository.ChangeState(model.Id, ModelStateEnum.Shared);
+                _modelRepository.ChangeState(model.Id, ModelStateEnum.Executable);
             }
             await _modelRepository.Save();
 

@@ -1,0 +1,8 @@
+@model List<ServiceAllDTO>
+    
+<div class="row">
+    @foreach (ServiceAllDTO service in Model)
+    {
+        @await Html.PartialAsync("Partial/_ServiceCard", (service, false))
+    }
+</div>

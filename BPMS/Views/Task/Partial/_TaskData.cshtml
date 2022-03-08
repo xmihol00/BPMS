@@ -48,6 +48,10 @@
                         case ITaskFile taskFile:
                             @await Html.PartialAsync("Partial/_TaskDataFile", taskFile)
                             break;
+                        
+                        case ITaskArray taskArray:
+                            @await Html.PartialAsync("Partial/_TaskDataArray", taskArray)
+                            break;
                     }
                 }
             }

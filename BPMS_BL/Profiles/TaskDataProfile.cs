@@ -30,7 +30,8 @@ namespace BPMS_BL.Profiles
             .Include<SelectDataEntity, TaskSelectDTO>()
             .Include<FileDataEntity, TaskFileDTO>()
             .Include<TextDataEntity, TaskTextDTO>()
-            .Include<DateDataEntity, TaskDateDTO>();
+            .Include<DateDataEntity, TaskDateDTO>()
+            .Include<ArrayDataEntity, TaskArrayDTO>();
 
             CreateMap<StringDataEntity, TaskStringDTO>();
             CreateMap<BoolDataEntity, TaskBoolDTO>();
@@ -43,6 +44,9 @@ namespace BPMS_BL.Profiles
                                                                                         .Aggregate((x, y) => x + ", " + y)));
             CreateMap<TextDataEntity, TaskTextDTO>();
             CreateMap<DateDataEntity, TaskDateDTO>();
+            CreateMap<ArrayDataEntity, TaskArrayDTO>()
+                .ForMember(dst => dst.Values, opt => opt.Ignore())
+                .ForMember(dst => dst.Type, opt => opt.MapFrom(src => src.Schema.Type - 4));
         }
     }
 }

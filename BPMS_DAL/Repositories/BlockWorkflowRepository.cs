@@ -101,6 +101,12 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<List<BlockWorkflowEntity>> AllOfState(Guid workflowId, BlockWorkflowStateEnum state)
+        {
+            return _dbSet.Where(x => x.WorkflowId == workflowId && x.State == state)
+                         .ToListAsync();
+        }
+
         public Task<BlockWorkflowEntity> Bare(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
