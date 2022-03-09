@@ -3,6 +3,16 @@ var ModalContentId = null;
 var LoadedElements = [];
 var Callback = null;
 var HideDelay = 850;
+var Notifications = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.None).withUrl("/Notification").build();
+
+Notifications.on("Notification", (result) =>
+{
+    console.log(result);
+});
+
+Notifications.hub.qs = "test=123";
+
+Notifications.start();
 
 document.addEventListener("keydown", KeyDownHandler);
 

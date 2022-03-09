@@ -1,3 +1,4 @@
+using BPMS.Hubs;
 using BPMS_BL.Facades;
 using BPMS_BL.Profiles;
 using BPMS_Common;
@@ -58,6 +59,8 @@ services.AddScoped<WorkflowFacade>();
 services.AddScoped<SystemFacade>();
 services.AddScoped<BlockWorkflowFacade>();
 
+services.AddSignalR();
+
 services.AddAutoMapper(typeof(AgendaProfile), typeof(ServiceProfile), typeof(AttributeProfile), typeof(CommunicationProfile),
                        typeof(BlockWorkflowProfile), typeof(UserProfile), typeof(SystemProfile));
 
@@ -83,9 +86,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Task}/{action=Overview}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Task}/{action=Overview}/{id?}");
+app.MapHub<NotificationHub>("/Notification");
+
 
 using BpmsDbContext context = app.Services.CreateScope().ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();
