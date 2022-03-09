@@ -33,7 +33,6 @@ namespace BPMS.Controllers
             ViewData[SystemRoleEnum.AgendaKeeper.ToString()] = false;
             ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] = false;
             ViewData[SystemRoleEnum.ServiceKeeper.ToString()] = false;
-            ViewData[SystemRoleEnum.TaskSolver.ToString()] = false;
             ViewData[SystemRoleEnum.ModelKeeper.ToString()] = false;
 
             List<Claim> claims = user.Claims?.ToList();

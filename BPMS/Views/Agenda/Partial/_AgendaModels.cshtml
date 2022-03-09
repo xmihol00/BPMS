@@ -5,8 +5,11 @@
     @foreach (ModelAllAgendaDTO modl in Model)
     {
         <div class="shadow-box p-3 m-3 my-card bradius-card hover-card pointer" onclick="window.location.href = '/Model/Detail/@modl.Id'">
-            <div>
-                <h3 class="text-center border-bottom">@modl.Name</h3>
+            <div class="d-flex justify-content-center border-bottom mb-1">
+                <h3 class="text-font my-auto me-1">@modl.Name</h3>
+                <div class="badge rounded-pill text-1em ms-1 my-auto @modl.State">
+                    @modl.State.ToLabel()
+                </div>
             </div>
             @Html.Raw(modl.SVG)
         </div>

@@ -11,7 +11,7 @@ using BPMS_BL.Helpers;
 
 namespace BPMS.Controllers
 {
-    [Authorize("Admin, ServiceKeeper")]
+    [Authorize(Roles = "Admin, ServiceKeeper")]
     public class ServiceController : BaseController
     {
         private readonly ServiceFacade _serviceFacade;

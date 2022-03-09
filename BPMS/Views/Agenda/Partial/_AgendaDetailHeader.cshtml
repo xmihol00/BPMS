@@ -1,106 +1,104 @@
 @model AgendaDetailHeaderDTO
-
+@{
+    bool show = (bool)ViewData[SystemRoleEnum.Admin.ToString()] || (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()];
+}
 <div class="d-flex justify-content-between px-4 page-navbar-content">
-    <button type="button" class="btn my-auto mr-100"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+    <button type="button" class="btn my-auto @(show ? "mr-100" : "")"><i class="fas fa-info-circle my-auto"></i></button>
     <h1 class="my-auto text-font">Detail agendy</h1>
     <div class="my-auto">
-        <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
-        <button type="button" class="butn btn-p my-auto" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
-        <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
-        <button class="butn btn-p" onclick="ShowModal('EditAgendaId')">Upravit</button>
+        @if (show)
+        {
+            <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
+            <button type="button" class="butn btn-p my-auto" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
+            <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
+            <button class="butn btn-p" onclick="ShowModal('EditAgendaId')">Upravit</button>
+        }
     </div>
 </div>
-<form id="UploadModelFormId" class="mx-4 mt-4 mb-3 d-none" method="POST" action="/ModelUpload/Upload" enctype="multipart/form-data"
-      oninput="InputValidator(this)">
-    <input id="AgendaIdId" type="hidden" name="AgendaId" value="@Model.Id">
-    <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-        <h2 class="mb-0">Nahrání modelu</h2>
-        <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
-    </div>
-    <div class="row">
-        <div class="col-12 mt-1">
-            <label class="input">
-                <input required class="input-field" type="text" placeholder=" " name="Name" />
-                <span id="ModelNameLabelId" class="input-label">Název</span>
-            </label>
+@if (show)
+{
+    <form id="UploadModelFormId" class="mx-4 mt-4 mb-3 d-none" method="POST" action="/ModelUpload/Upload" enctype="multipart/form-data"
+        oninput="InputValidator(this)">
+        <input id="AgendaIdId" type="hidden" name="AgendaId" value="@Model.Id">
+        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+            <h2 class="mb-0">Nahrání modelu</h2>
+            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
         </div>
-        <div class="col-12 mt-3 mb-2">
-            <label class="input mb-2">
-                <textarea class="input-field" type="text" placeholder=" " name="Description"></textarea>
-                <span class="input-label">Popis</span>
-            </label>
+        <div class="row">
+            <div class="col-12 mt-1">
+                <label class="input">
+                    <input required class="input-field" type="text" placeholder=" " name="Name" />
+                    <span id="ModelNameLabelId" class="input-label">Název</span>
+                </label>
+            </div>
+            <div class="col-12 mt-3 mb-2">
+                <label class="input mb-2">
+                    <textarea class="input-field" type="text" placeholder=" " name="Description"></textarea>
+                    <span class="input-label">Popis</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <input required class="input-file" type="file" onchange="FileSelected(this)" name="BPMN" accept=".bpmn"/>
+                    <span class="input-label pointer">Soubor BPMN</span>
+                </label>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+                <label class="input">
+                    <input required class="input-file" type="file" onchange="FileSelected(this)" name="SVG" accept=".svg" />
+                    <span class="input-label pointer">Soubor SVG</span>
+                </label>
+            </div>
         </div>
-        <div class="col-12 col-md-6 mb-3">
-            <label class="input">
-                <input required class="input-file" type="file" onchange="FileSelected(this)" name="BPMN" accept=".bpmn"/>
-                <span class="input-label pointer">Soubor BPMN</span>
-            </label>
+        <div class="d-flex justify-content-center mb-1">
+            <button form="UploadModelFormId" type="submit" class="butn btn-s" disabled>Nahrát</button>
         </div>
-        <div class="col-12 col-md-6 mb-3">
-            <label class="input">
-                <input required class="input-file" type="file" onchange="FileSelected(this)" name="SVG" accept=".svg" />
-                <span class="input-label pointer">Soubor SVG</span>
-            </label>
+    </form>
+    <form id="EditAgendaId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/Edit" oninput="InputValidator(this)"
+        onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)">
+        <input type="hidden" name="Id" value="@Model.Id">
+        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+            <h2 class="mb-0">Editace agendy</h2>
+            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
         </div>
-    </div>
-    <div class="d-flex justify-content-center mb-1">
-        <button form="UploadModelFormId" type="submit" class="butn btn-s" disabled>Nahrát</button>
-    </div>
-</form>
-<form id="EditAgendaId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/Edit" oninput="InputValidator(this)"
-      onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)">
-    <input type="hidden" name="Id" value="@Model.Id">
-    <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-        <h2 class="mb-0">Editace agendy</h2>
-        <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
-    </div>
-    <div class="row">
-        <div class="col-12 mt-1">
-            <label class="input">
-                <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
-                <span class="input-label">Název</span>
-            </label>
+        <div class="row">
+            <div class="col-12 mt-1">
+                <label class="input">
+                    <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
+                    <span class="input-label">Název</span>
+                </label>
+            </div>
+            <div class="col-12 mt-3">
+                <label class="input mb-1">
+                    <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
+                    <span class="input-label">Popis</span>
+                </label>
+            </div>
         </div>
-        <div class="col-12 mt-3">
-            <label class="input mb-1">
-                <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
-                <span class="input-label">Popis</span>
-            </label>
+        <div class="d-flex justify-content-center mt-2">
+            <button form="EditAgendaId" type="submit" class="butn btn-s">Upravit</button>
         </div>
-    </div>
-    <div class="d-flex justify-content-center mt-2">
-        <button form="EditAgendaId" type="submit" class="butn btn-s">Upravit</button>
-    </div>
-</form>
-<form id="AddRoleFormId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/AddRole" novalidate 
-      onsubmit="AjaxFormSubmit(event, 'AgendaRolesId', true)" oninput="InputValidator(this)">
-    <input type="hidden" name="AgendaId" value="@Model.Id">
-    <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-        <h2 class="mb-0">Přidání role</h2>
-        <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
-    </div>
-    <div id="AddRoleId" class="row">
-        <div class="loading-content"></div>
-    </div>
-</form>
-<form id="AddSystemFormId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/AddSystem" novalidate 
-      onsubmit="AjaxFormSubmit(event, 'AgendaSystemsId', true)" oninput="InputValidator(this)">
-    <input type="hidden" name="TargetId" value="@Model.Id">
-    <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-        <h2 class="mb-0">Přidání systému</h2>
-        <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
-    </div>
-    <div id="AddSystemId" class="row">
-        <div class="loading-content"></div>
-    </div>
-</form>
-<div id="ModelModalId" class="d-none p-3">
-    <div class="d-flex">
-        <div class="container-lg">
-
+    </form>
+    <form id="AddRoleFormId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/AddRole" novalidate 
+        onsubmit="AjaxFormSubmit(event, 'AgendaRolesId', true)" oninput="InputValidator(this)">
+        <input type="hidden" name="AgendaId" value="@Model.Id">
+        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+            <h2 class="mb-0">Přidání role</h2>
+            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
         </div>
-        <div class="overview-nav">
-
+        <div id="AddRoleId" class="row">
+            <div class="loading-content"></div>
         </div>
-    </div>
-</div>
+    </form>
+    <form id="AddSystemFormId" class="mx-4 mt-4 mb-3 d-none" action="/Agenda/AddSystem" novalidate 
+        onsubmit="AjaxFormSubmit(event, 'AgendaSystemsId', true)" oninput="InputValidator(this)">
+        <input type="hidden" name="TargetId" value="@Model.Id">
+        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
+            <h2 class="mb-0">Přidání systému</h2>
+            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
+        </div>
+        <div id="AddSystemId" class="row">
+            <div class="loading-content"></div>
+        </div>
+    </form>
+}

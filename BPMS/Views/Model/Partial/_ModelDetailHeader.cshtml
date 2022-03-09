@@ -1,11 +1,14 @@
 @model ModelDetailHeaderDTO
+@{
+    bool show = (bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+}
 
-@if (Model != null)
-{
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
-        <h1 class="my-auto text-font">Detail modelu</h1>
-        <div class="my-auto">
+<div class="d-flex justify-content-between px-4 page-navbar-content">
+    <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
+    <h1 class="my-auto text-font">Detail modelu</h1>
+    <div class="my-auto">
+        @if (show)
+        {
             <button class="butn btn-p" onclick="ShowModal('EditModelId')" >Upravit</button>
             @switch (Model.State)
             {  
@@ -16,19 +19,22 @@
                 case ModelStateEnum.Shareable:
                     <button class="butn btn-s" onclick="ShareModel(this)">Sdílet</button>
                     break;
-                
+
                 case ModelStateEnum.Executable:
                     <button class="butn btn-s" onclick="ShowModal('RunModelId', '/Model/Run/@Model.Id', 'RunModelTargetId', true, null, ValidateStart)">Spustit</button>
                     break;
-                
+
                 case ModelStateEnum.Waiting:
                     <button class="butn btn-s" title="Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy." disabled>Spustit</button>
                     break;
             }
-        </div>
+        }
     </div>
+</div>
+@if (show)
+{
     <form id="EditModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Edit" 
-          onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)" oninput="InputValidator(this)">
+        onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)" oninput="InputValidator(this)">
         <input id="ModelIdId" type="hidden" name="Id" value="@Model.Id">
         <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
             <h2 class="mb-0 text-font">Editace modelu</h2>
@@ -72,7 +78,7 @@
         </div>
     </div>
     <form id="RunModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Run" 
-          onsubmit="AjaxFormSubmit(event, null, true)" oninput="InputValidator(this)">
+        onsubmit="AjaxFormSubmit(event, null, true)" oninput="InputValidator(this)">
         <input type="hidden" name="Id" value="@Model.Id">
         <input type="hidden" name="WorkflowId" value="@Model.Workflow?.Id">
         <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
@@ -99,4 +105,5 @@
         </div>
     </form>
 }
+
 

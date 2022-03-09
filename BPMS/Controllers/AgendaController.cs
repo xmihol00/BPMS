@@ -64,14 +64,14 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             return PartialView("Partial/_AgendaCreate", await _agendaFacade.Create());
         }
 
         [HttpPost]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(AgendaCreateDTO dto)
         {
             await _agendaFacade.Create(dto);
@@ -79,7 +79,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> Edit(AgendaEditDTO dto)
         {
             AgendaInfoCardDTO infoCard = await _agendaFacade.Edit(dto);
@@ -91,14 +91,14 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddRole(Guid id)
         {
             return PartialView("Partial/_AgendaAddRole", await _agendaFacade.AddRole(id));
         }
 
         [HttpPost]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddRole(RoleAddDTO dto)
         {
             return PartialView("Partial/_AgendaRoles", await _agendaFacade.AddRole(dto));
@@ -106,7 +106,7 @@ namespace BPMS.Controllers
 
         [HttpGet]
         [Route("/Agenda/MissingInRole/{agendaId}/{roleId}")]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> MissingInRole(Guid agendaId, Guid roleId)
         {
             return PartialView("Partial/_AgendaRoleNewUser", await _agendaFacade.MissingInRole(agendaId, roleId));
@@ -114,7 +114,7 @@ namespace BPMS.Controllers
 
         [HttpPost]
         [Route("/Agenda/AddUserRole/{userId}/{agendaRoleId}")]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddUserRole(Guid userId, Guid agendaRoleId)
         {
             await _agendaFacade.AddUserRole(userId, agendaRoleId);
@@ -122,7 +122,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> RemoveAgendaRole(Guid id)
         {
             await _agendaFacade.RemoveAgendaRole(id);
@@ -131,7 +131,7 @@ namespace BPMS.Controllers
 
         [HttpPost]
         [Route("/Agenda/RemoveUserRole/{userId}/{agendaRoleId}")]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> RemoveUserRole(Guid userId, Guid agendaRoleId)
         {
             await _agendaFacade.RemoveUserRole(userId, agendaRoleId);
@@ -139,21 +139,21 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddSystem(Guid id)
         {            
             return PartialView("Partial/_AgendaAddSystem", await _agendaFacade.MissingSystems(id));
         }
 
         [HttpPost]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddSystem(SystemAddDTO dto)
         {            
             return PartialView("Partial/_AgendaSystems", await _agendaFacade.AddSystem(dto));
         }
 
         [HttpPost]
-        [Authorize("Admin, AgendaKeeper")]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
         [Route("/Agenda/RemoveSystem/{agendaId}/{systemId}")]
         public async Task<IActionResult> RemoveSystem(Guid agendaId, Guid systemId)
         {    

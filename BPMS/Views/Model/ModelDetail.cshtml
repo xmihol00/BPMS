@@ -4,7 +4,7 @@
 }
 <script src="~/js/Model/Model.js"></script>
 <script>
-    RoleForEdit = @((bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()])
+    const RoleForEdit = "@((bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()])" == "True";
 </script>
 
 <div id="PageNavId" class="page-navbar">

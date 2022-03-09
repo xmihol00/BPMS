@@ -5,7 +5,7 @@
 <script>
     const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
     const ActiveBlock = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlock)));
-    const RoleForEdit = @((bool)ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()]);
+    const RoleForEdit = "@((bool)ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()])" == "True";
 </script>
 <script src="~/js/Workflow/Workflow.js"></script>
 

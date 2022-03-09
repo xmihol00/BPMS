@@ -12,6 +12,5 @@ namespace BPMS_DTOs.Model
     {
         public Guid? AgendaId { get; set; }
         public string AgendaName { get; set; } = string.Empty;
-        public ModelStateEnum State { get; set; }
     }
 }

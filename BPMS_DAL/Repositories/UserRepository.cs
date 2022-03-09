@@ -96,14 +96,13 @@ namespace BPMS_DAL.Repositories
             {
                 if (Filters[((int)FilterTypeEnum.UserAdmin)] || Filters[((int)FilterTypeEnum.UserAgendaKeeper)] ||
                     Filters[((int)FilterTypeEnum.UserWorkflowKeeper)] || Filters[((int)FilterTypeEnum.UserServiceKeeper)] ||
-                    Filters[((int)FilterTypeEnum.UserTaskSolver)] || Filters[((int)FilterTypeEnum.UserModelKeeper)])
+                    Filters[((int)FilterTypeEnum.UserModelKeeper)])
                 {
                     query = query.Where(x => (Filters[((int)FilterTypeEnum.UserAdmin)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.Admin)) ||
                                              (Filters[((int)FilterTypeEnum.UserAgendaKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper)) ||
                                              (Filters[((int)FilterTypeEnum.UserWorkflowKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.WorkflowKeeper)) ||
                                              (Filters[((int)FilterTypeEnum.UserServiceKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.ServiceKeeper)) ||
-                                             (Filters[((int)FilterTypeEnum.UserModelKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.ModelKeeper)) ||
-                                             (Filters[((int)FilterTypeEnum.UserTaskSolver)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.TaskSolver)));
+                                             (Filters[((int)FilterTypeEnum.UserModelKeeper)] && x.SystemRoles.Any(y => y.Role == SystemRoleEnum.ModelKeeper)));
                 }
             }
                          

@@ -13,24 +13,35 @@ function AddEventListeners()
     if (model)
     {
         let workflowId = document.getElementById("WorkflowIdId").value;
-        for (let pool of model.getElementsByClassName("bpmn-pool"))
+        if (RoleForEdit)
         {
-            if (pool.classList.contains("bpmn-this-sys"))
+            for (let pool of model.getElementsByClassName("bpmn-pool"))
             {
-                for (let block of pool.getElementsByClassName("bpmn-block"))
+                if (pool.classList.contains("bpmn-this-sys"))
                 {
-                    block.addEventListener("click", (event) => ShowBlockDetail(event, workflowId, block.id));
+                    for (let block of pool.getElementsByClassName("bpmn-block"))
+                    {
+                        block.addEventListener("click", (event) => ShowBlockDetail(event, workflowId, block.id));
+                    }
                 }
+                else
+                {
+                    for (let block of pool.getElementsByClassName("bpmn-block"))
+                    {
+                        block.addEventListener("click", (event) => event.stopPropagation());
+                    }
+                }
+
+                pool.addEventListener("click", () => ShowPoolDetail(pool.id));
             }
-            else
+        }
+        else
+        {
+            for (let pool of model.getElementsByClassName("bpmn-pool"))
             {
-                for (let block of pool.getElementsByClassName("bpmn-block"))
-                {
-                    block.addEventListener("click", (event) => event.stopPropagation());
-                }
+                pool.classList.remove("bpmn-this-sys");
+                pool.classList.remove("bpmn-pool");
             }
-    
-            pool.addEventListener("click", () => ShowPoolDetail(pool.id));
         }
     }
 }

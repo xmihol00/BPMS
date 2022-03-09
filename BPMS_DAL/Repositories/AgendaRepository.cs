@@ -98,7 +98,8 @@ namespace BPMS_DAL.Repositories
                                        {
                                            Id = y.Id,
                                            Name = y.Name,
-                                           SVG = y.SVG
+                                           SVG = y.SVG,
+                                           State = y.State
                                        })
                                        .ToList(),
                             Workflows = x.Workflows

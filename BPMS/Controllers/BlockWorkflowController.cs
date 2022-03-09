@@ -8,7 +8,7 @@ using BPMS_DTOs.BlockWorkflow.EditTypes;
 
 namespace BPMS.Controllers
 {
-    [Authorize("Admin, WorkflowKeeper")]
+    [Authorize(Roles = "Admin, WorkflowKeeper")]
     public class BlockWorkflowController : BaseController
     {
         private readonly BlockWorkflowFacade _blockWorkflowFacade;

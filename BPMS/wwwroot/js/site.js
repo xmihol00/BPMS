@@ -8,11 +8,6 @@ document.addEventListener("keydown", KeyDownHandler);
 
 window.addEventListener('DOMContentLoaded', () => 
 {
-    for (let icon of document.getElementsByClassName("fa-chevron-circle-left"))
-    {
-        icon.parentNode.addEventListener("click", HistoryBack);
-    }
-
     if (typeof ActiveBlocks != "undefined")
     {
         DisplayActiveBlocks(ActiveBlocks);

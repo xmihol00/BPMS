@@ -1,18 +1,22 @@
 @model ModelOverviewDTO
 @{
     ViewData["Title"] = "Modely";
+    bool show = (bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()];
 }
 <script src="~/js/Model/Model.js"></script>
 <script>
-    const RoleForEdit = @((bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()])
+    const RoleForEdit = "@show" == "True";
 </script>
 
 <div id="PageNavId" class="page-navbar">
     <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-chevron-circle-left my-auto"></i></button>
+        <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
         <h1 class="my-auto text-font">@ViewData["Title"]</h1>
         <div class="my-auto">
-            <a class="butn btn-p" href="/Service/Create">Vytvořit</a>
+            @if (show)
+            {
+                <a class="butn btn-p" href="/Service/Create">Vytvořit</a>
+            }
         </div>
     </div>
 </div>

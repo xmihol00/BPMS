@@ -12,7 +12,6 @@ namespace BPMS_Common.Enums
         AgendaKeeper,
         WorkflowKeeper,
         ServiceKeeper,
-        TaskSolver,
         ModelKeeper
     }
 
@@ -31,9 +30,6 @@ namespace BPMS_Common.Enums
                 case SystemRoleEnum.ServiceKeeper:
                     return "Správce webových služeb";
                 
-                case SystemRoleEnum.TaskSolver:
-                    return "Řešitel úkolů";
-
                 case SystemRoleEnum.WorkflowKeeper:
                     return "Správce workflow";
 

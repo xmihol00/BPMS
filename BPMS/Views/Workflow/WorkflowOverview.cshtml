@@ -5,11 +5,15 @@
 <script src="~/js/Workflow/Workflow.js"></script>
 <script>
     const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
-    const RoleForEdit = @((bool)ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()]);
+    const RoleForEdit = "@((bool)ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()])" == "True";
 </script>
 
 <div id="PageNavId" class="page-navbar">
-    <h1 class="mt-1 text-font text-center page-navbar-content">@ViewData["title"]</h1>
+    <div class="d-flex justify-content-between px-4 page-navbar-content">
+        <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
+        <h1 class="my-auto text-font">@ViewData["title"]</h1>
+        <div class="my-auto mr-5"></div>
+    </div>
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">

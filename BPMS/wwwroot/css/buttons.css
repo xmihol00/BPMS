@@ -110,3 +110,8 @@ a.butn:hover {
 .fa-times:hover {
     color: rgb(255, 0, 0);
 }
+
+.bg-ddd .fa-times:hover
+{
+    color: black;
+}

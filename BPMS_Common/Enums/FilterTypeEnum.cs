@@ -59,7 +59,6 @@ namespace BPMS_Common.Enums
         UserModelKeeper,
         UserWorkflowKeeper,
         UserServiceKeeper,
-        UserTaskSolver,
     }
 
     public static class FilterType
@@ -194,9 +193,6 @@ namespace BPMS_Common.Enums
 
                 case FilterTypeEnum.UserServiceKeeper:
                     return "Správci služeb";
-
-                case FilterTypeEnum.UserTaskSolver:
-                    return "Řešitelé úkolů";
                 
                 case FilterTypeEnum.UserModelKeeper:
                     return "Správci modelů";

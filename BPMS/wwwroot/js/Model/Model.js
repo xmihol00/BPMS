@@ -39,6 +39,7 @@ function AddEventListeners()
             for (let pool of model.getElementsByClassName("bpmn-pool"))
             {
                 pool.classList.remove("bpmn-this-sys");
+                pool.classList.remove("bpmn-pool");
             }
         }
     }
