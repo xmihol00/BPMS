@@ -253,7 +253,7 @@ namespace BPMS_BL.Facades
             return ServiceTreeHelper.CreateTree(await _dataSchemaRepository.DataSchemas(dto.ServiceId, dto.Direction));
         }
 
-        private async Task<Guid> CreateOutputDataSchema(string name, DataTypeEnum type, Guid? parentId)
+        private async Task<Guid> CreateOutputDataSchema(string? name, DataTypeEnum type, Guid? parentId, bool array)
         {
             DataSchemaEntity? current = await _dataSchemaRepository.Find(_serviceId, name, parentId, DirectionEnum.Output);
             
@@ -271,7 +271,8 @@ namespace BPMS_BL.Facades
                 ParentId = parentId,
                 ServiceId = _serviceId,
                 Type = type,
-                StaticData = null
+                StaticData = null,
+                Array = array
             };
 
             await _dataSchemaRepository.Create(dataSchema);
@@ -316,7 +317,7 @@ namespace BPMS_BL.Facades
             return ServiceTreeHelper.CreateTree<DataSchemaDataDTO>(nodes);
         }
 
-        private async Task ParseJObject(IEnumerable<JToken> tokens, Guid? parentId = null)
+        private async Task ParseJObject(IEnumerable<JToken> tokens, Guid? parentId = null, bool array = false)
         {
             foreach (JProperty property in tokens)
             {
@@ -324,27 +325,57 @@ namespace BPMS_BL.Facades
                 switch (property.Value.Type)
                 {
                     case JTokenType.Object:
-                        await ParseJObject(property.Value.Children(), await CreateOutputDataSchema(name, DataTypeEnum.Object, parentId));
+                        await ParseJObject(property.Value.Children(), await CreateOutputDataSchema(name, DataTypeEnum.Object, parentId, array));
                         break;
                     
                     case JTokenType.String:
-                        await CreateOutputDataSchema(name, DataTypeEnum.String, parentId);
+                        await CreateOutputDataSchema(name, DataTypeEnum.String, parentId, array);
                         break;
                     
                     case JTokenType.Float:
                     case JTokenType.Integer:
-                        await CreateOutputDataSchema(name, DataTypeEnum.Number, parentId);
+                        await CreateOutputDataSchema(name, DataTypeEnum.Number, parentId, array);
                         break;
 
                     case JTokenType.Boolean:
-                        await CreateOutputDataSchema(name, DataTypeEnum.Bool, parentId);
+                        await CreateOutputDataSchema(name, DataTypeEnum.Bool, parentId, array);
                         break;
-                    
+
                     case JTokenType.Array:
-                        // TODO
-                        //await ParseJObject(property.Descendants(), await CreateOutputDataSchema(name, DataTypeEnum.Array, parentId));
+                        await ParseJArray(name, property, parentId, array);
                         break;
                 }
+            }
+        }
+
+        private async Task ParseJArray(string? name, JProperty property, Guid? parentId = null, bool array = false)
+        {
+            JToken? arrayItem = property.Value.Children().FirstOrDefault();
+            if (arrayItem != null)
+            {
+                switch (property.Value.Type)
+                {
+                    case JTokenType.String:
+                        await CreateOutputDataSchema(name, DataTypeEnum.ArrayString, parentId, array);
+                        break;
+
+                    case JTokenType.Float:
+                    case JTokenType.Integer:
+                        await CreateOutputDataSchema(name, DataTypeEnum.ArrayNumber, parentId, array);
+                        break;
+
+                    case JTokenType.Boolean:
+                        await CreateOutputDataSchema(name, DataTypeEnum.ArrayBool, parentId, array);
+                        break;
+
+                    case JTokenType.Object:
+                        await ParseJObject(property.Value.Children(), await CreateOutputDataSchema(null, DataTypeEnum.ArrayObject, parentId, array), true);
+                        break;
+
+                    case JTokenType.Array:
+                        await ParseJArray(null, property, await CreateOutputDataSchema(null, DataTypeEnum.ArrayArray, parentId, array), true);
+                        break;
+                }   
             }
         }
     }

@@ -15,6 +15,7 @@ namespace BPMS_DAL.Entities
         public string? StaticData { get; set; } = string.Empty;
         public uint Order { get; set; } 
         public bool Compulsory { get; set; }
+        public bool Array { get; set; }
         public DataTypeEnum Type { get; set; }
         public DirectionEnum Direction { get; set; }
         public Guid? ParentId { get; set; }
