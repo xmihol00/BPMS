@@ -12,7 +12,7 @@ using BPMS_Common.Enums;
 
 namespace BPMS.Controllers
 {
-    [Authorize]
+    [Authorize("Admin, TaskSolver")]
     public class TaskController : BaseController
     {
         private readonly TaskFacade _taskFacade;

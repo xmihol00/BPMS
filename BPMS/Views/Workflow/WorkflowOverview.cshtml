@@ -5,6 +5,7 @@
 <script src="~/js/Workflow/Workflow.js"></script>
 <script>
     const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
+    const RoleForEdit = @((bool)ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()]);
 </script>
 
 <div id="PageNavId" class="page-navbar">

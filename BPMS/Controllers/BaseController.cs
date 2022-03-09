@@ -29,11 +29,12 @@ namespace BPMS.Controllers
             ViewBag.Name = user.Identity.Name;
             ViewBag.Id = Guid.Empty;
 
-            ViewBag.Admin = false;
-            ViewBag.AgendaKeeper = false;
-            ViewBag.WorkflowKeeper = false;
-            ViewBag.ServiceKeeper = false;
-            ViewBag.TaskSolver = false;
+            ViewData[SystemRoleEnum.Admin.ToString()] = false;
+            ViewData[SystemRoleEnum.AgendaKeeper.ToString()] = false;
+            ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] = false;
+            ViewData[SystemRoleEnum.ServiceKeeper.ToString()] = false;
+            ViewData[SystemRoleEnum.TaskSolver.ToString()] = false;
+            ViewData[SystemRoleEnum.ModelKeeper.ToString()] = false;
 
             List<Claim> claims = user.Claims?.ToList();
             if (claims != null)
@@ -42,28 +43,7 @@ namespace BPMS.Controllers
                 {
                     if (claim.Type == ClaimTypes.Role)
                     {
-                        switch (Enum.Parse(typeof(SystemRoleEnum), claim.Value))
-                        {
-                            case SystemRoleEnum.Admin:
-                                ViewBag.Admin = true;
-                                break;
-                            
-                            case SystemRoleEnum.AgendaKeeper:
-                                ViewBag.AgendaKeeper = true;
-                                break;
-                            
-                            case SystemRoleEnum.WorkflowKeeper:
-                                ViewBag.WorkflowKeeper = true;
-                                break;
-                            
-                            case SystemRoleEnum.ServiceKeeper:
-                                ViewBag.ServiceKeeper = true;
-                                break;
-                            
-                            case SystemRoleEnum.TaskSolver:
-                                ViewBag.TaskSolver = true;
-                                break;
-                        }
+                        ViewData[claim.Value] = true;
                     }
                     else if (claim.Type == ClaimTypes.NameIdentifier)
                     {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BPMS.Controllers
 {
-    [Authorize]
+    [Authorize("Admin, AgendaKeeper")]
     public class ModelUploadController : BaseController
     {
         private readonly ModelUploadFacade _modelUploadFacade;

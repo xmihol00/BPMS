@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BPMS.Controllers
 {
-    [Authorize]
+    [Authorize("Admin, ModelKeeper")]
     public class BlockModelController : BaseController
     {
         private readonly BlockModelFacade _blockModelFacade;

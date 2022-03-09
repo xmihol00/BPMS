@@ -56,6 +56,7 @@ namespace BPMS_Common.Enums
 
         UserAdmin,
         UserAgendaKeeper,
+        UserModelKeeper,
         UserWorkflowKeeper,
         UserServiceKeeper,
         UserTaskSolver,
@@ -196,6 +197,9 @@ namespace BPMS_Common.Enums
 
                 case FilterTypeEnum.UserTaskSolver:
                     return "Řešitelé úkolů";
+                
+                case FilterTypeEnum.UserModelKeeper:
+                    return "Správci modelů";
             }
         }
     }

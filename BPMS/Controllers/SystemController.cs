@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BPMS.Controllers
 {
-    [Authorize]
+    [Authorize("Admin")]
     public class SystemController : BaseController
     {
         private readonly SystemFacade _systemFacade;

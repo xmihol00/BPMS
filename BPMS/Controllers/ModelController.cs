@@ -57,6 +57,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        [Authorize("Admin, ModelKeeper")]
         public async Task<IActionResult> Edit(ModelEditDTO dto)
         {
             ModelInfoCardDTO infoCard = await _modelFacade.Edit(dto);
@@ -68,24 +69,28 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        [Authorize("Admin, AgendaKeeper")]
         public async Task<IActionResult> Share(Guid id)
         {
             return Ok(await _modelFacade.Share(id));
         }
 
         [HttpGet]
+        [Authorize("Admin, AgendaKeeper")]
         public async Task<IActionResult> Run(Guid id)
         {
             return PartialView("Partial/_ModelRun", await _modelFacade.Run(id));
         }
 
         [HttpPost]
+        [Authorize("Admin, AgendaKeeper")]
         public async Task<IActionResult> Run(ModelRunDTO dto)
         {
             return Ok(await _modelFacade.Run(dto));
         }
 
         [HttpPost]
+        [Authorize("Admin, ModelKeeper")]
         public async Task<IActionResult> Remove(Guid id)
         {
             return Ok(await _modelFacade.Remove(id));

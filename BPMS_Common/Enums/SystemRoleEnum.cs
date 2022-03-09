@@ -13,6 +13,7 @@ namespace BPMS_Common.Enums
         WorkflowKeeper,
         ServiceKeeper,
         TaskSolver,
+        ModelKeeper
     }
 
     public static class SystemRole
@@ -35,6 +36,9 @@ namespace BPMS_Common.Enums
 
                 case SystemRoleEnum.WorkflowKeeper:
                     return "Správce workflow";
+
+                case SystemRoleEnum.ModelKeeper:
+                    return "Správce modelů";
                 
                 default:
                     return "";

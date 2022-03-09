@@ -64,7 +64,7 @@ namespace BPMS.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost("Admin, WorkflowKeeper")]
         public async Task<IActionResult> Edit(WorkflowEditDTO dto)
         {
             WorkflowInfoCardDTO infoCard = await _workflowFacade.Edit(dto);

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BPMS.Controllers
 {
-    [Authorize]
+    [Authorize("Admin, ModelKeeper")]
     public class PoolController : BaseController
     {
         private readonly PoolFacade _PoolFacade;
