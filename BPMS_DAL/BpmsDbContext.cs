@@ -33,10 +33,12 @@ namespace BPMS_DAL
         public DbSet<ForeignSendEventEntity>? ForeignSendEvents { get; set; }
         public DbSet<MessageEntity>? Message { get; set; }
         public DbSet<ModelEntity>? Models { get; set; }
+        public DbSet<NotificationEntity>? Notifications { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
         public DbSet<ServiceEntity>? Services { get; set; }
         public DbSet<ServiceHeaderEntity>? Headers { get; set; }
-        public DbSet<DataSchemaEntity>? ServiceSchemas { get; set; }
+        public DbSet<DataSchemaEntity>? DataSchemas { get; set; }
+        public DbSet<DataSchemaMapEntity>? DataSchemaMaps { get; set; }
         public DbSet<SolvingRoleEntity>? SolvingRoles { get; set; }
         public DbSet<SystemAgendaEntity>? SystemAgendas { get; set; }
         public DbSet<SystemEntity>? Systems { get; set; }
@@ -128,7 +130,13 @@ namespace BPMS_DAL
             modelBuilder.Entity<DataSchemaEntity>().HasOne(x => x.Service).WithMany(x => x.DataSchemas).HasForeignKey(x => x.ServiceId);
             modelBuilder.Entity<DataSchemaEntity>().HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<DataSchemaMapEntity>().HasKey(x => new { x.ServiceTaskId, x.SourceId, x.TargetId });
+            modelBuilder.Entity<DataSchemaMapEntity>().HasOne(x => x.ServiceTask).WithMany(x => x.MappedSchemas).HasForeignKey(x => x.ServiceTaskId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<DataSchemaMapEntity>().HasOne(x => x.Target).WithMany(x => x.Targets).HasForeignKey(x => x.TargetId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<DataSchemaMapEntity>().HasOne(x => x.Source).WithMany(x => x.Sources).HasForeignKey(x => x.SourceId).OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<BlockWorkflowEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<BlockWorkflowEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.Workflow).WithMany(x => x.Blocks).HasForeignKey(x => x.WorkflowId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<BlockWorkflowEntity>().HasOne(x => x.BlockModel).WithMany(x => x.BlockWorkflows).HasForeignKey(x => x.BlockModelId);
             modelBuilder.Entity<UserTaskWorkflowEntity>().HasOne(x => x.User).WithMany(x => x.Tasks).HasForeignKey(x => x.UserId);
@@ -188,6 +196,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.ForeignSendEventId });
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithOne(x => x.MappedForeignBlock).HasForeignKey<ForeignAttributeMapEntity>(x => x.AttributeId);
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.ForeignSendEvent).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.ForeignSendEventId);
+
+            modelBuilder.Entity<NotificationEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<NotificationEntity>().HasOne(x => x.User).WithMany(x => x.Notifications).HasForeignKey(x => x.UserId);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

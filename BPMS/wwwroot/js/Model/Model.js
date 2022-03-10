@@ -1,10 +1,12 @@
 
 var BlockId = "";
 var PoolId = "";
+var DragTarget = null;
 
 window.addEventListener('DOMContentLoaded', () => 
 {
     AddEventListeners();
+    document.addEventListener("dragover", (event) => event.preventDefault());
 });
 
 function AddEventListeners()
@@ -534,4 +536,91 @@ function PoolChange(select)
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });   
+}
+
+function SchemaDragStart(event)
+{
+    DragTarget = event.target;
+    let type = DragTarget.getAttribute("data-type");
+
+    for (let ele of document.getElementsByClassName("target-map"))
+    {
+        if (type == ele.getAttribute("data-type"))
+        {
+            ele.classList.add("map-ok");
+        }
+        else
+        {
+            ele.classList.add("map-bad");
+        }
+    }
+}
+
+function SchemaDragEnd()
+{
+    for (let ele of document.getElementsByClassName("target-map"))
+    {
+        ele.classList.remove("map-bad");
+        ele.classList.remove("map-ok");
+    }
+}
+
+function SchemaDragEnter(div)
+{
+    div.classList.add("map-drag-over");
+}
+
+function SchemaDragLeave(div)
+{
+    div.classList.remove("map-drag-over");
+}
+
+function SchemaDragDrop(event)
+{
+    if (event.target.getAttribute("data-type") != DragTarget.getAttribute("data-type"))
+    {
+        return;
+    }
+
+    let target = event.target;
+    target.classList.remove("text-center");
+    target.innerHTML = DragTarget.innerHTML;
+    DragTarget.remove();
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/AddMap/${document.getElementById("BlockIdId").value}/${DragTarget.id}/${target.id}`
+    })
+    .done((result) => 
+    {
+        document.getElementById("ServiceMapConfigId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function RemoveMap(btn, serviceTaskId)
+{
+    let parent = btn.parentNode;
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/BlockModel/RemoveMap/${serviceTaskId}/${parent.children[0].id}/${parent.children[2].id}`
+    })
+    .done((result) => 
+    {
+        document.getElementById("ServiceMapConfigId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
 }

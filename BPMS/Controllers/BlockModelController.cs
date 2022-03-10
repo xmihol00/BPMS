@@ -107,5 +107,19 @@ namespace BPMS.Controllers
         {
             return PartialView("Partial/_AttributesConfig", await _blockModelFacade.SenderChange(dto));
         }
+
+        [HttpPost]
+        [Route("/BlockModel/AddMap/{serviceTaskId}/{sourceId}/{targetId}")]
+        public async Task<IActionResult> AddMap(Guid serviceTaskId, Guid sourceId, Guid targetId)
+        {
+            return PartialView("Partial/_ServiceMapConfig", await _blockModelFacade.AddMap(serviceTaskId, sourceId, targetId));
+        }
+
+        [HttpPost]
+        [Route("/BlockModel/RemoveMap/{serviceTaskId}/{sourceId}/{targetId}")]
+        public async Task<IActionResult> RemoveMap(Guid serviceTaskId, Guid sourceId, Guid targetId)
+        {
+            return PartialView("Partial/_ServiceMapConfig", await _blockModelFacade.RemoveMap(serviceTaskId, sourceId, targetId));
+        }
     }
 }

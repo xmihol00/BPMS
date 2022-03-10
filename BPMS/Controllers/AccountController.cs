@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BPMS.Controllers
 {
@@ -20,6 +21,13 @@ namespace BPMS.Controllers
         : base(userFacade)
         {
             _userFacade = userFacade;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+
+            _userFacade.SetFilters(_filters, _userId);
         }
 
         [HttpGet]
@@ -90,6 +98,21 @@ namespace BPMS.Controllers
             await HttpContext.SignOutAsync();
 
             return Redirect("/Account/SignIn");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Notifications()
+        {
+            return PartialView("Partial/_NotificationAll", await _userFacade.AllNotifications());
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> NotificationSeen(Guid id)
+        {
+            await _userFacade.NotificationSeen(id);
+            return Ok();
         }
     }
 }

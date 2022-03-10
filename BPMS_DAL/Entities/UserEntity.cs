@@ -24,5 +24,6 @@ namespace BPMS_DAL.Entities
         public List<WorkflowEntity> Workflows { get; set; } = new List<WorkflowEntity>();
         public List<UserRoleEntity> UserRoles { get; set; } = new List<UserRoleEntity>();
         public List<FilterEntity> Fitlers { get; set; } = new List<FilterEntity>();
+        public List<NotificationEntity> Notifications { get; set; } = new List<NotificationEntity>();
     }
 }

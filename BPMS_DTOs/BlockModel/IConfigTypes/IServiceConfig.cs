@@ -13,6 +13,9 @@ namespace BPMS_DTOs.BlockModel.IConfigTypes
     public interface IServiceConfig
     {
         public List<ServiceIdNameDTO> Services { get; set; }
-        public Guid? CurrentService { get; set; }
+        public Guid? CurrentServiceId { get; set; }
+        public List<DataSchemaSourceDTO> SourceSchemas { get; set; }
+        public List<DataSchemaMapDTO> TargetSchemas { get; set; }
+        public List<DataSchemaMappedDTO> MappedSchemas { get; set; }
     }
 }

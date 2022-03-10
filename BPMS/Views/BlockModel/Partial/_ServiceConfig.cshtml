@@ -4,7 +4,7 @@
     <select required class="input-select" name="ServiceId"> 
         @foreach (ServiceIdNameDTO item in Model.Services)
         {
-            if (item.Id == Model.CurrentService)
+            if (item.Id == Model.CurrentServiceId)
             {
                 <option value="@item.Id" selected>@item.Name</option>
             }

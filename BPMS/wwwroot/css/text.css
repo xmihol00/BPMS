@@ -81,3 +81,12 @@
 .text-prim {
   color: var(--color-primary);
 }
+
+.source-name {
+  padding: 0.91rem 0.25rem 0.35rem 0rem;
+  font-weight: bold;
+}
+
+.text-filter {
+  margin-top: 1.25rem;
+}

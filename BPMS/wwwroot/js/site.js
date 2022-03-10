@@ -7,10 +7,26 @@ var Notifications = new signalR.HubConnectionBuilder().configureLogging(signalR.
 
 Notifications.on("Notification", (result) =>
 {
-    console.log(result);
+    console.log(document.getElementsByClassName("fa-info-circle"));
+    for (let icon of document.getElementsByClassName("fa-info-circle"))
+    {
+        icon.children[0].innerHTML =
+        `<h4 class="text-font border-bottom text-center mx-3 my-2">Nové oznámení</h4>
+        <div class="notif-div ${result.state} d-flex justify-content-between">
+            <div class="my-auto">${result.text}<b class="notif-info">${result.info}</b>.</div>
+            <div id="@notification.Id" class="my-auto">
+                <button class="btn px-1" onclick="NotificationMark(this)"><i class="fas fa-highlighter"></i></button>
+                <button class="btn px-1" onclick="NotificationSeen(this)"><i class="fas fa-eye-slash"></i></button>
+                <a class="btn px-1" href="${result.href}"><i class="fas fa-angle-double-right"></i></a>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mb-2">
+        <button class="butn btn-p">Zobrazit vše</button>
+        </div>`;
+        icon.children[0].classList.add("message-div-active");
+        console.log(icon.children[0]);
+    }
 });
-
-Notifications.hub.qs = "test=123";
 
 Notifications.start();
 
@@ -29,7 +45,18 @@ window.addEventListener('DOMContentLoaded', () =>
     }
 
     ResizeTextAreas(document);
+    ActivateIcons();
 });
+
+function ActivateIcons()
+{
+    document.addEventListener("click", HideNotifications);
+    for (let icon of document.getElementsByClassName("fa-info-circle"))
+    {
+        icon.innerHTML = '<div class="message-div" onclick="event.stopPropagation()"></div>';
+        icon.parentNode.addEventListener("click", (event) => ToggleNotifications(icon, event));
+    }
+}
 
 function DisplayActiveBlocks(activeBlocks)
 {
@@ -428,6 +455,8 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
         {
             succesCallback(result);
         }
+
+        ActivateIcons();
     })
     .fail(() => 
     {
@@ -497,4 +526,61 @@ function FilterChanges(event, path, blocks = false)
             //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
         });
     }
+}
+
+function ToggleNotifications(btn, event)
+{
+    event.stopPropagation();
+
+    let target = btn.children[0];
+    if (target.classList.contains("message-div-active"))
+    {
+        target.classList.remove("message-div-active");
+    }
+    else
+    {
+        $.ajax(
+        {
+            async: true,
+            type: "GET",
+            url: "/Account/Notifications"
+        })
+        .done((result) => 
+        {
+            target.classList.add("message-div-active");
+            target.innerHTML = result;
+        })
+        .fail(() => 
+        {
+            // TODO
+            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        });
+    }
+}
+
+function NotificationSeen(btn)
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: "/Account/NotificationSeen/" + btn.parentNode.id
+    })
+    .done(() => 
+    {
+        btn.parentNode.parentNode.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function HideNotifications()
+{
+    for (let icon of document.getElementsByClassName("fa-info-circle"))
+    {
+        icon.children[0].classList.remove("message-div-active");
+    }   
 }

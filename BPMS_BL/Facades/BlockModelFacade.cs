@@ -28,6 +28,7 @@ namespace BPMS_BL.Facades
         private readonly SystemRepository _systemRepository;
         private readonly ServiceRepository _serviceRepository;
         private readonly DataSchemaRepository _dataSchemaRepository;
+        private readonly DataSchemaMapRepository _dataSchemaMapRepository;
         private readonly FlowRepository _flowRepository;
         private readonly BlockModelDataSchemaRepository _blockModelDataSchemaRepository;
         private readonly AgendaRepository _agendaRepository;
@@ -41,11 +42,12 @@ namespace BPMS_BL.Facades
         public BlockModelFacade(BlockModelRepository blockModelRepository, AttributeRepository attributeRepository,
                                 AttributeMapRepository attributeMapRepository, PoolRepository poolRepository,
                                 SystemRepository systemRepository, ServiceRepository serviceRepository, 
-                                DataSchemaRepository dataSchemaRepository, FlowRepository flowRepository,
-                                BlockModelDataSchemaRepository blockModelDataSchemaRepository, AgendaRepository agendaRepository,
-                                ForeignSendEventRepository foreignSendEventRepository, ModelRepository modelRepository,
-                                ForeignRecieveEventRepository foreignRecieveEventRepository, FilterRepository filterRepository,
-                                ForeignAttributeMapRepository foreignAttributeMapRepository, IMapper mapper)
+                                DataSchemaRepository dataSchemaRepository, DataSchemaMapRepository dataSchemaMapRepository, 
+                                FlowRepository flowRepository, BlockModelDataSchemaRepository blockModelDataSchemaRepository, 
+                                AgendaRepository agendaRepository, ForeignSendEventRepository foreignSendEventRepository, 
+                                ModelRepository modelRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
+                                FilterRepository filterRepository, ForeignAttributeMapRepository foreignAttributeMapRepository, 
+                                IMapper mapper)
         : base(filterRepository)
         {
             _blockModelRepository = blockModelRepository;
@@ -55,6 +57,7 @@ namespace BPMS_BL.Facades
             _systemRepository = systemRepository;
             _serviceRepository = serviceRepository;
             _dataSchemaRepository = dataSchemaRepository;
+            _dataSchemaMapRepository = dataSchemaMapRepository;
             _flowRepository = flowRepository;
             _blockModelDataSchemaRepository = blockModelDataSchemaRepository;
             _agendaRepository = agendaRepository;
@@ -76,6 +79,47 @@ namespace BPMS_BL.Facades
                 DstAddressDTO address = await _systemRepository.Address(systemId);
                 return await CommunicationHelper.Agendas(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address));
             }
+        }
+
+        public async Task<ServiceTaskModelConfigDTO> AddMap(Guid serviceTaskId, Guid sourceId, Guid targetId)
+        {
+            if (!await _dataSchemaMapRepository.Any(serviceTaskId, sourceId, targetId))
+            {
+                await _dataSchemaMapRepository.Create(new DataSchemaMapEntity
+                {
+                    ServiceTaskId = serviceTaskId,
+                    SourceId = sourceId,
+                    TargetId = targetId
+                });
+                await _dataSchemaMapRepository.Save();
+            }
+
+            IServiceTaskModelEntity serviceTask = await _blockModelRepository.Bare(serviceTaskId) as IServiceTaskModelEntity;
+            ServiceTaskModelConfigDTO dto = new ServiceTaskModelConfigDTO();
+            dto.MappedSchemas = await _dataSchemaMapRepository.Mapped(serviceTask.Id);
+            dto.TargetSchemas = await _dataSchemaRepository.Targets(serviceTask.ServiceId, serviceTaskId);
+            dto.SourceSchemas = await _blockModelRepository.Sources(serviceTask.Order, serviceTask.PoolId);
+            dto.CurrentServiceId = serviceTask.ServiceId;
+            return dto;
+        }
+
+        public async Task<ServiceTaskModelConfigDTO> RemoveMap(Guid serviceTaskId, Guid sourceId, Guid targetId)
+        {
+            _dataSchemaMapRepository.Remove(new DataSchemaMapEntity
+            {
+                ServiceTaskId = serviceTaskId,
+                SourceId = sourceId,
+                TargetId = targetId
+            });
+            await _dataSchemaMapRepository.Save();
+
+            IServiceTaskModelEntity serviceTask = await _blockModelRepository.Bare(serviceTaskId) as IServiceTaskModelEntity;
+            ServiceTaskModelConfigDTO dto = new ServiceTaskModelConfigDTO();
+            dto.MappedSchemas = await _dataSchemaMapRepository.Mapped(serviceTask.Id);
+            dto.TargetSchemas = await _dataSchemaRepository.Targets(serviceTask.ServiceId, serviceTaskId);
+            dto.SourceSchemas = await _blockModelRepository.Sources(serviceTask.Order, serviceTask.PoolId);
+            dto.CurrentServiceId = serviceTask.ServiceId;
+            return dto;
         }
 
         public async Task<BlockModelConfigDTO> SenderChange(SenderChangeDTO dto)
@@ -425,24 +469,26 @@ namespace BPMS_BL.Facades
 
         private async Task<BlockModelConfigDTO> ServiceTaskConfig(IServiceTaskModelEntity serviceTask)
         {
-            BlockModelConfigDTO dto = new ServiceTaskModelConfigDTO();
-            IServiceConfig service = dto as IServiceConfig;
-            service.CurrentService = serviceTask.ServiceId;
-            service.Services.Add(new ServiceIdNameDTO
+            ServiceTaskModelConfigDTO dto = new ServiceTaskModelConfigDTO();
+            dto.CurrentServiceId = serviceTask.ServiceId;
+            dto.Services.Add(new ServiceIdNameDTO
             {
                 Id = null,
                 Name = "Nevybrána"
             });
-            service.Services.AddRange(await _serviceRepository.AllIdNames());
+            dto.Services.AddRange(await _serviceRepository.AllIdNames());
 
-            IRoleConfig roleConfig = dto as IRoleConfig;
-            roleConfig.CurrentRole = serviceTask.RoleId;
-            roleConfig.Roles.Add(new RoleAllDTO 
+            dto.CurrentRole = serviceTask.RoleId;
+            dto.Roles.Add(new RoleAllDTO 
             {
                 Id = null,
                 Name = "Nevybrána",
             });
-            roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(serviceTask.PoolId));
+            dto.Roles.AddRange(await _poolRepository.RolesOfAgenda(serviceTask.PoolId));
+
+            dto.MappedSchemas = await _dataSchemaMapRepository.Mapped(serviceTask.Id);
+            dto.TargetSchemas = await _dataSchemaRepository.Targets(serviceTask.ServiceId, serviceTask.Id);
+            dto.SourceSchemas = await _blockModelRepository.Sources(serviceTask.Order, serviceTask.PoolId);
 
             return dto;
         }

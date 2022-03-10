@@ -210,6 +210,7 @@ namespace BPMS_BL.Facades
         public async Task<List<TaskAllDTO>> Filter(FilterDTO dto)
         {
             await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _taskRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _taskRepository.All();
         }
 

@@ -14,16 +14,16 @@
             <span class="input-label">Popis</span>
         </label>
     </div>
-    @if (Model is IServiceConfig)
-    {
-        <div class="col-12 mb-3">
-            @await Html.PartialAsync("Partial/_ServiceConfig", Model)
-        </div>
-    }
     @if (Model is IRoleConfig)
     {
         <div class="col-12 mb-3">
             @await Html.PartialAsync("Partial/_RoleConfig", Model)
+        </div>
+    }
+    @if (Model is IServiceConfig)
+    {
+        <div class="col-12 mb-3">
+            @await Html.PartialAsync("Partial/_ServiceConfig", Model)
         </div>
     }
     <div class="d-flex justify-content-center mb-1">

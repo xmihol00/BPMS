@@ -16,5 +16,6 @@ namespace BPMS_Common
         public static string FileStore { get; set; } = string.Empty;
         public static int KeySize = 256;
         public static int SaltSize = 32;
+        public static IServiceProvider? ServiceProvider { get; set; }
     }
 }

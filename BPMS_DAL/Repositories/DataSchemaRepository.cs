@@ -133,5 +133,20 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<List<DataSchemaMapDTO>> Targets(Guid? serviceId, Guid serviceTaskId)
+        {
+            return _dbSet.Include(x => x.Targets)
+                         .Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input && 
+                                     x.StaticData == null && x.Targets.All(y => y.TargetId != x.Id || y.ServiceTaskId != serviceTaskId))
+                         .Select(x => new DataSchemaMapDTO
+                         {
+                             Alias = x.Alias,
+                             Id = x.Id,
+                             Name = x.Name,
+                             Type = x.Type
+                         })
+                         .ToListAsync();
+        }
     }
 }

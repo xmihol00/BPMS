@@ -15,6 +15,7 @@
   --color-canceled: red;
   --color-bg-light: rgba(0, 238, 255, 0.25);
   --color-border: #e5e5e5;
+  --color-border-dark: #858585;
   --color-disabled: #777;
   --color-inactive: #505050;
   --color-prio-low: #018f5b;
@@ -23,6 +24,8 @@
   --color-prio-urgent: #cf0000;
   --color-state-new: #444;
   --color-secondary: #6c757d;
+  --color-bad-map: #750000;
+  --color-ok-map: #007bff;
 }
 
 html {
@@ -455,6 +458,18 @@ a:hover {
   color: var(--color-active);
 }
 
+.wf-paused {
+  color: var(--color-paused);
+}
+
+.wf-finished {
+  color: var(--color-finished);
+}
+
+.wf-canceled {
+  color: var(--color-canceled);
+}
+
 .Active, .Shared, .Activated {
   background-color: var(--color-active);
 }
@@ -463,28 +478,16 @@ a:hover {
   background-color: var(--primary-color);
 }
 
-.wf-paused {
-  color: var(--color-paused);
-}
-
 .Paused, .Waiting {
   background-color: var(--color-paused);
 }
 
-.wf-finished {
-  color: var(--color-finished);
-}
-
-.New, .Inactive {
+.New, .Inactive, .NotStarted {
   background-color: var(--color-state-new);
 }
 
-.Finished, .Executable, .ThisSystem {
+.Finished, .Executable, .ThisSystem, .SolvedByUser, .Solved {
   background-color: var(--color-finished);
-}
-
-.wf-canceled {
-  color: var(--color-canceled);
 }
 
 .Canceled, .Incorrect, .Deactivated {
@@ -764,4 +767,139 @@ a:hover {
 
 .fa-info-circle {
   font-size: 1.5em;
+}
+
+.map-src, .map-dst, .target {
+  border: 2px solid var(--color-border-dark);
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.target-map:empty::before {
+  content: "Namapujte přetažením";
+  font-style: italic;
+  color: var(--color-secondary);
+}
+
+.target-map {
+  border: 2px dashed var(--color-border);
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.grab {
+  cursor: grab;
+}
+
+.map-ok {
+  border-color: var(--color-ok-map);
+}
+
+.map-bad {
+  border-color: var(--color-bad-map);
+}
+
+.map-bad.map-drag-over {
+  border-color: red;
+}
+
+.map-ok.map-drag-over {
+  border-color: green;
+}
+
+.map-src {
+  border-right: none;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  width: 33.33333%;
+}
+
+.map-dst {
+  border-left: none;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  width: 33.33333%;
+}
+
+.map-remove {
+  border: 2px solid var(--danger-color);
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--danger-color);
+  cursor: pointer;
+  color: #fff;
+  width: 90px;
+  text-align: center;
+}
+
+.map-remove:hover {
+  background-color: red;
+}
+
+.w-map-name {
+  width: 33.33333%;
+}
+
+.w-map-name:first-child {
+  margin-right: 90px;
+}
+
+.message-div {
+  position: fixed;
+  top: 42px;
+  height: 0px;
+  width: 0px;
+  min-height: 0px;
+  border-radius: 0.25rem;
+  margin-top: 0.15rem;
+  margin-left: 0.7rem;
+  background-color: #fff;
+  -webkit-box-shadow: 0px 0px 6px 0px #aaa; 
+  box-shadow: 0px 0px 6px 0px #aaa;
+  transition: all 0.35s ease-in;
+  cursor: default;
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: initial;
+}
+
+.message-div-active {
+  min-height: fit-content;
+  height: fit-content;
+  width: 20vw;
+}
+
+.notif-div {
+  border: 2px solid;
+  border-radius: 0.25rem;
+  margin: 0.5rem;
+  padding: 0.1rem 0.5rem;
+  text-align: start;
+  min-width: 18vw;
+  font-family: var(--bs-body-font-family) !important;
+}
+
+.no-notif {
+  min-width: 18vw;
+  margin: 1rem 0rem;
+  min-width: fit-content;
+  font-family: var(--bs-body-font-family) !important;
+}
+
+.Unread {
+  border-color: green;
+}
+
+.Marked {
+  border-color: var(--color-ok-map);
+}
+
+.Read {
+  border-color: var(--color-border-dark);
+}
+
+.notif-info:not(:empty) {
+  margin-left: 0.25rem;
 }

@@ -112,7 +112,9 @@ namespace BPMS_DAL.Repositories
                                              State = y.State,
                                              SVG = y.Model.SVG,
                                              AdministratorEmail = y.Administrator.Email,
-                                             AdministratorName = $"{x.Administrator.Title} {y.Administrator.Name} {y.Administrator.Surname}"
+                                             AdministratorName = $"{x.Administrator.Title} {y.Administrator.Name} {y.Administrator.Surname}",
+                                             ModelId = y.ModelId,
+                                             ModelName = y.Model.Name
                                          })
                                          .ToList(),
                             Roles = x.AgendaRoles

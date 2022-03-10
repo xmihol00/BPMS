@@ -11,18 +11,12 @@ using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Account;
-using BPMS_DTOs.Attribute;
-using BPMS_DTOs.BlockModel;
-using BPMS_DTOs.BlockModel.ConfigTypes;
-using BPMS_DTOs.Role;
-using BPMS_DTOs.Service;
-using BPMS_DTOs.DataSchema;
-using BPMS_DTOs.System;
 using BPMS_DTOs.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using BPMS_BL.Helpers;
 using BPMS_DTOs.Filter;
+using BPMS_DTOs.Notification;
 
 namespace BPMS_BL.Facades
 {
@@ -30,14 +24,16 @@ namespace BPMS_BL.Facades
     {
         private readonly UserRepository _userRepository;
         private readonly SystemRoleRepository _systemRoleRepository;
+        private readonly NotificationRepository _notificationRepository;
         private readonly IMapper _mapper;
 
         public UserFacade(UserRepository userRepository, SystemRoleRepository systemRoleRepository, FilterRepository filterRepository,
-                          IMapper mapper)
+                          NotificationRepository notificationRepository, IMapper mapper)
         : base(filterRepository)
         {
             _userRepository = userRepository;
             _systemRoleRepository = systemRoleRepository;
+            _notificationRepository = notificationRepository;
             _mapper = mapper;
         }
 
@@ -100,6 +96,17 @@ namespace BPMS_BL.Facades
             await _userRepository.Create(entity);
             await _userRepository.Save();
             return entity.Id;
+        }
+
+        public async Task NotificationSeen(Guid id)
+        {
+            _notificationRepository.ChangeState(id, NotificationStateEnum.Read);
+            await _notificationRepository.Save();
+        }
+
+        public Task<List<NotificationAllDTO>> AllNotifications()
+        {
+            return _notificationRepository.All(_userId); 
         }
 
         public async Task<UserInfoCardDTO> Edit(UserCreateEditDTO dto)

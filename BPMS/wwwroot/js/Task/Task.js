@@ -1,9 +1,10 @@
 
 window.addEventListener('DOMContentLoaded', () => 
-{
-    if (document.location.pathname.startsWith("/Task/UserDetail/"))
+{  
+    let form = document.getElementById("TaskDataFormId")
+    if (form)
     {
-        InputValidator(document.getElementById("TaskDataFormId"));
+        InputValidator(form);
     }
 });
 

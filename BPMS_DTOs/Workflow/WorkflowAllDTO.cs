@@ -12,7 +12,5 @@ namespace BPMS_DTOs.Workflow
     {
         public Guid AgendaId { get; set; }
         public string AgendaName { get; set; } = string.Empty;
-        public Guid ModelId { get; set; }
-        public string ModelName { get; set; } = string.Empty;
     }
 }

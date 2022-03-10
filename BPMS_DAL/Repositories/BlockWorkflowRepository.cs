@@ -52,14 +52,14 @@ namespace BPMS_DAL.Repositories
                 {
                     serviceQuery = 
                         serviceQuery.Where(x => (Filters[((int)FilterTypeEnum.TaskActive)] && x.State == BlockWorkflowStateEnum.Active) ||
-                                                (Filters[((int)FilterTypeEnum.TaskPaused)] && (x.State == BlockWorkflowStateEnum.Paused) ||
-                                                (Filters[((int)FilterTypeEnum.TaskSolved)] && x.State == BlockWorkflowStateEnum.Solved) ||
-                                                (Filters[((int)FilterTypeEnum.TaskCanceled)] && x.State == BlockWorkflowStateEnum.Canceled)));
+                                                (Filters[((int)FilterTypeEnum.TaskPaused)] && x.State == BlockWorkflowStateEnum.Paused) ||
+                                                (Filters[((int)FilterTypeEnum.TaskSolved)] && x.State == BlockWorkflowStateEnum.SolvedByUser) ||
+                                                (Filters[((int)FilterTypeEnum.TaskCanceled)] && x.State == BlockWorkflowStateEnum.Canceled));
                     taskQuery = 
                         taskQuery.Where(x => (Filters[((int)FilterTypeEnum.TaskActive)] && x.State == BlockWorkflowStateEnum.Active) ||
-                                             (Filters[((int)FilterTypeEnum.TaskPaused)] && (x.State == BlockWorkflowStateEnum.Paused) ||
+                                             (Filters[((int)FilterTypeEnum.TaskPaused)] && x.State == BlockWorkflowStateEnum.Paused) ||
                                              (Filters[((int)FilterTypeEnum.TaskSolved)] && x.State == BlockWorkflowStateEnum.Solved) ||
-                                             (Filters[((int)FilterTypeEnum.TaskCanceled)] && x.State == BlockWorkflowStateEnum.Canceled)));
+                                             (Filters[((int)FilterTypeEnum.TaskCanceled)] && x.State == BlockWorkflowStateEnum.Canceled));
                 }
                 else
                 {
@@ -78,7 +78,8 @@ namespace BPMS_DAL.Repositories
                                                           TaskName = x.BlockModel.Name,
                                                           WorkflowId = x.WorkflowId,
                                                           WorkflowName = x.Workflow.Name,
-                                                          Type = TaskTypeEnum.UserTask
+                                                          Type = TaskTypeEnum.UserTask,
+                                                          State = x.State,
                                                        })
                                                        .ToListAsync();
                                                      
@@ -94,6 +95,7 @@ namespace BPMS_DAL.Repositories
                                              WorkflowId = x.WorkflowId,
                                              WorkflowName = x.Workflow.Name,
                                              Type = TaskTypeEnum.UserTask,
+                                             State = x.State,
                                           })
                                           .OrderBy(x => x.Priority)
                                                .ThenBy(x => x.SolveDate)
@@ -147,7 +149,8 @@ namespace BPMS_DAL.Repositories
                                              TaskName = x.BlockModel.Name,
                                              WorkflowId = x.WorkflowId,
                                              WorkflowName = x.Workflow.Name,
-                                             Type = TaskTypeEnum.UserTask
+                                             Type = TaskTypeEnum.UserTask,
+                                             State = x.State,
                                           })
                                           .FirstAsync();
             }

@@ -147,21 +147,20 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.SystemRoles)
                          .Select(x => new UserDetailDTO
                          {
-                             Agendas = x.UserRoles.Select(y => y.AgendaRole.Agenda)
-                                                  .Select(y => new AgendaAllDTO
-                                                  {
-                                                      Id = y.Id,
-                                                      Name = y.Name,
-                                                      ActiveWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
-                                                      PausedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
-                                                      FinishedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
-                                                      CanceledWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
-                                                      ModelsCount = y.Models.Count(),
-                                                      SystemsCount = y.Systems.Count(),
-                                                      UserCount = y.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
-                                                      MissingRolesCount = y.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
-                                                  })
-                                                  .ToList(),
+                             Agendas = x.Agendas.Select(y => new AgendaAllDTO
+                                                 {
+                                                     Id = y.Id,
+                                                     Name = y.Name,
+                                                     ActiveWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
+                                                     PausedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                                                     FinishedWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                                                     CanceledWorkflowsCount = y.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
+                                                     ModelsCount = y.Models.Count(),
+                                                     SystemsCount = y.Systems.Count(),
+                                                     UserCount = y.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                                                     MissingRolesCount = y.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
+                                                 })
+                                                 .ToList(),
                             Workflows = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active)
                                                          .Select(y => new WorkflowAllDTO
                                                          {

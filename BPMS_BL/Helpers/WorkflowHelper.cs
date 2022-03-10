@@ -21,6 +21,8 @@ using BPMS_DTOs.DataSchema;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.SignalR;
+using BPMS_BL.Hubs;
 
 namespace BPMS_BL.Helpers
 {
@@ -36,6 +38,7 @@ namespace BPMS_BL.Helpers
         private readonly BlockModelRepository _blockModelRepository;
         private readonly ServiceRepository _serviceRepository;
         private readonly PoolRepository _poolRepository;
+        private readonly NotificationRepository _notificationRepository;
         private Dictionary<Guid, BlockWorkflowEntity> _createdUserTasks = new Dictionary<Guid, BlockWorkflowEntity>();
         private Dictionary<(Guid, Guid), TaskDataEntity> _createdServiceData = new Dictionary<(Guid, Guid), TaskDataEntity>();
         private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
@@ -53,6 +56,7 @@ namespace BPMS_BL.Helpers
             _blockModelRepository = new BlockModelRepository(context);
             _serviceRepository = new ServiceRepository(context);
             _poolRepository = new PoolRepository(context);
+            _notificationRepository = new NotificationRepository(context);
         }
         #pragma warning restore CS8618
 
@@ -63,13 +67,13 @@ namespace BPMS_BL.Helpers
             BlockModelEntity startEvent = model.Pools.First(x => x.SystemId == StaticData.ThisSystemId)
                                                .Blocks.First(x => x is IStartEventModelEntity);
 
-            List<BlockWorkflowEntity> blocks = await CreateBlocks(startEvent);
-
             workflow.State = WorkflowStateEnum.Active;
-            workflow.Blocks = blocks;
+            workflow.Blocks = await CreateBlocks(startEvent);
+            workflow.Blocks[0].SolvedDate = DateTime.Now;
+            await _modelRepository.Save();
 
-            blocks[0].SolvedDate = DateTime.Now;
-            await ExecuteFirstBlock(startEvent.OutFlows[0].InBlock, blocks[1], workflow);
+            await StartNextTask(workflow.Blocks[0]);
+            await ShareActivity(startEvent.PoolId, workflow.Id, model.Id);
         }
 
         public async Task CreateWorkflow(Guid modelId, Guid workflowId)
@@ -466,7 +470,7 @@ namespace BPMS_BL.Helpers
                 ServiceRequestDTO service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId.Value);
                 service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
                 ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
-                await MapRequestResult(result, serviceTask.Id);
+                await MapRequestResult(result, serviceTask.Id, serviceTask.WorkflowId);
 
                 await StartNextTask(task);
                 serviceTask.State = BlockWorkflowStateEnum.NotStarted;
@@ -479,14 +483,15 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task MapRequestResult(ServiceCallResultDTO result, Guid serviceTaskId)
+        private async Task MapRequestResult(ServiceCallResultDTO result, Guid serviceTaskId, Guid workflowId)
         {
             List<TaskDataEntity> data = await _taskDataRepository.OutputServiceTaskData(serviceTaskId);
+            List<DataSchemaDataMap> mappedData = await _taskDataRepository.MappedServiceTaskData(serviceTaskId, workflowId);
 
             switch (result.Serialization)
             {
                 case SerializationEnum.JSON:
-                    await MapRequestResultJson(JObject.Parse(result.RecievedData), data);
+                    await MapRequestResultJson(JObject.Parse(result.RecievedData), data, mappedData);
                     break;
                 
                 case SerializationEnum.XML:
@@ -500,13 +505,17 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task MapRequestResultJson(IEnumerable<JToken> tokens, IEnumerable<TaskDataEntity> data)
+        private async Task MapRequestResultJson(IEnumerable<JToken> tokens, IEnumerable<TaskDataEntity> data, 
+                                                IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId = null)
         {
             TaskDataEntity currentData;
             foreach (JProperty property in tokens)
             {
                 string name = property.Name;
-                currentData = data.FirstOrDefault(x => x.Schema.Alias == name);
+                currentData = data.FirstOrDefault(x => x.Schema.ParentId == parentId && (x.Schema.Alias == name || 
+                                                       (x.Schema.Alias == null && x.Schema.Name == name)));
+                List<TaskDataEntity> mappedCurrent = mappedData.FirstOrDefault(x => x.ParentId == parentId && (x.Alias == name || 
+                                                                               (x.Alias == null && x.Name == name)))?.Data ?? new List<TaskDataEntity>();
                 if (currentData == null)
                 {
                     continue;
@@ -515,23 +524,46 @@ namespace BPMS_BL.Helpers
                 switch (property.Value.Type)
                 {
                     case JTokenType.Object:
-                        await MapRequestResultJson(property.Value.Children(), data.Where(x => x.Schema.ParentId == currentData.Schema.Id));
+                        await MapRequestResultJson(property.Value.Children(), 
+                                                   data.Where(x => x.Schema.ParentId == currentData.SchemaId),
+                                                   mappedData.Where(x => x.ParentId == currentData.SchemaId), currentData.SchemaId);
                         continue;
                     
                     case JTokenType.String:
                         IStringDataEntity stringData = currentData as IStringDataEntity;
                         stringData.Value = ((string?)property.Value);
+                        foreach (TaskDataEntity mapped in mappedCurrent)
+                        {
+                            if (stringData.Value != null)
+                            {
+                                (mapped as IStringDataEntity).Value = stringData.Value;
+                            }
+                        }
                         break;
                     
                     case JTokenType.Float:
                     case JTokenType.Integer:
                         INumberDataEntity numberData = currentData as INumberDataEntity;
                         numberData.Value = ((double?)property.Value);
+                        foreach (TaskDataEntity mapped in mappedCurrent)
+                        {
+                            if (numberData.Value != null)
+                            {
+                                (mapped as INumberDataEntity).Value = numberData.Value;
+                            }
+                        }
                         break;
 
                     case JTokenType.Boolean:
                         IBoolDataEntity boolData = currentData as IBoolDataEntity;
                         boolData.Value = ((bool?)property.Value);
+                        foreach (TaskDataEntity mapped in mappedCurrent)
+                        {
+                            if (boolData.Value != null)
+                            {
+                                (mapped as IBoolDataEntity).Value = boolData.Value;
+                            }
+                        }
                         break;
                     
                     case JTokenType.Array:
@@ -619,6 +651,20 @@ namespace BPMS_BL.Helpers
             userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty.TotalDays);
             userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
                               userTask.Workflow.AdministratorId;
+
+            NotificationEntity notification = new NotificationEntity
+            {
+                Date = DateTime.Now,
+                TargetId = userTask.Id,
+                Type = NotificationTypeEnum.NewTask,
+                State = NotificationStateEnum.Unread,
+                UserId = userTask.UserId.Value,
+                Info = userTaskModel.Name
+            };
+            await _notificationRepository.Create(notification);
+
+            IHubContext<NotificationHub> hub = StaticData.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
+            await NotificationHub.SendNotification(hub.Clients, notification);
         }
 
         public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)

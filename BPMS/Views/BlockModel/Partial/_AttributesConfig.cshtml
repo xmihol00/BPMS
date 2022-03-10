@@ -7,7 +7,7 @@
         <button type="button" id="CancelAttBtnId" class="butn butn-sm btn-d mt-1" onclick="CancelAddAttrib()"><i class="fas fa-times"></i></button>
     </div>
     <input type="hidden" id="IdId" name="Id" value="" />
-    <input type="hidden" name="BlockId" value="@Model.Id" />
+    <input type="hidden" id="BlockIdId" name="BlockId" value="@Model.Id" />
     <h5 id="HeadlineId">Tvorba atributu</h5>
     <div class="row">
         <div class="col-4">
@@ -60,23 +60,23 @@
 {
     @await Html.PartialAsync("Partial/_SenderConfig", Model)
 }
-
 @if (Model is IOutputAttributesConfig)
 {   
     @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IOutputAttributesConfig, Model is IRecieverConfig))
 }
-
 @if (Model is IServiceInputAttributes)
 {
     @await Html.PartialAsync("Partial/_ServiceInputAttributesConfig", Model)
 }
-
 @if (Model is IInputAttributesConfig)
 {
     @await Html.PartialAsync("Partial/_InputAttributesConfig", Model)
 }
-
 @if (Model is IServiceOutputAttributes)
 {
     @await Html.PartialAsync("Partial/_ServiceOutputAttributesConfig", Model)
+}
+@if (Model is IServiceConfig)
+{
+    @await Html.PartialAsync("Partial/_ServiceMapConfig", Model)
 }

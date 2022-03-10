@@ -17,5 +17,7 @@ namespace BPMS_DTOs.Workflow
         public string SVG { get; set; } = string.Empty;
         public string AdministratorName { get; set; } = string.Empty;
         public string AdministratorEmail { get; set; } = string.Empty;
+        public Guid ModelId { get; set; }
+        public string ModelName { get; set; } = string.Empty;
     }
 }

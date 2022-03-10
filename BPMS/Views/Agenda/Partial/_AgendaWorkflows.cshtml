@@ -11,8 +11,35 @@
                     @Html.Raw(workflow.SVG)
                 </div>
                 <div class="col-12 col-lg-6">
-                    <h3 class="text-center border-bottom">@workflow.Name</h3>
-                    <p>@workflow.Description</p>
+                    <h3 class="text-center border-bottom wf-headline">@workflow.Name</h3>
+                    @if (String.IsNullOrEmpty(workflow.Description))
+                    {
+                        <div class="text-placeholder my-2">Workflow nemá popis.</div>
+                    }
+                    else
+                    {
+                        <div class="mt-2 text-descr">@workflow.Description</div>
+                    }
+                    <div class="d-flex justify-content-around mt-2">
+                        <div class="d-flex flex-wrap justify-content-center">
+                            <div class="text-center mx-1">Stav:</div>
+                            <div class="badge rounded-pill text-1em @workflow.State mx-1 my-auto">
+                                @workflow.State.ToLabel()
+                            </div>
+                        </div>
+                        <div class="my-auto d-flex flex-wrap justify-content-center">
+                            <div class="text-center mx-1">Správce:</div>
+                            <b class="mx-1">@workflow.AdministratorName</b>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <a href="/Model/Detail/@workflow.ModelId" class="w-100 link-p" onclick="event.stopPropagation()">
+                            <div class="d-flex justify-content-center">
+                                <i class="fas fa-clone mx-auto task-icon"></i>
+                            </div>
+                            <h4 class="text-center mb-0">@workflow.ModelName</h4>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -11,6 +11,8 @@ using BPMS_DTOs.Task;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
 using BPMS_DAL.Entities.BlockDataTypes;
+using BPMS_DTOs.DataSchema;
+using BPMS_DAL.Sharing;
 
 namespace BPMS_DAL.Repositories
 {
@@ -127,6 +129,27 @@ namespace BPMS_DAL.Repositories
         public Task<List<TaskDataEntity>> OfArray(Guid id, Guid? dataSchemaId)
         {
             return _dbSet.Where(x => x.Id != id && x.SchemaId == dataSchemaId)
+                         .ToListAsync();
+        }
+
+        public Task<List<DataSchemaDataMap>> MappedServiceTaskData(Guid serviceTaskId, Guid workflowId)
+        {
+            return _dbSet.Include(x => x.Schema)
+                            .ThenInclude(x => x.Sources)
+                                .ThenInclude(x => x.Target)
+                                    .ThenInclude(x => x.Data)
+                                        .Include(x => x.OutputTask)
+                         .Where(x => x.OutputTaskId == serviceTaskId && x.Schema.Direction == DirectionEnum.Output)
+                         .Select(x => x.Schema)
+                         .Select(x => new DataSchemaDataMap
+                         {
+                             ParentId = x.ParentId,
+                             Alias = x.Alias,
+                             Name = x.Name,
+                             Data = x.Sources.SelectMany(x => x.Target.Data)
+                                             .Where(x => x.OutputTaskId != serviceTaskId && x.OutputTask.WorkflowId == workflowId)
+                                             .ToList()
+                         })
                          .ToListAsync();
         }
     }

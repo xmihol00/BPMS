@@ -51,7 +51,7 @@
         @await Html.PartialAsync("Partial/_SystemOverview", Model.Systems)
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/System/Filter')">
-        <h2 class="text-font text-center mt-4 border-bottom mb-1">Filtrování</h2>
+        <h2 class="text-font text-center text-filter border-bottom mb-1">Filtrování</h2>
         @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("System")))
         {
             <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   

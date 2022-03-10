@@ -447,5 +447,27 @@ namespace BPMS_DAL.Repositories
                               })
                               .ToListAsync();
         }
+
+        public Task<List<DataSchemaSourceDTO>> Sources(uint order, Guid poolId)
+        {
+            return _serviceTasks.Include(x => x.Service)
+                                    .ThenInclude(x => x.DataSchemas)
+                                .Where(x => x.PoolId == poolId && x.Order < order)
+                                .Select(x => new DataSchemaSourceDTO
+                                {
+                                    BlockName = x.Name,
+                                    Sources = x.Service.DataSchemas
+                                                       .Where(x => x.StaticData == null && x.Direction == DirectionEnum.Output)
+                                                       .Select(x => new DataSchemaMapDTO
+                                                       {
+                                                           Alias = x.Alias,
+                                                           Id = x.Id,
+                                                           Name = x.Name,
+                                                           Type = x.Type
+                                                       })
+                                                       .ToList()
+                                })
+                                .ToListAsync();
+        }
     }
 }

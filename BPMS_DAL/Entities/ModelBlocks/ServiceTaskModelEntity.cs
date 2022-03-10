@@ -18,5 +18,6 @@ namespace BPMS_DAL.Entities.ModelBlocks
         public ServiceEntity? Service { get; set; }
         public ServiceStateEnum State { get; set; }
         public List<BlockModelDataSchemaEntity> Blocks { get; set; } = new List<BlockModelDataSchemaEntity>();
+        public List<DataSchemaMapEntity> MappedSchemas { get; set; } = new List<DataSchemaMapEntity>();
     }
 }

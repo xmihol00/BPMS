@@ -20,5 +20,6 @@ namespace BPMS_DTOs.Task
         public TaskPriorityEnum Priority { get; set; }
         public DateTime SolveDate { get; set; }
         public TaskTypeEnum Type { get; set; }
+        public BlockWorkflowStateEnum State { get; set; }
     }
 }

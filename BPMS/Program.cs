@@ -1,4 +1,4 @@
-using BPMS.Hubs;
+using BPMS_BL.Hubs;
 using BPMS_BL.Facades;
 using BPMS_BL.Profiles;
 using BPMS_Common;
@@ -45,6 +45,8 @@ services.AddScoped<ForeignRecieveEventRepository>();
 services.AddScoped<ForeignSendEventRepository>();
 services.AddScoped<ForeignAttributeMapRepository>();
 services.AddScoped<FilterRepository>();
+services.AddScoped<DataSchemaMapRepository>();
+services.AddScoped<NotificationRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
@@ -89,8 +91,8 @@ app.UseAuthorization();
 app.MapControllerRoute(name: "default", pattern: "{controller=Task}/{action=Overview}/{id?}");
 app.MapHub<NotificationHub>("/Notification");
 
-
-using BpmsDbContext context = app.Services.CreateScope().ServiceProvider.GetService<BpmsDbContext>();
+StaticData.ServiceProvider = app.Services.CreateScope().ServiceProvider;
+using BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();
 
 app.Run();

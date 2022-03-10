@@ -1,0 +1,93 @@
+@model IServiceConfig
+
+<div id ="ServiceMapConfigId">
+    <h4 class="mt-2">Namapované výstupy na vstupy</h4>
+    @if (Model.MappedSchemas.Count > 0)
+    {
+        <div class="d-flex justify-content-center">
+            <h5 class="w-map-name text-center">Výstupy služeb</h5>
+            <h5 class="w-map-name text-center">Vstupy služeby</h5>
+        </div>
+        @foreach (DataSchemaMappedDTO mapped in Model.MappedSchemas)
+        {
+            <div class="d-flex justify-content-center">
+                <div id="@mapped.Source.Id" class="map-src">
+                    <span class="text-prim">@mapped.Source.Name</span>
+                    @(String.IsNullOrEmpty(mapped.Source.Alias) ? "" : $"({mapped.Source.Alias})")
+                    <span class="text-code float-end">@mapped.Source.Type</span>
+                </div>
+                <div class="map-remove" onclick="RemoveMap(this, '@mapped.ServiceTaskId')">Odebrat</div>
+                <div id="@mapped.Target.Id" class="map-dst">
+                    <span class="text-prim">@mapped.Target.Name</span>
+                    @(String.IsNullOrEmpty(mapped.Target.Alias) ? "" : $"({mapped.Target.Alias})")
+                    <span class="text-code float-end">@mapped.Target.Type</span>
+                </div>
+            </div>   
+        }
+    }
+    else
+    {
+        <div class="text-placeholder">Webová služba nemá nakonfigurována žádná mapování.</div>
+    }
+
+    <h4 class="mt-2">Mapování výstupů na vstupy</h4>
+    @if (Model.CurrentServiceId == null)
+    {
+        <div class="text-placeholder">Vyberte jakou službu bude volat tento blok.</div>
+    }
+    else if (Model.SourceSchemas.Count > 0)
+    {
+        <div class="row">
+            <div class="col-4">
+                <h5 class="text-center">Výstupy služeb</h5>
+                @foreach (DataSchemaSourceDTO sources in Model.SourceSchemas)
+                {
+                    <div class="source-name">Služba: <span class="text-prim">@sources.BlockName</span></div>
+                    @foreach (DataSchemaMapDTO source in sources.Sources)
+                    {
+                        <div id="@source.Id" class="target grab" data-type="@source.Type" draggable="true" 
+                            ondragstart="SchemaDragStart(event)" ondragend="SchemaDragEnd(event)">
+                            <span class="text-prim">@source.Name</span>
+                            @(String.IsNullOrEmpty(source.Alias) ? "" : $"({source.Alias})")
+                            <span class="text-code float-end">@source.Type</span>
+                        </div>    
+                    }
+                }
+            </div>
+            @if (Model.TargetSchemas.Count > 0)
+            {
+                <div class="col-4 px-2">
+                    <h5 class="text-center">Mapování</h5>
+                    @foreach (DataSchemaMapDTO target in Model.TargetSchemas)
+                    {
+                        <div id="@target.Id" class="target-map text-center" data-type="@target.Type" ondragenter="SchemaDragEnter(this)"
+                            ondragleave="SchemaDragLeave(this)" ondrop="SchemaDragDrop(event)"></div>
+                    }
+                </div>
+                <div class="col-4 px-2">
+                    <h5 class="text-center">Vstupy služby</h5>
+                    @foreach (DataSchemaMapDTO target in Model.TargetSchemas)
+                    {
+                        <div class="target">
+                            <span class="text-prim">@target.Name</span>
+                            @(String.IsNullOrEmpty(target.Alias) ? "" : $"({target.Alias})")
+                            <span class="text-code float-end">@target.Type</span>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="col-8 d-flex flex-wrap">
+                    <h5 class="text-center w-50">Mapování</h5>
+                    <h5 class="text-center w-50">Vstupy služby</h5>
+                    <div class="text-placeholder text-center w-100">Všechny vstupy webové služby jsou již namapovány.</div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-placeholder">Webová služba nemá žádné zdroje pro mapování.</div>
+    }
+</div>
