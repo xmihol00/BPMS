@@ -10,5 +10,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
     public class NumberDataEntity : TaskDataEntity, INumberDataEntity
     {
         public double? Value { get; set; }
+
+        public override bool HasData()
+        {
+            return Value != null;
+        }
     }
 }

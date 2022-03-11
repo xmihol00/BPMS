@@ -10,5 +10,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
     public class StringDataEntity : TaskDataEntity, IStringDataEntity
     {
         public string? Value { get; set; }
+
+        public override bool HasData()
+        {
+            return Value != null;
+        }
     }
 }

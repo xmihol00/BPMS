@@ -1,0 +1,14 @@
+@model ServiceTaskDetailHeaderDTO
+
+<div class="d-flex justify-content-between px-4 page-navbar-content">
+    <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
+    <h1 class="my-auto text-font">Detail úkolu</h1>
+    <div class="my-auto">
+        @if (Model.State == BlockWorkflowStateEnum.Active)
+        {
+            <button type="submit" form="SeviceCallFormId" class="butn btn-s">Volat službu</button>
+            <button type="button" class="butn btn-s" onclick="SaveServiceTask()">Uložit</button>
+            <button type="submit" form="TaskDataFormId" class="butn btn-s">Vyřešit</button>
+        }
+    </div>
+</div>

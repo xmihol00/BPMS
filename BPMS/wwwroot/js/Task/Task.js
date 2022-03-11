@@ -6,19 +6,67 @@ window.addEventListener('DOMContentLoaded', () =>
     {
         InputValidator(form);
     }
+    form = document.getElementById("SeviceCallFormId");
+    if (form)
+    {
+        InputValidator(form);
+    }
 });
 
-function SaveTaskData()
+function SaveUserTask()
 {
     let form = document.getElementById("TaskDataFormId");
-    form.setAttribute("action", "/Task/SaveData");
+    form.setAttribute("action", "/Task/SaveUserTask");
     AjaxFormSubmit(form, "DetailDivId");
 }
 
-function SolveTask()
+function SaveServiceTask()
+{
+    document.getElementById("TaskIdId").remove();
+    let formData1 = new FormData(document.getElementById("SeviceCallFormId"));
+    let formData2 = new FormData(document.getElementById("TaskDataFormId"));
+    for (var pair of formData2.entries()) 
+    {
+        formData1.append(pair[0], pair[1]);
+    }
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: "/Task/SaveServiceTask",
+        data: formData1,
+        contentType: false,
+        processData: false,
+    })
+    .done((result) => 
+    {
+        document.getElementById("DetailDivId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function SolveUserTask()
 {
     let form = document.getElementById("TaskDataFormId");
     form.setAttribute("action", "/Task/SolveUserTask");
+}
+
+function SolveServiceTask()
+{
+    let form = document.getElementById("TaskDataFormId");
+    form.setAttribute("action", "/Task/SolveServiceTask");
+}
+
+function CallService()
+{
+    let form = document.getElementById("TaskDataFormId");
+    form.setAttribute("action", "/Task/CallService");
+    AjaxFormSubmit(form, "DetailDivId");
 }
 
 function RemoveFile(btn)

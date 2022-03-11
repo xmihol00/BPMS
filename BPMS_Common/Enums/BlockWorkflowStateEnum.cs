@@ -26,20 +26,20 @@ namespace BPMS_Common.Enums
                     return "";
 
                 case BlockWorkflowStateEnum.NotStarted:
-                    return "Nezapočnutý";
+                    return "nezapočnutý";
                     
                 case BlockWorkflowStateEnum.Active:
-                    return "Aktivní";
+                    return "aktivní";
                     
                 case BlockWorkflowStateEnum.Solved:
                 case BlockWorkflowStateEnum.SolvedByUser:
-                    return "Vyřešený";
+                    return "vyřešený";
                     
                 case BlockWorkflowStateEnum.Paused:
-                    return "Pozastavený";
+                    return "pozastavený";
                     
                 case BlockWorkflowStateEnum.Canceled:
-                    return "Zrušený";
+                    return "zrušený";
                     
             }
         }

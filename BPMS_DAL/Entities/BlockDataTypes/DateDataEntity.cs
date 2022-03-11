@@ -10,5 +10,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
     public class DateDataEntity : TaskDataEntity, IDateDataEntity
     {
         public DateTime? Value { get; set; }
+
+        public override bool HasData()
+        {
+            return Value != null;
+        }
     }
 }

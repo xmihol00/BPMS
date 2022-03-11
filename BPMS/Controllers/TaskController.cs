@@ -15,8 +15,7 @@ namespace BPMS.Controllers
     [Authorize]
     public class TaskController : BaseController
     {
-        private readonly TaskFacade _taskFacade;
-        
+        private readonly TaskFacade _taskFacade;       
 
         public TaskController(TaskFacade taskFacade)
         : base(taskFacade)
@@ -47,37 +46,67 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> UserDetail(Guid id)
         {
-            return View("UserTaskDetail", await _taskFacade.UserTaskDetail(id, _userId));
+            return View("UserTaskDetail", await _taskFacade.UserTaskDetail(id));
         }
 
         [HttpGet]
         public async Task<IActionResult> UserDetailPartial(Guid id)
         {
-            UserTaskDetailPartialDTO dto = await _taskFacade.UserTaskDetailPartial(id, _userId);
+            UserTaskDetailPartialDTO dto = await _taskFacade.UserTaskDetailPartial(id);
             return Ok(new
             {
                 detail = await this.RenderViewAsync("Partial/_UserTaskDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_UserTaskHeader", dto, true),
+                header = await this.RenderViewAsync("Partial/_UserTaskDetailHeader", dto, true),
             });
         }
 
         [HttpGet]
         public async Task<IActionResult> ServiceDetail(Guid id)
         {
-            return View("ServiceTaskDetail", await _taskFacade.ServiceTaskDetail(id, _userId));
+            return View("ServiceTaskDetail", await _taskFacade.ServiceTaskDetail(id));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ServiceDetailPartial(Guid id)
+        {
+            ServiceTaskDetailPartialDTO dto = await _taskFacade.ServiceTaskDetailPartial(id);
+            return Ok(new
+            {
+                detail = await this.RenderViewAsync("Partial/_ServiceTaskDetail", dto, true),
+                header = await this.RenderViewAsync("Partial/_ServiceTaskDetailHeader", dto, true),
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveData(IFormCollection data)
+        public async Task<IActionResult> SaveUserTask(IFormCollection data)
         {
-            return PartialView("Partial/_UserTaskDetail", await _taskFacade.SaveData(data, Request.Form.Files, _userId));
+            return PartialView("Partial/_UserTaskDetail", await _taskFacade.SaveUserTask(data, Request.Form.Files));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveServiceTask(IFormCollection data)
+        {
+            return PartialView("Partial/_ServiceTaskDetail", await _taskFacade.SaveServiceTask(data, Request.Form.Files));
         }
 
         [HttpPost]
         public async Task<IActionResult> SolveUserTask(IFormCollection data)
         {
-            await _taskFacade.SolveUserTask(data, Request.Form.Files);
+            await _taskFacade.SolveTask(data, Request.Form.Files);
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SolveServiceTask(IFormCollection data)
+        {
+            await _taskFacade.SolveTask(data, Request.Form.Files, BlockWorkflowStateEnum.SolvedByUser);
+            return Redirect("/Task/Overview");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CallService(IFormCollection data)
+        {
+            return PartialView("Partial/_ServiceTaskDetail", await _taskFacade.CallService(data, Request.Form.Files));
         }
 
         [HttpGet]

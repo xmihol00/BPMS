@@ -148,7 +148,6 @@ namespace BPMS_DAL.Repositories
                                                     Id = y.Id,
                                                     Name = y.Name,
                                                     URL = y.URL,
-                                                    Description = y.Description
                                                 })
                                                 .ToList()
                          })

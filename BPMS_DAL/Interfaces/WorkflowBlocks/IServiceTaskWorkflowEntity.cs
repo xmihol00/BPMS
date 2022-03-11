@@ -9,5 +9,6 @@ namespace BPMS_DAL.Interfaces.WorkflowBlocks
 {
     public interface IServiceTaskWorkflowEntity : ITaskWorkflowEntity
     {
+        public string? FailedResponse { get; set; }
     }
 }

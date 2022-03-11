@@ -27,5 +27,9 @@ namespace BPMS_DAL.Entities
 
         [JsonIgnore]
         public DataSchemaEntity? Schema { get; set; }
+        public virtual bool HasData()
+        {
+            return true;
+        }
     }
 }

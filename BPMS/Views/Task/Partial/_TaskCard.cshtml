@@ -1,47 +1,43 @@
 @model (TaskAllDTO task, bool selected)
 
-<div id="@Model.task.Id" class="col-12 col-md-6 col-lg-4 pointer p-2" onclick="DetailTransition(this, '/Task/UserDetailPartial/', false)">
+<div id="@Model.task.Id" class="col-12 col-md-6 col-lg-4 pointer p-2" 
+     onclick="DetailTransition(this, '/Task/@(Model.task.Type == TaskTypeEnum.UserTask ? "UserDetailPartial/" : "ServiceDetailPartial/")', false)">
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
         <h3 class="border-bottom text-center">@Model.task.TaskName</h3>
-        @if (String.IsNullOrEmpty(Model.task.Description))
-        {
-            <div class="text-placeholder">Úkol nemá popis.</div>
-        }
-        else
-        {
-            <div class="text-descr">@Model.task.Description</div>
-        }
         <div class="row mb-1 mt-2">
             <div class="col-6 text-right">
                 Priorita:
             </div>
-            <div class="col-6">
+            <div class="col-6 ps-0">
                 <span class="badge @Model.task.Priority rounded-pill text-1em px-3">
                     @Model.task.Priority.ToLabel()
                 </span>
             </div>
         </div>
-        <div class="row mb-1">
-            <div class="col-6 ps-4 text-right">
-                Dokončit do: 
+        @if (Model.task.SolveDate > DateTime.MinValue)
+        {
+            <div class="row mb-1">
+                <div class="col-6 text-right">
+                    Dokončit do: 
+                </div>
+                <div class="col-6 ps-0">
+                    <b>@Model.task.SolveDate.ToString("dd. MM. yyyy")</b>
+                </div>
             </div>
-            <div class="col-6">
-                <b>@Model.task.SolveDate.ToString("dd. MM. yyyy")</b>
-            </div>
-        </div>
+        }
         <div class="row mb-1">
-            <div class="col-6 ps-4 text-right">
+            <div class="col-6 text-right">
                 Typ úkolu: 
             </div>
-            <div class="col-6">
+            <div class="col-6 ps-0">
                 <b>@Model.task.Type.ToLabel()</b>
             </div>
         </div>
         <div class="row">
-            <div class="col-6 ps-4 text-right">
+            <div class="col-6 text-right">
                 Stav: 
             </div>
-            <div class="col-6">
+            <div class="col-6 ps-0">
                 <span class="badge @Model.task.State rounded-pill text-1em px-3">
                     @Model.task.State.ToLabel()
                 </span>

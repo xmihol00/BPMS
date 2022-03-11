@@ -11,5 +11,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
     public class ArrayDataEntity : TaskDataEntity, IArrayDataEntity
     {
         public DataTypeEnum Type { get; set; }
+
+        public override bool HasData()
+        {
+            return true;
+        }
     }
 }

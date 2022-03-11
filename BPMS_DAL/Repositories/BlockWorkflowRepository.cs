@@ -72,13 +72,12 @@ namespace BPMS_DAL.Repositories
                                                        {
                                                           AgendaId = x.Workflow.AgendaId,
                                                           AgendaName = x.Workflow.Agenda.Name,
-                                                          Description = x.BlockModel.Description,
                                                           Id = x.Id,
                                                           Priority = TaskPriorityEnum.Urgent,
                                                           TaskName = x.BlockModel.Name,
                                                           WorkflowId = x.WorkflowId,
                                                           WorkflowName = x.Workflow.Name,
-                                                          Type = TaskTypeEnum.UserTask,
+                                                          Type = TaskTypeEnum.ServiceTask,
                                                           State = x.State,
                                                        })
                                                        .ToListAsync();
@@ -87,7 +86,6 @@ namespace BPMS_DAL.Repositories
                                           {
                                              AgendaId = x.Workflow.AgendaId,
                                              AgendaName = x.Workflow.Agenda.Name,
-                                             Description = x.BlockModel.Description,
                                              SolveDate = x.SolveDate,
                                              Id = x.Id,
                                              Priority = x.Priority,
@@ -131,25 +129,24 @@ namespace BPMS_DAL.Repositories
             return TaskUserId(id, _userTasks);
         }
 
-        public async Task<TaskAllDTO> Selected(Guid id, Guid userId)
+        public async Task<TaskAllDTO> Selected(Guid id)
         {
             if (await _serviceTasks.AnyAsync(x => x.Id == id))
             {
                 return await _serviceTasks.Include(x => x.BlockModel)
                                           .Include(x => x.Workflow)
                                              .ThenInclude(x => x.Agenda)
-                                          .Where(x => x.UserId == userId && x.Id == id)
+                                          .Where(x => x.UserId == UserId && x.Id == id)
                                           .Select(x => new TaskAllDTO
                                           {
                                              AgendaId = x.Workflow.AgendaId,
                                              AgendaName = x.Workflow.Agenda.Name,
-                                             Description = x.BlockModel.Description,
                                              Id = x.Id,
                                              Priority = TaskPriorityEnum.Urgent,
                                              TaskName = x.BlockModel.Name,
                                              WorkflowId = x.WorkflowId,
                                              WorkflowName = x.Workflow.Name,
-                                             Type = TaskTypeEnum.UserTask,
+                                             Type = TaskTypeEnum.ServiceTask,
                                              State = x.State,
                                           })
                                           .FirstAsync();
@@ -159,19 +156,19 @@ namespace BPMS_DAL.Repositories
                 return await _userTasks.Include(x => x.BlockModel)
                                        .Include(x => x.Workflow)
                                           .ThenInclude(x => x.Agenda)
-                                       .Where(x => x.UserId == userId && x.Id == id)
+                                       .Where(x => x.UserId == UserId && x.Id == id)
                                        .Select(x => new TaskAllDTO
                                        {
                                           AgendaId = x.Workflow.AgendaId,
                                           AgendaName = x.Workflow.Agenda.Name,
-                                          Description = x.BlockModel.Description,
                                           SolveDate = x.SolveDate,
                                           Id = x.Id,
                                           Priority = x.Priority,
                                           TaskName = x.BlockModel.Name,
                                           WorkflowId = x.WorkflowId,
                                           WorkflowName = x.Workflow.Name,
-                                          Type = TaskTypeEnum.UserTask
+                                          Type = TaskTypeEnum.UserTask,
+                                          State = x.State
                                        })
                                        .FirstAsync();
             }
@@ -234,6 +231,27 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<ServiceTaskDetailDTO> ServiceDetail(Guid id)
+        {
+            return _serviceTasks.Include(x => x.Workflow)
+                                .ThenInclude(x => x.Agenda)
+                             .Include(x => x.BlockModel)
+                             .Where(x => x.UserId == UserId)
+                             .Select(x => new ServiceTaskDetailDTO
+                             {
+                                 AgendaId = x.Workflow.AgendaId,
+                                 AgendaName = x.Workflow.Agenda.Name,
+                                 Description = x.BlockModel.Description,
+                                 Id = x.Id,
+                                 WorkflowId = x.WorkflowId,
+                                 WorkflowName = x.Workflow.Name,
+                                 TaskName = x.BlockModel.Name,
+                                 State = x.State,
+                                 FailedResponse = x.FailedResponse
+                             })
+                             .FirstAsync(x => x.Id == id);
+        }
+
         public Task<List<BlockWorkflowActivityDTO>> BlockActivity(Guid poolId, Guid workflowId)
         {
             return _dbSet.Include(x => x.BlockModel)
@@ -271,11 +289,12 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<UserTaskDetailDTO> UserDetail(Guid id, Guid userId)
+        public Task<UserTaskDetailDTO> UserDetail(Guid id)
         {
             return _userTasks.Include(x => x.Workflow)
                                 .ThenInclude(x => x.Agenda)
                              .Include(x => x.BlockModel)
+                             .Where(x => x.UserId == UserId)
                              .Select(x => new UserTaskDetailDTO
                              {
                                  AgendaId = x.Workflow.AgendaId,

@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.System
+namespace BPMS_DTOs.Task
 {
-    public class SystemAllDTO
+    public class ServiceTaskDetailHeaderDTO
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string URL { get; set; } = string.Empty;
-        public SystemStateEnum State { get; set; }
+        public BlockWorkflowStateEnum State { get; set; }
     }
 }

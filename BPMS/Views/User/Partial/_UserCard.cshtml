@@ -4,7 +4,7 @@
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
         <h3 class="border-bottom text-center">@Model.user.FullName</h3>
         <div class="d-flex justify-content-center">
-            <div class="vertical-justify-center me-2">Role:</div>
+            <div class="vertical-justify-center me-1">Role:</div>
             <div class="text-bold ms-2">
                 @if (Model.user.Roles.Count == 0)
                 {

@@ -6,27 +6,17 @@ using BPMS_Common.Helpers;
 using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
-using BPMS_DAL.Entities.ModelBlocks;
-using BPMS_DAL.Entities.WorkflowBlocks;
-using BPMS_DAL.Interfaces;
 using BPMS_DAL.Interfaces.BlockDataTypes;
-using BPMS_DAL.Interfaces.ModelBlocks;
-using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
-using BPMS_DTOs.BlockModel;
-using BPMS_DTOs.Pool;
-using BPMS_DTOs.Service;
-using BPMS_DTOs.DataSchema;
 using BPMS_DTOs.Task;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using BPMS_DTOs.Filter;
 using BPMS_DTOs.Task.DataTypes;
 using BPMS_DTOs.Task.IDataTypes;
+using BPMS_DTOs.Service;
+using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_BL.Facades
 {
@@ -40,6 +30,7 @@ namespace BPMS_BL.Facades
         private readonly ServiceRepository _serviceRepository;
         private readonly WorkflowRepository _workflowRepository;
         private readonly PoolRepository _poolRepository;
+        private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly BpmsDbContext _context;
         private WorkflowHelper _worflowHelper { get; set; }
         private readonly IMapper _mapper;
@@ -49,7 +40,7 @@ namespace BPMS_BL.Facades
                           BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, 
                           DataSchemaRepository dataSchemaRepository, ServiceRepository serviceRepository, 
                           WorkflowRepository workflowRepository, PoolRepository poolRepository, FilterRepository filterRepository,
-                          BpmsDbContext context, IMapper mapper)
+                          BlockWorkflowRepository blockWorkflowRepository, BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _taskRepository = taskRepository;
@@ -60,17 +51,54 @@ namespace BPMS_BL.Facades
             _serviceRepository = serviceRepository;
             _workflowRepository = workflowRepository;
             _poolRepository = poolRepository;
+            _blockWorkflowRepository = blockWorkflowRepository;
             _context = context;
             _mapper = mapper;
         }
 #pragma warning restore CS8618
 
-        public async Task<UserTaskDetailPartialDTO> SaveData(IFormCollection data, IFormFileCollection files, Guid userId)
+        public async Task<UserTaskDetailPartialDTO> SaveUserTask(IFormCollection data, IFormFileCollection files)
         {
             await SaveDataInternal(data, files);
             await _taskDataRepository.Save();
 
-            return await UserTaskDetail(Guid.Parse(data["TaskId"]), userId);
+            return await UserTaskDetail(Guid.Parse(data["TaskId"]));
+        }
+
+        public async Task SolveTask(IFormCollection data, IFormFileCollection files, BlockWorkflowStateEnum state = BlockWorkflowStateEnum.Solved)
+        {
+            await SaveDataInternal(data, files);
+            _worflowHelper = new WorkflowHelper(_context);
+
+            BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
+            await _worflowHelper.StartNextTask(solvedTask);
+
+            solvedTask.State = state;
+            solvedTask.SolvedDate = DateTime.Now;
+
+            await _taskRepository.Save();
+
+            await _worflowHelper.ShareActivity(solvedTask.BlockModel.PoolId, solvedTask.WorkflowId, solvedTask.BlockModel.Pool.ModelId);
+        }
+
+        public async Task<ServiceTaskDetailPartialDTO> SaveServiceTask(IFormCollection data, IFormFileCollection files)
+        {
+            await SaveDataInternal(data, files);
+            await _taskDataRepository.Save();
+
+            return await ServiceTaskDetail(Guid.Parse(data["TaskId"]));
+        }
+
+        public async Task<ServiceTaskDetailPartialDTO> CallService(IFormCollection data, IFormFileCollection files)
+        {
+            Guid id = Guid.Parse(data["TaskId"]);
+            await SaveDataInternal(data, files);
+            _worflowHelper = new WorkflowHelper(_context);
+            IServiceTaskWorkflowEntity serviceTask = await _blockWorkflowRepository.Bare(id) as IServiceTaskWorkflowEntity;
+            serviceTask.FailedResponse = await _worflowHelper.CallService(serviceTask);
+            await _taskDataRepository.Save();
+
+            return await ServiceTaskDetail(id);
         }
 
         public async Task<TaskDataDTO> AddToArray(Guid taskDataId, DataTypeEnum type)
@@ -178,27 +206,6 @@ namespace BPMS_BL.Facades
             }
         }
 
-        public async Task SolveUserTask(IFormCollection data, IFormFileCollection files)
-        {
-            await SaveDataInternal(data, files);
-            _worflowHelper = new WorkflowHelper(_context);
-
-            BlockWorkflowEntity solvedTask = await _taskRepository.TaskForSolving(Guid.Parse(data["TaskId"]));
-            await _worflowHelper.StartNextTask(solvedTask);
-
-            solvedTask.State = BlockWorkflowStateEnum.Solved;
-            solvedTask.SolvedDate = DateTime.Now;
-
-            await _taskRepository.Save();
-
-            await _worflowHelper.ShareActivity(solvedTask.BlockModel.PoolId, solvedTask.WorkflowId, solvedTask.BlockModel.Pool.ModelId);
-        }
-
-        public Task<object?> ServiceTaskDetail(Guid id, Guid userId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<TaskOverviewDTO> Overview(Guid userId)
         {
             return new TaskOverviewDTO()
@@ -214,19 +221,18 @@ namespace BPMS_BL.Facades
             return await _taskRepository.All();
         }
 
-        public async Task<UserTaskDetailDTO> UserTaskDetail(Guid id, Guid userId)
+        public async Task<UserTaskDetailDTO> UserTaskDetail(Guid id)
         {
-            UserTaskDetailDTO detail = await UserTaskDetailPartial(id, userId);
+            UserTaskDetailDTO detail = await UserTaskDetailPartial(id);
             detail.OtherTasks = await _taskRepository.All(id);
-            detail.SelectedTask = await _taskRepository.Selected(id, userId);
+            detail.SelectedTask = await _taskRepository.Selected(id);
 
             return detail;
         }
 
-        public async Task<UserTaskDetailDTO> UserTaskDetailPartial(Guid id, Guid userId)
+        public async Task<UserTaskDetailDTO> UserTaskDetailPartial(Guid id)
         {
-            UserTaskDetailDTO detail = await _taskRepository.UserDetail(id, userId);
-            UserTaskWorkflowEntity entity = await _taskRepository.Detail(id);
+            UserTaskDetailDTO detail = await _taskRepository.UserDetail(id);
             
             List<TaskDataDTO> inputData = new List<TaskDataDTO>();
             foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTaskData(id))
@@ -269,6 +275,35 @@ namespace BPMS_BL.Facades
             }
             detail.InputServiceData = inputServiceData.GroupBy(x => x.BlockName);
             detail.OutputServiceData = outputServiceData.GroupBy(x => x.BlockName);
+
+            return detail;
+        }
+
+        public async Task<ServiceTaskDetailDTO> ServiceTaskDetailPartial(Guid id)
+        {
+            ServiceTaskDetailDTO detail = await _taskRepository.ServiceDetail(id);
+            
+            foreach (TaskDataEntity data in await _taskDataRepository.ServiceTaskData(id))
+            {
+                TaskDataDTO mapped = _mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO;
+                if (data.Schema.Direction == DirectionEnum.Input)
+                {
+                    detail.InputData.Add(mapped);
+                }
+                else
+                {
+                    detail.OutputData.Add(mapped);
+                }
+            }
+
+            return detail;
+        }
+
+        public async Task<ServiceTaskDetailDTO> ServiceTaskDetail(Guid id)
+        {
+            ServiceTaskDetailDTO detail = await ServiceTaskDetailPartial(id);
+            detail.OtherTasks = await _taskRepository.All(id);
+            detail.SelectedTask = await _taskRepository.Selected(id);
 
             return detail;
         }

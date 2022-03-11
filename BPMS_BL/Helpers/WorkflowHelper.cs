@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.SignalR;
 using BPMS_BL.Hubs;
+using System.Net;
 
 namespace BPMS_BL.Helpers
 {
@@ -79,6 +80,39 @@ namespace BPMS_BL.Helpers
         public async Task CreateWorkflow(Guid modelId, Guid workflowId)
         {
             await CreateWorkflow(modelId, await _workflowRepository.Waiting(workflowId));
+        }
+
+        public async Task<string?> CallService(IServiceTaskWorkflowEntity serviceTask)
+        {
+            ServiceTaskModelEntity serviceTaskModel = await _blockModelRepository.ServiceTaskForSolve(serviceTask.BlockModelId);
+
+            ServiceCallResultDTO? result = null;
+            try
+            {
+                ServiceRequestDTO service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId.Value);
+                service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
+                result = await new WebServiceHelper(service).SendRequest();
+            }
+            catch
+            {
+                return result.RecievedData;
+            }
+            
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                return result.RecievedData;
+            }
+
+            try
+            {
+                await MapRequestResult(result, serviceTask.Id, serviceTask.WorkflowId);
+            }
+            catch
+            {
+                return result.RecievedData;
+            }
+
+            return null;
         }
 
         private async Task<List<BlockWorkflowEntity>> CreateBlocks(BlockModelEntity blockModel)
@@ -470,10 +504,16 @@ namespace BPMS_BL.Helpers
                 ServiceRequestDTO service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId.Value);
                 service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
                 ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
+                serviceTask.FailedResponse = result.RecievedData;
+                if (result.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new Exception();
+                }
                 await MapRequestResult(result, serviceTask.Id, serviceTask.WorkflowId);
 
                 await StartNextTask(task);
                 serviceTask.State = BlockWorkflowStateEnum.NotStarted;
+                serviceTask.FailedResponse = null;
             }
             catch
             {
@@ -502,6 +542,11 @@ namespace BPMS_BL.Helpers
                 
                 default:
                     throw new NotImplementedException();
+            }
+
+            if (data.Any(x => !x.HasData()))
+            {
+                throw new Exception();
             }
         }
 

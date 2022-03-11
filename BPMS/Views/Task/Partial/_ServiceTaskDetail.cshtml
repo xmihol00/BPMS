@@ -1,0 +1,60 @@
+@model ServiceTaskDetailPartialDTO
+
+<div class="d-flex justify-content-center">
+    <h1 class="text-font my-auto me-1">@Model.TaskName</h1>
+    <div class="badge rounded-pill text-large ms-1 my-auto @Model.State">
+        @Model.State.ToLabel()
+    </div>
+    <div class="badge rounded-pill text-large ms-2 my-auto @Model.Priority">
+        @Model.Priority.ToLabel()
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font my-1">Informace</h4>
+        <div class="text-center">Typ úkolu: <b>@TaskTypeEnum.UserTask.ToLabel()</b></div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <h4 class="text-center text-font my-1">Popis</h4>
+        @if (String.IsNullOrEmpty(Model.Description))
+        {
+            <div class="text-placeholder">Úkol nemá popis.</div>
+        }
+        else
+        {
+            <div class="text-descr">@Model.Description</div>
+        }
+    </div>
+</div>
+<div class="row mt-2">
+@if (Model.State == BlockWorkflowStateEnum.Active)
+{
+    <form id="SeviceCallFormId" class="col-12 col-lg-6" action="/Task/CallService" novalidate
+            oninput="InputValidator(this)" onsubmit="AjaxFormSubmit(event, 'DetailDivId', false, false, null, () => InputValidator(this))">
+        <input type="hidden" name="TaskId" value="@Model.Id" />
+        <h2 class="text-center text-font mb-0">Vstupní data</h2>
+        @await Html.PartialAsync("Partial/_TaskDataService", (Model.InputData, true))
+    </form>
+    <form id="TaskDataFormId" class="col-12 col-lg-6" action="/Task/SolveServiceTask" method="POST" novalidate oninput="InputValidator(this)">
+        <input id="TaskIdId" type="hidden" name="TaskId" value="@Model.Id" />
+        <h2 class="text-center text-font mb-0">Výstupní data</h2>
+        @await Html.PartialAsync("Partial/_TaskDataService", (Model.OutputData, true))
+    </form>
+}
+else
+{
+    <div class="col-12 col-lg-6">
+        <h2 class="text-center text-font mb-0">Vstupní data</h2>
+        @await Html.PartialAsync("Partial/_TaskDataService", (Model.OutputData, false))
+    </div>
+    <div class="col-12 col-lg-6">
+        <h2 class="text-center text-font mb-0">Výstupní data</h2>
+        @await Html.PartialAsync("Partial/_TaskDataService", (Model.OutputData, false))
+    </div>
+}
+</div>
+@if (!String.IsNullOrEmpty(Model.FailedResponse))
+{
+    <h4 class="text-center text-font mt-2">Chybná odpověď</h4>
+    <div class="verbatim mb-2 text-break">@Model.FailedResponse</div>
+}

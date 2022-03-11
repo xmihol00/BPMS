@@ -8,17 +8,18 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.Task
 {
-    public class TaskAllDTO
+    public class ServiceTaskDetailPartialDTO : ServiceTaskDetailHeaderDTO
     {
-        public Guid Id { get; set; }
         public string TaskName { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
         public Guid WorkflowId { get; set; }
         public string WorkflowName { get; set; } = string.Empty;
         public Guid AgendaId { get; set; }
         public string AgendaName { get; set; } = string.Empty;
-        public TaskPriorityEnum Priority { get; set; }
+        public TaskPriorityEnum Priority { get; set; } = TaskPriorityEnum.Urgent;
         public DateTime SolveDate { get; set; }
-        public TaskTypeEnum Type { get; set; }
-        public BlockWorkflowStateEnum State { get; set; }
+        public string? FailedResponse { get; set; }
+        public List<TaskDataDTO> InputData { get; set; } = new List<TaskDataDTO>();
+        public List<TaskDataDTO> OutputData { get; set; } = new List<TaskDataDTO>();
     }
 }

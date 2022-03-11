@@ -10,5 +10,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
     public class SelectDataEntity : TaskDataEntity, ISelectDataEntity
     {
         public string? Value { get; set; }
+
+        public override bool HasData()
+        {
+            return Value != null;
+        }
     }
 }

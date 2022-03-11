@@ -16,6 +16,7 @@ using BPMS_DTOs.Service;
 using BPMS_DTOs.DataSchema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace BPMS_BL.Helpers
 {
@@ -210,6 +211,7 @@ namespace BPMS_BL.Helpers
         {
             string? mediaType = response.Content.Headers?.ContentType?.MediaType;
             ServiceCallResultDTO result = new ServiceCallResultDTO();
+            result.StatusCode = HttpStatusCode.OK;
             result.RecievedData = await response.Content.ReadAsStringAsync();
 
             if (mediaType == "text/xml" || mediaType == "application/xml")

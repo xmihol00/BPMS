@@ -9,6 +9,6 @@ namespace BPMS_DAL.Entities.WorkflowBlocks
 {
     public class ServiceTaskWorkflowEntity : TaskWorkflowEntity, IServiceTaskWorkflowEntity
     {
-        
+        public string? FailedResponse { get; set; }
     }
 }

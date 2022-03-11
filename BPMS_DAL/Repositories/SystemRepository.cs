@@ -67,7 +67,6 @@ namespace BPMS_DAL.Repositories
                             Id = x.Id,
                             Name = x.Name,
                             URL = x.URL,
-                            Description = x.Description,
                             State = x.State
                         })
                         .ToListAsync();
@@ -84,7 +83,6 @@ namespace BPMS_DAL.Repositories
                              State = x.State,
                              SelectedSystem = new SystemAllDTO
                              {
-                                 Description = x.Description,
                                  Id = x.Id,
                                  Name = x.Name,
                                  URL = x.URL,
@@ -101,7 +99,6 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Name = x.Name,
                              URL = x.URL,
-                             Description = x.Description,
                              State = x.State
                          })
                          .FirstAsync(x => x.Id == id);

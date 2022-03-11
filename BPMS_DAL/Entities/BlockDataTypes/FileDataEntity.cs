@@ -15,5 +15,10 @@ namespace BPMS_DAL.Entities.BlockDataTypes
 
         [NotMapped]
         public byte[]? Data { get; set; }
+
+        public override bool HasData()
+        {
+            return FileName != null;
+        }
     }
 }
