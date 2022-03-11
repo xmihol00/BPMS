@@ -532,8 +532,34 @@ a:hover {
   transition: all 1.0s;
   display: block;
   overflow: hidden;
+  width: 0%;
 }
 
+.container-lg {
+  width: 100%;
+}
+
+@media (min-width: 992px)
+{
+  .container-lg {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px)
+{
+  .container-lg {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 1400px)
+{
+  .container-lg {
+      max-width: 1320px;
+  }
+}
+  
 .overview-nav {
   width: max(calc(100vw - 1320px - var(--side-bar-small-width)), 324px);
   max-width: 424px;
@@ -765,8 +791,8 @@ a:hover {
   color: var(--color-inactive);
 }
 
-.fa-info-circle {
-  font-size: 1.5em;
+.fa-info-circle, .fa-chevron-circle-left {
+  font-size: 1.3em;
 }
 
 .map-src, .map-dst, .target {
@@ -870,7 +896,8 @@ a:hover {
   height: fit-content;
   max-height: 90vh;
   width: 380px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .notif-div {

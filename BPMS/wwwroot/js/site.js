@@ -34,6 +34,7 @@ Notifications.on("Notification", (result) =>
 Notifications.start();
 
 document.addEventListener("keydown", KeyDownHandler);
+window.addEventListener("popstate", () => window.location.reload())
 
 window.addEventListener('DOMContentLoaded', () => 
 {
@@ -404,6 +405,41 @@ function LoadingImageHtml()
     return "<div class='loading-content'></div>"
 }
 
+function OverviewTransition(path)
+{
+    let detailDiv = document.getElementById("DetailDivId");
+    let overviewDiv = document.getElementById("OverviewDivId");
+    let overviewNav = document.getElementById("OverviewNavId");
+
+    detailDiv.classList.remove("container-lg");
+    detailDiv.innerHTML = LoadingImageHtml();
+
+    overviewDiv.classList.remove("side-overview");
+    overviewDiv.children[0].children[0].children[0].classList.remove("selected-card");
+
+    overviewNav.classList.remove("overview-nav-hide");
+
+    $.ajax(
+    {
+        async: true,
+        type: "GET",
+        url: path
+    })
+    .done((result) => 
+    {
+        document.getElementById("PageNavId").innerHTML = result.header;
+        overviewNav.innerHTML = result.filters;
+
+        window.history.pushState({}, '', path.replace("Partial", ""));
+        ActivateIcons();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
 function DetailTransition(element, path, blocks = false, succesCallback = null)
 {
     let detailDiv = document.getElementById("DetailDivId");
@@ -418,22 +454,16 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
         detailDiv.innerHTML = LoadingImageHtml();
     }
 
-    for (let card of document.getElementsByClassName("selected-card"))
-    {
-        card.classList.remove("selected-card");
-    }
-    
-    let topEle = element.parentNode.parentNode;
-    let overviewDiv = document.getElementById("OverviewNavId");
-    topEle.classList.add("side-overview");
+    let overviewDiv = document.getElementById("OverviewDivId");
+    overviewDiv.children[0].children[0].children[0].classList.remove("selected-card");
+        
+    overviewDiv.classList.add("side-overview");
     detailDiv.classList.add("container-lg");
     detailDiv.classList.remove("d-none");
     
-    if (overviewDiv)
-    {
-        overviewDiv.classList.add("overview-nav-hide");
-    }
-    
+    let overviewNav = document.getElementById("OverviewNavId");
+    overviewNav.classList.add("overview-nav-hide");
+        
     element.children[0].classList.add("selected-card");
     element.parentElement.prepend(element);
     window.scrollTo({ top: 0, behavior: 'smooth' });
