@@ -59,6 +59,10 @@ namespace BPMS_Common.Enums
         UserModelKeeper,
         UserWorkflowKeeper,
         UserServiceKeeper,
+
+
+        NotificationMarked,
+        NotificationSeen,
     }
 
     public static class FilterType

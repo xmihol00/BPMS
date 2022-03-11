@@ -64,6 +64,10 @@
   font-size: 1em;
 }
 
+.text-1p2m {
+  font-size: 1.2em;
+}
+
 .text-large {
   font-size: 1.25em;
 }
@@ -76,10 +80,6 @@
   content: "Bez názvu";
   font-style: italic;
   color: var(--color-secondary);
-}
-
-.text-prim {
-  color: var(--color-primary);
 }
 
 .source-name {

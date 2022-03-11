@@ -114,5 +114,14 @@ namespace BPMS.Controllers
             await _userFacade.NotificationSeen(id);
             return Ok();
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("/Account/NotificationMark/{id}/{marked}")]
+        public async Task<IActionResult> NotificationMark(Guid id, bool marked)
+        {
+            await _userFacade.NotificationMark(id, marked);
+            return Ok();
+        }
     }
 }

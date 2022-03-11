@@ -41,6 +41,8 @@ namespace BPMS_BL.Facades
         {
             _userRepository.Filters = filters;
             _userRepository.UserId = userId;
+            _notificationRepository.Filters = filters;
+            _notificationRepository.UserId = userId;
             _userId = userId;
         }
 
@@ -101,6 +103,19 @@ namespace BPMS_BL.Facades
         public async Task NotificationSeen(Guid id)
         {
             _notificationRepository.ChangeState(id, NotificationStateEnum.Read);
+            await _notificationRepository.Save();
+        }
+
+        public async Task NotificationMark(Guid id, bool marked)
+        {
+            if (marked)
+            {
+                _notificationRepository.ChangeState(id, NotificationStateEnum.Read);
+            }
+            else
+            {
+                _notificationRepository.ChangeState(id, NotificationStateEnum.Marked);
+            }
             await _notificationRepository.Save();
         }
 
