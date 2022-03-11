@@ -60,6 +60,7 @@ services.AddScoped<TaskFacade>();
 services.AddScoped<WorkflowFacade>();
 services.AddScoped<SystemFacade>();
 services.AddScoped<BlockWorkflowFacade>();
+services.AddScoped<NotificationFacade>();
 
 services.AddSignalR();
 

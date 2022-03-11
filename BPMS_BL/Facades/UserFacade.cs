@@ -46,11 +46,18 @@ namespace BPMS_BL.Facades
             _userId = userId;
         }
 
-        public async Task<List<UserAllDTO>> Filter(FilterDTO dto)
+        public async Task<List<UserAllDTO>> FilterUsers(FilterDTO dto)
         {
             await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
             _userRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _userRepository.All();
+        }
+
+        public async Task<List<NotificationAllDTO>> FilterNotifications(FilterDTO dto)
+        {
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            _userRepository.Filters[((int)dto.Filter)] = !dto.Removed;
+            return await _notificationRepository.All();
         }
 
         public async Task<(ClaimsPrincipal principal, AuthenticationProperties authProperties)> Authenticate(string userName, string password, HttpResponse response)
@@ -121,7 +128,7 @@ namespace BPMS_BL.Facades
 
         public Task<List<NotificationAllDTO>> AllNotifications()
         {
-            return _notificationRepository.All(_userId); 
+            return _notificationRepository.All(); 
         }
 
         public async Task<UserInfoCardDTO> Edit(UserCreateEditDTO dto)

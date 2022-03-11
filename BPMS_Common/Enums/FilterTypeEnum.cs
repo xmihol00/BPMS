@@ -62,7 +62,7 @@ namespace BPMS_Common.Enums
 
 
         NotificationMarked,
-        NotificationSeen,
+        NotificationRead,
     }
 
     public static class FilterType

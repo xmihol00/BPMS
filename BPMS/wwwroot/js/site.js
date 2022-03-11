@@ -7,24 +7,27 @@ var Notifications = new signalR.HubConnectionBuilder().configureLogging(signalR.
 
 Notifications.on("Notification", (result) =>
 {
-    console.log(document.getElementsByClassName("fa-info-circle"));
-    for (let icon of document.getElementsByClassName("fa-info-circle"))
+    for (let div of document.getElementsByClassName("message-div"))
     {
-        icon.children[0].innerHTML =
-        `<h4 class="text-font border-bottom text-center mx-3 my-2">Nové oznámení</h4>
+        document.removeEventListener("click", HideNotifications);
+        div.innerHTML =
+        `<h4 class="text-font border-bottom text-center mx-3 my-2 pb-1">Nové upozornění</h4>
         <div class="notif-div ${result.state} d-flex justify-content-between">
-            <div class="my-auto">${result.text}<b class="notif-info">${result.info}</b>.</div>
-            <div id="@notification.Id" class="my-auto text-prim-edit">
+            <div class="my-auto">
+                <span class="text-code text-small">${result.date}</span><br>
+                ${result.text}<b class="notif-info">${result.info}</b>.
+            </div>
+            <div id="${result.id}" class="my-auto text-prim-edit">
                 <button class="btn px-1" onclick="NotificationSeen(this)"><i class="fas fa-eye-slash"></i></button>
                 <button class="btn px-1" onclick="NotificationMark(this)"><i class="fas fa-highlighter"></i></button>
                 <a class="btn px-1" href="${result.href}"><i class="fas fa-angle-double-right"></i></a>
             </div>
         </div>
         <div class="d-flex justify-content-center mb-2">
-        <button class="butn btn-p">Zobrazit vše</button>
+            <button class="butn btn-p py-2" onclick=ShowNotifications(event)>Zobrazit vše</button>
+            <button class="butn btn-d py-2" onclick="HideNotificationsListener()">Zavřít</button>
         </div>`;
-        icon.children[0].classList.add("message-div-active");
-        console.log(icon.children[0]);
+        div.classList.add("message-div-active");
     }
 });
 
@@ -54,7 +57,7 @@ function ActivateIcons()
     for (let icon of document.getElementsByClassName("fa-info-circle"))
     {
         icon.innerHTML = '<div class="message-div" onclick="event.stopPropagation()"></div>';
-        icon.parentNode.addEventListener("click", (event) => ToggleNotifications(icon, event));
+        icon.parentNode.addEventListener("click", (event) => ShowNotifications(event));
     }
 }
 
@@ -528,47 +531,48 @@ function FilterChanges(event, path, blocks = false)
     }
 }
 
-function ToggleNotifications(btn, event)
+function ShowNotifications(event)
 {
     event.stopPropagation();
+    document.addEventListener("click", HideNotifications);
 
-    let target = btn.children[0];
-    if (target.classList.contains("message-div-active"))
+    $.ajax(
     {
-        target.classList.remove("message-div-active");
-    }
-    else
+        async: true,
+        type: "GET",
+        url: "/Notification/All"
+    })
+    .done((result) => 
     {
-        $.ajax(
+        for (let div of document.getElementsByClassName("message-div"))
         {
-            async: true,
-            type: "GET",
-            url: "/Account/Notifications"
-        })
-        .done((result) => 
-        {
-            target.classList.add("message-div-active");
-            target.innerHTML = result;
-        })
-        .fail(() => 
-        {
-            // TODO
-            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-        });
-    }
+            div.innerHTML = result;
+            div.classList.add("message-div-active");
+        } 
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
 }
 
 function NotificationSeen(btn)
 {
+    document.addEventListener("click", HideNotifications);
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: "/Account/NotificationSeen/" + btn.parentNode.id
+        url: "/Notification/Seen/" + btn.parentNode.id
     })
-    .done(() => 
+    .done((result) => 
     {
-        btn.parentNode.parentNode.remove();
+        for (let div of document.getElementsByClassName("message-div"))
+        {
+            div.innerHTML = result;
+            div.classList.add("message-div-active");
+        } 
     })
     .fail(() => 
     {
@@ -579,12 +583,13 @@ function NotificationSeen(btn)
 
 function NotificationMark(btn)
 {
+    document.addEventListener("click", HideNotifications);
     let marked = btn.classList.contains("text-prim");
     $.ajax(
     {
         async: true,
         type: "POST",
-        url: `/Account/NotificationMark/${btn.parentNode.id}/${marked}`
+        url: `/Notification/Mark/${btn.parentNode.id}/${marked}`
     })
     .done(() => 
     {
@@ -612,9 +617,62 @@ function NotificationMark(btn)
 
 function HideNotifications()
 {
-    for (let icon of document.getElementsByClassName("fa-info-circle"))
+    for (let div of document.getElementsByClassName("message-div"))
     {
-        icon.children[0].classList.remove("message-div-active");
+        div.classList.remove("message-div-active");
     }   
 }
 
+function HideNotificationsListener()
+{
+    document.addEventListener("click", HideNotifications);
+    HideNotifications();
+}
+
+function NotifFilterChange(btn)
+{
+    let dto = {};
+    dto.Filter = btn.id;
+    dto.Removed = btn.classList.contains("text-prim");
+
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: "/Notification/Filter",
+        data: dto
+    })
+    .done((result) => 
+    {
+        for (let messages of document.getElementsByClassName("message-div"))
+        {
+            messages.innerHTML = result;
+            messages.classList.add("message-div-active");
+        }
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}
+
+function NotificationRemove(btn)
+{
+    let parent = btn.parentNode;
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/Notification/Remove/${parent.id}`,
+    })
+    .done(() => 
+    {
+        parent.parentNode.remove();
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}

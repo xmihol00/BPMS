@@ -72,6 +72,10 @@
   font-size: 1.25em;
 }
 
+.text-small {
+  font-size: 0.9rem;
+}
+
 .text-right {
   text-align: right;
 }
@@ -89,4 +93,8 @@
 
 .text-filter {
   margin-top: 1.25rem;
+}
+
+.text-remove:hover {
+  color: red;
 }

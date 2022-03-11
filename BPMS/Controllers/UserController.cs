@@ -32,7 +32,7 @@ namespace BPMS.Controllers
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
             CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_UserOverview", await _userFacade.Filter(dto));
+            return PartialView("Partial/_UserOverview", await _userFacade.FilterUsers(dto));
         }
 
         public async Task<IActionResult> Overview()

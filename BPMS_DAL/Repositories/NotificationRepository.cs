@@ -16,21 +16,36 @@ namespace BPMS_DAL.Repositories
     {
         public NotificationRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<NotificationAllDTO>> All(Guid userId)
+        public Task<List<NotificationAllDTO>> All()
         {
-            return _dbSet.Where(x => x.UserId == userId && (x.State == NotificationStateEnum.Marked || x.State == NotificationStateEnum.Unread))
-                         .Select(x => new NotificationAllDTO
-                         {
-                             Date = x.Date,
-                             Id = x.Id,
-                             TargetId = x.TargetId,
-                             State = x.State,
-                             Type = x.Type,
-                             Info = x.Info,
-                         })
-                         .OrderBy(x => x.State)
-                            .ThenBy(x => x.Date)
-                         .ToListAsync();
+            IQueryable<NotificationEntity> query = _dbSet.Where(x => x.UserId == UserId);
+
+            if (Filters != null)
+            {
+                if (Filters[((int)FilterTypeEnum.NotificationMarked)] || Filters[((int)FilterTypeEnum.NotificationRead)])
+                {
+                    query = query.Where(x => x.State == NotificationStateEnum.Unread ||
+                                            (Filters[((int)FilterTypeEnum.NotificationMarked)] && x.State == NotificationStateEnum.Marked) ||
+                                            (Filters[((int)FilterTypeEnum.NotificationRead)] && x.State == NotificationStateEnum.Read));
+                }
+                else
+                {
+                    query = query.Where(x => x.State == NotificationStateEnum.Unread);
+                }
+            }
+
+            return query.Select(x => new NotificationAllDTO
+                        {
+                            Date = x.Date,
+                            Id = x.Id,
+                            TargetId = x.TargetId,
+                            State = x.State,
+                            Type = x.Type,
+                            Info = x.Info,
+                        })
+                        .OrderBy(x => x.State)
+                           .ThenBy(x => x.Date)
+                        .ToListAsync();
         }
 
         public void ChangeState(Guid id, NotificationStateEnum state)

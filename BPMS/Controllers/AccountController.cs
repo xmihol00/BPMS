@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using BPMS_BL.Facades;
+using BPMS_BL.Helpers;
 using BPMS_DTOs.Account;
 using BPMS_DTOs.Agenda;
+using BPMS_DTOs.Filter;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
@@ -40,7 +42,6 @@ namespace BPMS.Controllers
 
             return View(new SignInDTO() { ReturnURL = ReturnUrl, UserName = UserName });
         }
-
 
         [HttpGet]
         public IActionResult Create(string ReturnUrl, string UserName)
@@ -98,30 +99,6 @@ namespace BPMS.Controllers
             await HttpContext.SignOutAsync();
 
             return Redirect("/Account/SignIn");
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Notifications()
-        {
-            return PartialView("Partial/_NotificationAll", await _userFacade.AllNotifications());
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> NotificationSeen(Guid id)
-        {
-            await _userFacade.NotificationSeen(id);
-            return Ok();
-        }
-
-        [HttpPost]
-        [Authorize]
-        [Route("/Account/NotificationMark/{id}/{marked}")]
-        public async Task<IActionResult> NotificationMark(Guid id, bool marked)
-        {
-            await _userFacade.NotificationMark(id, marked);
-            return Ok();
         }
     }
 }

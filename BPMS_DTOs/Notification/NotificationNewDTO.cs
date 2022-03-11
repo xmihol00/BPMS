@@ -13,6 +13,7 @@ namespace BPMS_DTOs.Notification
         public Guid Id { get; set; }
         public string Href { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
         public string? Info { get; set; }
         public string? State { get; set; }
     }

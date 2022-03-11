@@ -36,7 +36,8 @@ namespace BPMS_BL.Hubs
                 Href = notification.Type.ToHref() + notification.TargetId,
                 Info = notification.Info,
                 State = notification.State.ToString(),
-                Text = notification.Type.ToText()
+                Text = notification.Type.ToText(),
+                Date = notification.Date.ToString()
             };
             await clients.Group(notification.UserId.ToString()).SendAsync("Notification", notif);
         }
