@@ -5,69 +5,7 @@
 <script src="~/js/User/User.js"></script>
 
 <div id="PageNavId" class="page-navbar">
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
-        <h1 class="my-auto text-font">Uživatelé</h1>
-        <div class="my-auto">
-            <button class="butn btn-p" onclick="ShowModal('CreateEditUserId')">Vytvořit</button>
-        </div>
-    </div>
-    <form id="CreateEditUserId" class="mx-4 mt-4 mb-3" method="POST" action="/User/Create"
-            oninput="InputValidator(this)" onsubmit="AddRoleInputs()">
-        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-            <h2 class="mb-0 text-font">Tvorba uživatel</h2>
-            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
-        </div>
-        <div class="row">
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input required class="input-field" type="text" placeholder=" " name="Name" />
-                    <span class="input-label">Jméno</span>
-                </label>
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input required class="input-field" type="text" placeholder=" " name="Surname" />
-                    <span class="input-label">Přijmení</span>
-                </label>
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input class="input-field" type="text" placeholder=" " name="Title" />
-                    <span class="input-label">Titul</span>
-                </label>
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input required class="input-field" type="text" placeholder=" " name="UserName" />
-                    <span class="input-label">Uživatelské jméno</span>
-                </label>
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input required class="input-field" type="email" placeholder=" " name="Email" />
-                    <span class="input-label">E-mail</span>
-                </label>
-            </div>
-            <div class="col-12 col-lg-6 mb-3">
-                <label class="input">
-                    <input class="input-field" type="tel" placeholder=" " name="PhoneNumber" />
-                    <span class="input-label">Telefonní číslo</span>
-                </label>
-            </div>
-            <div id="RoleColId" class="col-12 mb-3 d-flex flex-wrap mt--2">
-                @foreach (SystemRoleEnum role in Enum.GetValues<SystemRoleEnum>())
-                {
-                    <div class="badge bg-secondary rounded-pill text-default input-badge">
-                        @role.ToLabel()<i class="fas fa-plus my-auto ms-2 pointer" onclick="AddRole(this, '@role')"></i>
-                    </div>
-                }
-            </div>
-            <div class="d-flex justify-content-center">
-                <button form="CreateEditUserId" type="submit" class="butn btn-s" disabled>Vytvořit</button>
-            </div>
-        </div>
-    </form>
+    @await Html.PartialAsync("Partial/_UserOverviewHeader")
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">
@@ -77,10 +15,6 @@
         @await Html.PartialAsync("Partial/_UserOverview", Model.Users)
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/User/Filter')">
-        <h2 class="text-font text-center text-filter border-bottom mb-1">Filtrování</h2>
-        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("User")))
-        {
-            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
-        }
+        @await Html.PartialAsync("Partial/_OverviewFilters", "User")
     </div>
 </div>

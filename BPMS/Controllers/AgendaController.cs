@@ -37,6 +37,16 @@ namespace BPMS.Controllers
             return View("AgendaOverview", await _agendaFacade.Overview());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> OverviewPartial()
+        {
+            return Ok(new
+            {
+                header = await this.RenderViewAsync("Partial/_AgendaOverviewHeader", true),
+                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Agenda", true)
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {

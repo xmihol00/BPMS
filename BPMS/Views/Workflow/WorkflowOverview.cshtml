@@ -19,6 +19,6 @@
         @await Html.PartialAsync("Partial/_WorkflowOverview", Model.Workflows)
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Workflow/Filter', true)">
-        @await Html.PartialAsync("Partial/_WorkflowOverviewFilters")
+        @await Html.PartialAsync("Partial/_OverviewFilters", "Workflow")
     </div>
 </div>

@@ -35,9 +35,20 @@ namespace BPMS.Controllers
             return PartialView("Partial/_SystemOverview", await _systemFacade.Filter(dto));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Overview()
         {
             return View("SystemOverview", await _systemFacade.Overview());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OverviewPartial()
+        {
+            return Ok(new
+            {
+                header = await this.RenderViewAsync("Partial/_SystemOverviewHeader", true),
+                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "System", true)
+            });
         }
 
         public async Task<IActionResult> Detail(Guid id)

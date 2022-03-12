@@ -1,0 +1,19 @@
+@{
+    bool show = (bool)ViewData[SystemRoleEnum.Admin.ToString()] || (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()];
+}
+<div class="d-flex justify-content-between px-4 page-navbar-content">
+    <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
+    <h1 class="my-auto text-font">Agendy</h1>
+    <div class="my-auto">
+        @if (show)
+        {
+            <button class="butn btn-p" onclick="ShowModal('CreateAgendaFormId', '/Agenda/Create', 'CreateAgendaFormId')">Vytvořit</button>
+        }
+    </div>
+</div>
+@if (show)
+{
+    <form id="CreateAgendaFormId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create" oninput="InputValidator(this)">
+        <div class="loading-content"></div>
+    </form>
+}

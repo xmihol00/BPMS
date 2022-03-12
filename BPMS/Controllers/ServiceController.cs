@@ -43,6 +43,16 @@ namespace BPMS.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> OverviewPartial()
+        {
+            return Ok(new
+            {
+                header = await this.RenderViewAsync("Partial/_ServiceOverviewHeader", true),
+                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Service", true)
+            });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Detail(Guid id)
         {
             return View("ServiceDetail", await _serviceFacade.Detail(id));

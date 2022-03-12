@@ -40,6 +40,16 @@ namespace BPMS.Controllers
             return View("UserOverview", await _userFacade.Overview());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> OverviewPartial()
+        {
+            return Ok(new
+            {
+                header = await this.RenderViewAsync("Partial/_UserOverviewHeader", true),
+                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "User", true)
+            });
+        }
+
         public async Task<IActionResult> Detail(Guid id)
         {
             return View("UserDetail", await _userFacade.Detail(id));

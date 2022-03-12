@@ -5,98 +5,7 @@
 <script src="~/js/Service/Service.js"></script>
 
 <div id="PageNavId" class="page-navbar">
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
-        <h1 class="my-auto text-font">@ViewData["Title"]</h1>
-        <div class="my-auto">
-            <button type="button" class="butn btn-p" onclick="ShowModal('CreateServiceFormId')">Vytvořit</button>
-        </div>
-    </div>
-    <form id="CreateServiceFormId" class="mx-4 mt-4 mb-3 d-none" method="POST" action="/Service/Create/" oninput="InputValidator(this)">
-        <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-            <h2 class="mb-0">Tvorba webové služby</h2>
-            <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
-        </div>
-        <div class="row">
-            <div class="col-12 mb-3">
-                <label class="input">
-                    <input required name="URL" class="input-field" type="url" data-url="URLLabelId" placeholder=" "/>
-                    <span id="URLLabelId" class="input-label">URL služby</span>
-                </label>
-            </div>
-            <div class="col-12 mb-3">
-                <label class="input">
-                    <input required name="Name" class="input-field" type="text" placeholder=" " />
-                    <span class="input-label">Název</span>
-                </label>
-            </div>
-            <div class="col-12 col-md-6 mb-3">
-                <label class="input">
-                    <select class="input-select" name="Type"> 
-                        @foreach (ServiceTypeEnum type in Enum.GetValues<ServiceTypeEnum>())
-                        {
-                            <option value="@type">@type</option>
-                        }
-                    </select>
-                    <span class="input-label">Typ služby</span>
-                </label>
-            </div>
-            <div class="col-12 col-md-6 mb-3">
-                <label class="input">
-                    <select class="input-select" name="HttpMethod"> 
-                        @foreach (HttpMethodEnum method in Enum.GetValues<HttpMethodEnum>())
-                        {
-                            <option value="@method">@method</option>
-                        }
-                    </select>
-                    <span class="input-label">HTTP metoda</span>
-                </label>
-            </div>
-            <div class="col-12 col-md-6 mb-3">
-                <label class="input">
-                    <select class="input-select" name="Serialization"> 
-                        @foreach (SerializationEnum serialization in Enum.GetValues<SerializationEnum>())
-                        {
-                            <option value="@serialization">@serialization.ToLabel()</option>
-                        }
-                    </select>
-                    <span class="input-label">Serializace dat</span>
-                </label>
-            </div>
-            <div class="col-12 col-md-6 mb-3">
-                <label class="input">
-                    <select class="input-select" name="AuthType" onchange="AuthChange(this)"> 
-                        @foreach (ServiceAuthEnum auth in Enum.GetValues<ServiceAuthEnum>())
-                        {
-                            <option value="@auth">@auth.ToLabel()</option>
-                        }
-                    </select>
-                    <span class="input-label">Autentizace</span>
-                </label>
-            </div>
-            <div id="AppIdId" class="col-12 col-md-6 mb-3 d-none">
-                <label class="input">
-                    <input name="AppId" class="input-field" type="text" placeholder=" "/>
-                    <span class="input-label">Identifikátor</span>
-                </label>
-            </div>
-            <div id="AppSecretId" class="col-12 col-md-6 mb-3 d-none">
-                <label class="input">
-                    <input name="AppSecret" class="input-field" type="password" placeholder=" "/>
-                    <span class="input-label">Klíč</span>
-                </label>
-            </div>
-            <div class="col-12 mb-2">
-                <label class="input">
-                    <textarea name="Description" class="input-field" type="text" placeholder=" "></textarea>
-                    <span class="input-label">Popis</span>
-                </label>
-            </div>
-            <div class="d-flex justify-content-center">
-                <button form="CreateServiceFormId" type="submit" class="butn btn-s" disabled>Vytvořit</button>
-            </div>
-        </div>
-    </form>
+    @await Html.PartialAsync("Partial/_ServiceOverviewHeader")
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">
@@ -106,10 +15,6 @@
         @await Html.PartialAsync("Partial/_ServiceOverview", Model.Services)
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Service/Filter')">
-        <h2 class="text-font text-center text-filter border-bottom mb-1">Filtrování</h2>
-        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("Service")))
-        {
-            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
-        }
+        @await Html.PartialAsync("Partial/_OverviewFilters", "Service")
     </div>
 </div>

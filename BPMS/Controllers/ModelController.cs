@@ -39,6 +39,17 @@ namespace BPMS.Controllers
             return View("ModelOverview", await _modelFacade.Overview());
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> OverviewPartial()
+        {
+            return Ok(new
+            {
+                header = await this.RenderViewAsync("Partial/_ModelOverviewHeader", true),
+                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Model", true)
+            });
+        }
+
         [HttpGet]
         public async Task<IActionResult> Detail(Guid id)
         {

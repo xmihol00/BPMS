@@ -40,7 +40,7 @@ namespace BPMS.Controllers
             return Ok(new
             {
                 header = await this.RenderViewAsync("Partial/_WorkflowOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_WorkflowOverviewFilters", true)
+                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Workflow", true)
             });
         }
 

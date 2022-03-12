@@ -5,11 +5,7 @@
 <script src="~/js/Task/Task.js"></script>
 
 <div id="PageNavId" class="page-navbar">
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto position-relative"></i></button>
-        <h1 class="my-auto text-font">@ViewData["title"]</h1>
-        <div class="my-auto mr-5"></div>
-    </div>
+    @await Html.PartialAsync("Partial/_TaskOverviewHeader")
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">
@@ -19,11 +15,7 @@
         @await Html.PartialAsync("Partial/_TaskOverview", Model.Tasks)  
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Task/Filter')">
-        <h2 class="text-font text-center text-filter border-bottom mb-1">Filtrování</h2>
-        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("Task")))
-        {
-            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
-        }
+        @await Html.PartialAsync("Partial/_OverviewFilters", "Task")
     </div>
 </div>
 

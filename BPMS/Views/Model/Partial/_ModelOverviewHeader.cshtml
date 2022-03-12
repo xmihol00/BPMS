@@ -1,0 +1,13 @@
+@{
+    bool show = (bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+}
+<div class="d-flex justify-content-between px-4 page-navbar-content">
+    <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
+    <h1 class="my-auto text-font">Modely</h1>
+    <div class="my-auto">
+        @if (show)
+        {
+            <a class="butn btn-p" href="/Service/Create">Vytvořit</a>
+        }
+    </div>
+</div>

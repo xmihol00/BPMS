@@ -7,23 +7,7 @@
 <script src="~/js/Model/Model.js"></script>
 
 <div id="PageNavId" class="page-navbar">
-    <div class="d-flex justify-content-between px-4 page-navbar-content">
-        <button type="button" class="btn my-auto"><i class="fas fa-info-circle my-auto"></i></button>
-        <h1 class="my-auto text-font">Agendy</h1>
-        <div class="my-auto">
-            @if (show)
-            {
-                <button class="butn btn-p" onclick="ShowModal('CreateAgendaFormId', '/Agenda/Create', 'CreateAgendaFormId')">Vytvořit</button>
-            }
-        </div>
-    </div>
-    @if (show)
-    {
-        <form id="CreateAgendaFormId" class="mx-4 mt-4 mb-3" method="POST" action="/Agenda/Create"
-                oninput="InputValidator(this)">
-            <div class="loading-content"></div>
-        </form>
-    }
+    @await Html.PartialAsync("Partial/_AgendaOverviewHeader")
 </div>
 <div id="PageContentId" class="d-flex pt-3">
     <div id="DetailDivId" class="d-none detail-div">
@@ -33,10 +17,6 @@
         @await Html.PartialAsync("Partial/_AgendaOverview", Model.Agendas)
     </div>
     <div id="OverviewNavId" class="overview-nav" onclick="FilterChanges(event, '/Agenda/Filter')">
-        <h2 class="text-font text-center text-filter border-bottom mb-1">Filtrování</h2>
-        @foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>().Where(x => x.ToString().StartsWith("Agenda")))
-        {
-            <div id="@value" class="filter-div @(ViewBag.Filters[((int)value)] ? "filter-div-sel" : "")">@value.ToLabel()</div>   
-        }
+        @await Html.PartialAsync("Partial/_OverviewFilters", "Agenda")
     </div>
 </div>

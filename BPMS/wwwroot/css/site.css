@@ -933,3 +933,7 @@ a:hover {
 .notif-info:not(:empty) {
   margin-left: 0.25rem;
 }
+
+.nav-placeholder {
+  min-width: 7.5em;
+}
