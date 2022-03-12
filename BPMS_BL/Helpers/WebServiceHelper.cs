@@ -216,7 +216,7 @@ namespace BPMS_BL.Helpers
 
             if (mediaType == "text/xml" || mediaType == "application/xml")
             {
-                result.Serialization = SerializationEnum.XML;
+                result.Serialization = SerializationEnum.XMLMarks;
             }
             else if (mediaType == "application/json")
             {
@@ -248,8 +248,12 @@ namespace BPMS_BL.Helpers
                     SerilizeURL();
                     break;
                 
-                case SerializationEnum.XML:
-                    SerilizeXML();
+                case SerializationEnum.XMLMarks:
+                    SerilizeXMLMarks();
+                    break;
+                
+                case SerializationEnum.XMLAttributes:
+                    SerilizeXMLAttributes();
                     break;
                 
                 case SerializationEnum.Replace:
@@ -259,6 +263,11 @@ namespace BPMS_BL.Helpers
                 default:
                     return;
             }
+        }
+
+        private void SerilizeXMLAttributes()
+        {
+            throw new NotImplementedException();
         }
 
         private void SerilizeUrlReplace(IEnumerable<IDataSchemaData> data)
@@ -278,9 +287,65 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private void SerilizeXML()
+        private void SerilizeXMLMarks()
         {
-            throw new NotImplementedException();
+            if (_service.Nodes.Count() == 1 && _service.Nodes.First().Type == DataTypeEnum.Object)
+            {
+                SerilizeXMLMarks(_service.Nodes, false);
+            }
+            else
+            {
+                _builder.Append("<root ");
+                SerilizeXMLMarks(_service.Nodes, false);
+                _builder.Append("</root>");
+            }
+        }
+
+        private void SerilizeXMLMarks(IEnumerable<IDataSchemaData> data, bool array = false)
+        {
+            string name = "";
+            List<(string, DataSchemaDataDTO)> objects = new List<(string, DataSchemaDataDTO)>();
+            foreach (DataSchemaDataDTO schema in data)
+            {
+                if (!array)
+                {
+                    name = String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias;
+                }
+                else if (schema.Data == null)
+                {
+                    continue;
+                }
+
+                switch (schema.Type)
+                {
+                    case DataTypeEnum.Object:
+                        objects.Add((name, schema));
+                        break;
+
+                    case DataTypeEnum.Number:
+                    case DataTypeEnum.Bool:
+                    case DataTypeEnum.String:
+                        _builder.Append($"{name}=\"{schema.Data}\" ");
+                        break;
+                    
+                    case DataTypeEnum.ArrayString:
+                    case DataTypeEnum.ArrayNumber:
+                    case DataTypeEnum.ArrayBool:
+                    case DataTypeEnum.ArrayObject:
+                    case DataTypeEnum.ArrayArray:
+                        // TODO
+                        break;
+                }
+            }
+
+            _builder.Append(">");
+
+            foreach ((string name, DataSchemaDataDTO schema) obj in objects)
+            {
+                _builder.Append($"<{obj.name} ");
+                SerilizeXMLMarks(obj.schema.Children as IEnumerable<IDataSchemaData>, false);
+                _builder.Append($"</{obj.name}>");
+            }
         }
 
         private void SerilizeURL()

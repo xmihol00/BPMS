@@ -9,7 +9,8 @@ namespace BPMS_Common.Enums
     public enum SerializationEnum
     {
         JSON,
-        XML,
+        XMLMarks,
+        XMLAttributes,
         URL,
         Replace
     }
@@ -23,8 +24,11 @@ namespace BPMS_Common.Enums
                 case SerializationEnum.JSON:
                     return "application/json";
                 
-                case SerializationEnum.XML:
-                    return "text/xml";
+                case SerializationEnum.XMLMarks:
+                    return "text/xml (značky)";
+
+                case SerializationEnum.XMLAttributes:
+                    return "text/xml (atributy)";
                 
                 case SerializationEnum.URL:
                     return "application/x-www-form-urlencoded";
@@ -44,7 +48,7 @@ namespace BPMS_Common.Enums
                 case SerializationEnum.JSON:
                     return "application/json";
                 
-                case SerializationEnum.XML:
+                case SerializationEnum.XMLMarks:
                     return "text/xml";
                 
                 case SerializationEnum.URL:

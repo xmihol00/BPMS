@@ -34,7 +34,7 @@ namespace BPMS_DAL.Repositories
                     Filters[((int)FilterTypeEnum.ServiceURL)] || Filters[((int)FilterTypeEnum.ServiceReplace)])
                 {
                     query = query.Where(x => (Filters[((int)FilterTypeEnum.ServiceJSON)] && x.Serialization == SerializationEnum.JSON) ||
-                                             (Filters[((int)FilterTypeEnum.ServiceXML)] && x.Serialization == SerializationEnum.XML) ||
+                                             (Filters[((int)FilterTypeEnum.ServiceXML)] && (x.Serialization == SerializationEnum.XMLMarks || x.Serialization == SerializationEnum.XMLAttributes)) ||
                                              (Filters[((int)FilterTypeEnum.ServiceURL)] && x.Serialization == SerializationEnum.URL) ||
                                              (Filters[((int)FilterTypeEnum.ServiceReplace)] && x.Serialization == SerializationEnum.Replace));
                 }

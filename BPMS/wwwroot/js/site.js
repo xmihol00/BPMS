@@ -311,8 +311,10 @@ function DisplayResult(targetId, result, successCallback)
     let target = document.getElementById(targetId)
     target.innerHTML = result;
     ResizeTextAreas(target);
+    console.log(successCallback);
     if (successCallback)
     {
+        console.log("calling");
         successCallback();
     }
 }

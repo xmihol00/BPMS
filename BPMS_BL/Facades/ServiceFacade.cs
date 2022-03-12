@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BPMS_DTOs.Filter;
+using System.Xml;
 
 namespace BPMS_BL.Facades
 {
@@ -81,7 +82,7 @@ namespace BPMS_BL.Facades
             {
                 if (removedIds.Contains(schema.ParentId))
                 {
-                    removedIds.Add(schema.ParentId);
+                    removedIds.Add(schema.Id);
                     _dataSchemaRepository.Remove(schema);
                 }
             }
@@ -123,6 +124,10 @@ namespace BPMS_BL.Facades
             {
                 await ParseJObject(JObject.Parse(dto.RecievedData));
             }
+            else if (dto.Serialization == SerializationEnum.XMLMarks)
+            {
+                await ParseXML(XDocument.Parse(dto.RecievedData));
+            }
             else
             {
                 throw new NotImplementedException();
@@ -149,27 +154,34 @@ namespace BPMS_BL.Facades
             {
                 try
                 {
-                    result.RecievedData = JObject.Parse("{\"data\":" + result.RecievedData + "}").ToString(Formatting.Indented);
+                    result.RecievedData = JObject.Parse("{\"data\":" + result.RecievedData + "}").ToString(Newtonsoft.Json.Formatting.Indented);
                 }
                 catch 
                 {
-
+                    result.Serialization = null;
                 }
             }
             else if (result.Serialization == SerializationEnum.JSON)
             {
                 try
                 {
-                    result.RecievedData = JObject.Parse(result.RecievedData).ToString(Formatting.Indented);
+                    result.RecievedData = JObject.Parse(result.RecievedData).ToString(Newtonsoft.Json.Formatting.Indented);
                 }
                 catch
                 {
-
+                    result.Serialization = null;
                 }
             }
-            else if (result.Serialization == SerializationEnum.XML)
+            else if (result.Serialization == SerializationEnum.XMLMarks)
             {
-                // TODO
+                try
+                {
+                    result.RecievedData = XDocument.Parse(result.RecievedData).ToString();
+                }
+                catch
+                {
+                    result.Serialization = null;
+                }
             }
         }
 
@@ -377,6 +389,76 @@ namespace BPMS_BL.Facades
                         await ParseJArray(null, property, await CreateOutputDataSchema(null, DataTypeEnum.ArrayArray, parentId, array), true);
                         break;*/
                 }   
+            }
+        }
+
+        private async Task ParseXML(XDocument xml)
+        {
+            Guid? parentId = null;
+            if (xml.Root.HasAttributes)
+            {
+                parentId = await CreateOutputDataSchema(xml.Root.Name.LocalName, DataTypeEnum.Object, parentId, false);
+                await ParseXMLAttributes(xml.Root, parentId);
+            }
+            
+            if (xml.Root.HasElements)
+            {
+                await ParseXMLNodes(xml.Root.Nodes(), parentId);
+            }
+        }
+
+        private async Task ParseXMLNodes(IEnumerable<XNode> nodes, Guid? parentId = null)
+        {
+            foreach(XElement child in nodes)
+            {
+                Guid? currentId = null;
+                if (child.HasAttributes)
+                {
+                    currentId = await CreateOutputDataSchema(child.Name.LocalName, DataTypeEnum.Object, parentId, false);
+                    await ParseXMLAttributes(child, currentId);
+                }
+
+                if (child.HasElements)
+                {
+                    if (currentId == null)
+                    {
+                        currentId = await CreateOutputDataSchema(child.Name.LocalName, DataTypeEnum.Object, parentId, false);
+                    }
+                    await ParseXMLNodes(child.Nodes(), currentId);
+                }
+                else if (currentId == null)
+                {
+                    await ParseXMLValue(child.Name.LocalName, child.Value, parentId);
+                }
+            }
+        }
+
+        private async Task ParseXMLAttributes(XElement node, Guid? parentId = null)
+        {
+            foreach (XAttribute attrib in node.Attributes())
+            {
+                await ParseXMLValue(attrib.Name.LocalName, attrib.Value, parentId);
+            }
+        }
+
+        private async Task ParseXMLValue(string name, string value, Guid? parentId = null)
+        {
+            if (!String.IsNullOrEmpty(value))
+            {
+                bool boolResult;
+                double doubleResult;
+                if (Boolean.TryParse(value, out boolResult))
+                {
+                    await CreateOutputDataSchema(name, DataTypeEnum.Bool, parentId, false);
+                }
+                else if (Double.TryParse(value, out doubleResult))
+                {
+                    await CreateOutputDataSchema(name, DataTypeEnum.Number, parentId, false);
+                }
+                else
+                {
+                    await CreateOutputDataSchema(name, DataTypeEnum.String, parentId, false);
+                }
             }
         }
     }

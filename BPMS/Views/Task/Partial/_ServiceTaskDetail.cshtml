@@ -30,7 +30,7 @@
 @if (Model.State == BlockWorkflowStateEnum.Active)
 {
     <form id="SeviceCallFormId" class="col-12 col-lg-6" action="/Task/CallService" novalidate
-            oninput="InputValidator(this)" onsubmit="AjaxFormSubmit(event, 'DetailDivId', false, false, null, () => InputValidator(this))">
+            oninput="InputValidator(this)" onsubmit="AjaxFormSubmit(event, 'DetailDivId', false, false, null, ValidateServiceCall)">
         <input type="hidden" name="TaskId" value="@Model.Id" />
         <h2 class="text-center text-font mb-0">Vstupní data</h2>
         @await Html.PartialAsync("Partial/_TaskDataService", (Model.InputData, true))

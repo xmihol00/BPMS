@@ -102,3 +102,9 @@ function AddArrayInput(btn, type)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     }); 
 }
+
+
+function ValidateServiceCall()
+{
+    InputValidator(document.getElementById("TaskDataFormId"));
+}

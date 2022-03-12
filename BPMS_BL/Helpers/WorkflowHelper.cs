@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.SignalR;
 using BPMS_BL.Hubs;
 using System.Net;
+using System.Xml.Linq;
 
 namespace BPMS_BL.Helpers
 {
@@ -531,11 +532,12 @@ namespace BPMS_BL.Helpers
             switch (result.Serialization)
             {
                 case SerializationEnum.JSON:
-                    await MapRequestResultJson(JObject.Parse(result.RecievedData), data, mappedData);
+                    MapRequestResultJson(JObject.Parse(result.RecievedData), data, mappedData);
                     break;
                 
-                case SerializationEnum.XML:
-                    throw new NotImplementedException();
+                case SerializationEnum.XMLMarks:
+                    MapRequestResultXml(XDocument.Parse(result.RecievedData), data, mappedData);
+                    break;
 
                 case SerializationEnum.URL:
                     throw new NotImplementedException();
@@ -550,72 +552,170 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task MapRequestResultJson(IEnumerable<JToken> tokens, IEnumerable<TaskDataEntity> data, 
-                                                IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId = null)
+        private void MapRequestResultXml(XDocument xml, List<TaskDataEntity> data, List<DataSchemaDataMap> mappedData)
         {
-            TaskDataEntity currentData;
-            foreach (JProperty property in tokens)
+            Guid? parentId = null;
+            if (xml.Root.HasAttributes)
             {
-                string name = property.Name;
-                currentData = data.FirstOrDefault(x => x.Schema.ParentId == parentId && (x.Schema.Alias == name || 
-                                                       (x.Schema.Alias == null && x.Schema.Name == name)));
-                List<TaskDataEntity> mappedCurrent = mappedData.FirstOrDefault(x => x.ParentId == parentId && (x.Alias == name || 
-                                                                               (x.Alias == null && x.Name == name)))?.Data ?? new List<TaskDataEntity>();
-                if (currentData == null)
-                {
-                    continue;
-                }
+                MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, null);
+            }
 
-                switch (property.Value.Type)
-                {
-                    case JTokenType.Object:
-                        await MapRequestResultJson(property.Value.Children(), 
-                                                   data.Where(x => x.Schema.ParentId == currentData.SchemaId),
-                                                   mappedData.Where(x => x.ParentId == currentData.SchemaId), currentData.SchemaId);
-                        continue;
-                    
-                    case JTokenType.String:
-                        IStringDataEntity stringData = currentData as IStringDataEntity;
-                        stringData.Value = ((string?)property.Value);
-                        foreach (TaskDataEntity mapped in mappedCurrent)
-                        {
-                            if (stringData.Value != null)
-                            {
-                                (mapped as IStringDataEntity).Value = stringData.Value;
-                            }
-                        }
-                        break;
-                    
-                    case JTokenType.Float:
-                    case JTokenType.Integer:
-                        INumberDataEntity numberData = currentData as INumberDataEntity;
-                        numberData.Value = ((double?)property.Value);
-                        foreach (TaskDataEntity mapped in mappedCurrent)
-                        {
-                            if (numberData.Value != null)
-                            {
-                                (mapped as INumberDataEntity).Value = numberData.Value;
-                            }
-                        }
-                        break;
+            if (xml.Root.HasElements)
+            {
+                MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, null);
+            }
 
-                    case JTokenType.Boolean:
-                        IBoolDataEntity boolData = currentData as IBoolDataEntity;
-                        boolData.Value = ((bool?)property.Value);
-                        foreach (TaskDataEntity mapped in mappedCurrent)
-                        {
-                            if (boolData.Value != null)
-                            {
-                                (mapped as IBoolDataEntity).Value = boolData.Value;
-                            }
-                        }
-                        break;
-                    
-                    case JTokenType.Array:
-                        // TODO
-                        continue;
+            if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
+            {
+                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName, parentId);
+                if (currentData != null)
+                {
+                    MapRequestResultXmlValue(currentData, mappedCurrent, xml.Root.Value);
                 }
             }
+        }
+
+        private void MapRequestResultXmlNodes(IEnumerable<XNode> nodes, IEnumerable<TaskDataEntity> data, IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId)
+        {
+            foreach (XElement child in nodes)
+            {
+                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, child.Name.LocalName, parentId);
+                if (currentData != null)
+                {
+                    if (child.HasAttributes)
+                    {
+                        MapRequestResultXmlAttributes(child.Attributes(), data, mappedData, currentData.SchemaId);
+                    }
+
+                    if (child.HasElements)
+                    {
+                        MapRequestResultXmlNodes(child.Nodes(), data, mappedData, currentData.SchemaId);
+                    }
+                    else if (!child.HasAttributes)
+                    {
+                        MapRequestResultXmlValue(currentData, mappedCurrent, child.Value);
+                    }
+                }
+            }
+        }
+
+        private void MapRequestResultXmlAttributes(IEnumerable<XAttribute> attributes, IEnumerable<TaskDataEntity> data, 
+                                                   IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId)
+        {
+            foreach (XAttribute attribute in attributes)
+            {
+                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, attribute.Name.LocalName, parentId);
+                if (currentData != null)
+                {
+                    MapRequestResultXmlValue(currentData, mappedCurrent, attribute.Value);
+                }
+            }
+        }
+
+        private void MapRequestResultXmlValue(TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent, string value)
+        {
+            switch (currentData)
+            {
+                case IBoolDataEntity boolData:
+                    boolData.Value = Boolean.Parse(value);
+                    if (boolData.Value != null)
+                    {
+                        foreach (TaskDataEntity mapped in mappedCurrent)
+                        {
+                                (mapped as IBoolDataEntity).Value = boolData.Value;
+                        }
+                    }
+                    break;
+                
+                case INumberDataEntity numberData:
+                    numberData.Value = Double.Parse(value);
+                    if (numberData.Value != null)
+                    {
+                        foreach (TaskDataEntity mapped in mappedCurrent)
+                        {
+                                (mapped as INumberDataEntity).Value = numberData.Value;
+                        }
+                    }
+                    break;
+                
+                case IStringDataEntity stringData:
+                    stringData.Value = value;
+                    if (stringData.Value != null)
+                    {
+                        foreach (TaskDataEntity mapped in mappedCurrent)
+                        {
+                            (mapped as IStringDataEntity).Value = stringData.Value;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void MapRequestResultJson(IEnumerable<JToken> tokens, IEnumerable<TaskDataEntity> data, 
+                                                IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId = null)
+        {
+            foreach (JProperty property in tokens)
+            {
+                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, property.Name, parentId);
+                if (currentData != null)
+                {
+                    switch (property.Value.Type)
+                    {
+                        case JTokenType.Object:
+                            MapRequestResultJson(property.Value.Children(),
+                                                 data.Where(x => x.Schema.ParentId == currentData.SchemaId),
+                                                 mappedData.Where(x => x.ParentId == currentData.SchemaId), currentData.SchemaId);
+                            continue;
+
+                        case JTokenType.String:
+                            IStringDataEntity stringData = currentData as IStringDataEntity;
+                            stringData.Value = ((string?)property.Value);
+                            if (stringData.Value != null)
+                            {
+                                foreach (TaskDataEntity mapped in mappedCurrent)
+                                {
+                                    (mapped as IStringDataEntity).Value = stringData.Value;
+                                }
+                            }
+                            break;
+
+                        case JTokenType.Float:
+                        case JTokenType.Integer:
+                            INumberDataEntity numberData = currentData as INumberDataEntity;
+                            numberData.Value = ((double?)property.Value);
+                            if (numberData.Value != null)
+                            {
+                                foreach (TaskDataEntity mapped in mappedCurrent)
+                                {
+                                    (mapped as INumberDataEntity).Value = numberData.Value;
+                                }
+                            }
+                            break;
+
+                        case JTokenType.Boolean:
+                            IBoolDataEntity boolData = currentData as IBoolDataEntity;
+                            boolData.Value = ((bool?)property.Value);
+                            if (boolData.Value != null)
+                            {
+                                foreach (TaskDataEntity mapped in mappedCurrent)
+                                {
+                                    (mapped as IBoolDataEntity).Value = boolData.Value;
+                                }
+                            }
+                            break;
+
+                        case JTokenType.Array:
+                            // TODO
+                            continue;
+                    }
+                }
+            }
+        }
+
+        private (TaskDataEntity?, List<TaskDataEntity>) GetDataToMap(IEnumerable<TaskDataEntity> data, IEnumerable<DataSchemaDataMap> mappedData, string name, Guid? parentId = null)
+        {
+            return (data.FirstOrDefault(x => x.Schema.ParentId == parentId && (x.Schema.Alias == name || (x.Schema.Alias == null && x.Schema.Name == name))),
+                    mappedData.FirstOrDefault(x => x.ParentId == parentId && (x.Alias == name || (x.Alias == null && x.Name == name)))?.Data ?? new List<TaskDataEntity>());
         }
 
         private async Task<IEnumerable<DataSchemaDataDTO>> CreateRequestTree(Guid serviceId, Guid serviceTaskId)
