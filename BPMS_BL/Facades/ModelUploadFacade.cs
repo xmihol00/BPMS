@@ -40,23 +40,24 @@ namespace BPMS_BL.Facades
             _blockModelRepository = blockModelRepository;
         }
 
-        public async Task<(string error, string? svg)?> Upload(ModelCreateDTO dto)
+        public async Task<Guid> Upload(ModelCreateDTO dto)
         {
             XDocument bpmn = new XDocument();
             if (dto.BPMN is not null)
             {
-                try
+                bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()), LoadOptions.PreserveWhitespace);   
+                /*try
                 {
-                    bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()), LoadOptions.PreserveWhitespace);   
                 }
                 catch
                 {
                     return ("BPMN soubor je ve špatném formátu.", null);    
-                }
+                }*/
             }
             else
             {
-                return ("BPMN soubor nebyl nahrán.", null);
+                //return ("BPMN soubor nebyl nahrán.", null);
+                throw new NotImplementedException();
             }
 
             if (dto.SVG is not null)
@@ -67,16 +68,16 @@ namespace BPMS_BL.Facades
                 }
                 catch
                 {
-                    return ("SVG soubor je ve špatném formátu.", null);    
+                    //return ("SVG soubor je ve špatném formátu.", null);
+                    throw new NotImplementedException();
                 }
             }
             else
             {
-                return ("SVG soubor nebyl nahrán.", null);
+                //return ("SVG soubor nebyl nahrán.", null);
+                throw new NotImplementedException();
             }
 
-            try
-            {
                 (XElement? collaboration, IEnumerable<XElement> processes) = ParseRoot(bpmn.Root ?? new XElement(""));
 
                 ParseCollaboration(collaboration);
@@ -101,11 +102,13 @@ namespace BPMS_BL.Facades
                 }
                 
                 CheckExecutability();
+            /*try
+            {
             }
             catch (ParsingException e)
             {
                 return (e.Message, _svg.ToString(SaveOptions.DisableFormatting));
-            }
+            }*/
 
             _svg.Root?.Attribute("width")?.Remove();
             _svg.Root?.Attribute("height")?.Remove();
@@ -149,7 +152,7 @@ namespace BPMS_BL.Facades
 
             await _modelRepository.Create(_model);
             await _blockModelRepository.Save();
-            return null;
+            return _model.Id;
         }
 
         private void ChangeSvg(string? elementId, Guid newId, string? className = null, bool assignParent = false)

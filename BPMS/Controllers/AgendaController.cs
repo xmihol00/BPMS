@@ -170,5 +170,13 @@ namespace BPMS.Controllers
             await _agendaFacade.RemoveSystem(agendaId, systemId);
             return Ok();
         }
+
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, AgendaKeeper")]
+        public async Task<IActionResult> UploadModel()
+        {
+            return PartialView("Partial/_AgendaSelect", await _agendaFacade.UploadModel());
+        }
     }
 }

@@ -1,0 +1,9 @@
+@model List<AgendaIdNameDTO>
+
+<label class="input">
+    <select required class="input-select" name="AgendaId">@foreach (AgendaIdNameDTO agenda in Model)
+        {
+            <option value="@agenda.Id" >@agenda.Name</option>
+        }</select>
+    <span class="input-label">Agenda</span>
+</label>

@@ -1,21 +1,23 @@
 @model List<SystemAllDTO>
 
-<div class="col-12">
+<div class="col-12 mt-1 mb-3">
     @if (Model.Count > 0)
     {
-        <select required class="input-select mt-2 mb-3" name="SystemId"> 
-            @foreach (SystemAllDTO system in Model)
-            {
-                <option value="@system.Id" >@system.Name @(String.IsNullOrEmpty(system.URL) ? "" : $"({system.URL})")</option>
-                <span class="input-label">Vyberte systém</span>
-            }
-        </select>
+        <label class="input">
+            <select required class="input-select" name="SystemId"> 
+                @foreach (SystemAllDTO system in Model)
+                {
+                    <option value="@system.Id" >@system.Name @(String.IsNullOrEmpty(system.URL) ? "" : $"({system.URL})")</option>
+                }
+            </select>
+            <span class="input-label">Systém</span>
+        </label>
     }
     else
     {
-        <div class="text-placeholder mt-2 mb-2">Agenda má již přiřazeny všechny systémy.</div>
+        <div class="text-placeholder">Agenda má již přiřazeny všechny systémy.</div>
     }
-    <div class="d-flex justify-content-center">
-        <button type="submit" class="butn btn-s" @(Model.Count == 0 ? "disabled" : "")>Přidat systém</button>
-    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <button type="submit" class="butn btn-s" @(Model.Count == 0 ? "disabled" : "")>Přidat systém</button>
 </div>

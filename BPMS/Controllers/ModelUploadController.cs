@@ -20,8 +20,7 @@ namespace BPMS.Controllers
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Upload(ModelCreateDTO dto)
         {
-            await _modelUploadFacade.Upload(dto);
-            return Redirect($"/Agenda/Detail/{dto.AgendaId}");
+            return Redirect($"/Model/Detail/{await _modelUploadFacade.Upload(dto)}");
         }
     }
 }

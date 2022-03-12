@@ -178,6 +178,11 @@ namespace BPMS_BL.Facades
             await _agendaRoleRepository.Save();
         }
 
+        public Task<List<AgendaIdNameDTO>> UploadModel()
+        {
+            return _agendaRepository.AdminOfAgendas();
+        }
+
         public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
         {
             return _userRepository.MissingInRole(agendaId, roleId);

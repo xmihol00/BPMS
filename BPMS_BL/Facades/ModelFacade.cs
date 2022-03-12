@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BPMS_DAL;
 using BPMS_DTOs.Account;
 using BPMS_DTOs.Filter;
+using BPMS_DTOs.Agenda;
 
 namespace BPMS_BL.Facades
 {
@@ -64,6 +65,7 @@ namespace BPMS_BL.Facades
         {
             _modelRepository.Filters = filters;
             _modelRepository.UserId = userId;
+            _userRepository.UserId = userId;
             _userId = userId;
         }
 
