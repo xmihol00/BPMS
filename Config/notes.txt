@@ -1,0 +1,22 @@
+
+sudo systemctl status bpms1
+sudo systemctl enable bpms1
+sudo systemctl start bpms1
+sudo systemctl stop bpms1
+sudo systemctl disable bpms1
+
+journalctl -xefu bpms1
+
+sudo systemctl status apache2
+sudo systemctl enable apache2
+sudo systemctl start apache2
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+
+/etc/systemd/system/
+/etc/apache2/conf-enabled/
+/var/dotnet
+/var/log/apache2/
+
+systemctl list-unit-files
+systemctl --all
