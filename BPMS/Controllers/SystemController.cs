@@ -102,5 +102,12 @@ namespace BPMS.Controllers
         {
             return PartialView("Partial/_ConnectionRequest", await _systemFacade.ConnectionRequest(id));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Deactivate(Guid id)
+        {
+            await _systemFacade.Deactivate(id);
+            return Ok();
+        }
     }
 }

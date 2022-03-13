@@ -150,5 +150,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.AddReciever(foreignBlockId, senderId));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeactivateSystem(Guid id)
+        {
+            return Ok(await _communicationFacade.DeactivateSystem(id));
+        }
     }
 }

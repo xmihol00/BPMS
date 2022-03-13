@@ -109,13 +109,29 @@ namespace BPMS_BL.Facades
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL
             };
-            if (!await CommunicationHelper.ActivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address), ""))
+            if (!await CommunicationHelper.ActivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address)))
             {
                 throw new Exception(); // TODO
             }
 
             await _systemRepository.Save();
             return await _systemRepository.InfoCard(dto.Id);
+        }
+
+        public async Task Deactivate(Guid id)
+        {
+            SystemEntity entity = await _systemRepository.BareAsync(id);
+            entity.State = SystemStateEnum.Deactivated;
+            DstAddressDTO address = new DstAddressDTO
+            {
+                Key = entity.Key,
+                SystemId = entity.Id,
+                URL = StaticData.ThisSystemURL
+            };
+            if (!await CommunicationHelper.DeactivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address)))
+            {
+                throw new Exception(); // TODO
+            }
         }
 
         public Task<LastConnectionRequestDTO> ConnectionRequest(Guid id)

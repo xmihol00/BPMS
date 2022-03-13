@@ -147,6 +147,16 @@ namespace BPMS_DAL.Repositories
                         .FirstAsync(x => x.Id == id);
         }
 
+        public void ChangeState(Guid id, SystemStateEnum state)
+        {
+            _dbSet.Attach(new SystemEntity
+                  {
+                      Id = id,
+                      State = state
+                  })
+                  .Property(x => x.State).IsModified = true;
+        }
+
         public Task<List<SystemIdNameDTO>> ThisSystemIdName()
         {
             return _dbSet.Where(x => x.Id == StaticData.ThisSystemId)

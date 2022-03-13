@@ -7,3 +7,24 @@ function SystemUpdate(result)
     buttonDiv.children[0].remove();
     buttonDiv.innerHTML = `<button class="butn btn-d" onclick="Deactive()">Deaktivovat</button>` + buttonDiv.innerHTML;
 }
+
+function Deactive()
+{
+    $.ajax(
+    {
+        async: true,
+        type: "POST",
+        url: `/System/Deactivate/${document.getElementById("IdId").value}`,
+    })
+    .done(() => 
+    {
+        let buttonDiv = document.getElementById("SystemBtnsId");
+        buttonDiv.children[0].remove();
+        buttonDiv.innerHTML = `<button class="butn btn-s" onclick="ShowModal('ReactivateFormId')">Aktivovat</button>` + buttonDiv.innerHTML;
+    })
+    .fail(() => 
+    {
+        // TODO
+        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+    });
+}

@@ -107,6 +107,13 @@ namespace BPMS_BL.Facades
             return _agendaRepository.AgendasSystem(_system.Id);
         }
 
+        public async Task<string> DeactivateSystem(Guid id)
+        {
+            _systemRepository.ChangeState(id, SystemStateEnum.Deactivated);
+            await _systemRepository.Save();
+            return "";
+        }
+
         public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
         {
             return _blockModelRepository.SenderBlocks(poolId);
@@ -440,7 +447,7 @@ namespace BPMS_BL.Facades
             SystemAuthorizationDTO authSystem = 
                 SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
-            if (authSystem.URL != _system.URL)
+            if (_system.State != SystemStateEnum.Active || authSystem.URL != _system.URL)
             {
                 throw new UnauthorizedAccessException();
             }
