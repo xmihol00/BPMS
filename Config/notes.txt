@@ -1,0 +1,15 @@
+
+sudo systemctl enable bpms1
+sudo systemctl start bpms1
+sudo systemctl stop bpms1
+sudo systemctl status bpms1
+
+journalctl -xefu bpms1
+
+sudo /etc/init.d/apache2 restart
+sudo /etc/init.d/apache2 stop
+
+/etc/systemd/system/
+/etc/apache2/conf-enabled/
+/var/dotnet
+/var/log/apache2/

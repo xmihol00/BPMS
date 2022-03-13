@@ -28,16 +28,6 @@ namespace BPMS_DAL.Seeds
                 UserId = Guid.Parse("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                 Role = SystemRoleEnum.WorkflowKeeper
             },
-            new SystemRoleEntity()
-            {
-                UserId = Guid.Parse("442c2de7-eb92-44f9-acf1-41d5dade854a"),
-                Role = SystemRoleEnum.AgendaKeeper
-            },
-            new SystemRoleEntity()
-            {
-                UserId = Guid.Parse("442c2de7-eb92-44f9-acf1-41d5dade854a"),
-                Role = SystemRoleEnum.WorkflowKeeper
-            }
         };
 
         public static void SeedSystemRoles(this ModelBuilder modelBuilder)
