@@ -23,7 +23,11 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
             
-             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization, Request.Path);
+            string action = context.RouteData.Values["action"].ToString();
+             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization, Request.Path, action != "DeactivateSystem" &&
+                                                                                               action != "ReactivateSystem" && 
+                                                                                               action != "ActivateSystem" &&
+                                                                                               action != "CreateSystem");
         }
 
         [HttpPost]
@@ -158,7 +162,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReactivateSystem(ConnectionRequestEntity request)
+        public async Task<IActionResult> ReactivateSystem([FromBody] ConnectionRequestEntity request)
         {
             return Ok(await _communicationFacade.ReactivateSystem(request));
         }

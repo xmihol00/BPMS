@@ -450,7 +450,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public void AuthorizeSystem(string auth, string path)
+        public void AuthorizeSystem(string auth, string path, bool check)
         {
             auth = auth["Bearer ".Length..];
             (Guid id, auth) = SymetricCipherHelper.ExtractGuid(auth);
@@ -458,7 +458,7 @@ namespace BPMS_BL.Facades
             SystemAuthorizationDTO authSystem = 
                 SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
-            if (authSystem.URL != _system.URL)
+            if ((_system.State != SystemStateEnum.Active && check) || authSystem.URL != _system.URL)
             {
                 throw new UnauthorizedAccessException();
             }
