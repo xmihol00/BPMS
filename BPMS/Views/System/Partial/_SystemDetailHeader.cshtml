@@ -12,7 +12,7 @@
         @switch (Model.State)
         {
             case SystemStateEnum.Inactive:
-                <button class="butn btn-s" onclick="ShowModal('ActivateFormId', '/System/ConnectionRequest/@Model.Id', 'ConnectionRequestInfo')">Povolit a aktivovat</button>
+                <button class="butn btn-s" onclick="ShowModal('ActivateFormId', '/System/ConnectionRequest/@Model.Id', 'ConnectionRequestId')">Povolit a aktivovat</button>
                 break;
             
             case SystemStateEnum.Waiting:
@@ -77,8 +77,8 @@
             </label>
         </div>
         <div class="col-12 mb-2">
-            <label class="input mb-2">
-                <textarea class="input-field" name="Description" placeholder=" ">@Model.Description</textarea>
+            <label class="input">
+                <textarea class="input-field mb-2" name="Description" placeholder=" ">@Model.Description</textarea>
                 <span class="input-label">Popis</span>
             </label>
         </div>
