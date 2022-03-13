@@ -118,6 +118,34 @@ namespace BPMS_BL.Facades
             return await _systemRepository.InfoCard(dto.Id);
         }
 
+        public async Task<SystemInfoCardDTO> Reactivate(SystemReactivateDTO dto)
+        {
+            SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
+            entity.State = SystemStateEnum.Deactivated;
+            DstAddressDTO address = new DstAddressDTO
+            {
+                Key = entity.Key,
+                SystemId = entity.Id,
+                URL = StaticData.ThisSystemURL
+            };
+            ConnectionRequestEntity request = new ConnectionRequestEntity
+            {
+                Date = DateTime.Now,
+                ForeignUserId = _userId,
+                SystemId = dto.Id,
+                SenderName = _userName,
+                Text = dto.Text
+            };
+
+            if (!await CommunicationHelper.ReactivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address), JsonConvert.SerializeObject(request)))
+            {
+                throw new Exception(); // TODO
+            }
+
+            await _systemRepository.Save();
+            return await _systemRepository.InfoCard(dto.Id);
+        }
+
         public async Task<SystemInfoCardDTO> Deactivate(Guid id)
         {
             SystemEntity entity = await _systemRepository.BareAsync(id);

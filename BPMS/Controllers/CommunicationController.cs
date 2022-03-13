@@ -156,5 +156,11 @@ namespace BPMS.Controllers
         {
             return Ok(await _communicationFacade.DeactivateSystem());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ReactivateSystem(ConnectionRequestEntity request)
+        {
+            return Ok(await _communicationFacade.ReactivateSystem(request));
+        }
     }
 }

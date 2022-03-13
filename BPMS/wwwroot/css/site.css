@@ -482,7 +482,7 @@ a:hover {
   background-color: var(--color-paused);
 }
 
-.New, .Inactive, .NotStarted {
+.New, .Inactive, .NotStarted, .Reactivated {
   background-color: var(--color-state-new);
 }
 

@@ -38,6 +38,7 @@ namespace BPMS_BL.Facades
         private readonly AgendaRepository _agendaRepository;
         private readonly ForeignRecieveEventRepository _foreignRecieveEventRepository;
         private readonly ForeignAttributeMapRepository _foreignAttributeMapRepository;
+        private readonly ConnectionRequestRepository _connectionRequestRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -50,7 +51,7 @@ namespace BPMS_BL.Facades
                                    BlockWorkflowRepository blockWorkflowRepository, ForeignSendEventRepository foreignSendEventRepository,
                                    AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
                                    ForeignAttributeMapRepository foreignAttributeMapRepository, FilterRepository filterRepository,
-                                   BpmsDbContext context, IMapper mapper)
+                                   ConnectionRequestRepository connectionRequestRepository, BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _userRepository = userRepository;
@@ -70,6 +71,7 @@ namespace BPMS_BL.Facades
             _agendaRepository = agendaRepository;
             _foreignRecieveEventRepository = foreignRecieveEventRepository;
             _foreignAttributeMapRepository = foreignAttributeMapRepository;
+            _connectionRequestRepository = connectionRequestRepository;
             _context = context;
             _mapper = mapper;
             _system = new SystemEntity();
@@ -111,6 +113,15 @@ namespace BPMS_BL.Facades
         {
             _system.State = SystemStateEnum.Deactivated;
             await _systemRepository.Save();
+            return "";
+        }
+
+        public async Task<string> ReactivateSystem(ConnectionRequestEntity request)
+        {
+            _system.State = SystemStateEnum.Reactivated;
+            await _connectionRequestRepository.Create(request);
+            await _connectionRequestRepository.Save();
+
             return "";
         }
 

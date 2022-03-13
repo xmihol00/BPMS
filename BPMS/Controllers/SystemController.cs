@@ -113,5 +113,16 @@ namespace BPMS.Controllers
                 card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
             });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Reactivate(SystemReactivateDTO dto)
+        {
+            SystemInfoCardDTO infoCard = await _systemFacade.Reactivate(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
+            });
+        }
     }
 }

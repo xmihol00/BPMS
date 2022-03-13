@@ -1,11 +1,20 @@
 
-function SystemUpdate(result)
+function SystemActivate(result)
 {
     InfoCardUpdate(result);
 
     let buttonDiv = document.getElementById("SystemBtnsId");
     buttonDiv.children[0].remove();
     buttonDiv.innerHTML = `<button class="butn btn-d" onclick="Deactive()">Deaktivovat</button>` + buttonDiv.innerHTML;
+}
+
+function SystemReactivate(result)
+{
+    InfoCardUpdate(result);
+
+    let buttonDiv = document.getElementById("SystemBtnsId");
+    buttonDiv.children[0].remove();
+    buttonDiv.innerHTML = `<button class="butn btn-s" disabled title="Žádost o navázání spojení již byla odeslána.">Aktivovat</button>` + buttonDiv.innerHTML;
 }
 
 function Deactive()

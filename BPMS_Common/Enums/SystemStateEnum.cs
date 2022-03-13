@@ -9,6 +9,7 @@ namespace BPMS_Common.Enums
     public enum SystemStateEnum
     {
         Inactive,
+        Reactivated,
         Waiting,
         Active,
         Deactivated,
@@ -26,6 +27,9 @@ namespace BPMS_Common.Enums
 
                 case SystemStateEnum.Inactive:
                     return "žádost o spojení";
+                
+                case SystemStateEnum.Reactivated:
+                    return "obnovení spojení";
                 
                 case SystemStateEnum.Waiting:
                     return "spojení zažádáno";

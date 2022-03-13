@@ -87,6 +87,12 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
+        public static async Task<bool> ReactivateSystem(string systemURL, string auth, string payload)
+        {
+            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ReactivateSystem", auth, payload);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         public static async Task<bool> DeactivateSystem(string systemURL, string auth)
         {
             using HttpResponseMessage response = await SendMessage(systemURL, "Communication/DeactivateSystem", auth, "");
