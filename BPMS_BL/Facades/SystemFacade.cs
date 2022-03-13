@@ -121,7 +121,7 @@ namespace BPMS_BL.Facades
         public async Task<SystemInfoCardDTO> Reactivate(SystemReactivateDTO dto)
         {
             SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
-            entity.State = SystemStateEnum.Deactivated;
+            entity.State = SystemStateEnum.Waiting;
             DstAddressDTO address = new DstAddressDTO
             {
                 Key = entity.Key,
