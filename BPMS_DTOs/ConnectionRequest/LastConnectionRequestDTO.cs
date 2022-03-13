@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace BPMS_DTOs.System
+namespace BPMS_DTOs.ConnectionRequest
 {
-    public class SystemCreateDTO
+    public class LastConnectionRequestDTO
     {
-        public string Name { get; set; } = string.Empty;
-        public string URL { get; set; } = string.Empty;
-        public string? Description { get; set; }
+        public Guid Id { get; set; }
         public string Text { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
     }
 }

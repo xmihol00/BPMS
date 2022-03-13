@@ -47,6 +47,7 @@ services.AddScoped<ForeignAttributeMapRepository>();
 services.AddScoped<FilterRepository>();
 services.AddScoped<DataSchemaMapRepository>();
 services.AddScoped<NotificationRepository>();
+services.AddScoped<ConnectionRequestRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

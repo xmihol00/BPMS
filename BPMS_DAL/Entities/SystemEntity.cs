@@ -31,5 +31,7 @@ namespace BPMS_DAL.Entities
 
         [JsonIgnore]
         public List<ForeignSendEventEntity> ForeignSenedrs { get; set; } = new List<ForeignSendEventEntity>();
+
+        public List<ConnectionRequestEntity> ConnectionRequests { get; set; } = new List<ConnectionRequestEntity>();
     }
 }

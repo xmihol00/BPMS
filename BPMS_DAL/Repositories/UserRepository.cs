@@ -88,6 +88,13 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<string?> UserPassword()
+        {
+            return _dbSet.Where(x => x.Id == UserId)
+                         .Select(x => x.Password)
+                         .FirstAsync();
+        }
+
         public Task<List<UserAllDTO>> All(Guid? id = null)
         {
             IQueryable<UserEntity> query = _dbSet.Include(x => x.SystemRoles)

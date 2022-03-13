@@ -25,7 +25,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            _systemFacade.SetFilters(_filters, _userId);
+            _systemFacade.SetFilters(_filters, _userId, ViewBag.UserName);
         }
 
         [HttpPost]
@@ -51,11 +51,13 @@ namespace BPMS.Controllers
             });
         }
 
+        [HttpGet]
         public async Task<IActionResult> Detail(Guid id)
         {
             return View("SystemDetail", await _systemFacade.Detail(id));
         }
 
+        [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
             SystemDetailPartialDTO dto = await _systemFacade.DetailPartial(id);
@@ -67,11 +69,13 @@ namespace BPMS.Controllers
             });
         }
 
+        [HttpPost]
         public async Task<IActionResult> Create(SystemCreateDTO dto)
         {
             return Redirect($"/System/Detail/{await _systemFacade.Create(dto)}");
         }
 
+        [HttpPost]
         public async Task<IActionResult> Edit(SystemEditDTO dto)
         {
             SystemInfoCardDTO infoCard = await _systemFacade.Edit(dto);
@@ -82,6 +86,7 @@ namespace BPMS.Controllers
             });
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddActivate(SystemActivateDTO dto)
         {
             SystemInfoCardDTO infoCard = await _systemFacade.Activate(dto);
@@ -90,6 +95,12 @@ namespace BPMS.Controllers
                 info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
                 card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConnectionRequest(Guid id)
+        {
+            return PartialView("Partial/_ConnectionRequest", await _systemFacade.ConnectionRequest(id));
         }
     }
 }

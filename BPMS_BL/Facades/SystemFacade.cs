@@ -9,9 +9,12 @@ using AutoMapper;
 using BPMS_BL.Helpers;
 using BPMS_Common;
 using BPMS_Common.Enums;
+using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Account;
+using BPMS_DTOs.ConnectionRequest;
+using BPMS_DTOs.Error;
 using BPMS_DTOs.Filter;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
@@ -22,20 +25,28 @@ namespace BPMS_BL.Facades
     public class SystemFacade : BaseFacade
     {
         private readonly SystemRepository _systemRepository;
+        private readonly ConnectionRequestRepository _connectionRequestRepository;
+        private readonly UserRepository _userRepository;
         private readonly IMapper _mapper;
+        private string _userName { get; set; } = string.Empty;
 
-        public SystemFacade(SystemRepository systemRepository, FilterRepository filterRepository, IMapper mapper)
+        public SystemFacade(SystemRepository systemRepository, ConnectionRequestRepository connectionRequestRepository, 
+                            UserRepository userRepository, FilterRepository filterRepository, IMapper mapper)
         : base(filterRepository)
         {
             _systemRepository = systemRepository;
+            _connectionRequestRepository = connectionRequestRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters, Guid userId, string userName)
         {
             _systemRepository.Filters = filters;
             _systemRepository.UserId = userId;
+            _userRepository.UserId = userId;
             _userId = userId;
+            _userName = userName;
         }
 
         public async Task<List<SystemAllDTO>> Filter(FilterDTO dto)
@@ -83,6 +94,11 @@ namespace BPMS_BL.Facades
 
         public async Task<SystemInfoCardDTO> Activate(SystemActivateDTO dto)
         {
+            if(!PasswordHelper.Authenticate(await _userRepository.UserPassword(), dto.Password))
+            {
+                throw new Exception();
+            }
+            
             SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
             entity.Name = dto.Name;
             entity.Description = dto.Description;
@@ -102,13 +118,28 @@ namespace BPMS_BL.Facades
             return await _systemRepository.InfoCard(dto.Id);
         }
 
+        public Task<LastConnectionRequestDTO> ConnectionRequest(Guid id)
+        {
+            return _connectionRequestRepository.Last(id);
+        }
+
         public async Task<Guid> Create(SystemCreateDTO dto)
         {
             SystemEntity entity = new SystemEntity
             {
                 URL = StaticData.ThisSystemURL,
                 State = SystemStateEnum.Inactive,
-                Key = SymetricCipherHelper.NewKey()
+                Key = SymetricCipherHelper.NewKey(),
+                ConnectionRequests = new List<ConnectionRequestEntity>
+                {
+                    new ConnectionRequestEntity
+                    {
+                        Date = DateTime.Now,
+                        ForeignUserId = _userId,
+                        SenderName = _userName,
+                        Text = dto.Text,
+                    }
+                }
             };
             DstAddressDTO address = new DstAddressDTO
             {
@@ -127,6 +158,7 @@ namespace BPMS_BL.Facades
             entity.Description = dto.Description;
             entity.URL = dto.URL;
             entity.State = SystemStateEnum.Waiting;
+            entity.ConnectionRequests.Clear();
 
             await _systemRepository.Create(entity);
             await _systemRepository.Save();

@@ -20,6 +20,7 @@ namespace BPMS_DAL
 
         public DbSet<AgendaEntity>? Agendas { get; set; }
         public DbSet<AgendaRoleEntity>? AgendaRoles { get; set; }
+        public DbSet<ConnectionRequestEntity>? ConnectionRequests { get; set; }
         public DbSet<TaskDataEntity>? TaskDatas { get; set; }
         public DbSet<TaskDataMapEntity>? TaskDataMaps { get; set; }
         public DbSet<AttributeEntity>? Attributes { get; set; }
@@ -199,6 +200,9 @@ namespace BPMS_DAL
 
             modelBuilder.Entity<NotificationEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<NotificationEntity>().HasOne(x => x.User).WithMany(x => x.Notifications).HasForeignKey(x => x.UserId);
+
+            modelBuilder.Entity<ConnectionRequestEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<ConnectionRequestEntity>().HasOne(x => x.System).WithMany(x => x.ConnectionRequests).HasForeignKey(x => x.SystemId);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

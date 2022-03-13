@@ -26,7 +26,7 @@ namespace BPMS.Controllers
             ViewBag.Controller = this.GetType().Name;
 
             ViewBag.Signed = user.Identity.IsAuthenticated;
-            ViewBag.Name = user.Identity.Name;
+            ViewBag.UserName = user.Identity.Name;
             ViewBag.Id = Guid.Empty;
 
             ViewData[SystemRoleEnum.Admin.ToString()] = false;
