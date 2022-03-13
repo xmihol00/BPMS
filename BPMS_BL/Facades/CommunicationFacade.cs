@@ -458,7 +458,7 @@ namespace BPMS_BL.Facades
             SystemAuthorizationDTO authSystem = 
                 SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
-            if (_system.State != SystemStateEnum.Active || authSystem.URL != _system.URL)
+            if ((_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem) || authSystem.URL != _system.URL)
             {
                 throw new UnauthorizedAccessException();
             }
