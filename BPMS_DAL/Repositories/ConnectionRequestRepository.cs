@@ -18,13 +18,15 @@ namespace BPMS_DAL.Repositories
 
         public Task<LastConnectionRequestDTO> Last(Guid systemId)
         {
-            return _dbSet.Where(x => x.SystemId == systemId)
+            return _dbSet.Include(x => x.System)
+                         .Where(x => x.SystemId == systemId)
                          .Select(x => new LastConnectionRequestDTO
                          {
                              Date = x.Date,
                              Id = x.Id,
                              Text = x.Text,
-                             UserName = x.SenderName
+                             UserName = x.SenderName,
+                             URL = x.System.URL
                          })
                          .OrderByDescending(x => x.Date)
                          .FirstAsync();

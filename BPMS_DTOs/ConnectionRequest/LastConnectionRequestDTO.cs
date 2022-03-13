@@ -10,6 +10,7 @@ namespace BPMS_DTOs.ConnectionRequest
     public class LastConnectionRequestDTO
     {
         public Guid Id { get; set; }
+        public string URL { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
         public DateTime Date { get; set; }
