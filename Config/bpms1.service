@@ -1,0 +1,13 @@
+[Unit]  
+Description=BPMS1
+[Service]
+WorkingDirectory=/var/dotnet/sys1  
+ExecStart=dotnet /var/dotnet/sys1/BPMS.dll --urls="http://127.0.0.1:5101"
+Restart=always  
+RestartSec=10  
+SyslogIdentifier=netcore-demo  
+User=www-data  
+Environment=ASPNETCORE_ENVIRONMENT=sys1  
+[Install]
+WantedBy=multi-user.target
+ 
