@@ -365,13 +365,9 @@ namespace BPMS_BL.Facades
             {
                 throw new Exception();
             }
-            else if (targetAgendas.Count == 1)
-            {
-                model.AgendaId = targetAgendas.First();
-            }
             else
             {
-                model.AgendaId = null;
+                model.AgendaId = targetAgendas.First();
             }
 
             foreach (PoolShareDTO poolDTO in dto.Pools)
