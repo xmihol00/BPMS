@@ -107,9 +107,9 @@ namespace BPMS_BL.Facades
             return _agendaRepository.AgendasSystem(_system.Id);
         }
 
-        public async Task<string> DeactivateSystem(Guid id)
+        public async Task<string> DeactivateSystem()
         {
-            _systemRepository.ChangeState(id, SystemStateEnum.Deactivated);
+            _system.State = SystemStateEnum.Deactivated;
             await _systemRepository.Save();
             return "";
         }

@@ -152,9 +152,9 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeactivateSystem(Guid id)
+        public async Task<IActionResult> DeactivateSystem()
         {
-            return Ok(await _communicationFacade.DeactivateSystem(id));
+            return Ok(await _communicationFacade.DeactivateSystem());
         }
     }
 }

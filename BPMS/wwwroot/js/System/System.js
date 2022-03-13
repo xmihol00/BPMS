@@ -16,8 +16,10 @@ function Deactive()
         type: "POST",
         url: `/System/Deactivate/${document.getElementById("IdId").value}`,
     })
-    .done(() => 
+    .done((result) => 
     {
+        InfoCardUpdate(result);
+
         let buttonDiv = document.getElementById("SystemBtnsId");
         buttonDiv.children[0].remove();
         buttonDiv.innerHTML = `<button class="butn btn-s" onclick="ShowModal('ReactivateFormId')">Aktivovat</button>` + buttonDiv.innerHTML;

@@ -118,7 +118,7 @@ namespace BPMS_BL.Facades
             return await _systemRepository.InfoCard(dto.Id);
         }
 
-        public async Task Deactivate(Guid id)
+        public async Task<SystemInfoCardDTO> Deactivate(Guid id)
         {
             SystemEntity entity = await _systemRepository.BareAsync(id);
             entity.State = SystemStateEnum.Deactivated;
@@ -132,6 +132,9 @@ namespace BPMS_BL.Facades
             {
                 throw new Exception(); // TODO
             }
+
+            await _systemRepository.Save();
+            return await _systemRepository.InfoCard(id);
         }
 
         public Task<LastConnectionRequestDTO> ConnectionRequest(Guid id)

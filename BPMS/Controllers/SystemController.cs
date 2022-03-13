@@ -106,8 +106,12 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Deactivate(Guid id)
         {
-            await _systemFacade.Deactivate(id);
-            return Ok();
+            SystemInfoCardDTO infoCard = await _systemFacade.Deactivate(id);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
+                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
+            });
         }
     }
 }
