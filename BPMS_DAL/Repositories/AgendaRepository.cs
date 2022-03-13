@@ -148,6 +148,7 @@ namespace BPMS_DAL.Repositories
                                                     Id = y.Id,
                                                     Name = y.Name,
                                                     URL = y.URL,
+                                                    State = y.State
                                                 })
                                                 .ToList()
                          })
@@ -225,7 +226,8 @@ namespace BPMS_DAL.Repositories
                          {
                              Id = x.System.Id,
                              Name = x.System.Name,
-                             URL = x.System.URL
+                             URL = x.System.URL,
+                             State = x.System.State
                          })
                          .ToListAsync();
         }

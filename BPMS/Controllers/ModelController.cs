@@ -83,7 +83,13 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> Share(Guid id)
         {
-            return Ok(await _modelFacade.Share(id));
+            ModelDetailDTO detail = await _modelFacade.Share(id);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true),
+                card = await this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true),
+                header = await this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true)
+            });
         }
 
         [HttpGet]
@@ -104,7 +110,8 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, ModelKeeper")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            return Ok(await _modelFacade.Remove(id));
+            await _modelFacade.Remove(id);
+            return Ok();
         }
     }
 }

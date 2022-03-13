@@ -160,8 +160,9 @@ function RemoveUser(btn)
     });
 }
 
-function EditSystem(btn)
+function EditSystem(btn, event)
 {
+    event.stopPropagation();
     let closeBtn = btn.parentNode.children[0];
     if (btn.classList.contains("text-prim"))
     {
@@ -175,8 +176,9 @@ function EditSystem(btn)
     }
 }
 
-function RemoveSystem(btn)
+function RemoveSystem(btn, event)
 {
+    event.stopPropagation();
     let agendaId = document.getElementById("AgendaIdId").value;
     $.ajax(
     {

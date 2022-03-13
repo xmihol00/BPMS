@@ -362,8 +362,8 @@ function ShareModel(btn)
     })
     .done((result) => 
     {
-        btn.innerText = "Spustit";
-        btn.onclick = () => RunModel(btn);
+        InfoCardUpdate(result);
+        document.getElementById("PageNavId").innerHTML = model.header;
     })
     .fail(() => 
     {
@@ -409,16 +409,9 @@ function RemoveModel()
         type: "POST",
         url: `/Model/Remove/${modelId}`
     })
-    .done((result) => 
+    .done(() => 
     {
-        if (result)
-        {
-            window.location.replace(`/Agenda/Detail/${result}`);
-        }
-        else
-        {
-            window.location.replace(`/Agenda/Overview/`);
-        }
+        window.location.replace(`/Model/Overview/`);
     })
     .fail(() => 
     {
@@ -623,4 +616,10 @@ function RemoveMap(btn, serviceTaskId)
         // TODO
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });
+}
+function PoolConfigCB(result)
+{
+    InfoCardUpdate(result);
+    setTimeout(() => document.getElementById("PageNavId").innerHTML = result.header, 850);
+    AddEventListeners();
 }

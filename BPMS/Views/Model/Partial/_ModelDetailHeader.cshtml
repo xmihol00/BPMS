@@ -82,7 +82,7 @@
             <div class="loading-content"></div>
         </div>
     </div>
-    <form id="RunModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Run" 
+    <form id="RunModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Run" method="POST"
         onsubmit="AjaxFormSubmit(event, null, true)" oninput="InputValidator(this)">
         <input type="hidden" name="Id" value="@Model.Id">
         <input type="hidden" name="WorkflowId" value="@Model.Workflow?.Id">
@@ -93,7 +93,7 @@
         <div class="row">
             <div class="col-12 col-lg-6 mb-3">
                 <label class="input">
-                    <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Workflow?.Name"/>
+                    <input required class="input-field" type="text" placeholder=" " name="Name" value=""/>
                     <span class="input-label">Název</span>
                 </label>
             </div>

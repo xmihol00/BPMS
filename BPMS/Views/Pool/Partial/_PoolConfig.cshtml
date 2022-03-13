@@ -1,6 +1,6 @@
 @model PoolConfigDTO
 <form id="PoolEditFormId" class="row mt-1" action="/Pool/Edit" 
-      onsubmit="AjaxFormSubmit(event, 'ModelSvgId', true, true, null, AddEventListeners)" novalidate>
+      onsubmit="AjaxFormSubmit(event, null, true, true, null, PoolConfigCB)" novalidate>
     <input type="hidden" name="Id" value="@Model.Id" />
     <div class="col-12 col-md-6 mb-3">
         <label class="input">

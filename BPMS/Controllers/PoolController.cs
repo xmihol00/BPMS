@@ -4,6 +4,7 @@ using BPMS_DTOs.Pool;
 using Microsoft.AspNetCore.Mvc;
 using BPMS_DTOs.Attribute;
 using Microsoft.AspNetCore.Authorization;
+using BPMS_DTOs.Model;
 
 namespace BPMS.Controllers
 {
@@ -28,7 +29,13 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(PoolEditDTO dto)
         {
-            return PartialView("../Model/Partial/_ModelSvg", await _PoolFacade.Edit(dto));
+            ModelDetailDTO detail = await _PoolFacade.Edit(dto);
+            return Ok(new
+            {
+                info = await this.RenderViewAsync("../Model/Partial/_ModelDetailInfo", detail, true),
+                card = await this.RenderViewAsync("../Model/Partial/_ModelCard", (detail.SelectedModel, true), true),
+                header = await this.RenderViewAsync("../Model/Partial/_ModelDetailHeader", detail, true)
+            });
         }
     }
 }

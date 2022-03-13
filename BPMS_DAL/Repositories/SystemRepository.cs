@@ -189,7 +189,8 @@ namespace BPMS_DAL.Repositories
         public Task<List<SystemAllDTO>> NotInAgenda(Guid agendaId)
         {
             return _dbSet.Include(x => x.Agendas)
-                         .Where(x => x.Agendas.All(y => y.AgendaId != agendaId) && x.Id != StaticData.ThisSystemId)
+                         .Where(x => x.Agendas.All(y => y.AgendaId != agendaId) && x.Id != StaticData.ThisSystemId && 
+                                     x.State == SystemStateEnum.Active)
                          .Select(x => new SystemAllDTO
                          {
                              Id = x.Id,

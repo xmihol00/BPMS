@@ -38,6 +38,9 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.Agenda)
                          .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Administrator)
+                         .Include(x => x.Workflows)
+                            .ThenInclude(x => x.Blocks)
                          .Select(x => new ModelDetailDTO
                          {
                              Id = x.Id,
@@ -45,15 +48,37 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              SVG = x.SVG,
                              State = x.State,
-                             Workflow = x.Workflows.Select(y => new WorkflowRunDTO 
+                             Workflow = x.Workflows.Where(x => x.State == WorkflowStateEnum.Waiting)
+                                                   .Select(y => new WorkflowRunDTO 
                                                    {
                                                        Description = x.Description,
                                                        Id = x.Id,
                                                        Name = x.Name
                                                    })
                                                    .FirstOrDefault(),
+                             Workflows = x.Workflows.Where(x => x.State == WorkflowStateEnum.Active)
+                                                    .Select(y => new WorkflowAllModelDTO
+                                                    {
+                                                        AdministratorEmail = y.Administrator.Email,
+                                                        AdministratorName = $"{y.Administrator.Title} {y.Administrator.Name} {y.Administrator.Surname}",
+                                                        Description = y.Description,
+                                                        Id = y.Id,
+                                                        Name = y.Name,
+                                                        State = y.State
+                                                    })
+                                                    .ToList(),
                              AgendaId = x.AgendaId,
-                             AgendaName = x.Agenda.Name
+                             AgendaName = x.Agenda.Name,
+                             ActiveBlocks = x.Workflows.Where(x => x.State == WorkflowStateEnum.Active)
+                                                       .Select(x => new WorkflowActiveBlocksDTO
+                                                       {
+                                                           Id = x.Id,
+                                                           BlockIds = x.Blocks
+                                                                       .Where(y => y.State == BlockWorkflowStateEnum.Active)
+                                                                       .Select(y => y.BlockModelId)
+                                                                       .ToList()
+                                                       })
+                                                       .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -171,7 +196,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Description = x.Description,
                              Name = x.Name,
-                             Workflow = x.Workflows.Select(y => new WorkflowRunDTO 
+                             Workflow = x.Workflows.Where(x => x.State == WorkflowStateEnum.Waiting)
+                                                   .Select(y => new WorkflowRunDTO 
                                                    {
                                                        Description = x.Description,
                                                        Id = x.Id,

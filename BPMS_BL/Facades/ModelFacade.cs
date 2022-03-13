@@ -76,13 +76,11 @@ namespace BPMS_BL.Facades
             return await _modelRepository.All();
         }
 
-        public async Task<Guid?> Remove(Guid id)
+        public async Task Remove(Guid id)
         {
             ModelEntity entity = await _modelRepository.DetailDeep(id);
             _modelRepository.Remove(entity);
             await _modelRepository.Save();
-
-            return entity.AgendaId;
         }
 
         public async Task<ModelDetailDTO> Detail(Guid id)
@@ -114,12 +112,11 @@ namespace BPMS_BL.Facades
                 Id = entity.Id,
                 Name = entity.Name,
                 State = entity.State,
-                Workflow = await _modelRepository.WaitingWorklfow(dto.Id),
                 SelectedModel = await _modelRepository.Selected(entity.Id)
             };
         }
 
-        public async Task<string> Share(Guid id)
+        public async Task<ModelDetailDTO> Share(Guid id)
         {
             ModelDetailShare model = await _modelRepository.Share(id);
             model.Pools = await _poolRepository.Share(id);
@@ -151,7 +148,9 @@ namespace BPMS_BL.Facades
             }
             await _modelRepository.Save();
 
-            return "";
+            ModelDetailDTO detail = await _modelRepository.Detail(id);
+            detail.SelectedModel = await _modelRepository.Selected(id);
+            return detail;
         }
 
         public Task<List<UserIdNameDTO>> Run(Guid id)
