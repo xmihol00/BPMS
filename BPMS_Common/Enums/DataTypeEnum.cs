@@ -15,8 +15,8 @@ namespace BPMS_Common.Enums
         ArrayString,
         ArrayNumber,
         ArrayBool,
-        ArrayObject,
-        ArrayArray,
+        //ArrayObject,
+        //ArrayArray,
     }
 
     public static class DataType
@@ -46,11 +46,11 @@ namespace BPMS_Common.Enums
                 case DataTypeEnum.ArrayNumber:
                     return "pole čísel";
 
-                case DataTypeEnum.ArrayObject:
-                    return "pole objektů";
-                
-                case DataTypeEnum.ArrayArray:
-                    return "pole polí";
+                //case DataTypeEnum.ArrayObject:
+                //    return "pole objektů";
+                //
+                //case DataTypeEnum.ArrayArray:
+                //    return "pole polí";
                 
                 default:
                     return "";

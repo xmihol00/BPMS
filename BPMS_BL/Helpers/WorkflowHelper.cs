@@ -288,8 +288,8 @@ namespace BPMS_BL.Helpers
                 case DataTypeEnum.ArrayString:
                 case DataTypeEnum.ArrayBool:
                 case DataTypeEnum.ArrayNumber:
-                case DataTypeEnum.ArrayObject:
-                case DataTypeEnum.ArrayArray:
+                //case DataTypeEnum.ArrayObject:
+                //case DataTypeEnum.ArrayArray:
                     return new ArrayDataEntity();
                                 
                 default:

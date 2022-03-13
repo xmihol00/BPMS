@@ -82,27 +82,29 @@ namespace BPMS_BL.Helpers
 
         private string CreateGetRequest()
         {
-            _builder.Append("GET ");
             if (_service.Serialization == SerializationEnum.Replace)
             {
+                _builder.Append("GET ");
                 SerilizeData();
                 Uri url = new Uri(_service.URL);
                 _builder.Append(url.PathAndQuery);
                 _builder.Append(" HTTP/1.1\r\nHost: ");
                 _builder.Append(url.DnsSafeHost);
+                GenerateHeaders();
+                _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n");
+                return _builder.ToString();
             }
             else
             {
-                _builder.Append(_url.PathAndQuery);
-                SerilizeData();
+                string result = "GET " + _url.PathAndQuery;
+                result += SerilizeData(true);
+                _builder.Clear();
                 _builder.Append(" HTTP/1.1\r\nHost: ");
                 _builder.Append(_url.DnsSafeHost);
                 _builder.Append("\r\nContent-Type: ");
                 _builder.Append(_service.Serialization.ToMIME());
+                return result + _builder.ToString();
             }
-            GenerateHeaders();
-            _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n");
-            return _builder.ToString();
         }
 
         private string CreateBodyRequest(string method)
@@ -131,8 +133,7 @@ namespace BPMS_BL.Helpers
                 string header = _builder.ToString();
 
                 _builder.Clear();
-                SerilizeData();
-                return header + JToken.Parse(_builder.ToString()).ToString();
+                return header + SerilizeData(true);
             }
         }
 
@@ -231,43 +232,44 @@ namespace BPMS_BL.Helpers
             return result;
         }
 
-        private void SerilizeData()
+        private string SerilizeData(bool indented = false)
         {
             switch (_service.Serialization)
             {
                 case SerializationEnum.JSON:
-                    if (_service.Nodes.Count() > 0)
+                    SerilizeJson();
+                    if (indented)
                     {
-                        _builder.Append("{");
-                        SerilizeJSON(_service.Nodes);
-                        _builder.Append("}");
+                        return JObject.Parse(_builder.ToString()).ToString(Newtonsoft.Json.Formatting.Indented);
                     }
                     break;
-                
+
                 case SerializationEnum.URL:
                     SerilizeURL();
                     break;
                 
                 case SerializationEnum.XMLMarks:
                     SerilizeXMLMarks();
+                    if (indented)
+                    {
+                        return XDocument.Parse(_builder.ToString()).ToString();
+                    }
                     break;
                 
                 case SerializationEnum.XMLAttributes:
                     SerilizeXMLAttributes();
+                    if (indented)
+                    {
+                        return XDocument.Parse(_builder.ToString()).ToString();
+                    }
                     break;
                 
                 case SerializationEnum.Replace:
                     SerilizeUrlReplace(_service.Nodes);
                     break;
-                
-                default:
-                    return;
             }
-        }
 
-        private void SerilizeXMLAttributes()
-        {
-            throw new NotImplementedException();
+            return "";
         }
 
         private void SerilizeUrlReplace(IEnumerable<IDataSchemaData> data)
@@ -283,6 +285,59 @@ namespace BPMS_BL.Helpers
                 else
                 {
                     _service.URL = _service.URL.Replace(search, schema.Data);
+                }
+            }
+        }
+
+        private void SerilizeXMLAttributes()
+        {
+            if (_service.Nodes.Count() == 1 && _service.Nodes.First().Type == DataTypeEnum.Object)
+            {
+                SerilizeXMLAttributes(_service.Nodes);
+            }
+            else
+            {
+                _builder.Append("<root>");
+                SerilizeXMLAttributes(_service.Nodes);
+                _builder.Append("</root>");
+            }
+        }
+
+        private void SerilizeXMLAttributes(IEnumerable<IDataSchemaData> data, bool array = false)
+        {
+            foreach (DataSchemaDataDTO schema in data)
+            {
+                string name = "value";
+                if (!array)
+                {
+                    name = String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias;
+                }
+                else if (schema.Data == null)
+                {
+                    continue;
+                }
+
+                switch (schema.Type)
+                {
+                    case DataTypeEnum.ArrayString:
+                    case DataTypeEnum.ArrayNumber:
+                    case DataTypeEnum.ArrayBool:
+                    case DataTypeEnum.Object:
+                        _builder.Append($"<{name}>");
+                        SerilizeXMLAttributes(schema.Children as IEnumerable<IDataSchemaData>, schema.Type != DataTypeEnum.Object);
+                        _builder.Append($"</{name}>");            
+                        break;
+
+                    case DataTypeEnum.Number:
+                    case DataTypeEnum.Bool:
+                    case DataTypeEnum.String:
+                        _builder.Append($"<{name}>{schema.Data}</{name}>");
+                        break;
+                    
+                    //case DataTypeEnum.ArrayObject:
+                    //case DataTypeEnum.ArrayArray:
+                        // TODO
+                        //break;
                 }
             }
         }
@@ -303,10 +358,10 @@ namespace BPMS_BL.Helpers
 
         private void SerilizeXMLMarks(IEnumerable<IDataSchemaData> data, bool array = false)
         {
-            string name = "";
             List<(string, DataSchemaDataDTO)> objects = new List<(string, DataSchemaDataDTO)>();
             foreach (DataSchemaDataDTO schema in data)
             {
+                string name = "value";
                 if (!array)
                 {
                     name = String.IsNullOrEmpty(schema.Alias) ? schema.Name : schema.Alias;
@@ -325,25 +380,43 @@ namespace BPMS_BL.Helpers
                     case DataTypeEnum.Number:
                     case DataTypeEnum.Bool:
                     case DataTypeEnum.String:
-                        _builder.Append($"{name}=\"{schema.Data}\" ");
+                        if (array)
+                        {
+                            _builder.Append($"<{name}>{schema.Data}</{name}>");
+                        }
+                        else
+                        {
+                            _builder.Append($"{name}=\"{schema.Data}\" ");
+                        }
                         break;
                     
                     case DataTypeEnum.ArrayString:
                     case DataTypeEnum.ArrayNumber:
                     case DataTypeEnum.ArrayBool:
-                    case DataTypeEnum.ArrayObject:
-                    case DataTypeEnum.ArrayArray:
-                        // TODO
+                    //case DataTypeEnum.ArrayObject:
+                    //case DataTypeEnum.ArrayArray:
+                        objects.Add((name, schema));
                         break;
                 }
             }
 
-            _builder.Append(">");
+            if (!array)
+            {
+                _builder.Append(">");
+            }
 
             foreach ((string name, DataSchemaDataDTO schema) obj in objects)
             {
-                _builder.Append($"<{obj.name} ");
-                SerilizeXMLMarks(obj.schema.Children as IEnumerable<IDataSchemaData>, false);
+                if (obj.schema.Type != DataTypeEnum.Object)
+                {
+                    _builder.Append($"<{obj.name}>");
+                    SerilizeXMLMarks(obj.schema.Children as IEnumerable<IDataSchemaData>, true);
+                }
+                else
+                {
+                    _builder.Append($"<{obj.name} ");
+                    SerilizeXMLMarks(obj.schema.Children as IEnumerable<IDataSchemaData>, false);
+                }
                 _builder.Append($"</{obj.name}>");
             }
         }
@@ -362,6 +435,13 @@ namespace BPMS_BL.Helpers
                 }
             }
             _builder.Length = _builder.Length - 1;
+        }
+
+        private void SerilizeJson()
+        {
+            _builder.Append("{");
+            SerilizeJSON(_service.Nodes);
+            _builder.Append("}");
         }
 
         private void SerilizeJSON(IEnumerable<IDataSchemaData> data, bool array = false)
@@ -402,8 +482,8 @@ namespace BPMS_BL.Helpers
                     case DataTypeEnum.ArrayString:
                     case DataTypeEnum.ArrayNumber:
                     case DataTypeEnum.ArrayBool:
-                    case DataTypeEnum.ArrayObject:
-                    case DataTypeEnum.ArrayArray:
+                    //case DataTypeEnum.ArrayObject:
+                    //case DataTypeEnum.ArrayArray:
                         _builder.Append("[");
                         SerilizeJSON(schema.Children as IEnumerable<IDataSchemaData>, true);
                         _builder.Append("],");
