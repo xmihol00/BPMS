@@ -15,7 +15,7 @@
 <form id="CreateEditUserId" class="mx-4 mt-4 mb-3" method="POST" action="/User/Edit" oninput="InputValidator(this)"
       onsubmit="AjaxFormSubmit(event, null, true, false, AddRoleInputs, (result) => { InfoCardUpdate(result); RemoveRoleInpust() })">
     <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
-        <h2 class="mb-0 text-font">Editace uživatel</h2>
+        <h2 class="mb-0">Editace uživatel</h2>
         <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
     </div>
     <input id="IdId" type="hidden" name="Id" value="@Model.Id" />
