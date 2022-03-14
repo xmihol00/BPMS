@@ -449,10 +449,8 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RunModel(ModelIdWorkflowDTO dto)
         {
-            IDbContextTransaction transaction = await _workflowRepository.CreateTransaction();
             await new WorkflowHelper(_context).CreateWorkflow(dto.ModelId, dto.WorkflowId);
             await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
 
             return "";   
         }
