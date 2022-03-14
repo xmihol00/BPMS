@@ -137,7 +137,6 @@ namespace BPMS_BL.Facades
             bool shared = true;
             foreach (DstAddressDTO pool in await _poolRepository.Addresses(id))
             {
-                pool.MessageId = Guid.NewGuid();
                 shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, 
                                                                SymetricCipherHelper.JsonEncrypt(pool), 
                                                                serilizedModel);

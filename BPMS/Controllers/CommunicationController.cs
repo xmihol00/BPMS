@@ -153,7 +153,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeactivateSystem()
+        public async Task<IActionResult> DeactivateSystem([FromBody] string test)
         {
             return Ok(await _communicationFacade.DeactivateSystem());
         }
