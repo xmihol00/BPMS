@@ -83,7 +83,7 @@ namespace BPMS_Common.Enums
                     return "/Task/UserDetail/";
                 
                 case NotificationTypeEnum.NewServiceTask:
-                    return "Task/ServiceDetail/";
+                    return "/Task/ServiceDetail/";
 
                 case NotificationTypeEnum.NewRole:
                 case NotificationTypeEnum.NewAgenda:

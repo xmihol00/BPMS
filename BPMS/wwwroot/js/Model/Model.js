@@ -7,21 +7,21 @@ window.addEventListener('DOMContentLoaded', () =>
 {
     AddEventListeners();
     document.addEventListener("dragover", (event) => event.preventDefault());
-    DisplayActivePools(ActivePools);
+    if (typeof activePools != "undefined")
+    {
+        DisplayActivePools(ActivePools);
+    }
 });
 
 function DisplayActivePools(activePools)
 {
-    if (typeof activePools != "undefined")
+    let model = document.querySelector(`[id=ModelSvgId]`);
+    for (let blockId of activePools)
     {
-        let model = document.querySelector(`[id=ModelSvgId]`);
-        for (let blockId of activePools)
-        {
-            let block = model.querySelector(`[id='${blockId}']`);
-            let target = block.children[0].children[0];
-            target.style.stroke = "#5400db";
-            target.style.fill = "#0054db";
-        }
+        let block = model.querySelector(`[id='${blockId}']`);
+        let target = block.children[0].children[0];
+        target.style.stroke = "#5400db";
+        target.style.fill = "#0054db";
     }
 }
 
@@ -390,7 +390,6 @@ function ShareModel()
 
 function ModelRunCB(result)
 {   
-    console.log(result, typeof(result))
     if (typeof(result) == "object")
     {
         PoolConfigCB(result);
