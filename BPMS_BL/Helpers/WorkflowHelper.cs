@@ -72,6 +72,7 @@ namespace BPMS_BL.Helpers
             await _modelRepository.Save();
 
             await StartNextTask(workflow.Blocks[0]);
+            await _modelRepository.Save();
             await ShareActivity(startEvent.PoolId, workflow.Id, model.Id);
             await NotificationHub.CreateSendNotifications(_notificationRepository, workflow.Id, NotificationTypeEnum.NewWorkflow, 
                                                           workflow.Name, workflow.AdministratorId.Value);

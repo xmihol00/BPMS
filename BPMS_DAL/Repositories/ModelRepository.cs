@@ -291,6 +291,7 @@ namespace BPMS_DAL.Repositories
                             .ThenInclude(x => x.Blocks)
                          .Select(x => new ModelEntity
                          {
+                             Id = x.Id,
                              AgendaId = x.AgendaId,
                              State = x.State,
                              Agenda = x.Agenda,

@@ -24,6 +24,7 @@ using BPMS_DAL;
 using BPMS_DTOs.Account;
 using BPMS_DTOs.Filter;
 using BPMS_DTOs.Agenda;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BPMS_BL.Facades
 {
@@ -160,6 +161,7 @@ namespace BPMS_BL.Facades
 
         public async Task<(ModelDetailDTO?, Guid)> Run(ModelRunDTO dto)
         {
+            IDbContextTransaction transaction = await _workflowRepository.CreateTransaction();
             WorkflowEntity? workflow = await _workflowRepository.WaitingOrDefault(dto.Id);
             if (workflow == null)
             {
@@ -227,6 +229,7 @@ namespace BPMS_BL.Facades
                 _modelRepository.ChangeState(dto.Id, ModelStateEnum.Waiting);
             }
             await _modelRepository.Save();
+            await transaction.CommitAsync();
             
             if (!run)
             {
