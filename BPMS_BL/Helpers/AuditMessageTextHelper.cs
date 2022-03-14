@@ -66,8 +66,7 @@ namespace BPMS_BL.Helpers
                     break;
 
                 case "CreateSystem":
-                    message.Text = "Vytvoření systému";
-                    break;
+                    return;
 
                 case "ActivateSystem":
                     message.Text = "Aktivace systémy";
