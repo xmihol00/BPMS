@@ -44,7 +44,7 @@ namespace BPMS_DAL.Repositories
                             Info = x.Info,
                         })
                         .OrderBy(x => x.State)
-                           .ThenBy(x => x.Date)
+                           .ThenByDescending(x => x.Date)
                         .ToListAsync();
         }
 

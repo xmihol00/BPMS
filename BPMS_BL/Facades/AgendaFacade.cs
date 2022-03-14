@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
+using BPMS_BL.Hubs;
+using BPMS_Common.Enums;
 using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
@@ -31,12 +33,14 @@ namespace BPMS_BL.Facades
         private readonly SystemRepository _systemRepository;
         private readonly SystemAgendaRepository _systemAgendaRepository;
         private readonly UserRoleRepository _userRoleRepository;
+        private readonly NotificationRepository _notificationRepository;
         private readonly IMapper _mapper;
 
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
                             SolvingRoleRepository solvingRoleRepository, AgendaRoleRepository agendaRoleRepository, 
                             BlockModelRepository blockModelRepository, SystemRepository systemRepository, FilterRepository filterRepository,
-                            SystemAgendaRepository systemAgendaRepository, UserRoleRepository userRoleRepository, IMapper mapper)
+                            SystemAgendaRepository systemAgendaRepository, UserRoleRepository userRoleRepository, 
+                            NotificationRepository notificationRepository, IMapper mapper)
         : base(filterRepository)
         {
             _agendaRepository = agendaRepository;
@@ -48,6 +52,7 @@ namespace BPMS_BL.Facades
             _systemRepository = systemRepository;
             _systemAgendaRepository = systemAgendaRepository;
             _userRoleRepository = userRoleRepository;
+            _notificationRepository = notificationRepository;
             _mapper = mapper;
         }
 
@@ -90,7 +95,10 @@ namespace BPMS_BL.Facades
 
         public async Task Create(AgendaCreateDTO dto)
         {
-            await _agendaRepository.Create(_mapper.Map<AgendaEntity>(dto));
+            AgendaEntity entity = _mapper.Map<AgendaEntity>(dto);
+            await _agendaRepository.Create(entity);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, entity.Id, NotificationTypeEnum.NewAgenda, 
+                                                          entity.Name, entity.AdministratorId);
             await _agendaRepository.Save();
         }
 
@@ -121,12 +129,20 @@ namespace BPMS_BL.Facades
                 UserId = userId
             });
 
+            AgendaIdNameDTO agenda = await _agendaRoleRepository.AgendaIdName(agendaRoleId);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, agenda.Id, NotificationTypeEnum.NewRole, 
+                                                          agenda.Name, userId);
+
             await _agendaRoleRepository.Save();
         }
 
         public async Task RemoveUserRole(Guid userId, Guid agendaRoleId)
         {
+            AgendaIdNameDTO agenda = await _agendaRoleRepository.AgendaIdName(agendaRoleId);
             _userRoleRepository.Remove(await _userRoleRepository.RoleForRemoval(userId, agendaRoleId));
+            
+            await NotificationHub.CreateSendNotifications(_notificationRepository, agenda.Id, NotificationTypeEnum.RemovedRole, 
+                                                          agenda.Name, userId);
 
             await _userRoleRepository.Save();
         }
@@ -173,6 +189,9 @@ namespace BPMS_BL.Facades
             {
                 task.RoleId = null;
             }
+
+            await NotificationHub.CreateSendNotifications(_notificationRepository, agendaRole.AgendaId, NotificationTypeEnum.RemovedRole, 
+                                                          agendaRole.Agenda.Name, agendaRole.UserRoles.Select(x => x.UserId).ToArray());
 
             _agendaRoleRepository.Remove(agendaRole);
             await _agendaRoleRepository.Save();

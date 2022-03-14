@@ -10,7 +10,7 @@
                 <span class="text-code text-small">@notification.Date:</span><br>
                 @notification.Type.ToText()<b class="notif-info">@notification.Info</b>.
             </div>
-            <div id="@notification.Id" class="my-auto">
+            <div id="@notification.Id" class="my-auto notif-btns">
                 @if (notification.State == NotificationStateEnum.Unread)
                 {
                     <button class="btn px-1 text-prim-edit" onclick="NotificationSeen(this)"><i class="fas fa-eye-slash"></i></button>

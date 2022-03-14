@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
+using BPMS_BL.Hubs;
 using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DAL;
@@ -40,6 +41,7 @@ namespace BPMS_BL.Facades
         private readonly ForeignAttributeMapRepository _foreignAttributeMapRepository;
         private readonly ConnectionRequestRepository _connectionRequestRepository;
         private readonly AuditMessageRepository _auditMessageRepository;
+        private readonly NotificationRepository _notificationRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -53,7 +55,7 @@ namespace BPMS_BL.Facades
                                    AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
                                    ForeignAttributeMapRepository foreignAttributeMapRepository, FilterRepository filterRepository,
                                    ConnectionRequestRepository connectionRequestRepository, AuditMessageRepository auditMessageRepository,
-                                   BpmsDbContext context, IMapper mapper)
+                                   NotificationRepository notificationRepository, BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _userRepository = userRepository;
@@ -75,6 +77,7 @@ namespace BPMS_BL.Facades
             _foreignAttributeMapRepository = foreignAttributeMapRepository;
             _connectionRequestRepository = connectionRequestRepository;
             _auditMessageRepository = auditMessageRepository;
+            _notificationRepository = notificationRepository;
             _context = context;
             _mapper = mapper;
             _system = new SystemEntity();
@@ -115,6 +118,8 @@ namespace BPMS_BL.Facades
         public async Task<string> DeactivateSystem()
         {
             _system.State = SystemStateEnum.Deactivated;
+            await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.DeactivatedSystem, 
+                                                          _system.Name, await _userRepository.Admins());
             await _systemRepository.Save();
             return "";
         }
@@ -122,6 +127,8 @@ namespace BPMS_BL.Facades
         public async Task<string> ReactivateSystem(ConnectionRequestEntity request)
         {
             _system.State = SystemStateEnum.Reactivated;
+            await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.ReactivateSystem, 
+                                                          _system.Name, await _userRepository.Admins());
             await _connectionRequestRepository.Create(request);
             await _connectionRequestRepository.Save();
 
@@ -363,15 +370,7 @@ namespace BPMS_BL.Facades
             model.State = ModelStateEnum.Executable;
             XDocument svg = XDocument.Parse(dto.SVG, LoadOptions.PreserveWhitespace);
             
-            List<Guid> targetAgendas = await _systemRepository.Agendas(dto.SenderURL);
-            if (targetAgendas.Count == 0)
-            {
-                throw new Exception();
-            }
-            else
-            {
-                model.AgendaId = targetAgendas.First();
-            }
+            AgendaTargetDTO targetAgenda = await _systemRepository.Agendas(dto.SenderURL);
 
             foreach (PoolShareDTO poolDTO in dto.Pools)
             {
@@ -398,6 +397,7 @@ namespace BPMS_BL.Facades
             }
 
             model.SVG = svg.ToString(SaveOptions.DisableFormatting);
+            model.AgendaId = targetAgenda.Id;
             await _modelRepository.Create(model);
 
             await _blockModelRepository.CreateRange(dto.EndEvents);
@@ -410,6 +410,9 @@ namespace BPMS_BL.Facades
             await _blockModelRepository.CreateRange(dto.RecieveEvents);
 
             await _flowRepository.CreateRange(dto.Flows);
+
+            await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.NewModel, model.Name,
+                                                          targetAgenda.AdministratorId);
            
             await _modelRepository.Save();
 
@@ -445,6 +448,9 @@ namespace BPMS_BL.Facades
         public async Task<string> CreateSystem(SystemEntity system)
         {
             await _systemRepository.Create(system);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, system.Id, NotificationTypeEnum.NewSystem, "",
+                                                          await _userRepository.Admins());
+            
             await _systemAgendaRepository.Save();
             return "";
         }

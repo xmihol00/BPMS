@@ -208,13 +208,18 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<Guid>> Agendas(string senderURL)
+        public Task<AgendaTargetDTO> Agendas(string senderURL)
         {
             return _dbSet.Include(x => x.Agendas)
-                            .Where(x => x.URL == senderURL)
+                            .ThenInclude(x => x.Agenda)
+                         .Where(x => x.URL == senderURL)
                          .SelectMany(x => x.Agendas)
-                         .Select(x => x.AgendaId)
-                         .ToListAsync();
+                         .Select(x => new AgendaTargetDTO
+                         {
+                             AdministratorId = x.Agenda.AdministratorId,
+                             Id = x.AgendaId,
+                         })
+                         .FirstAsync();
         }
 
         public Task<SystemPickerDTO> ThisSystem()

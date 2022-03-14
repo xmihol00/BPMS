@@ -1,4 +1,3 @@
-
 using BPMS_Common;
 using BPMS_Common.Enums;
 using BPMS_DAL;
@@ -12,10 +11,7 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.Account;
-using BPMS_DTOs.Attribute;
-using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
-using BPMS_DTOs.Pool;
 using BPMS_DTOs.Service;
 using BPMS_DTOs.DataSchema;
 using Microsoft.Extensions.DependencyInjection;
@@ -76,6 +72,8 @@ namespace BPMS_BL.Helpers
 
             await StartNextTask(workflow.Blocks[0]);
             await ShareActivity(startEvent.PoolId, workflow.Id, model.Id);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, workflow.Id, NotificationTypeEnum.NewWorkflow, 
+                                                          workflow.Name, workflow.AdministratorId.Value);
         }
 
         public async Task CreateWorkflow(Guid modelId, Guid workflowId)
@@ -797,19 +795,8 @@ namespace BPMS_BL.Helpers
             userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
                               userTask.Workflow.AdministratorId;
 
-            NotificationEntity notification = new NotificationEntity
-            {
-                Date = DateTime.Now,
-                TargetId = userTask.Id,
-                Type = NotificationTypeEnum.NewTask,
-                State = NotificationStateEnum.Unread,
-                UserId = userTask.UserId.Value,
-                Info = userTaskModel.Name
-            };
-            await _notificationRepository.Create(notification);
-
-            IHubContext<NotificationHub> hub = StaticData.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
-            await NotificationHub.SendNotification(hub.Clients, notification);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, userTask.Id, NotificationTypeEnum.NewTask, 
+                                                          userTaskModel.Name, userTask.UserId.Value);
         }
 
         public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)

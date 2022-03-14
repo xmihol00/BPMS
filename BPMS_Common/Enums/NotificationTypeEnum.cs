@@ -11,6 +11,13 @@ namespace BPMS_Common.Enums
         MissedTask,
         NewTask,
         NewRole,
+        NewWorkflow,
+        NewAgenda,
+        RemovedRole,
+        NewModel,
+        NewSystem,
+        DeactivatedSystem,
+        ReactivateSystem,
     }
 
     public static class NotificationType
@@ -29,8 +36,28 @@ namespace BPMS_Common.Enums
                     return "Máte nový úkol";
 
                 case NotificationTypeEnum.NewRole:
-                    return "Byla Vám přiřazena role";
+                    return "Byla Vám přiřazena role v agendě";
 
+                case NotificationTypeEnum.RemovedRole:
+                    return "Byla Vám odebrána role v agendě";
+
+                case NotificationTypeEnum.NewWorkflow:
+                    return "Bylo Vám přiřazeno pod správu workflow";
+                
+                case NotificationTypeEnum.NewAgenda:
+                    return "Byla Vám přiřazena pod správu agenda";
+                
+                case NotificationTypeEnum.NewModel:
+                    return "Do agendy pod Vaší správou byl sdílen model";
+                
+                case NotificationTypeEnum.NewSystem:
+                    return "Byla přijata žádost o vytvoření systému";
+                
+                case NotificationTypeEnum.DeactivatedSystem:
+                    return "Byla deaktivován systém";
+                
+                case NotificationTypeEnum.ReactivateSystem:
+                    return "Byla přijata žádost o reaktivování systému";
             }
         }
 
@@ -46,24 +73,20 @@ namespace BPMS_Common.Enums
                     return "/Task/UserDetail/";
 
                 case NotificationTypeEnum.NewRole:
+                case NotificationTypeEnum.NewAgenda:
+                case NotificationTypeEnum.RemovedRole:
                     return "/Agenda/Detail/";
 
-            }
-        }
-
-        public static string ToButton(this NotificationTypeEnum value)
-        {
-            switch (value)
-            {
-                default:
-                    return "";
+                case NotificationTypeEnum.NewWorkflow:
+                    return "/Workflow/Detail/";
                 
-                case NotificationTypeEnum.MissedTask:
-                case NotificationTypeEnum.NewTask:
-                    return "Vyřešit";
-
-                case NotificationTypeEnum.NewRole:
-                    return "Navštívit";
+                case NotificationTypeEnum.NewModel:
+                    return "/Model/Detail/";
+                
+                case NotificationTypeEnum.NewSystem:
+                case NotificationTypeEnum.DeactivatedSystem:
+                case NotificationTypeEnum.ReactivateSystem:
+                    return "/System/Detail/";
             }
         }
     }

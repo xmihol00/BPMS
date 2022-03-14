@@ -10,7 +10,7 @@ namespace BPMS_DAL.Entities
 {
     public class NotificationEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid TargetId { get; set; }
         public DateTime Date { get; set; }
         public NotificationTypeEnum Type { get; set; }

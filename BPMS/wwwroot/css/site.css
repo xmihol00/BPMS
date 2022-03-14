@@ -935,5 +935,7 @@ a:hover {
 }
 
 .nav-placeholder {
-  min-width: 7.5em;
+  min-width: 10%;
+  display: flex;
+  justify-content: end;
 }

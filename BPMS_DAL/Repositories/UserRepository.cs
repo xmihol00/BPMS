@@ -204,5 +204,13 @@ namespace BPMS_DAL.Repositories
                          })
                          .FirstAsync(x => x.Id == id);
         }
+
+        public Task<Guid[]> Admins()
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.Admin))
+                         .Select(x => x.Id)
+                         .ToArrayAsync();
+        }
     }
 }

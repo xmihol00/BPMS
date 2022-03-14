@@ -10,6 +10,7 @@ using BPMS_DAL.Entities;
 using BPMS_DTOs.Role;
 using BPMS_Common.Enums;
 using BPMS_DTOs.User;
+using BPMS_DTOs.Agenda;
 
 namespace BPMS_DAL.Repositories
 {
@@ -26,6 +27,7 @@ namespace BPMS_DAL.Repositories
         public Task<AgendaRoleEntity> RoleForRemoval(Guid id)
         {
             return _dbSet.Include(x => x.UserRoles)
+                         .Include(x => x.Agenda)
                          .FirstAsync(x => x.Id == id);
         }
 
@@ -66,6 +68,18 @@ namespace BPMS_DAL.Repositories
                                                 .ToList()
                          })
                          .ToListAsync();
+        }
+
+        public Task<AgendaIdNameDTO> AgendaIdName(Guid id)
+        {
+            return _dbSet.Include(x => x.Agenda)
+                         .Where(x => x.Id == id)
+                         .Select(x => new AgendaIdNameDTO
+                         {
+                             Id = x.Agenda.Id,
+                             Name = x.Agenda.Name
+                         })
+                         .FirstAsync();
         }
     }
 }

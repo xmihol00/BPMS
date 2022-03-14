@@ -14,13 +14,13 @@ Notifications.on("Notification", (result) =>
         `<h4 class="text-font border-bottom text-center mx-3 my-2 pb-1">Nové upozornění</h4>
         <div class="notif-div ${result.state} d-flex justify-content-between">
             <div class="my-auto">
-                <span class="text-code text-small">${result.date}</span><br>
+                <span class="text-code text-small">${result.date}:</span><br>
                 ${result.text}<b class="notif-info">${result.info}</b>.
             </div>
-            <div id="${result.id}" class="my-auto text-prim-edit">
-                <button class="btn px-1" onclick="NotificationSeen(this)"><i class="fas fa-eye-slash"></i></button>
-                <button class="btn px-1" onclick="NotificationMark(this)"><i class="fas fa-highlighter"></i></button>
-                <a class="btn px-1" href="${result.href}"><i class="fas fa-angle-double-right"></i></a>
+            <div id="${result.id}" class="my-auto notif-btns">
+                <button class="btn text-prim-edit px-1" onclick="NotificationSeen(this)"><i class="fas fa-eye-slash"></i></button>
+                <button class="btn text-prim-edit px-1" onclick="NotificationMark(this)"><i class="fas fa-highlighter"></i></button>
+                <a class="btn text-prim-edit px-1" href="${result.href}"><i class="fas fa-angle-double-right"></i></a>
             </div>
         </div>
         <div class="d-flex justify-content-center mb-2">

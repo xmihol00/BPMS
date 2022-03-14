@@ -69,7 +69,7 @@ namespace BPMS_BL.Helpers
                     return;
 
                 case "ActivateSystem":
-                    message.Text = "Aktivace systémy";
+                    message.Text = "Aktivace systému";
                     break;
 
                 case "SenderInfo":

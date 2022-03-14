@@ -127,3 +127,9 @@ a.butn:hover {
     right: 10px;
     top: 10px;
 }
+
+.notif-btns {
+    display: flex;
+    min-width: 90px;
+    justify-content: end;
+}

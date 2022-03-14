@@ -69,6 +69,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<FilterEntity>().HasOne(x => x.User).WithMany(x => x.Fitlers).HasForeignKey(x => x.UserId);
 
             modelBuilder.Entity<AgendaEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<AgendaEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<AgendaEntity>().HasOne(x => x.Administrator).WithMany(x => x.Agendas).HasForeignKey(x => x.AdministratorId);
 
             modelBuilder.Entity<AgendaRoleEntity>().HasKey(x => x.Id);
@@ -195,6 +196,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.ForeignSendEvent).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.ForeignSendEventId);
 
             modelBuilder.Entity<NotificationEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<NotificationEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<NotificationEntity>().HasOne(x => x.User).WithMany(x => x.Notifications).HasForeignKey(x => x.UserId);
 
             modelBuilder.Entity<ConnectionRequestEntity>().HasKey(x => x.Id);

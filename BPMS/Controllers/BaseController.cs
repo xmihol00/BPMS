@@ -22,10 +22,14 @@ namespace BPMS.Controllers
             base.OnActionExecuting(context);
             
             ClaimsPrincipal user = HttpContext.User;
+            ViewBag.Signed = user.Identity.IsAuthenticated;
+            if (!ViewBag.Signed)
+            {
+                return;
+            }
 
             ViewBag.Controller = this.GetType().Name;
 
-            ViewBag.Signed = user.Identity.IsAuthenticated;
             ViewBag.UserName = user.Identity.Name;
             ViewBag.Id = Guid.Empty;
 
@@ -34,22 +38,18 @@ namespace BPMS.Controllers
             ViewData[SystemRoleEnum.WorkflowKeeper.ToString()] = false;
             ViewData[SystemRoleEnum.ServiceKeeper.ToString()] = false;
             ViewData[SystemRoleEnum.ModelKeeper.ToString()] = false;
-
-            List<Claim> claims = user.Claims?.ToList();
-            if (claims != null)
+            
+            foreach(Claim claim in user.Claims)
             {
-                foreach(Claim claim in claims)
+                if (claim.Type == ClaimTypes.Role)
                 {
-                    if (claim.Type == ClaimTypes.Role)
-                    {
-                        ViewData[claim.Value] = true;
-                    }
-                    else if (claim.Type == ClaimTypes.NameIdentifier)
-                    {
-                        _userId = Guid.Parse(claim.Value);
-                        ViewBag.Id = _userId;
-                    }                    
+                    ViewData[claim.Value] = true;
                 }
+                else if (claim.Type == ClaimTypes.NameIdentifier)
+                {
+                    _userId = Guid.Parse(claim.Value);
+                    ViewBag.Id = _userId;
+                }                    
             }
 
             foreach (FilterTypeEnum value in Enum.GetValues<FilterTypeEnum>())
