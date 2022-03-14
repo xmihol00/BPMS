@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using BPMS_BL.Facades;
 using BPMS_DAL.Entities;
@@ -5,6 +6,7 @@ using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Model;
+using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,6 +15,7 @@ namespace BPMS.Controllers
     public class CommunicationController : Controller
     {
         private readonly CommunicationFacade _communicationFacade;
+        private string _data { get; set; } = string.Empty;
 
         public CommunicationController(CommunicationFacade communicationFacade)
         {
@@ -21,6 +24,13 @@ namespace BPMS.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            /* TODO
+            HttpContext.Request.EnableBuffering();
+            using (StreamReader stream = new StreamReader(HttpContext.Request.Body))
+            {
+                _data = stream.ReadToEndAsync().Result;
+            }*/
+
             base.OnActionExecuting(context);
             
             string action = context.RouteData.Values["action"].ToString();
@@ -153,7 +163,7 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeactivateSystem([FromBody] string test)
+        public async Task<IActionResult> DeactivateSystem()
         {
             return Ok(await _communicationFacade.DeactivateSystem());
         }
