@@ -211,6 +211,7 @@ namespace BPMS_BL.Facades
             {
                 foreach (DstAddressDTO pool in pools)
                 {
+                    pool.MessageId = Guid.NewGuid();
                     run &= await CommunicationHelper.RunModel(pool.DestinationURL, 
                                                               SymetricCipherHelper.JsonEncrypt(pool), 
                                                               runMessage);
