@@ -372,32 +372,17 @@ function ShareModel(btn)
     });
 }
 
-function RunModel(btn)
-{
-    let modelId = document.getElementById("ModelIdId").value;
-
-    $.ajax(
+function ModelRunCB(result)
+{   
+    console.log(result, typeof(result))
+    if (typeof(result) == "object")
     {
-        async: true,
-        type: "POST",
-        url: `/Model/Run/${modelId}`
-    })
-    .done((result) => 
+        PoolConfigCB(result);
+    }
+    else
     {
-        if (typeof(result) == "object")
-        {
-            PoolConfigCB(result);
-        }
-        else
-        {
-            document.location.replace("/Woekflow/Detail" + result);
-        }
-    })
-    .fail(() => 
-    {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
-    });
+        window.location.replace("/Workflow/Detail/" + result);
+    }
 }
 
 function RemoveModel()

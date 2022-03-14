@@ -24,7 +24,7 @@ namespace BPMS_DAL.Entities
         public List<PoolEntity> Pools { get; set; } = new List<PoolEntity>();
 
         [JsonIgnore]
-        public List<MessageEntity> Messages { get; set; } = new List<MessageEntity>();
+        public List<AuditMessageEntity> AuditMessages { get; set; } = new List<AuditMessageEntity>();
 
         [JsonIgnore]
         public List<ForeignRecieveEventEntity> ForeignRecievers { get; set; } = new List<ForeignRecieveEventEntity>();

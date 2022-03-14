@@ -14,6 +14,7 @@ using BPMS_Common.Enums;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Account;
 using BPMS_DTOs.Pool;
+using BPMS_DTOs.AuditMessage;
 
 namespace BPMS_DAL.Repositories
 {
@@ -121,6 +122,7 @@ namespace BPMS_DAL.Repositories
                                     .ThenInclude(x => x.UserRoles)
                          .Include(x => x.Pools)
                             .ThenInclude(x => x.Model)
+                         .Include(x => x.AuditMessages)
                          .Select(x => new SystemDetailDTO
                          {
                              Description = x.Description,
@@ -142,7 +144,13 @@ namespace BPMS_DAL.Repositories
                                                     UserCount = y.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
                                                     MissingRolesCount = y.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
                                                 })
-                                                .ToList()
+                                                .ToList(),
+                             Messages = x.AuditMessages.Select(y => new AuditMessageAllDTO
+                                                       {
+                                                           Date = y.Date,
+                                                           Text = y.Text
+                                                       })
+                                                       .ToList()
                          })
                         .FirstAsync(x => x.Id == id);
         }

@@ -1,7 +1,6 @@
 ﻿using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
-using BPMS_DAL.Entities.MessageTypes;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Seeds;
@@ -20,19 +19,17 @@ namespace BPMS_DAL
 
         public DbSet<AgendaEntity>? Agendas { get; set; }
         public DbSet<AgendaRoleEntity>? AgendaRoles { get; set; }
-        public DbSet<ConnectionRequestEntity>? ConnectionRequests { get; set; }
-        public DbSet<TaskDataEntity>? TaskDatas { get; set; }
-        public DbSet<TaskDataMapEntity>? TaskDataMaps { get; set; }
-        public DbSet<AttributeEntity>? Attributes { get; set; }
+        public DbSet<AuditMessageEntity>? AuditMessages { get; set; }
         public DbSet<AttributeMapEntity>? AttributesMaps { get; set; }
+        public DbSet<AttributeEntity>? Attributes { get; set; }
         public DbSet<BlockModelEntity>? BlockModels { get; set; }
         public DbSet<BlockWorkflowEntity>? BlockWorkflows { get; set; }
         public DbSet<ConditionDataEntity>? ConditionData { get; set; }
+        public DbSet<ConnectionRequestEntity>? ConnectionRequests { get; set; }
         public DbSet<FlowEntity>? Flows { get; set; }
         public DbSet<ForeignAttributeMapEntity>? ForeignAttributeMaps { get; set; }
         public DbSet<ForeignRecieveEventEntity>? ForeignRecieveEvents { get; set; }
         public DbSet<ForeignSendEventEntity>? ForeignSendEvents { get; set; }
-        public DbSet<MessageEntity>? Message { get; set; }
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<NotificationEntity>? Notifications { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
@@ -44,6 +41,8 @@ namespace BPMS_DAL
         public DbSet<SystemAgendaEntity>? SystemAgendas { get; set; }
         public DbSet<SystemEntity>? Systems { get; set; }
         public DbSet<SystemRoleEntity>? SystemRoles { get; set; }
+        public DbSet<TaskDataEntity>? TaskDatas { get; set; }
+        public DbSet<TaskDataMapEntity>? TaskDataMaps { get; set; }
         public DbSet<UserEntity>? Users { get; set; }
         public DbSet<UserRoleEntity>? UserRoles { get; set; }
         public DbSet<WorkflowEntity>? Workflows { get; set; }
@@ -179,12 +178,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
 
-            modelBuilder.Entity<MessageEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<MessageEntity>().Property(x => x.Id).ValueGeneratedNever();
-            modelBuilder.Entity<MessageEntity>().HasOne(x => x.System).WithMany(x => x.Messages).HasForeignKey(x => x.SystemId);
-            modelBuilder.Entity<MessageEntity>().HasDiscriminator<MessageTypeEnum>(x => x.Type)
-                        .HasValue<MessageEntity>(MessageTypeEnum.None)
-                        .HasValue<AcceptationMessageEntity>(MessageTypeEnum.Acceptation);
+            modelBuilder.Entity<AuditMessageEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<AuditMessageEntity>().Property(x => x.Id).ValueGeneratedNever();
+            modelBuilder.Entity<AuditMessageEntity>().HasOne(x => x.System).WithMany(x => x.AuditMessages).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<ForeignRecieveEventEntity>().HasKey(x => new { x.SenderId, x.SystemId, x.ForeignBlockId });
             modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.Sender).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SenderId);

@@ -227,7 +227,7 @@ namespace BPMS_BL.Facades
             }
             await _modelRepository.Save();
             
-            if (run)
+            if (!run)
             {
                 ModelDetailDTO detail = await _modelRepository.DetailNoWF(dto.Id);
                 detail.SelectedModel = await _modelRepository.Selected(dto.Id);

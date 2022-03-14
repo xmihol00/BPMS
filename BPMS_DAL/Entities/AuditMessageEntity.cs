@@ -8,11 +8,11 @@ using Newtonsoft.Json;
 
 namespace BPMS_DAL.Entities
 {
-    public class MessageEntity : IMessageEntity
+    public class AuditMessageEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Date { get; set; }
-        public MessageTypeEnum Type { get; set; }
+        public string Text { get; set; } = string.Empty;
         public Guid SystemId { get; set; }
         public SystemEntity System { get; set; } = new SystemEntity();
     }

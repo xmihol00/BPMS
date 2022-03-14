@@ -32,3 +32,22 @@ else
 {
     <div class="text-placeholder mt-2">Systém není přiřazen k žádnému modelu.</div>
 }
+
+<h4 class="text-center text-font mt-3 mb-0">Auditní záznamy</h4>
+<table class="table table-striped table-pad">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Datum</th>
+            <th scope="col">Záznam</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (AuditMessageAllDTO message in Model.Messages)
+        {
+            <tr>
+                <th scope="row">@message.Date</th>
+                <td>@message.Text</td>
+            </tr>
+        }
+    </tbody>
+</table>

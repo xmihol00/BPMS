@@ -39,6 +39,7 @@ namespace BPMS_BL.Facades
         private readonly ForeignRecieveEventRepository _foreignRecieveEventRepository;
         private readonly ForeignAttributeMapRepository _foreignAttributeMapRepository;
         private readonly ConnectionRequestRepository _connectionRequestRepository;
+        private readonly AuditMessageRepository _auditMessageRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -51,7 +52,8 @@ namespace BPMS_BL.Facades
                                    BlockWorkflowRepository blockWorkflowRepository, ForeignSendEventRepository foreignSendEventRepository,
                                    AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
                                    ForeignAttributeMapRepository foreignAttributeMapRepository, FilterRepository filterRepository,
-                                   ConnectionRequestRepository connectionRequestRepository, BpmsDbContext context, IMapper mapper)
+                                   ConnectionRequestRepository connectionRequestRepository, AuditMessageRepository auditMessageRepository,
+                                   BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _userRepository = userRepository;
@@ -72,6 +74,7 @@ namespace BPMS_BL.Facades
             _foreignRecieveEventRepository = foreignRecieveEventRepository;
             _foreignAttributeMapRepository = foreignAttributeMapRepository;
             _connectionRequestRepository = connectionRequestRepository;
+            _auditMessageRepository = auditMessageRepository;
             _context = context;
             _mapper = mapper;
             _system = new SystemEntity();
@@ -421,8 +424,8 @@ namespace BPMS_BL.Facades
                 dto.Workflow.AgendaId = model.AgendaId.Value;
                 dto.Workflow.AdministratorId = null;
                 await _workflowRepository.Create(dto.Workflow);
-                await _workflowRepository.Save();
             }
+            await _workflowRepository.Save();
 
             if (model.State != ModelStateEnum.Waiting)
             {
@@ -446,18 +449,20 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public void AuthorizeSystem(string auth, string path, bool check)
+        public async void AuthorizeSystem(string auth, string path, string? action, string method)
         {
             auth = auth["Bearer ".Length..];
             (Guid id, auth) = SymetricCipherHelper.ExtractGuid(auth);
             _system = _systemRepository.Bare(id);
-            SystemAuthorizationDTO authSystem = 
-                SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
+            SystemAuthorizationDTO authSystem = SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
-            if ((_system.State != SystemStateEnum.Active && check) || authSystem.URL != _system.URL)
+            bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
+            if ((_system.State != SystemStateEnum.Active && active) || authSystem.URL != _system.URL)
             {
                 throw new UnauthorizedAccessException();
             }
+
+            await AuditMessageTextHelper.CreateAuditMessage(_auditMessageRepository, authSystem.MessageId, id, action, method);
         }
     }
 }

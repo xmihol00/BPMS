@@ -10,12 +10,14 @@
     <div class="col-12 col-lg-6">
         @if (Model.AgendaId != null)
         {
-            <a href="/Agenda/Detail/@Model.AgendaId" class="w-50 link-p">
-                <div class="d-flex justify-content-center">
-                    <i class="fas fa-list-alt task-icon"></i>
-                </div>
-                <h4 class="text-center mb-0">@Model.AgendaName</h4>
-            </a>
+            <div class="d-flex justify-content-center">
+                <a href="/Agenda/Detail/@Model.AgendaId" class="link-p d-block">
+                    <div class="d-flex justify-content-center">
+                        <i class="fas fa-list-alt task-icon"></i>
+                    </div>
+                    <h4 class="text-center mb-0">@Model.AgendaName</h4>
+                </a>
+            </div>
         }
         else
         {

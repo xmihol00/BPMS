@@ -48,6 +48,7 @@ services.AddScoped<FilterRepository>();
 services.AddScoped<DataSchemaMapRepository>();
 services.AddScoped<NotificationRepository>();
 services.AddScoped<ConnectionRequestRepository>();
+services.AddScoped<AuditMessageRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

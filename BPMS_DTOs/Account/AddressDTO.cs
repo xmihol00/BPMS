@@ -22,6 +22,6 @@ namespace BPMS_DTOs.Account
 
         [JsonIgnore]
         public Guid SystemId { get; set; }
-        public Guid Salt { get; set; } = Guid.NewGuid();
+        public Guid MessageId { get; set; } = Guid.NewGuid();
     }
 }

@@ -101,7 +101,7 @@ namespace BPMS_BL.Helpers
 
         public static async Task<SenderRecieverConfigDTO> SenderInfo(string systemURL, string auth, string payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderInfo/{payload}", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderInfo/{payload}", auth, "", HttpMethod.Get);
 
             SenderRecieverConfigDTO dto = JsonConvert.DeserializeObject<SenderRecieverConfigDTO>(await response.Content.ReadAsStringAsync());
             if (dto != null)
@@ -116,7 +116,7 @@ namespace BPMS_BL.Helpers
 
         public static async Task<SenderRecieverConfigDTO> ForeignRecieverInfo(string systemURL, string auth, Guid blockId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/ForeignRecieverInfo/{blockId}", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/ForeignRecieverInfo/{blockId}", auth, "", HttpMethod.Get);
             SenderRecieverConfigDTO dto = JsonConvert.DeserializeObject<SenderRecieverConfigDTO>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -144,7 +144,7 @@ namespace BPMS_BL.Helpers
 
         public static async Task<List<ModelIdNameDTO>> Models(string systemURL, string auth, Guid agendaId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Models/{agendaId}", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Models/{agendaId}", auth, "", HttpMethod.Get);
             List<ModelIdNameDTO> dto = JsonConvert.DeserializeObject<List<ModelIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -158,7 +158,7 @@ namespace BPMS_BL.Helpers
 
         public static async Task<List<PoolIdNameDTO>> Pools(string systemURL, string auth, Guid modelId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Pools/{modelId}", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Pools/{modelId}", auth, "", HttpMethod.Get);
             List<PoolIdNameDTO> dto = JsonConvert.DeserializeObject<List<PoolIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -172,7 +172,7 @@ namespace BPMS_BL.Helpers
 
         public static async Task<List<BlockIdNameDTO>> SenderBlocks(string systemURL, string auth, Guid poolId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderBlocks/{poolId}", auth, "");
+            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderBlocks/{poolId}", auth, "", HttpMethod.Get);
             List<BlockIdNameDTO> dto = JsonConvert.DeserializeObject<List<BlockIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -204,7 +204,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload)
+        private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload, HttpMethod? method = null)
         {
             using HttpClientHandler httpClientHandler = new HttpClientHandler();
             httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
@@ -212,7 +212,7 @@ namespace BPMS_BL.Helpers
             using HttpClient client = new HttpClient(httpClientHandler);
             using HttpRequestMessage request = new HttpRequestMessage
             {
-                Method = HttpMethod.Post,
+                Method = method ?? HttpMethod.Post,
                 RequestUri = new Uri(systemURL + path), 
                 Content = new StringContent(payload)
                 {

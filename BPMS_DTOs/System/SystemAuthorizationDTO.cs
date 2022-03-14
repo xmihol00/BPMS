@@ -10,7 +10,7 @@ namespace BPMS_DTOs.System
 {
     public class SystemAuthorizationDTO
     {
-        public Guid Id { get; set; }
+        public Guid MessageId { get; set; }
         public string URL { get; set; } = string.Empty;
     }
 }

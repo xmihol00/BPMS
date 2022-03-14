@@ -1,31 +1,24 @@
 @model List<HeaderAllDTO>
 
-@if (Model.Count == 0)
-{
-    <div class="text-placeholder mt-2">Služba nemá nakonfigurované žádné hlavičky.</div>
-}
-else
-{
-    <table class="table table-striped table-pad">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Název</th>
-                <th scope="col">Hodnota</th>
-                <th scope="col" class="text-right"></th>
+<table class="table table-striped table-pad">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Název</th>
+            <th scope="col">Hodnota</th>
+            <th scope="col" class="text-right"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (HeaderAllDTO header in Model)
+        {
+            <tr id="@header.Id">
+                <th scope="row">@header.Name</th>
+                <td>@header.Value</td>
+                <td id="@header.Id" class="text-right">
+                    <button class="btn btn-sm table-icon" onclick="EditHeader(this)"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn btn-sm table-icon me-2" onclick="RemoveHeader(this)"><i class="fas fa-times"></i></button>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (HeaderAllDTO header in Model)
-            {
-                <tr id="@header.Id">
-                    <th scope="row">@header.Name</th>
-                    <td>@header.Value</td>
-                    <td id="@header.Id" class="text-right">
-                        <button class="btn btn-sm table-icon" onclick="EditHeader(this)"><i class="fas fa-edit"></i></button>
-                        <button type="button" class="btn btn-sm table-icon me-2" onclick="RemoveHeader(this)"><i class="fas fa-times"></i></button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+        }
+    </tbody>
+</table>

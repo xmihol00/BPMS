@@ -30,20 +30,24 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-6">
-                        <a href="/Agenda/Detail/@Model.workflow.AgendaId" class="link-p" onclick="event.stopPropagation()">
-                            <div class="d-flex justify-content-center">
-                                <i class="fas fa-list-alt mx-auto task-icon"></i>
-                            </div>
-                            <h4 class="text-center mb-0">@Model.workflow.AgendaName</h4>
-                        </a>
+                        <div class="d-flex justify-content-center">
+                            <a href="/Agenda/Detail/@Model.workflow.AgendaId" class="link-p" onclick="event.stopPropagation()">
+                                <div class="d-flex justify-content-center">
+                                    <i class="fas fa-list-alt task-icon"></i>
+                                </div>
+                                <h4 class="text-center mb-0">@Model.workflow.AgendaName</h4>
+                            </a>
+                        </div>
                     </div>
                     <div class="col-6">
-                        <a href="/Model/Detail/@Model.workflow.ModelId" class="link-p" onclick="event.stopPropagation()">
-                            <div class="d-flex justify-content-center">
-                                <i class="fas fa-clone mx-auto task-icon"></i>
-                            </div>
-                            <h4 class="text-center mb-0">@Model.workflow.ModelName</h4>
-                        </a>
+                        <div class="d-flex justify-content-center">
+                            <a href="/Model/Detail/@Model.workflow.ModelId" class="link-p" onclick="event.stopPropagation()">
+                                <div class="d-flex justify-content-center">
+                                    <i class="fas fa-clone task-icon"></i>
+                                </div>
+                                <h4 class="text-center mb-0">@Model.workflow.ModelName</h4>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

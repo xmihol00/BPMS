@@ -24,10 +24,7 @@ namespace BPMS.Controllers
             base.OnActionExecuting(context);
             
             string action = context.RouteData.Values["action"].ToString();
-             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization, Request.Path, action != "DeactivateSystem" &&
-                                                                                               action != "ReactivateSystem" && 
-                                                                                               action != "ActivateSystem" &&
-                                                                                               action != "CreateSystem");
+             _communicationFacade.AuthorizeSystem(Request.Headers.Authorization, Request.Path, action, Request.Method);
         }
 
         [HttpPost]
@@ -105,37 +102,37 @@ namespace BPMS.Controllers
             return Ok(await _communicationFacade.ActivateSystem());
         }
 
-        [HttpPost] 
+        [HttpGet] 
         public async Task<IActionResult> SenderInfo(Guid id)
         {
             return Ok(await _communicationFacade.SenderInfo(id));
         }
         
-        [HttpPost] 
+        [HttpGet] 
         public async Task<IActionResult> ForeignRecieverInfo(Guid id)
         {
             return Ok(await _communicationFacade.ForeignRecieverInfo(id));
         }
 
-        [HttpPost] 
+        [HttpGet] 
         public async Task<IActionResult> Agendas()
         {
             return Ok(await _communicationFacade.Agendas());
         }
 
-        [HttpPost] 
+        [HttpGet] 
         public async Task<IActionResult> Models(Guid id)
         {
             return Ok(await _communicationFacade.Models(id));
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Pools(Guid id)
         {
             return Ok(await _communicationFacade.Pools(id));
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> SenderBlocks(Guid id)
         {
             return Ok(await _communicationFacade.SenderBlocks(id));
