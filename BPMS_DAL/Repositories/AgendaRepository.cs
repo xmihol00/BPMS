@@ -221,6 +221,7 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.Systems)
                             .ThenInclude(x => x.System)
+                         .Where(x => x.Id == id)
                          .SelectMany(x => x.Systems)
                          .Select(x => new SystemAllDTO
                          {

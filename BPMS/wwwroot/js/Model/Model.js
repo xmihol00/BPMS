@@ -366,7 +366,7 @@ function RemoveAttribute(element)
     });
 }
 
-function ShareModel(btn)
+function ShareModel()
 {
     let modelId = document.getElementById("ModelIdId").value;
 
@@ -379,7 +379,7 @@ function ShareModel(btn)
     .done((result) => 
     {
         InfoCardUpdate(result);
-        document.getElementById("PageNavId").innerHTML = model.header;
+        document.getElementById("PageNavId").innerHTML = result.header;
     })
     .fail(() => 
     {
