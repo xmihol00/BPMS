@@ -14,6 +14,6 @@ namespace BPMS_DAL.Entities
         public DateTime Date { get; set; }
         public string Text { get; set; } = string.Empty;
         public Guid SystemId { get; set; }
-        public SystemEntity? System { get; set; } = new SystemEntity();
+        public SystemEntity? System { get; set; }
     }
 }
