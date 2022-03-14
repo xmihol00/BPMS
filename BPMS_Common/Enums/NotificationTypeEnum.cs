@@ -18,6 +18,7 @@ namespace BPMS_Common.Enums
         NewSystem,
         DeactivatedSystem,
         ReactivateSystem,
+        ActivatedSystem,
     }
 
     public static class NotificationType
@@ -54,10 +55,13 @@ namespace BPMS_Common.Enums
                     return "Byla přijata žádost o vytvoření systému";
                 
                 case NotificationTypeEnum.DeactivatedSystem:
-                    return "Byla deaktivován systém";
+                    return "Byl deaktivován systém";
                 
                 case NotificationTypeEnum.ReactivateSystem:
                     return "Byla přijata žádost o reaktivování systému";
+                
+                case NotificationTypeEnum.ActivatedSystem:
+                    return "Byl aktivování systém";
             }
         }
 
@@ -86,6 +90,7 @@ namespace BPMS_Common.Enums
                 case NotificationTypeEnum.NewSystem:
                 case NotificationTypeEnum.DeactivatedSystem:
                 case NotificationTypeEnum.ReactivateSystem:
+                case NotificationTypeEnum.ActivatedSystem:
                     return "/System/Detail/";
             }
         }

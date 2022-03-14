@@ -164,6 +164,9 @@ namespace BPMS_BL.Facades
         {
             _system.State = SystemStateEnum.Active;
             _systemRepository.Update(_system);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.ActivatedSystem, 
+                                                          _system.Name, await _userRepository.Admins());
+
             await _systemRepository.Save();
 
             return "";
