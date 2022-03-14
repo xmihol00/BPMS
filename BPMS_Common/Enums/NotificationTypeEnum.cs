@@ -61,7 +61,7 @@ namespace BPMS_Common.Enums
                     return "Byla přijata žádost o reaktivování systému";
                 
                 case NotificationTypeEnum.ActivatedSystem:
-                    return "Byl aktivování systém";
+                    return "Byl aktivován systém";
             }
         }
 
