@@ -9,7 +9,7 @@ namespace BPMS_Common.Enums
     public enum NotificationTypeEnum
     {
         MissedTask,
-        NewTask,
+        NewUserTask,
         NewRole,
         NewWorkflow,
         NewAgenda,
@@ -20,6 +20,7 @@ namespace BPMS_Common.Enums
         ReactivateSystem,
         ActivatedSystem,
         ModelRun,
+        NewServiceTask,
     }
 
     public static class NotificationType
@@ -34,7 +35,8 @@ namespace BPMS_Common.Enums
                 case NotificationTypeEnum.MissedTask:
                     return "Máte promeškaný úkol";
 
-                case NotificationTypeEnum.NewTask:
+                case NotificationTypeEnum.NewUserTask:
+                case NotificationTypeEnum.NewServiceTask:
                     return "Máte nový úkol";
 
                 case NotificationTypeEnum.NewRole:
@@ -77,8 +79,11 @@ namespace BPMS_Common.Enums
                     return "";
                 
                 case NotificationTypeEnum.MissedTask:
-                case NotificationTypeEnum.NewTask:
+                case NotificationTypeEnum.NewUserTask:
                     return "/Task/UserDetail/";
+                
+                case NotificationTypeEnum.NewServiceTask:
+                    return "Task/ServiceDetail/";
 
                 case NotificationTypeEnum.NewRole:
                 case NotificationTypeEnum.NewAgenda:

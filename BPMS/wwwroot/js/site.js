@@ -7,6 +7,7 @@ var Notifications = new signalR.HubConnectionBuilder().configureLogging(signalR.
 
 Notifications.on("Notification", (result) =>
 {
+    console.log("notif");
     for (let div of document.getElementsByClassName("message-div"))
     {
         document.removeEventListener("click", HideNotifications);

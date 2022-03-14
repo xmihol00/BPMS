@@ -521,6 +521,8 @@ namespace BPMS_BL.Helpers
                 serviceTask.State = BlockWorkflowStateEnum.Active;
                 serviceTask.UserId = await _agendaRoleRepository.LeastBussyUser(serviceTaskModel.RoleId ?? Guid.Empty) ??
                                                                                 serviceTask.Workflow.AdministratorId;
+                await NotificationHub.CreateSendNotifications(_notificationRepository, serviceTask.Id, NotificationTypeEnum.NewServiceTask,
+                                                              serviceTask.BlockModel.Name, serviceTask.UserId.Value);
             }
         }
 
@@ -797,7 +799,7 @@ namespace BPMS_BL.Helpers
             userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
                               userTask.Workflow.AdministratorId;
 
-            await NotificationHub.CreateSendNotifications(_notificationRepository, userTask.Id, NotificationTypeEnum.NewTask, 
+            await NotificationHub.CreateSendNotifications(_notificationRepository, userTask.Id, NotificationTypeEnum.NewUserTask, 
                                                           userTaskModel.Name, userTask.UserId.Value);
         }
 
