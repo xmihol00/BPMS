@@ -64,6 +64,7 @@ namespace BPMS.Controllers
             {
                 detail = await this.RenderViewAsync("Partial/_ModelDetail", dto, true),
                 header = await this.RenderViewAsync("Partial/_ModelDetailHeader", dto, true),
+                activePools = dto.ActivePools
             });
         }
 

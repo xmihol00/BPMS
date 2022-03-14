@@ -20,6 +20,7 @@ namespace BPMS_DAL.Entities
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public Guid ModelId { get; set; }
+        public Guid? StartedId { get; set; }
 
         [JsonIgnore]
         public ModelEntity? Model { get; set; }

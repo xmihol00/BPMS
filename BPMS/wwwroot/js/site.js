@@ -440,7 +440,7 @@ function OverviewTransition(path)
     });
 }
 
-function DetailTransition(element, path, blocks = false, succesCallback = null)
+function DetailTransition(element, path, blocks = false, succesCallback = null, pools = false)
 {
     let detailDiv = document.getElementById("DetailDivId");
 
@@ -481,6 +481,10 @@ function DetailTransition(element, path, blocks = false, succesCallback = null)
         if (blocks)
         {
             DisplayActiveBlocks(result.activeBlocks || result.activeBlock);
+        }
+        if (pools)
+        {
+            DisplayActivePools(result.activePools);
         }
         window.history.pushState({}, '', path.replace("Partial", "") + element.id);
         

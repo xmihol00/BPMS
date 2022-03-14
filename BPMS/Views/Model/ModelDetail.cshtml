@@ -6,6 +6,7 @@
 <script>
     const RoleForEdit = "@((bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()])" == "True";
     const ActiveBlocks = @(Html.Raw(JsonConvert.SerializeObject(Model.ActiveBlocks)));
+    const ActivePools = @(Html.Raw(JsonConvert.SerializeObject(Model.ActivePools)));
 </script>
 
 <div id="PageNavId" class="page-navbar">

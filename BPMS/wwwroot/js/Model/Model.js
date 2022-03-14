@@ -7,7 +7,23 @@ window.addEventListener('DOMContentLoaded', () =>
 {
     AddEventListeners();
     document.addEventListener("dragover", (event) => event.preventDefault());
+    DisplayActivePools(ActivePools);
 });
+
+function DisplayActivePools(activePools)
+{
+    if (typeof activePools != "undefined")
+    {
+        let model = document.querySelector(`[id=ModelSvgId]`);
+        for (let blockId of activePools)
+        {
+            let block = model.querySelector(`[id='${blockId}']`);
+            let target = block.children[0].children[0];
+            target.style.stroke = "#5400db";
+            target.style.fill = "#0054db";
+        }
+    }
+}
 
 function AddEventListeners()
 {

@@ -13,5 +13,6 @@ namespace BPMS_DTOs.Model
         public string SVG { get; set; } = string.Empty;
         public List<WorkflowAllModelDTO> Workflows { get; set; } = new List<WorkflowAllModelDTO>();
         public List<WorkflowActiveBlocksDTO> ActiveBlocks { get; set; } = new List<WorkflowActiveBlocksDTO>();
+        public List<Guid> ActivePools { get; set; } = new List<Guid>();
     }
 }

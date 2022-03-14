@@ -37,6 +37,7 @@ namespace BPMS_DAL.Repositories
         public Task<ModelDetailDTO> Detail(Guid id)
         {
             return _dbSet.Include(x => x.Agenda)
+                         .Include(x => x.Pools)
                          .Include(x => x.Workflows)
                             .ThenInclude(x => x.Administrator)
                          .Include(x => x.Workflows)
@@ -78,7 +79,10 @@ namespace BPMS_DAL.Repositories
                                                                        .Select(y => y.BlockModelId)
                                                                        .ToList()
                                                        })
-                                                       .ToList()
+                                                       .ToList(),
+                            ActivePools = x.Pools.Where(y => y.StartedId != null)
+                                                 .Select(y => y.StartedId.Value)
+                                                 .ToList()
                          })
                          .FirstAsync(x => x.Id == id);
         }
@@ -279,13 +283,20 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<ModelEntity> StateAgendaId(Guid id)
+        public Task<ModelEntity> StateAgendaPool(Guid id, Guid systemId)
         {
             return _dbSet.Where(x => x.Id == id)
+                         .Include(x => x.Agenda)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.Blocks)
                          .Select(x => new ModelEntity
                          {
                              AgendaId = x.AgendaId,
-                             State = x.State
+                             State = x.State,
+                             Agenda = x.Agenda,
+                             Name = x.Name,
+                             Pools = x.Pools.Where(y => y.SystemId == systemId)
+                                            .ToList()
                          })
                          .FirstAsync();
         }

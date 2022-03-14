@@ -9,6 +9,7 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
 using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
+using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.Agenda;
@@ -424,19 +425,24 @@ namespace BPMS_BL.Facades
 
         public async Task<string> IsModelRunable(WorkflowShare dto)
         {
-            ModelEntity model = await _modelRepository.StateAgendaId(dto.ModelId);
+            ModelEntity model = await _modelRepository.StateAgendaPool(dto.ModelId, _system.Id);
             if (!await _workflowRepository.Any(dto.Workflow.Id))
             {
                 dto.Workflow.AgendaId = model.AgendaId.Value;
                 dto.Workflow.AdministratorId = null;
                 await _workflowRepository.Create(dto.Workflow);
             }
+
+            model.Pools[0].StartedId = model.Pools[0].Blocks.First(x => x is IStartEventModelEntity).Id;
             await _workflowRepository.Save();
+            await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.ModelRun, model.Name,
+                                                          model.Agenda.AdministratorId);
 
             if (model.State != ModelStateEnum.Waiting)
             {
-                throw new NotImplementedException(); // TODO
+                throw new Exception(); // TODO
             }
+
             return "";
         }
 

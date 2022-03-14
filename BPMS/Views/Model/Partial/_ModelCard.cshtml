@@ -1,6 +1,6 @@
 @model (ModelAllDTO model, bool selected)
 
-<div id="@Model.model.Id" class="col-12 col-md-6 col-lg-4 p-2 pointer" onclick="DetailTransition(this, '/Model/DetailPartial/', false, AddEventListeners)">    
+<div id="@Model.model.Id" class="col-12 col-md-6 col-lg-4 p-2 pointer" onclick="DetailTransition(this, '/Model/DetailPartial/', true, AddEventListeners, true)">    
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
         <h3 class="border-bottom text-center">@Model.model.Name</h3>
         @Html.Raw(Model.model.SVG)

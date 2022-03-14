@@ -19,6 +19,7 @@ namespace BPMS_Common.Enums
         DeactivatedSystem,
         ReactivateSystem,
         ActivatedSystem,
+        ModelRun,
     }
 
     public static class NotificationType
@@ -62,6 +63,9 @@ namespace BPMS_Common.Enums
                 
                 case NotificationTypeEnum.ActivatedSystem:
                     return "Byl aktivován systém";
+                
+                case NotificationTypeEnum.ModelRun:
+                    return "Žádost o spuštění modelu";
             }
         }
 
@@ -85,6 +89,7 @@ namespace BPMS_Common.Enums
                     return "/Workflow/Detail/";
                 
                 case NotificationTypeEnum.NewModel:
+                case NotificationTypeEnum.ModelRun:
                     return "/Model/Detail/";
                 
                 case NotificationTypeEnum.NewSystem:

@@ -64,6 +64,7 @@ namespace BPMS_BL.Helpers
             model.State = ModelStateEnum.Executable;
             BlockModelEntity startEvent = model.Pools.First(x => x.SystemId == StaticData.ThisSystemId)
                                                .Blocks.First(x => x is IStartEventModelEntity);
+            model.Pools.ForEach(x => x.StartedId = null);
 
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = await CreateBlocks(startEvent);
