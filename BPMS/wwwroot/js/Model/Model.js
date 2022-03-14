@@ -384,12 +384,13 @@ function RunModel(btn)
     })
     .done((result) => 
     {
-        if (!result)
+        if (typeof(result) == "object")
         {
-            btn.innerText = "Spustit";
-            btn.disabled = true;
-            btn.setAttribute("title", "Vytvoření workflow je již spuštěno, čeká se na spolupracující systémy.")
-            btn.removeAttribute("onclick");
+            PoolConfigCB(result);
+        }
+        else
+        {
+            document.location.replace("/Woekflow/Detail" + result);
         }
     })
     .fail(() => 
@@ -617,9 +618,15 @@ function RemoveMap(btn, serviceTaskId)
         //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
     });
 }
+
 function PoolConfigCB(result)
 {
-    InfoCardUpdate(result);
     setTimeout(() => document.getElementById("PageNavId").innerHTML = result.header, 850);
-    AddEventListeners();
+    InfoCardUpdate(result);
+
+    if (result.model)
+    {
+        document.getElementById("ModelSvgId").innerHTML = result.model;
+        AddEventListeners();
+    }
 }

@@ -83,6 +83,22 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<ModelDetailDTO> DetailNoWF(Guid id)
+        {
+            return _dbSet.Include(x => x.Agenda)
+                         .Select(x => new ModelDetailDTO
+                         {
+                             Id = x.Id,
+                             Description = x.Description,
+                             Name = x.Name,
+                             SVG = x.SVG,
+                             State = x.State,
+                             AgendaId = x.AgendaId,
+                             AgendaName = x.Agenda.Name,
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<ModelEntity> BareAgenda(Guid id)
         {
             return _dbSet.Include(x => x.Agenda)

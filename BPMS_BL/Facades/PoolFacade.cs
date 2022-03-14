@@ -83,7 +83,7 @@ namespace BPMS_BL.Facades
             entity.Model.State = state == ModelStateEnum.Shareable ? entity.Model.State : state;
 
             await _poolRepository.Save();
-            ModelDetailDTO detail = await _modelRepository.Detail(entity.ModelId);
+            ModelDetailDTO detail = await _modelRepository.DetailNoWF(entity.ModelId);
             detail.SelectedModel = await _modelRepository.Selected(entity.ModelId);
             return detail;
         }

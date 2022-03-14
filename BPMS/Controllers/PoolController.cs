@@ -33,6 +33,7 @@ namespace BPMS.Controllers
             return Ok(new
             {
                 info = await this.RenderViewAsync("../Model/Partial/_ModelDetailInfo", detail, true),
+                model = await this.RenderViewAsync("../Model/Partial/_ModelSvg", detail.SVG, true),
                 card = await this.RenderViewAsync("../Model/Partial/_ModelCard", (detail.SelectedModel, true), true),
                 header = await this.RenderViewAsync("../Model/Partial/_ModelDetailHeader", detail, true)
             });

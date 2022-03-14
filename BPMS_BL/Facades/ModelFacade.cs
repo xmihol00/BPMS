@@ -148,7 +148,7 @@ namespace BPMS_BL.Facades
             }
             await _modelRepository.Save();
 
-            ModelDetailDTO detail = await _modelRepository.Detail(id);
+            ModelDetailDTO detail = await _modelRepository.DetailNoWF(id);
             detail.SelectedModel = await _modelRepository.Selected(id);
             return detail;
         }
@@ -158,7 +158,7 @@ namespace BPMS_BL.Facades
             return _modelRepository.WorflowKeepers(id);
         }
 
-        public async Task<bool> Run(ModelRunDTO dto)
+        public async Task<(ModelDetailDTO?, Guid)> Run(ModelRunDTO dto)
         {
             WorkflowEntity? workflow = await _workflowRepository.WaitingOrDefault(dto.Id);
             if (workflow == null)
@@ -226,8 +226,15 @@ namespace BPMS_BL.Facades
                 _modelRepository.ChangeState(dto.Id, ModelStateEnum.Waiting);
             }
             await _modelRepository.Save();
+            
+            if (run)
+            {
+                ModelDetailDTO detail = await _modelRepository.DetailNoWF(dto.Id);
+                detail.SelectedModel = await _modelRepository.Selected(dto.Id);
+                return (detail, workflow.Id);
+            }
 
-            return run;
+            return (null, workflow.Id);
         }
 
         public Task<ModelDetailHeaderDTO> Header(Guid id)

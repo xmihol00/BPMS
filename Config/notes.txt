@@ -20,3 +20,5 @@ sudo systemctl disable apache2
 
 systemctl list-unit-files
 systemctl --all
+
+git ls-files | xargs wc -l

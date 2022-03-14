@@ -87,6 +87,7 @@ namespace BPMS.Controllers
             return Ok(new
             {
                 info = await this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true),
+                model = await this.RenderViewAsync("Partial/_ModelSvg", detail.SVG, true),
                 card = await this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true),
                 header = await this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true)
             });
@@ -103,7 +104,20 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> Run(ModelRunDTO dto)
         {
-            return Ok(await _modelFacade.Run(dto));
+            (ModelDetailDTO? detail, Guid workflowId) = await _modelFacade.Run(dto);
+            if (detail != null)
+            {
+                return Ok(new
+                {
+                    info = await this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true),
+                    card = await this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true),
+                    header = await this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true)
+                }); 
+            }
+            else
+            {
+                return Ok(workflowId);
+            }
         }
 
         [HttpPost]
