@@ -435,9 +435,9 @@ namespace BPMS_BL.Facades
             }
 
             model.Pools[0].StartedId = model.Pools[0].Blocks.First(x => x is IStartEventModelEntity).Id;
-            await _workflowRepository.Save();
             await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.ModelRun, model.Name,
                                                           model.Agenda.AdministratorId);
+            await _workflowRepository.Save();
 
             if (model.State != ModelStateEnum.Waiting)
             {
