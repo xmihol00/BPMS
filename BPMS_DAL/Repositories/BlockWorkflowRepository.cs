@@ -13,6 +13,7 @@ using BPMS_DAL.Entities.WorkflowBlocks;
 using BPMS_DAL.Interfaces.WorkflowBlocks;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
+using BPMS_DTOs.User;
 
 namespace BPMS_DAL.Repositories
 {
@@ -101,6 +102,20 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<UserIdNameDTO> WorkflowAdmin(Guid id)
+        {
+            return _dbSet.Include(x => x.Workflow)
+                            .ThenInclude(x => x.Administrator)
+                         .Where(x => x.Id == id)
+                         .Select(x => x.Workflow.Administrator)
+                         .Select(x => new UserIdNameDTO
+                         {
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
+                             Id = x.Id
+                         })
+                         .FirstAsync();
+        }
+
         public Task<List<BlockWorkflowEntity>> AllOfState(Guid workflowId, BlockWorkflowStateEnum state)
         {
             return _dbSet.Where(x => x.WorkflowId == workflowId && x.State == state)
@@ -182,6 +197,7 @@ namespace BPMS_DAL.Repositories
         public Task<BlockWorkflowEntity> BareWorkflow(Guid blockId, Guid workflowId)
         {
             return _dbSet.Include(x => x.Workflow)
+                         .Include(x => x.BlockModel)
                          .FirstAsync(x => x.BlockModelId == blockId && x.WorkflowId == workflowId);
         }
 

@@ -159,5 +159,12 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.OutputTaskId == taskId && x.Schema.StaticData == null)
                          .ToListAsync();
         }
+
+        public Task<List<TaskDataEntity>> ServiceTaskDataOutput(Guid taskId)
+        {
+            return _dbSet.Include(x => x.Schema)
+                         .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Output && x.Schema.StaticData == null)
+                         .ToListAsync();
+        }
     }
 }

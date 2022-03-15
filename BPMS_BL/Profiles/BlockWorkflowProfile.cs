@@ -19,10 +19,12 @@ namespace BPMS_BL.Profiles
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.BlockModel.Name))
                 .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.BlockModel.Description))
             .Include<UserTaskWorkflowEntity, UserTaskWorkflowConfigDTO>()
-            .Include<ServiceTaskWorkflowEntity, ServiceTaskWorkflowConfigDTO>();
+            .Include<ServiceTaskWorkflowEntity, ServiceTaskWorkflowConfigDTO>()
+            .Include<RecieveEventWorkflowEntity, RecieveEventWorkflowConfigDTO>();
 
             CreateMap<UserTaskWorkflowEntity, UserTaskWorkflowConfigDTO>();            
             CreateMap<ServiceTaskWorkflowEntity, ServiceTaskWorkflowConfigDTO>();
+            CreateMap<RecieveEventWorkflowEntity, RecieveEventWorkflowConfigDTO>();
         }
     }
 }

@@ -59,7 +59,15 @@
         </div>
     </form>
 }
-else
+else 
 {
     <div class="py-1"></div>
+}
+
+@if (Model is IOutputData)
+{
+    <h4 class="text-center text-font mb-0 mt-2">Výstupní data bloku</h4>
+    <div class="row mb-3">
+        @await Html.PartialAsync("Partial/_TaskData", (Model as IOutputData).OutputData)
+    </div>
 }

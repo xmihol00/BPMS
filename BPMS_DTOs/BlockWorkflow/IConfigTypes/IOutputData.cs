@@ -11,10 +11,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockWorkflow.IConfigTypes
 {
-    public interface ITaskWorkflowConfigDTO : IBlockWorkflowConfigDTO
+    public interface IOutputData
     {
-        public Guid? CurrentUserId { get; set; }
-        public List<UserIdNameDTO> UserIdNames { get; set; }
-        public BlockWorkflowStateEnum State { get; set; }
+        public List<TaskDataDTO> OutputData { get; set; }
     }
 }
