@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_DAL.Interfaces.BlockDataTypes;
+using Newtonsoft.Json;
 
 namespace BPMS_DAL.Entities.BlockDataTypes
 {
@@ -14,6 +15,7 @@ namespace BPMS_DAL.Entities.BlockDataTypes
         public string? MIMEType { get; set; }
 
         [NotMapped]
+        [JsonProperty]
         public byte[]? Data { get; set; }
 
         public override bool HasData()

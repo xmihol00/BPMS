@@ -54,6 +54,7 @@ namespace BPMS_BL.Facades
         {
             IServiceTaskWorkflowEntity entity = await _blockWorkflowRepository.Bare(dto.Id) as IServiceTaskWorkflowEntity;
             entity.UserId = dto.UserId;
+            entity.State = dto.State;
 
             await _blockWorkflowRepository.Save();
         }
@@ -64,6 +65,7 @@ namespace BPMS_BL.Facades
             entity.Priority = dto.Priority;
             entity.SolveDate = dto.SolveDate;
             entity.UserId = dto.UserId;
+            entity.State = dto.State;
 
             await _blockWorkflowRepository.Save();
         }

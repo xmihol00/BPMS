@@ -1,6 +1,6 @@
 @model ITaskWorkflowConfigDTO
 
-<div class="col-12 mt-3">
+<div class="col-12 col-lg-6 mt-3">
     <label class="input">
         <select required class="input-select" name="UserId">
             @if (Model.CurrentUserId == null)
@@ -25,5 +25,24 @@
             }
         </select>
         <span class="input-label">Řešitel</span>
+    </label>
+</div>
+<div class="col-12 col-lg-6 mt-3">
+    <label class="input">
+        @if (Model.State == BlockWorkflowStateEnum.Solved || Model.State == BlockWorkflowStateEnum.SolvedByUser)
+        {
+            <select class="input-select" name="State">
+                <option value="@Model.State" selected>Vyřešený</option>
+                <option value="@BlockWorkflowStateEnum.Active">Aktivní</option>
+            </select>
+            <span class="input-label">Stav</span>
+        }
+        else
+        {
+            <select class="input-select" name="State">
+                <option value="@Model.State" selected>@Model.State.ToLabel()</option>
+            </select>
+            <span class="input-label">Stav</span>
+        }
     </label>
 </div>

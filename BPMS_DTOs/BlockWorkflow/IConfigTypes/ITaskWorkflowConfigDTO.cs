@@ -14,5 +14,6 @@ namespace BPMS_DTOs.BlockWorkflow.IConfigTypes
     {
         public Guid? CurrentUserId { get; set; }
         public List<UserIdNameDTO> UserIdNames { get; set; }
+        public BlockWorkflowStateEnum State { get; set; }
     }
 }
