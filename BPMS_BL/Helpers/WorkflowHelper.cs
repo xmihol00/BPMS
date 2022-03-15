@@ -464,17 +464,13 @@ namespace BPMS_BL.Helpers
                 }
                 dto.BlockId = address.BlockId;
 
-                recieved &= await CommunicationHelper.Message(address.DestinationURL, 
-                                                              SymetricCipherHelper.JsonEncrypt(address),
-                                                              JsonConvert.SerializeObject(dto));
+                recieved &= await CommunicationHelper.Message(address, dto);
             }
 
             foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieversAddresses(task.BlockModelId))
             {
                 dto.BlockId = address.ForeignBlockId;
-                recieved &= await CommunicationHelper.ForeignMessage(address.DestinationURL, 
-                                                                     SymetricCipherHelper.JsonEncrypt(address),
-                                                                     JsonConvert.SerializeObject(dto));
+                recieved &= await CommunicationHelper.ForeignMessage(address, dto);
             }
 
             if (recieved)
@@ -806,11 +802,10 @@ namespace BPMS_BL.Helpers
         public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)
         {
             List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(poolId, workflowId);
-            string message = JsonConvert.SerializeObject(activeBlocks);
 
             foreach (DstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
-                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), message);
+                await CommunicationHelper.BlockActivity(address, activeBlocks);
             }
         }
 
@@ -825,11 +820,10 @@ namespace BPMS_BL.Helpers
                     WorkflowId = worflowId
                 }
             };
-            string message = JsonConvert.SerializeObject(activeBlocks);
 
             foreach (DstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
-                await CommunicationHelper.BlockActivity(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), message);
+                await CommunicationHelper.BlockActivity(address, activeBlocks);
             }
         }
     }

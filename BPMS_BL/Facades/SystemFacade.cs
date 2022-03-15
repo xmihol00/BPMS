@@ -109,7 +109,7 @@ namespace BPMS_BL.Facades
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL
             };
-            if (!await CommunicationHelper.ActivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address)))
+            if (!await CommunicationHelper.ActivateSystem(address))
             {
                 throw new Exception(); // TODO
             }
@@ -137,7 +137,7 @@ namespace BPMS_BL.Facades
                 Text = dto.Text
             };
 
-            if (!await CommunicationHelper.ReactivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address), JsonConvert.SerializeObject(request)))
+            if (!await CommunicationHelper.ReactivateSystem(address, request))
             {
                 throw new Exception(); // TODO
             }
@@ -156,7 +156,7 @@ namespace BPMS_BL.Facades
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL
             };
-            if (!await CommunicationHelper.DeactivateSystem(entity.URL, SymetricCipherHelper.JsonEncrypt(address)))
+            if (!await CommunicationHelper.DeactivateSystem(address))
             {
                 throw new Exception(); // TODO
             }
@@ -195,8 +195,7 @@ namespace BPMS_BL.Facades
                 URL = dto.URL
             };
 
-            if (!await CommunicationHelper.CreateSystem(dto.URL, SymetricCipherHelper.JsonEncrypt(address), 
-                                                                 JsonConvert.SerializeObject(entity)))
+            if (!await CommunicationHelper.CreateSystem(address, entity))
             {
                 throw new Exception(); // TODO
             }

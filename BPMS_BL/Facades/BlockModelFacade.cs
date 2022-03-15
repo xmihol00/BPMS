@@ -77,7 +77,7 @@ namespace BPMS_BL.Facades
             else
             {
                 DstAddressDTO address = await _systemRepository.Address(systemId);
-                return await CommunicationHelper.Agendas(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address));
+                return await CommunicationHelper.Agendas(address);
             }
         }
 
@@ -128,16 +128,13 @@ namespace BPMS_BL.Facades
             if (entity.ForeignSenderId != null)
             {
                 SenderRecieverAddressDTO recieverAddress = await _foreignSendEventRepository.SenderAddress(entity.ForeignSenderId.Value);
-                await CommunicationHelper.RemoveReciever(recieverAddress.DestinationURL, SymetricCipherHelper.JsonEncrypt(recieverAddress), 
-                                                         dto.Id, recieverAddress.ForeignBlockId);
+                await CommunicationHelper.RemoveReciever(recieverAddress, dto.Id, recieverAddress.ForeignBlockId);
                 _foreignSendEventRepository.Remove(await _foreignSendEventRepository.ForRemoval(entity.ForeignSenderId.Value));
                 // TODO check if all is removed
             }
             
             DstAddressDTO address = await _systemRepository.Address(dto.SystemId);
-            List<AttributeEntity> attributes = await CommunicationHelper.AddReciever(address.DestinationURL, 
-                                                                                     SymetricCipherHelper.JsonEncrypt(address), 
-                                                                                     dto.Id, dto.BlockId);
+            List<AttributeEntity> attributes = await CommunicationHelper.AddReciever(address, dto.Id, dto.BlockId);
             
             ForeignSendEventEntity foreignEntity = new ForeignSendEventEntity
             {
@@ -177,7 +174,7 @@ namespace BPMS_BL.Facades
             else
             {
                 DstAddressDTO address = await _systemRepository.Address(systemId);
-                return await CommunicationHelper.SenderBlocks(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), poolId);
+                return await CommunicationHelper.SenderBlocks(address, poolId);
             }
         }
 
@@ -190,7 +187,7 @@ namespace BPMS_BL.Facades
             else
             {
                 DstAddressDTO address = await _systemRepository.Address(systemId);
-                return await CommunicationHelper.Pools(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), modelId);
+                return await CommunicationHelper.Pools(address, modelId);
             }
         }
 
@@ -203,7 +200,7 @@ namespace BPMS_BL.Facades
             else
             {
                 DstAddressDTO address = await _systemRepository.Address(systemId);
-                return await CommunicationHelper.Models(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address), agendaId);
+                return await CommunicationHelper.Models(address, agendaId);
             }
         }
 
@@ -246,14 +243,12 @@ namespace BPMS_BL.Facades
                 {
                     foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(mappedBlock.Id))
                     {
-                        await CommunicationHelper.RemoveRecieverAttribute(recieverAddress.DestinationURL, 
-                                                                          SymetricCipherHelper.JsonEncrypt(recieverAddress), id);
+                        await CommunicationHelper.RemoveRecieverAttribute(recieverAddress, id);
                     }
 
                     foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(mappedBlock.Id))
                     {
-                        await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress.DestinationURL,
-                                                                                 SymetricCipherHelper.JsonEncrypt(recieverAddress), id);
+                        await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress, id);
                     }
                 }
             }
@@ -310,17 +305,13 @@ namespace BPMS_BL.Facades
             foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
             {
                 attrib.BlockId = recieverAddress.BlockId;
-                success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress.DestinationURL, 
-                                                                          SymetricCipherHelper.JsonEncrypt(recieverAddress),
-                                                                          JsonConvert.SerializeObject(attrib));
+                success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress, attrib);
             }
 
             foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
             {
                 attrib.BlockId = recieverAddress.ForeignBlockId;
-                success &= await CommunicationHelper.ToggleForeignRecieverAttribute(recieverAddress.DestinationURL, 
-                                                                                    SymetricCipherHelper.JsonEncrypt(recieverAddress),
-                                                                                    JsonConvert.SerializeObject(attrib));
+                success &= await CommunicationHelper.ToggleForeignRecieverAttribute(recieverAddress, attrib);
             }
 
             // TODO check success
@@ -411,8 +402,7 @@ namespace BPMS_BL.Facades
             else if (recieveEvent.ForeignSenderId != null)
             {
                 SenderRecieverAddressDTO address = await _foreignSendEventRepository.SenderAddress(recieveEvent.ForeignSenderId.Value);
-                dto.Sender = await CommunicationHelper.SenderInfo(address.DestinationURL, SymetricCipherHelper.JsonEncrypt(address),
-                                                                  address.ForeignBlockId.ToString());
+                dto.Sender = await CommunicationHelper.SenderInfo(address, address.ForeignBlockId);
                 dto.Sender.SystemName = address.SystemName;
             }
             else
@@ -433,9 +423,7 @@ namespace BPMS_BL.Facades
             {
                 try
                 {
-                    SenderRecieverConfigDTO senderReciever = await CommunicationHelper.ForeignRecieverInfo(address.DestinationURL, 
-                                                                                   SymetricCipherHelper.JsonEncrypt(address),
-                                                                                   address.ForeignBlockId);
+                    SenderRecieverConfigDTO senderReciever = await CommunicationHelper.ForeignRecieverInfo(address, address.ForeignBlockId);
                     senderReciever.SystemName = address.SystemName;
                     dto.Recievers.Add(senderReciever);
                 }

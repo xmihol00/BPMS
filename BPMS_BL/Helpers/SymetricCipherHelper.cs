@@ -9,7 +9,7 @@ namespace BPMS_BL.Helpers
 {
     public static class SymetricCipherHelper
     {
-        public static string JsonEncrypt(IAuthInfo data)
+        public static string JsonEncrypt(IAddressAuth data)
         {
             using Aes aes = Aes.Create();
             aes.Key = data.Key;

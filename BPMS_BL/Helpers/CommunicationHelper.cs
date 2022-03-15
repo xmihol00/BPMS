@@ -4,7 +4,9 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
+using BPMS_Common.Interfaces;
 using BPMS_DAL.Entities;
+using BPMS_DAL.Sharing;
 using BPMS_DTOs.Agenda;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.Model;
@@ -15,93 +17,97 @@ namespace BPMS_BL.Helpers
 {
     public static class CommunicationHelper
     {
-        public static async Task<bool> ShareModel(string systemURL, string auth, string payload)
+        public static async Task<bool> ShareModel(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ShareModel", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ShareModel");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> IsModelRunable(string systemURL, string auth, string payload)
+        public static async Task<bool> IsModelRunable(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/IsModelRunable", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/IsModelRunable");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> RunModel(string systemURL, string auth, string payload)
+        public static async Task<bool> RunModel(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/RunModel", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/RunModel");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ToggleRecieverAttribute(string systemURL, string auth, string payload)
+        public static async Task<bool> ToggleRecieverAttribute(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ToggleRecieverAttribute", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ToggleRecieverAttribute");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ToggleForeignRecieverAttribute(string systemURL, string auth, string payload)
+        public static async Task<bool> ToggleForeignRecieverAttribute(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ToggleForeignRecieverAttribute", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ToggleForeignRecieverAttribute");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> RemoveRecieverAttribute(string systemURL, string auth, Guid id)
+        public static async Task<bool> RemoveRecieverAttribute(IAddressAuth addressAuth, Guid id)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveRecieverAttribute/{id}", auth, "");
+            object payload = id;
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, $"Communication/RemoveRecieverAttribute/");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> RemoveForeignRecieverAttribute(string systemURL, string auth, Guid id)
+        public static async Task<bool> RemoveForeignRecieverAttribute(IAddressAuth addressAuth, Guid id)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveForeignRecieverAttribute/{id}", auth, "");
+            object payload = id;
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, $"Communication/RemoveForeignRecieverAttribute/");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> Message(string systemURL, string auth, string payload)
+        public static async Task<bool> Message(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/Message", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/Message");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ForeignMessage(string systemURL, string auth, string payload)
+        public static async Task<bool> ForeignMessage(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ForeignMessage", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ForeignMessage");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> BlockActivity(string systemURL, string auth, string payload)
+        public static async Task<bool> BlockActivity(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/BlockActivity", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/BlockActivity");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> CreateSystem(string systemURL, string auth, string payload)
+        public static async Task<bool> CreateSystem(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/CreateSystem", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/CreateSystem");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ActivateSystem(string systemURL, string auth)
+        public static async Task<bool> ActivateSystem(IAddressAuth addressAuth)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ActivateSystem", auth, "");
+            object payload = "";
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ActivateSystem");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ReactivateSystem(string systemURL, string auth, string payload)
+        public static async Task<bool> ReactivateSystem(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/ReactivateSystem", auth, payload);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ReactivateSystem");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> DeactivateSystem(string systemURL, string auth)
+        public static async Task<bool> DeactivateSystem(IAddressAuth addressAuth)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/DeactivateSystem", auth, "test...");
+            object payload = "";
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/DeactivateSystem");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<SenderRecieverConfigDTO> SenderInfo(string systemURL, string auth, string payload)
+        public static async Task<SenderRecieverConfigDTO> SenderInfo(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderInfo/{payload}", auth, "", HttpMethod.Get);
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/SenderInfo/", HttpMethod.Put);
 
             SenderRecieverConfigDTO dto = JsonConvert.DeserializeObject<SenderRecieverConfigDTO>(await response.Content.ReadAsStringAsync());
             if (dto != null)
@@ -114,9 +120,10 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<SenderRecieverConfigDTO> ForeignRecieverInfo(string systemURL, string auth, Guid blockId)
+        public static async Task<SenderRecieverConfigDTO> ForeignRecieverInfo(IAddressAuth addressAuth, Guid blockId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/ForeignRecieverInfo/{blockId}", auth, "", HttpMethod.Get);
+            object payload = blockId;
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ForeignRecieverInfo", HttpMethod.Put);
             SenderRecieverConfigDTO dto = JsonConvert.DeserializeObject<SenderRecieverConfigDTO>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -128,9 +135,10 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        internal static async Task<List<AgendaIdNameDTO>> Agendas(string systemURL, string auth)
+        internal static async Task<List<AgendaIdNameDTO>> Agendas(IAddressAuth addressAuth)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, "Communication/Agendas", auth, "");
+            object payload = "";
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/Agendas", HttpMethod.Put);
             List<AgendaIdNameDTO> dto = JsonConvert.DeserializeObject<List<AgendaIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -142,9 +150,10 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<List<ModelIdNameDTO>> Models(string systemURL, string auth, Guid agendaId)
+        public static async Task<List<ModelIdNameDTO>> Models(IAddressAuth addressAuth, Guid agendaId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Models/{agendaId}", auth, "", HttpMethod.Get);
+            object payload = agendaId;
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/Models", HttpMethod.Put);
             List<ModelIdNameDTO> dto = JsonConvert.DeserializeObject<List<ModelIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -156,9 +165,10 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<List<PoolIdNameDTO>> Pools(string systemURL, string auth, Guid modelId)
+        public static async Task<List<PoolIdNameDTO>> Pools(IAddressAuth addressAuth, Guid modelId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/Pools/{modelId}", auth, "", HttpMethod.Get);
+            object payload = modelId;
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/Pools", HttpMethod.Put);
             List<PoolIdNameDTO> dto = JsonConvert.DeserializeObject<List<PoolIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -170,9 +180,10 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<List<BlockIdNameDTO>> SenderBlocks(string systemURL, string auth, Guid poolId)
+        public static async Task<List<BlockIdNameDTO>> SenderBlocks(IAddressAuth addressAuth, Guid poolId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/SenderBlocks/{poolId}", auth, "", HttpMethod.Get);
+            object payload = poolId;
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/SenderBlocks", HttpMethod.Put);
             List<BlockIdNameDTO> dto = JsonConvert.DeserializeObject<List<BlockIdNameDTO>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -184,15 +195,25 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<bool> RemoveReciever(string systemURL, string auth, Guid blockId, Guid senderId)
+        public static async Task<bool> RemoveReciever(IAddressAuth addressAuth, Guid blockId, Guid senderId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/RemoveReciever/{blockId}/{senderId}", auth, "");
+            object payload = new BlockIdSenderIdDTO
+            {
+                BlockId = blockId,
+                SenderId = senderId
+            };
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/RemoveReciever");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<List<AttributeEntity>> AddReciever(string systemURL, string auth, Guid blockId, Guid senderId)
+        public static async Task<List<AttributeEntity>> AddReciever(IAddressAuth addressAuth, Guid blockId, Guid senderId)
         {
-            using HttpResponseMessage response = await SendMessage(systemURL, $"Communication/AddReciever/{blockId}/{senderId}", auth, "");
+            object payload = new BlockIdSenderIdDTO
+            {
+                BlockId = blockId,
+                SenderId = senderId
+            };
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/AddReciever");
             List<AttributeEntity> dto = JsonConvert.DeserializeObject<List<AttributeEntity>>(await response.Content.ReadAsStringAsync());
             if (dto != null)
             {
@@ -204,24 +225,33 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private static async Task<HttpResponseMessage> SendMessage(string systemURL, string path, string auth, string payload, HttpMethod? method = null)
+        private static async Task<HttpResponseMessage> SendMessage(IAddressAuth addressAuth, object payload, string path, HttpMethod? method = null)
         {
             using HttpClientHandler httpClientHandler = new HttpClientHandler();
             httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+            string body;
+            if (payload.GetType() == typeof(string))
+            {
+                body = payload as string;
+            }
+            else
+            {
+                body = JsonConvert.SerializeObject(payload);
+            }
 
             using HttpClient client = new HttpClient(httpClientHandler);
             using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = method ?? HttpMethod.Post,
-                RequestUri = new Uri(systemURL + path), 
-                Content = new StringContent(payload)
+                RequestUri = new Uri(addressAuth.DestinationURL + path), 
+                Content = new StringContent(body)
                 {
                     Headers = { 
                         ContentType = new MediaTypeHeaderValue("application/json")
                     }
                 }
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", auth);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", SymetricCipherHelper.JsonEncrypt(addressAuth));
 
             return await client.SendAsync(request);
         }

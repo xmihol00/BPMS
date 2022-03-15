@@ -114,7 +114,7 @@ namespace BPMS_BL.Helpers
             }
 
             await auditMessageRepository.Create(message);
-            if (method == "get" || method == "GET")
+            if (method == "PUT")
             {
                 await auditMessageRepository.Save();
             }

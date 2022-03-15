@@ -136,11 +136,9 @@ namespace BPMS_BL.Facades
             string serilizedModel = JsonConvert.SerializeObject(model);
             
             bool shared = true;
-            foreach (DstAddressDTO pool in await _poolRepository.Addresses(id))
+            foreach (DstAddressDTO authAddress in await _poolRepository.Addresses(id))
             {
-                shared &= await CommunicationHelper.ShareModel(pool.DestinationURL, 
-                                                               SymetricCipherHelper.JsonEncrypt(pool), 
-                                                               serilizedModel);
+                shared &= await CommunicationHelper.ShareModel(authAddress, serilizedModel);
             }
 
             if (shared)
@@ -202,9 +200,7 @@ namespace BPMS_BL.Facades
             List<DstAddressDTO> pools = await _poolRepository.Addresses(dto.Id);
             foreach (DstAddressDTO pool in pools)
             {
-                run &= await CommunicationHelper.IsModelRunable(pool.DestinationURL, 
-                                                                SymetricCipherHelper.JsonEncrypt(pool), 
-                                                                checkMessage);
+                run &= await CommunicationHelper.IsModelRunable(pool, checkMessage);
             }
 
             if (run)
@@ -212,9 +208,7 @@ namespace BPMS_BL.Facades
                 foreach (DstAddressDTO pool in pools)
                 {
                     pool.MessageId = Guid.NewGuid();
-                    run &= await CommunicationHelper.RunModel(pool.DestinationURL, 
-                                                              SymetricCipherHelper.JsonEncrypt(pool), 
-                                                              runMessage);
+                    run &= await CommunicationHelper.RunModel(pool, runMessage);
                 }   
             }
 
