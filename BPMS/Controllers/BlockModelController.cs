@@ -42,8 +42,7 @@ namespace BPMS.Controllers
         [Route("/BlockModel/ToggleSendMap/{blockId}/{attributeId}")]
         public async Task<IActionResult> ToggleSendMap(Guid blockId, Guid attributeId)
         {
-            await _blockModelFacade.ToggleSendMap(blockId, attributeId);
-            return Ok();
+            return Ok(await _blockModelFacade.ToggleSendMap(blockId, attributeId));
         }
 
         [HttpPost]

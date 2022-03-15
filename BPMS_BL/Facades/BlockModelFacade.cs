@@ -295,10 +295,8 @@ namespace BPMS_BL.Facades
             await _attributeMapRepository.Save();
         }
 
-        public async Task ToggleSendMap(Guid blockId, Guid attributeId)
+        public async Task<bool> ToggleSendMap(Guid blockId, Guid attributeId)
         {
-            await ToggleTaskMap(blockId, attributeId);
-
             AttributeEntity attrib = await _attributeRepository.Bare(attributeId);
 
             bool success = true;
@@ -314,7 +312,13 @@ namespace BPMS_BL.Facades
                 success &= await CommunicationHelper.ToggleForeignRecieverAttribute(recieverAddress, attrib);
             }
 
-            // TODO check success
+            if (success)
+            {
+                await ToggleTaskMap(blockId, attributeId);
+                return false;
+            }
+
+            return true;
         }
 
         public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)

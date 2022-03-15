@@ -294,18 +294,21 @@ function ToggleSendMap(attribId, button)
         type: "POST",
         url: `/BlockModel/ToggleSendMap/${BlockId}/${attribId}`
     })
-    .done(() => 
+    .done((result) => 
     {
         button.innerHTML = "<i class='fas fa-check-circle'></i>"
-        if (button.classList.contains("bg-success"))
+        if (result)
         {
-            button.classList.remove("bg-success");
-            button.classList.add("bg-secondary");
-        }
-        else
-        {
-            button.classList.add("bg-success");
-            button.classList.remove("bg-secondary");
+            if (button.classList.contains("bg-success"))
+            {
+                button.classList.remove("bg-success");
+                button.classList.add("bg-secondary");
+            }
+            else
+            {
+                button.classList.add("bg-success");
+                button.classList.remove("bg-secondary");
+            }
         }
     })
     .fail(() => 
