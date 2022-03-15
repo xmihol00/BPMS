@@ -512,7 +512,7 @@ a:hover {
   transition: all 1.0s;
   margin-right: 0px;
   margin-left: 10px;
-  max-width: 420px !important;
+  max-width: 424px !important;
 }
 
 .side-overview .col-12 {
@@ -562,7 +562,7 @@ a:hover {
   
 .overview-nav {
   width: max(calc(100vw - 1320px - var(--side-bar-small-width)), 324px);
-  max-width: 424px;
+  max-width: 360px;
   margin-left: 10px;
   transition: all 1.0s;
   overflow: hidden;
