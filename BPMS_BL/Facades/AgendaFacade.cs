@@ -93,13 +93,14 @@ namespace BPMS_BL.Facades
             return _userRepository.Create();
         }
 
-        public async Task Create(AgendaCreateDTO dto)
+        public async Task<Guid> Create(AgendaCreateDTO dto)
         {
             AgendaEntity entity = _mapper.Map<AgendaEntity>(dto);
             await _agendaRepository.Create(entity);
             await NotificationHub.CreateSendNotifications(_notificationRepository, entity.Id, NotificationTypeEnum.NewAgenda, 
                                                           entity.Name, entity.AdministratorId);
             await _agendaRepository.Save();
+            return entity.Id;
         }
 
         public async Task<AgendaInfoCardDTO> Edit(AgendaEditDTO dto)

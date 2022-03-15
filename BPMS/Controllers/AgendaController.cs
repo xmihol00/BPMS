@@ -84,8 +84,7 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(AgendaCreateDTO dto)
         {
-            await _agendaFacade.Create(dto);
-            return Redirect("/Agenda/Overview");
+            return Redirect($"/Agenda/Detail/{await _agendaFacade.Create(dto)}");
         }
 
         [HttpPost]
