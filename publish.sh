@@ -2,6 +2,7 @@
 
 sudo mkdir -p /var/dotnet
 sudo mkdir -p /var/dotnet/sys1
+sudo mkdir -p /var/dotnet/sys1
 sudo mkdir -p /var/dotnet/sys2
 
 sudo dotnet publish -o /var/dotnet/sys1
