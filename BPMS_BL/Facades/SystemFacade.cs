@@ -128,7 +128,8 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = StaticData.ThisSystemURL
+                URL = StaticData.ThisSystemURL,
+                DestinationURL = entity.URL
             };
             ConnectionRequestEntity request = new ConnectionRequestEntity
             {
@@ -156,8 +157,10 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = StaticData.ThisSystemURL
+                URL = StaticData.ThisSystemURL,
+                DestinationURL = entity.URL
             };
+
             if (!await CommunicationHelper.DeactivateSystem(address))
             {
                 throw new Exception(); // TODO
