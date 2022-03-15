@@ -24,11 +24,23 @@
                         break;
 
                     case ITaskNumber taskNumber:
-                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskNumber.Value.ToString()))
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskNumber.Value?.ToString()))
                         break;
 
                     case ITaskText taskText:
                         @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskText.Value))
+                        break;
+                    
+                    case ITaskDate taskDate:
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskDate.Value?.ToString()))
+                        break;
+                    
+                    case ITaskSelect taskSelect:
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskSelect.Value))
+                        break;
+                    
+                    case ITaskBool taskBool:
+                        @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskBool.Value?.ToString()))
                         break;
                 }
             }
