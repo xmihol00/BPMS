@@ -107,8 +107,10 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = StaticData.ThisSystemURL
+                URL = StaticData.ThisSystemURL,
+                DestinationURL = entity.URL
             };
+
             if (!await CommunicationHelper.ActivateSystem(address))
             {
                 throw new Exception(); // TODO
