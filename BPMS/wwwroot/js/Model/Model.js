@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', () =>
 {
     AddEventListeners();
     document.addEventListener("dragover", (event) => event.preventDefault());
-    if (typeof activePools != "undefined")
+    if (typeof ActivePools != "undefined")
     {
         DisplayActivePools(ActivePools);
     }
