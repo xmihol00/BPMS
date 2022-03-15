@@ -315,10 +315,10 @@ namespace BPMS_BL.Facades
             if (success)
             {
                 await ToggleTaskMap(blockId, attributeId);
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)

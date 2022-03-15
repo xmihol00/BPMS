@@ -512,7 +512,7 @@ a:hover {
   transition: all 1.0s;
   margin-right: 0px;
   margin-left: 10px;
-  max-width: 420px;
+  max-width: 420px !important;
 }
 
 .side-overview .col-12 {
