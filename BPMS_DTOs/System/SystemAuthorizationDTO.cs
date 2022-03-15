@@ -12,5 +12,7 @@ namespace BPMS_DTOs.System
     {
         public Guid MessageId { get; set; }
         public string URL { get; set; } = string.Empty;
+        public byte[]? PayloadHash { get; set; }
+        public byte[]? PayloadKey { get; set; }
     }
 }

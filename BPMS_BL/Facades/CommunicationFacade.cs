@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
@@ -18,6 +19,7 @@ using BPMS_DTOs.BlockWorkflow;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BPMS_BL.Facades
@@ -85,12 +87,12 @@ namespace BPMS_BL.Facades
             _system = new SystemEntity();
         }
 
-        public async Task<string> RemoveReciever(Guid foreignBlockId, Guid senderId)
+        public async Task<string> RemoveReciever(BlockIdSenderIdDTO? dto)
         {
             _foreignRecieveEventRepository.Remove(new ForeignRecieveEventEntity
             {
-                ForeignBlockId = foreignBlockId,
-                SenderId = senderId,
+                ForeignBlockId = dto.BlockId,
+                SenderId = dto.SenderId,
                 SystemId = _system.Id
             });
             await _foreignRecieveEventRepository.Save();
@@ -98,18 +100,18 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<List<AttributeEntity?>> AddReciever(Guid foreignBlockId, Guid senderId)
+        public async Task<List<AttributeEntity?>> AddReciever(BlockIdSenderIdDTO? dto)
         {
             // TODO check system access
             await _foreignRecieveEventRepository.Create(new ForeignRecieveEventEntity
             {
-                ForeignBlockId = foreignBlockId,
-                SenderId = senderId,
+                ForeignBlockId = dto.BlockId,
+                SenderId = dto.SenderId,
                 SystemId = _system.Id
             });
             await _foreignRecieveEventRepository.Save();
 
-            return await _blockModelRepository.MappedBareAttributes(senderId);
+            return await _blockModelRepository.MappedBareAttributes(dto.SenderId);
         }
 
         public Task<List<AgendaIdNameDTO>> Agendas()
@@ -126,7 +128,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> ReactivateSystem(ConnectionRequestEntity request)
+        public async Task<string> ReactivateSystem(ConnectionRequestEntity? request)
         {
             _system.State = SystemStateEnum.Reactivated;
             await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.ReactivateSystem, 
@@ -174,7 +176,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> BlockActivity(List<BlockWorkflowActivityDTO> blocks)
+        public async Task<string> BlockActivity(List<BlockWorkflowActivityDTO>? blocks)
         {
             foreach (BlockWorkflowActivityDTO block in blocks)
             {
@@ -260,7 +262,7 @@ namespace BPMS_BL.Facades
             }
         }
 
-        public async Task<string> Message(MessageShare message)
+        public async Task<string> Message(MessageShare? message)
         {
             Dictionary<Guid, TaskDataEntity> taskData;
             List<RecieveEventWorkflowEntity> recieveEvents;
@@ -281,7 +283,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> ForeignMessage(MessageShare message)
+        public async Task<string> ForeignMessage(MessageShare? message)
         {
             await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId), 
                                 await _blockWorkflowRepository.RecieveEvents(message.BlockId));
@@ -313,7 +315,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> ToggleRecieverAttribute(AttributeEntity attribute)
+        public async Task<string> ToggleRecieverAttribute(AttributeEntity? attribute)
         {
             if (await _attributeRepository.Any(attribute.Id))
             {
@@ -328,7 +330,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> ToggleForeignRecieverAttribute(AttributeEntity attribute)
+        public async Task<string> ToggleForeignRecieverAttribute(AttributeEntity? attribute)
         {
             List<ForeignAttributeMapEntity> maps = await _foreignAttributeMapRepository.ForeignAttribs(attribute.Id);
             if (maps.Count > 0)
@@ -364,7 +366,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> ShareModel(ModelDetailShare dto)
+        public async Task<string> ShareModel(ModelDetailShare? dto)
         {
             if (await _modelRepository.Any(dto.Id))
             {
@@ -424,7 +426,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> IsModelRunable(WorkflowShare dto)
+        public async Task<string> IsModelRunable(WorkflowShare? dto)
         {
             ModelEntity model = await _modelRepository.StateAgendaPool(dto.ModelId, _system.Id);
             if (!await _workflowRepository.Any(dto.Workflow.Id))
@@ -447,7 +449,7 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> RunModel(ModelIdWorkflowDTO dto)
+        public async Task<string> RunModel(ModelIdWorkflowDTO? dto)
         {
             await new WorkflowHelper(_context).CreateWorkflow(dto.ModelId, dto.WorkflowId);
             await _context.SaveChangesAsync();
@@ -455,7 +457,7 @@ namespace BPMS_BL.Facades
             return "";   
         }
 
-        public async Task<string> CreateSystem(SystemEntity system)
+        public async Task<string> CreateSystem(SystemEntity? system)
         {
             await _systemRepository.Create(system);
             await NotificationHub.CreateSendNotifications(_notificationRepository, system.Id, NotificationTypeEnum.NewSystem, "",
@@ -465,12 +467,33 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async void AuthorizeSystem(string auth, string path, string? action, string method)
+        public async Task<string> AuthorizeSystem(string auth, HttpRequest request, string? action)
         {
             auth = auth["Bearer ".Length..];
             (Guid id, auth) = SymetricCipherHelper.ExtractGuid(auth);
             _system = _systemRepository.Bare(id);
-            SystemAuthorizationDTO authSystem = SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
+            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
+
+            string data;
+            if (authSystem.PayloadKey != null)
+            {
+                data = await SymetricCipherHelper.Decrypt(request.Body, authSystem.PayloadKey);
+            }
+            else
+            {
+                using (StreamReader stream = new StreamReader(request.Body))
+                {
+                    data = await stream.ReadToEndAsync();
+                }
+            }
+
+            if (authSystem.PayloadHash != null)
+            {
+                if (authSystem.PayloadHash != new Rfc2898DeriveBytes(data, authSystem.MessageId.ToByteArray(), 1000).GetBytes(32))
+                {
+                    throw new UnauthorizedAccessException();    
+                }
+            }
 
             bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
             if ((_system.State != SystemStateEnum.Active && active) || authSystem.URL != _system.URL)
@@ -478,7 +501,9 @@ namespace BPMS_BL.Facades
                 throw new UnauthorizedAccessException();
             }
 
-            await AuditMessageTextHelper.CreateAuditMessage(_auditMessageRepository, authSystem.MessageId, id, action, method);
+            await AuditMessageTextHelper.CreateAuditMessage(_auditMessageRepository, authSystem.MessageId, id, action, request.Method);
+
+            return data;
         }
     }
 }

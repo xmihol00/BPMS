@@ -35,7 +35,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static T? JsonDecrypt<T>(string cipherText, byte[] key) where T : class
+        public static async Task<T?> JsonDecrypt<T>(string cipherText, byte[] key) where T : class
         {
             using Aes aes = Aes.Create();
             aes.Key = key;
@@ -48,8 +48,24 @@ namespace BPMS_BL.Helpers
                 {
                     using (StreamReader streamReader = new StreamReader(cryptoStream))
                     {
-                        return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                        return JsonConvert.DeserializeObject<T>(await streamReader.ReadToEndAsync());
                     }
+                }
+            }
+        }
+
+        public static Task<string> Decrypt(Stream cipherStream, byte[] key)
+        {
+            using Aes aes = Aes.Create();
+            aes.Key = key;
+            aes.IV = StaticData.IV;
+            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+            
+            using (CryptoStream cryptoStream = new CryptoStream(cipherStream, decryptor, CryptoStreamMode.Read))
+            {
+                using (StreamReader streamReader = new StreamReader(cryptoStream))
+                {
+                    return streamReader.ReadToEndAsync();
                 }
             }
         }

@@ -1,4 +1,8 @@
 
+sudo apt-get install apache2
+sudo a2enmod proxy proxy_http proxy_html proxy_wstunnel
+sudo a2enmod rewrite
+
 sudo systemctl status bpms1
 sudo systemctl enable bpms1
 sudo systemctl start bpms1
