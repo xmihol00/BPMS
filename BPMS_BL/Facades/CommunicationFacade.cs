@@ -245,7 +245,7 @@ namespace BPMS_BL.Facades
                 IFileDataEntity file = taskData[data.AttributeId.Value] as IFileDataEntity;
                 file.MIMEType = data.MIMEType;
                 file.FileName = data.FileName;
-                await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, file.Data);
+                await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, data.Data);
             }
 
             foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)
