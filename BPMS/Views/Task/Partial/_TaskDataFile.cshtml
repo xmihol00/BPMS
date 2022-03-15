@@ -21,7 +21,7 @@ else
             <span class="input-label">@Model.Name</span>
         </label>
         <label class="input mt-3 d-none">
-            <input required class="input-file" type="file" onchange="FileSelected(this)" name="" accept="@Model.FileFormats"/>
+            <input @(Model.Compulsory ? "required" : "") required class="input-file" type="file" onchange="FileSelected(this)" name="" accept="@Model.FileFormats"/>
             <span class="input-label pointer">@Model.Name</span>
         </label>
     </div>
