@@ -1,0 +1,44 @@
+@model ITaskArray
+
+<div class="col-12 mt-3">
+    <div>pole: <span class="text-prim text-bold ms-1">@Model.Name</span></div>
+    <div class="row">
+        @foreach (TaskDataDTO? task in Model.Values)
+        {
+             switch (task)
+            {
+                case ITaskString taskString:
+                    @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskString.Value))
+                    break;
+
+                case ITaskNumber taskNumber:
+                    @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskNumber.Value.ToString()))
+                    break;
+
+                case ITaskText taskText:
+                    @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskText.Value))
+                    break;
+                
+                case ITaskDate taskDate:
+                    @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskDate.Value?.ToString()))
+                    break;
+
+                case ITaskSelect taskSelect:
+                    @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskSelect.Value))
+                    break;
+
+                case ITaskBool taskBool:
+                    @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskBool.Value?.ToString()))
+                    break;
+
+                case ITaskFile taskFile:
+                    @await Html.PartialAsync("Partial/_TaskFileNotEditable", taskFile)
+                    break;
+                
+                case ITaskArray taskArray:
+                    @await Html.PartialAsync("Partial/_TaskArrayNotEditable", taskArray)
+                    break;
+            }
+        }
+    </div>
+</div>

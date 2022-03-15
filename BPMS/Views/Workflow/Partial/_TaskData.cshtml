@@ -42,6 +42,14 @@
                     case ITaskBool taskBool:
                         @await Html.PartialAsync("Partial/_TaskDataNotEditable", (task, taskBool.Value?.ToString()))
                         break;
+                    
+                    case ITaskFile taskFile:
+                        @await Html.PartialAsync("Partial/_TaskFileNotEditable", taskFile)
+                        break;
+                    
+                     case ITaskArray taskArray:
+                        @await Html.PartialAsync("Partial/_TaskArrayNotEditable", taskArray)
+                        break;
                 }
             }
         }

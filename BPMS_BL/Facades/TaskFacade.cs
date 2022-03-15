@@ -31,6 +31,7 @@ namespace BPMS_BL.Facades
         private readonly WorkflowRepository _workflowRepository;
         private readonly PoolRepository _poolRepository;
         private readonly BlockWorkflowRepository _blockWorkflowRepository;
+        private readonly TaskDataMapRepository _taskDataMapRepository;
         private readonly BpmsDbContext _context;
         private WorkflowHelper _worflowHelper { get; set; }
         private readonly IMapper _mapper;
@@ -40,7 +41,8 @@ namespace BPMS_BL.Facades
                           BlockModelRepository blockModelRepository, AgendaRoleRepository agendaRoleRepository, 
                           DataSchemaRepository dataSchemaRepository, ServiceRepository serviceRepository, 
                           WorkflowRepository workflowRepository, PoolRepository poolRepository, FilterRepository filterRepository,
-                          BlockWorkflowRepository blockWorkflowRepository, BpmsDbContext context, IMapper mapper)
+                          BlockWorkflowRepository blockWorkflowRepository, TaskDataMapRepository taskDataMapRepository, 
+                          BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _taskRepository = taskRepository;
@@ -52,6 +54,7 @@ namespace BPMS_BL.Facades
             _workflowRepository = workflowRepository;
             _poolRepository = poolRepository;
             _blockWorkflowRepository = blockWorkflowRepository;
+            _taskDataMapRepository = taskDataMapRepository;
             _context = context;
             _mapper = mapper;
         }
@@ -235,7 +238,7 @@ namespace BPMS_BL.Facades
             UserTaskDetailDTO detail = await _taskRepository.UserDetail(id);
             
             List<TaskDataDTO> inputData = new List<TaskDataDTO>();
-            foreach (TaskDataEntity data in await _taskDataRepository.MappedUserTaskData(id))
+            foreach (TaskDataEntity data in await _taskDataMapRepository.MappedUserTaskData(id))
             {
                 inputData.Add(_mapper.Map(data, data.GetType(), typeof(TaskDataDTO)) as TaskDataDTO);
             }

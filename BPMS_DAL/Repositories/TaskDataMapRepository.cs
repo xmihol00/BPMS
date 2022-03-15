@@ -14,5 +14,17 @@ namespace BPMS_DAL.Repositories
     public class TaskDataMapRepository : BaseRepository<TaskDataMapEntity>
     {
         public TaskDataMapRepository(BpmsDbContext context) : base(context) {}
+
+        public Task<List<TaskDataEntity?>> MappedUserTaskData(Guid id)
+        {
+            return _dbSet.Include(x => x.Task)
+                            .ThenInclude(x => x.BlockModel)
+                         .Include(x => x.TaskData)
+                            .ThenInclude(x => x.Attribute)
+                         .Where(x => x.TaskId == id)
+                         .Select(x => x.TaskData)
+                         .Where(x => x.AttributeId != null)
+                         .ToListAsync();
+        }
     }
 }
