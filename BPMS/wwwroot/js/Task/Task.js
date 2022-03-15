@@ -1,6 +1,11 @@
 
 window.addEventListener('DOMContentLoaded', () => 
 {  
+    ValidateTask();
+});
+
+function ValidateTask()
+{
     let form = document.getElementById("TaskDataFormId")
     if (form)
     {
@@ -11,7 +16,7 @@ window.addEventListener('DOMContentLoaded', () =>
     {
         InputValidator(form);
     }
-});
+}
 
 function SaveUserTask()
 {

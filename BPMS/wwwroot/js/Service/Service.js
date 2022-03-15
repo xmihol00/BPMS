@@ -265,7 +265,7 @@ function GenerateOutAttributes(btn)
     .done((result) => 
     {
         document.getElementById("OutputSchemaId").innerHTML = result;
-        document.getElementById("InputSchemaId").scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById("InputSchemaId").scrollIntoView({ behavior: "smooth", block: "end" });
     })
     .fail(() => 
     {

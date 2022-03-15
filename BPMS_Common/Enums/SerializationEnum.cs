@@ -49,6 +49,7 @@ namespace BPMS_Common.Enums
                     return "application/json";
                 
                 case SerializationEnum.XMLMarks:
+                case SerializationEnum.XMLAttributes:
                     return "text/xml";
                 
                 case SerializationEnum.URL:

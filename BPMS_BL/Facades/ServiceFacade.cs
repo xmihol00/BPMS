@@ -124,7 +124,7 @@ namespace BPMS_BL.Facades
             {
                 await ParseJObject(JObject.Parse(dto.RecievedData));
             }
-            else if (dto.Serialization == SerializationEnum.XMLMarks)
+            else if (dto.Serialization == SerializationEnum.XMLMarks || dto.Serialization == SerializationEnum.XMLMarks)
             {
                 await ParseXML(XDocument.Parse(dto.RecievedData));
             }
@@ -365,7 +365,7 @@ namespace BPMS_BL.Facades
             JToken? arrayItem = property.Value.Children().FirstOrDefault();
             if (arrayItem != null)
             {
-                switch (property.Value.Type)
+                switch (arrayItem.Type)
                 {
                     case JTokenType.String:
                         await CreateOutputDataSchema(name, DataTypeEnum.ArrayString, parentId, array);

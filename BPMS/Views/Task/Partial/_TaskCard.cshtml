@@ -1,7 +1,7 @@
 @model (TaskAllDTO task, bool selected)
 
 <div id="@Model.task.Id" class="col-12 col-md-6 col-lg-4 pointer p-2" 
-     onclick="DetailTransition(this, '/Task/@(Model.task.Type == TaskTypeEnum.UserTask ? "UserDetailPartial/" : "ServiceDetailPartial/")', false)">
+     onclick="DetailTransition(this, '/Task/@(Model.task.Type == TaskTypeEnum.UserTask ? "UserDetailPartial/" : "ServiceDetailPartial/")', false, ValidateTask)">
     <div class="shadow-box p-3 my-card bradius-card hover-card pointer @(Model.selected ? "selected-card" : "")">
         <h3 class="border-bottom text-center">@Model.task.TaskName</h3>
         <div class="row mb-1 mt-2">
