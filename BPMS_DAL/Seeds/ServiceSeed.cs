@@ -48,7 +48,7 @@ namespace BPMS_DAL.Seeds
                 Serialization = SerializationEnum.JSON,
                 Name = "Echo API - JSON",
                 Type = ServiceTypeEnum.REST,
-                URL = "TODO",
+                URL = "TODO/EchoJson",
                 AuthType = ServiceAuthEnum.Basic,
                 AppId = "UserName",
                 AppSecret = "Password"
@@ -60,7 +60,7 @@ namespace BPMS_DAL.Seeds
                 Serialization = SerializationEnum.XMLAttributes,
                 Name = "Echo API - XML atributy",
                 Type = ServiceTypeEnum.REST,
-                URL = "TODO",
+                URL = "TODO/EchoXml",
                 AuthType = ServiceAuthEnum.Bearer,
                 AppSecret = "AppSecret"
             },
@@ -71,7 +71,19 @@ namespace BPMS_DAL.Seeds
                 Serialization = SerializationEnum.XMLMarks,
                 Name = "Echo API - XML tagy",
                 Type = ServiceTypeEnum.REST,
-                URL = "TODO",
+                URL = "TODO/EchoXml",
+            },
+            new ServiceEntity() {
+                Description = "Ozvěna vstupu serializovaného do XML tagů.",
+                Id = Guid.Parse("45adf844-8587-4ffb-92c3-99a23ade014a"),
+                HttpMethod = HttpMethodEnum.PUT,
+                Serialization = SerializationEnum.XMLMarks,
+                Name = "Echo API - Hlavičky",
+                Type = ServiceTypeEnum.REST,
+                URL = "TODO/EchoHeaders",
+                AuthType = ServiceAuthEnum.Basic,
+                AppId = "MyUserName",
+                AppSecret = "LongAndSecurePassword"
             },
         };
 
