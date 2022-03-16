@@ -37,7 +37,6 @@ namespace BPMS_BL.Facades
         public async Task<ModelDetailDTO> Edit(PoolEditDTO dto)
         {
             PoolEntity entity = await _poolRepository.DetailForEdit(dto.Id);
-            entity.Name = dto.Name ?? "";
             entity.Description = dto.Description ?? "";
 
             if (dto.SystemId != entity.SystemId)
