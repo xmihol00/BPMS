@@ -298,6 +298,7 @@ namespace BPMS_BL.Facades
         public async Task<bool> ToggleSendMap(Guid blockId, Guid attributeId)
         {
             AttributeEntity attrib = await _attributeRepository.Bare(attributeId);
+            Guid currentBlockId = attrib.BlockId;
 
             bool success = true;
             foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
@@ -311,6 +312,7 @@ namespace BPMS_BL.Facades
                 attrib.BlockId = recieverAddress.ForeignBlockId;
                 success &= await CommunicationHelper.ToggleForeignRecieverAttribute(recieverAddress, attrib);
             }
+            attrib.BlockId = currentBlockId;
 
             if (success)
             {
