@@ -229,8 +229,9 @@ namespace BPMS_BL.Facades
             await _blockModelRepository.Save();
         }
 
-        public async Task Remove(Guid id)
+        public async Task RemoveAttribute(Guid id)
         {
+            // TODO if any TASKS set disabled
             AttributeEntity attrib = new AttributeEntity()
             { 
                 Id = id,
@@ -298,29 +299,59 @@ namespace BPMS_BL.Facades
         public async Task<bool> ToggleSendMap(Guid blockId, Guid attributeId)
         {
             AttributeEntity attrib = await _attributeRepository.Bare(attributeId);
-            Guid currentBlockId = attrib.BlockId;
 
+            bool remove = await _attributeMapRepository.Any(blockId, attributeId);
             bool success = true;
-            foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
+            if (remove)
             {
-                attrib.BlockId = recieverAddress.BlockId;
-                success &= await CommunicationHelper.ToggleRecieverAttribute(recieverAddress, attrib);
-            }
+                foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
+                {
+                    attrib.BlockId = recieverAddress.BlockId;
+                    success &= await CommunicationHelper.RemoveRecieverAttribute(recieverAddress, attributeId);
+                }
 
-            foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
-            {
-                attrib.BlockId = recieverAddress.ForeignBlockId;
-                success &= await CommunicationHelper.ToggleForeignRecieverAttribute(recieverAddress, attrib);
+                foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
+                {
+                    attrib.BlockId = recieverAddress.ForeignBlockId;
+                    success &= await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress, attributeId);
+                }
             }
-            attrib.BlockId = currentBlockId;
+            else
+            {
+                foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
+                {
+                    attrib.BlockId = recieverAddress.BlockId;
+                    success &= await CommunicationHelper.CreateRecieverAttribute(recieverAddress, attrib);
+                }
+
+                foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
+                {
+                    attrib.BlockId = recieverAddress.ForeignBlockId;
+                    success &= await CommunicationHelper.CreateForeignRecieverAttribute(recieverAddress, attrib);
+                }
+            }
 
             if (success)
             {
-                await ToggleTaskMap(blockId, attributeId);
-                return true;
+                AttributeMapEntity entity = new AttributeMapEntity()
+                {
+                    AttributeId = attributeId,
+                    BlockId = blockId
+                };
+
+                if (remove)
+                {
+                    _attributeMapRepository.Remove(entity);
+                }
+                else
+                {   
+                    await _attributeMapRepository.Create(entity);
+                }
+
+                await _attributeMapRepository.Save();
             }
 
-            return false;
+            return success;
         }
 
         public async Task ToggleServiceMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)

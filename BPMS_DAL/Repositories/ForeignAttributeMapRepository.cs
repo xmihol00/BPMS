@@ -29,5 +29,10 @@ namespace BPMS_DAL.Repositories
                          .Select(x => x.Attribute)
                          .ToListAsync();
         }
+
+        public Task<bool> Any(Guid foreignAttributeId)
+        {
+            return _dbSet.AnyAsync(x => x.ForeignAttributeId == foreignAttributeId);
+        }
     }
 }

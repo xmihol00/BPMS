@@ -52,15 +52,15 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleRecieverAttribute()
+        public async Task<IActionResult> CreateRecieverAttribute()
         {
-            return Ok(await _communicationFacade.ToggleRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data)));
+            return Ok(await _communicationFacade.CreateRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data)));
         }
 
         [HttpPost]
-        public async Task<IActionResult> ToggleForeignRecieverAttribute()
+        public async Task<IActionResult> CreateForeignRecieverAttribute()
         {
-            return Ok(await _communicationFacade.ToggleForeignRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data)));
+            return Ok(await _communicationFacade.CreateForeignRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data)));
         }
 
         [HttpPost]

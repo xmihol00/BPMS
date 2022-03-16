@@ -35,15 +35,15 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ToggleRecieverAttribute(IAddressAuth addressAuth, object payload)
+        public static async Task<bool> CreateRecieverAttribute(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ToggleRecieverAttribute");
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/CreateRecieverAttribute");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public static async Task<bool> ToggleForeignRecieverAttribute(IAddressAuth addressAuth, object payload)
+        public static async Task<bool> CreateForeignRecieverAttribute(IAddressAuth addressAuth, object payload)
         {
-            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ToggleForeignRecieverAttribute");
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/CreateForeignRecieverAttribute");
             return response.StatusCode == HttpStatusCode.OK;
         }
 

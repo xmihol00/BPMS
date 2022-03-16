@@ -294,12 +294,15 @@ namespace BPMS_BL.Facades
 
         public async Task<string> RemoveRecieverAttribute(Guid id)
         {
-            _attributeRepository.Remove(new AttributeEntity
+            if (await _attributeRepository.Any(id))
             {
-                Id = id,
-                MappedBlocks = await _attributeRepository.MappedBlocks(id)
-            });
-            await _attributeRepository.Save();
+                _attributeRepository.Remove(new AttributeEntity
+                {
+                    Id = id,
+                    MappedBlocks = await _attributeRepository.MappedBlocks(id)
+                });
+                await _attributeRepository.Save();
+            }
 
             return "";
         }
@@ -315,38 +318,23 @@ namespace BPMS_BL.Facades
             return "";
         }
 
-        public async Task<string> ToggleRecieverAttribute(AttributeEntity? attribute)
+        public async Task<string> CreateRecieverAttribute(AttributeEntity? attribute)
         {
-            if (await _attributeRepository.Any(attribute.Id))
-            {
-                _attributeRepository.Remove(attribute);
-            }
-            else
+            if (!await _attributeRepository.Any(attribute.Id))
             {
                 await _attributeRepository.Create(attribute);
+                await _attributeRepository.Save();
             }
 
-            await _attributeRepository.Save();
             return "";
         }
 
-        public async Task<string> ToggleForeignRecieverAttribute(AttributeEntity? attribute)
+        public async Task<string> CreateForeignRecieverAttribute(AttributeEntity? attribute)
         {
-            List<ForeignAttributeMapEntity> maps = await _foreignAttributeMapRepository.ForeignAttribs(attribute.Id);
-            if (maps.Count > 0)
+            
+            foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
             {
-                foreach (ForeignAttributeMapEntity map in maps)
-                {
-                    _attributeRepository.Remove(new AttributeEntity
-                    {
-                        Id = map.AttributeId
-                    });
-                    _foreignAttributeMapRepository.Remove(map);
-                }
-            }
-            else
-            {
-                foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
+                if (!await _foreignAttributeMapRepository.Any(attribute.Id))
                 {
                     ForeignAttributeMapEntity map = new ForeignAttributeMapEntity
                     {
@@ -357,8 +345,8 @@ namespace BPMS_BL.Facades
 
                     attribute.Id = map.AttributeId;
                     attribute.BlockId = even.Reciever.Id;
-                    await _attributeRepository.Create(_mapper.Map<AttributeEntity>(attribute));
-                    await _foreignAttributeMapRepository.Create(map);
+                    _attributeRepository.Update(_mapper.Map<AttributeEntity>(attribute));
+                    _foreignAttributeMapRepository.Update(map);
                 }
             }
 

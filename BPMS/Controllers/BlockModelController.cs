@@ -61,9 +61,9 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> RemoveAttribute(Guid id)
         {
-            await _blockModelFacade.Remove(id);
+            await _blockModelFacade.RemoveAttribute(id);
             return Ok();
         }
 

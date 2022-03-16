@@ -357,7 +357,7 @@ function RemoveAttribute(element)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/Remove/${attrib.id}`
+        url: `/BlockModel/RemoveAttribute/${attrib.id}`
     })
     .done(() => 
     {
