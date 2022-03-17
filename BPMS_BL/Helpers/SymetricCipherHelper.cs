@@ -76,7 +76,7 @@ namespace BPMS_BL.Helpers
             aes.KeySize = StaticData.KeySize;
             aes.GenerateKey();
             aes.GenerateIV();
-            auth.Key = aes.Key;
+            auth.PayloadKey = aes.Key;
             auth.PayloadIV = aes.IV;
             
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
@@ -88,9 +88,10 @@ namespace BPMS_BL.Helpers
                     using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
                     {
                         await streamWriter.WriteAsync(payload);
-                        return Convert.ToBase64String(memStream.ToArray());
                     }
                 }
+
+                return Convert.ToBase64String(memStream.ToArray());
             }
         }
 
