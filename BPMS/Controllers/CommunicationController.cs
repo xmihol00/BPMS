@@ -70,6 +70,20 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UpdateRecieverAttribute()
+        {
+            await _communicationFacade.UpdateRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data));
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateForeignRecieverAttribute()
+        {
+            await _communicationFacade.UpdateForeignRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data));
+            return Ok();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemoveRecieverAttribute()
         {
             await _communicationFacade.RemoveRecieverAttribute(JsonConvert.DeserializeObject<Guid>(_data));
