@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BPMS_DTOs.Filter;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace BPMS_BL.Facades
 {
@@ -435,7 +436,7 @@ namespace BPMS_BL.Facades
 
         private async Task ParseXMLAttributes(XElement node, Guid? parentId = null)
         {
-            foreach (XAttribute attrib in node.Attributes())
+            foreach (XAttribute attrib in node.Attributes().Where(x => !Regex.Match(x.ToString(), "^(xmlns:|xsi:|xsi:|xslt:).*").Success))
             {
                 await ParseXMLValue(attrib.Name.LocalName, attrib.Value, parentId);
             }

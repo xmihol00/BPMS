@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.SignalR;
 using BPMS_BL.Hubs;
 using System.Net;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace BPMS_BL.Helpers
 {
@@ -534,6 +535,7 @@ namespace BPMS_BL.Helpers
                     break;
                 
                 case SerializationEnum.XMLMarks:
+                case SerializationEnum.XMLAttributes:
                     MapRequestResultXml(XDocument.Parse(result.RecievedData), data, mappedData);
                     break;
 
@@ -552,21 +554,20 @@ namespace BPMS_BL.Helpers
 
         private void MapRequestResultXml(XDocument xml, List<TaskDataEntity> data, List<DataSchemaDataMap> mappedData)
         {
-            Guid? parentId = null;
-            if (xml.Root.HasAttributes)
+            (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName);
+            if (currentData != null)
             {
-                MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, null);
-            }
+                if (xml.Root.HasAttributes)
+                {
+                    MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, currentData.SchemaId);
+                }
 
-            if (xml.Root.HasElements)
-            {
-                MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, null);
-            }
+                if (xml.Root.HasElements)
+                {
+                    MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, currentData.SchemaId);
+                }
 
-            if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
-            {
-                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName, parentId);
-                if (currentData != null)
+                if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
                 {
                     MapRequestResultXmlValue(currentData, mappedCurrent, xml.Root.Value);
                 }
@@ -600,7 +601,7 @@ namespace BPMS_BL.Helpers
         private void MapRequestResultXmlAttributes(IEnumerable<XAttribute> attributes, IEnumerable<TaskDataEntity> data, 
                                                    IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId)
         {
-            foreach (XAttribute attribute in attributes)
+            foreach (XAttribute attribute in attributes.Where(x => !Regex.Match(x.ToString(), "^(xmlns:|xsi:|xsi:|xslt:).*").Success))
             {
                 (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, attribute.Name.LocalName, parentId);
                 if (currentData != null)

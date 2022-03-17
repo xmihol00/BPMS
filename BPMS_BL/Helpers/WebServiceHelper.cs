@@ -246,6 +246,10 @@ namespace BPMS_BL.Helpers
 
                 case SerializationEnum.URL:
                     SerilizeURL();
+                    if (indented)
+                    {
+                        return _builder.ToString();
+                    }
                     break;
                 
                 case SerializationEnum.XMLMarks:
