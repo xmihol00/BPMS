@@ -553,27 +553,34 @@ namespace BPMS_BL.Helpers
 
         private void MapRequestResultXml(XDocument xml, List<TaskDataEntity> data, List<DataSchemaDataMap> mappedData)
         {
-            (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName);
-            if (currentData != null)
+            if (xml.Root.HasAttributes)
             {
-                if (xml.Root.HasAttributes)
+                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName);
+                if (currentData != null)
                 {
-                    MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, currentData.SchemaId);
-                }
+                    if (xml.Root.HasAttributes)
+                    {
+                        MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, currentData.SchemaId);
+                    }
 
-                if (xml.Root.HasElements)
-                {
-                    MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, currentData.SchemaId);
-                }
+                    if (xml.Root.HasElements)
+                    {
+                        MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, currentData.SchemaId);
+                    }
 
-                if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
-                {
-                    MapRequestResultXmlValue(currentData, mappedCurrent, xml.Root.Value);
+                    if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
+                    {
+                        MapRequestResultXmlValue(currentData, mappedCurrent, xml.Root.Value);
+                    }
                 }
+            }
+            else if (xml.Root.HasElements)
+            {
+                MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData);
             }
         }
 
-        private void MapRequestResultXmlNodes(IEnumerable<XNode> nodes, IEnumerable<TaskDataEntity> data, IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId)
+        private void MapRequestResultXmlNodes(IEnumerable<XNode> nodes, IEnumerable<TaskDataEntity> data, IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId = null)
         {
             foreach (XElement child in nodes)
             {
