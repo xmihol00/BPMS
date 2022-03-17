@@ -74,7 +74,7 @@ namespace BPMS_DAL.Repositories
         public Task<List<TaskDataEntity>> OutputServiceTaskData(Guid taskId)
         {
             return _dbSet.Include(x => x.Schema)
-                         .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Output)
+                         .Where(x => x.OutputTaskId == taskId && x.Schema.Direction == DirectionEnum.Output && !x.Schema.Disabled)
                          .ToListAsync();
         }
 
@@ -139,7 +139,7 @@ namespace BPMS_DAL.Repositories
                                 .ThenInclude(x => x.Target)
                                     .ThenInclude(x => x.Data)
                                         .Include(x => x.OutputTask)
-                         .Where(x => x.OutputTaskId == serviceTaskId && x.Schema.Direction == DirectionEnum.Output)
+                         .Where(x => x.OutputTaskId == serviceTaskId && x.Schema.Direction == DirectionEnum.Output && !x.Schema.Disabled)
                          .Select(x => x.Schema)
                          .Select(x => new DataSchemaDataMap
                          {

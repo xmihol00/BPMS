@@ -48,6 +48,18 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
+        public static async Task<bool> UpdateRecieverAttribute(IAddressAuth addressAuth, object payload)
+        {
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/UpdateRecieverAttribute");
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> UpdateForeignRecieverAttribute(IAddressAuth addressAuth, object payload)
+        {
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/UpdateForeignRecieverAttribute");
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         public static async Task<bool> RemoveRecieverAttribute(IAddressAuth addressAuth, Guid id)
         {
             object payload = id;

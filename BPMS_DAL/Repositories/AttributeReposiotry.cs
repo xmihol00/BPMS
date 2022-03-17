@@ -15,9 +15,9 @@ namespace BPMS_DAL.Repositories
     {
         public AttributeRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<AttributeDTO>> Details(Guid blockId)
+        public Task<List<AttributeDTO>> OutputAttributes(Guid blockId)
         {
-            return _dbSet.Where(x => x.BlockId == blockId)
+            return _dbSet.Where(x => x.BlockId == blockId && !x.Disabled)
                          .Select(x => new AttributeDTO
                          {
                              Compulsory = x.Compulsory,
@@ -90,6 +90,15 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.MappedBlocks)
                          .ToListAsync();
+        }
+
+        public Task<AttributeEntity> ForRemoval(Guid id)
+        {
+            return _dbSet.Include(x => x.Data)
+                         .Include(x => x.MappedBlocks)
+                            .ThenInclude(x => x.Block)
+                         .Include(x => x.MappedForeignBlock)
+                         .FirstAsync(x => x.Id == id);
         }
     }
 }

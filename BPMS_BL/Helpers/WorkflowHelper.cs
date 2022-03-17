@@ -17,7 +17,6 @@ using BPMS_DTOs.DataSchema;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.SignalR;
 using BPMS_BL.Hubs;
 using System.Net;
 using System.Xml.Linq;
@@ -187,7 +186,7 @@ namespace BPMS_BL.Helpers
         {
             BlockWorkflowEntity blockWorkflow = new SendEventWorkflowEntity();
 
-            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes.Where(x => !x.Attribute.Disabled))
             {
                 TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
                 if (taskData != null)
@@ -213,7 +212,7 @@ namespace BPMS_BL.Helpers
             IUserTaskWorkflowEntity uTask = blockWorkflow as IUserTaskWorkflowEntity;
 
             _createdUserTasks[blockModel.Id] = blockWorkflow;
-            foreach (BlockModelDataSchemaEntity schema in blockModel.DataSchemas)
+            foreach (BlockModelDataSchemaEntity schema in blockModel.DataSchemas.Where(x => !x.DataSchema.Disabled))
             {
                 TaskDataEntity? taskData = _createdServiceData.GetValueOrDefault((schema.DataSchemaId, schema.ServiceTaskId));
                 if (taskData != null)
@@ -226,7 +225,7 @@ namespace BPMS_BL.Helpers
                 }
             }
 
-            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes.Where(x => !x.Attribute.Disabled))
             {
                 TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
                 if (taskData != null)
@@ -301,7 +300,7 @@ namespace BPMS_BL.Helpers
         private List<TaskDataEntity> CrateUserTaskData(List<AttributeEntity> attributes)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
-            foreach(AttributeEntity attribute in attributes)
+            foreach (AttributeEntity attribute in attributes.Where(x => !x.Disabled))
             {
                 TaskDataEntity taskData = CreateUserTaskData(attribute.Type);
                 taskData.AttributeId = attribute.Id;
