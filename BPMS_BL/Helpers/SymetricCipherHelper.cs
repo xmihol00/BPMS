@@ -121,5 +121,10 @@ namespace BPMS_BL.Helpers
 
             return (Guid.Parse(guid), cipherText);
         }
+
+        public static bool ArraysMatch(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
+        {
+            return array1.SequenceEqual(array2);
+        }
     }
 }

@@ -471,7 +471,8 @@ namespace BPMS_BL.Facades
 
             if (authSystem.PayloadHash != null)
             {
-                if (authSystem.PayloadHash != new Rfc2898DeriveBytes(data, authSystem.MessageId.ToByteArray(), 1000).GetBytes(32))
+                byte[] hash = new Rfc2898DeriveBytes(data, authSystem.MessageId.ToByteArray(), 1000).GetBytes(32);
+                if (!SymetricCipherHelper.ArraysMatch(authSystem.PayloadHash, new Rfc2898DeriveBytes(data, authSystem.MessageId.ToByteArray(), 1000).GetBytes(32)))
                 {
                     throw new UnauthorizedAccessException();    
                 }
