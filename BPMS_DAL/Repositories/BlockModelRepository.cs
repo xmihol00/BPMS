@@ -232,6 +232,16 @@ namespace BPMS_DAL.Repositories
                            .ToListAsync();
         }
 
+        public Task<List<BlockModelDataSchemaEntity>> DataShemas(Guid id)
+        {
+            return _dbSet.Include(x => x.DataSchemas)
+                            .ThenInclude(x => x.DataSchema)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.DataSchemas)
+                         .Where(x => !x.DataSchema.Disabled)
+                         .ToListAsync();
+        }
+
         public Task<List<ServiceTaskModelEntity>> RolesForRemovalServiceTaks(Guid roleId)
         {
             return _context.Set<ServiceTaskModelEntity>()

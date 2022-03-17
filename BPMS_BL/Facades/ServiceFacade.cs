@@ -83,9 +83,9 @@ namespace BPMS_BL.Facades
             {
                 if (removedIds.Contains(schema.ParentId))
                 {
+                    removedIds.Add(schema.Id);
                     if (schema.Data.Count == 0)
                     {
-                        removedIds.Add(schema.Id);
                         _dataSchemaRepository.Remove(schema);
                     }
                     else

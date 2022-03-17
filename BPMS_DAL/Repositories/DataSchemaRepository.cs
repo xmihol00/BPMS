@@ -98,7 +98,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<DataSchemaEntity?> Find(Guid serviceId, string alias, Guid? parentId, DirectionEnum direction)
         {
-            return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && 
+            return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && !x.Disabled &&
                                                    x.ParentId == parentId && x.Direction == direction);
         }
 

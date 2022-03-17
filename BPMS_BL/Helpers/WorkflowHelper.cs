@@ -134,7 +134,7 @@ namespace BPMS_BL.Helpers
             switch (blockModel)
             {
                 case IUserTaskModelEntity:
-                    blockWorkflow = CreateUserTask(blockModel);
+                    blockWorkflow = await CreateUserTask(blockModel);
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
@@ -202,7 +202,7 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private BlockWorkflowEntity CreateUserTask(BlockModelEntity blockModel)
+        private async Task<BlockWorkflowEntity> CreateUserTask(BlockModelEntity blockModel)
         {
             BlockWorkflowEntity blockWorkflow = new UserTaskWorkflowEntity()
             {
@@ -212,7 +212,7 @@ namespace BPMS_BL.Helpers
             IUserTaskWorkflowEntity uTask = blockWorkflow as IUserTaskWorkflowEntity;
 
             _createdUserTasks[blockModel.Id] = blockWorkflow;
-            foreach (BlockModelDataSchemaEntity schema in blockModel.DataSchemas.Where(x => !x.DataSchema.Disabled))
+            foreach (BlockModelDataSchemaEntity schema in await _blockModelRepository.DataShemas(blockModel.Id))
             {
                 TaskDataEntity? taskData = _createdServiceData.GetValueOrDefault((schema.DataSchemaId, schema.ServiceTaskId));
                 if (taskData != null)
