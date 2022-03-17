@@ -111,6 +111,10 @@ namespace BPMS_BL.Helpers
                 case "ReactivateSystem":
                     message.Text = "Reaktivace systému";
                     break;
+                
+                case "ChangeEncryption":
+                    message.Text = "Změna úrovně zabezpečení";
+                    break;
             }
 
             await auditMessageRepository.Create(message);

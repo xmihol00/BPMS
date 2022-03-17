@@ -17,7 +17,7 @@ namespace BPMS_DAL.Entities
         public string? Description { get; set; }
         public string Specification { get; set; } = string.Empty;
         public bool Compulsory { get; set; }
-        public bool Removed { get; set; }
+        public bool Disabled { get; set; }
         public AttributeTypeEnum Type { get; set; }
         public Guid BlockId { get; set; }
 

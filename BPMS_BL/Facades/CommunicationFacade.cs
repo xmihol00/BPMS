@@ -87,7 +87,7 @@ namespace BPMS_BL.Facades
             _system = new SystemEntity();
         }
 
-        public async Task<string> RemoveReciever(BlockIdSenderIdDTO? dto)
+        public async Task RemoveReciever(BlockIdSenderIdDTO? dto)
         {
             _foreignRecieveEventRepository.Remove(new ForeignRecieveEventEntity
             {
@@ -96,8 +96,6 @@ namespace BPMS_BL.Facades
                 SystemId = _system.Id
             });
             await _foreignRecieveEventRepository.Save();
-
-            return "";
         }
 
         public async Task<List<AttributeEntity?>> AddReciever(BlockIdSenderIdDTO? dto)
@@ -119,32 +117,27 @@ namespace BPMS_BL.Facades
             return _agendaRepository.AgendasSystem(_system.Id);
         }
 
-        public async Task<string> DeactivateSystem()
+        public async Task DeactivateSystem()
         {
             _system.State = SystemStateEnum.Deactivated;
             await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.DeactivatedSystem, 
                                                           _system.Name, await _userRepository.Admins());
             await _systemRepository.Save();
-            return "";
         }
 
-        public async Task<string> ChangeEncryption(EncryptionLevelEnum encryption)
+        public async Task ChangeEncryption(EncryptionLevelEnum encryption)
         {
             _system.ForeignEncryption = encryption;
             await _systemRepository.Save();
-
-            return "";
         }
 
-        public async Task<string> ReactivateSystem(ConnectionRequestEntity? request)
+        public async Task ReactivateSystem(ConnectionRequestEntity? request)
         {
             _system.State = SystemStateEnum.Reactivated;
             await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.ReactivateSystem, 
                                                           _system.Name, await _userRepository.Admins());
             await _connectionRequestRepository.Create(request);
             await _connectionRequestRepository.Save();
-
-            return "";
         }
 
         public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
@@ -172,7 +165,7 @@ namespace BPMS_BL.Facades
             return _blockModelRepository.ForeignRecieverInfo(id);
         }
 
-        public async Task<string> ActivateSystem()
+        public async Task ActivateSystem()
         {
             _system.State = SystemStateEnum.Active;
             _systemRepository.Update(_system);
@@ -180,11 +173,9 @@ namespace BPMS_BL.Facades
                                                           _system.Name, await _userRepository.Admins());
 
             await _systemRepository.Save();
-
-            return "";
         }
 
-        public async Task<string> BlockActivity(List<BlockWorkflowActivityDTO>? blocks)
+        public async Task BlockActivity(List<BlockWorkflowActivityDTO>? blocks)
         {
             foreach (BlockWorkflowActivityDTO block in blocks)
             {
@@ -208,7 +199,6 @@ namespace BPMS_BL.Facades
             }
 
             await _blockWorkflowRepository.Save();
-            return "";
         }
         private async Task AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData, 
                                          List<RecieveEventWorkflowEntity> recieveEvents)
@@ -270,7 +260,7 @@ namespace BPMS_BL.Facades
             }
         }
 
-        public async Task<string> Message(MessageShare? message)
+        public async Task Message(MessageShare? message)
         {
             Dictionary<Guid, TaskDataEntity> taskData;
             List<RecieveEventWorkflowEntity> recieveEvents;
@@ -287,20 +277,16 @@ namespace BPMS_BL.Facades
 
             await AssignMessage(message, taskData, recieveEvents);
             await _taskDataRepository.Save();
-
-            return "";
         }
 
-        public async Task<string> ForeignMessage(MessageShare? message)
+        public async Task ForeignMessage(MessageShare? message)
         {
             await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId), 
                                 await _blockWorkflowRepository.RecieveEvents(message.BlockId));
             await _taskDataRepository.Save();
-
-            return "";
         }
 
-        public async Task<string> RemoveRecieverAttribute(Guid id)
+        public async Task RemoveRecieverAttribute(Guid id)
         {
             if (await _attributeRepository.Any(id))
             {
@@ -311,35 +297,28 @@ namespace BPMS_BL.Facades
                 });
                 await _attributeRepository.Save();
             }
-
-            return "";
         }
 
-        public async Task<string> RemoveForeignRecieverAttribute(Guid id)
+        public async Task RemoveForeignRecieverAttribute(Guid id)
         {
             foreach (AttributeEntity attribute in await _foreignAttributeMapRepository.ForRemoval(id))
             {
                 _attributeRepository.Remove(attribute);
             }
             await _attributeRepository.Save();
-
-            return "";
         }
 
-        public async Task<string> CreateRecieverAttribute(AttributeEntity? attribute)
+        public async Task CreateRecieverAttribute(AttributeEntity? attribute)
         {
             if (!await _attributeRepository.Any(attribute.Id))
             {
                 await _attributeRepository.Create(attribute);
                 await _attributeRepository.Save();
             }
-
-            return "";
         }
 
-        public async Task<string> CreateForeignRecieverAttribute(AttributeEntity? attribute)
+        public async Task CreateForeignRecieverAttribute(AttributeEntity? attribute)
         {
-            
             foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
             {
                 if (!await _foreignAttributeMapRepository.Any(attribute.Id))
@@ -359,14 +338,33 @@ namespace BPMS_BL.Facades
             }
 
             await _foreignAttributeMapRepository.Save();
-            return "";
         }
 
-        public async Task<string> ShareModel(ModelDetailShare? dto)
+        public async Task UpdateForeignRecieverAttribute(AttributeEntity? attribute)
+        {
+            foreach (AttributeEntity attrib in await _foreignAttributeMapRepository.ForeignAttribs(attribute.Id))
+            {
+                attrib.Compulsory = attribute.Compulsory;
+                attrib.Description = attribute.Description;
+                attrib.Name = attribute.Name;
+                attrib.Specification = attribute.Specification;
+                attrib.Disabled = attribute.Disabled;
+            }
+
+            await _foreignAttributeMapRepository.Save();
+        }
+
+        public async Task UpdateRecieverAttribute(AttributeEntity? attribute)
+        {
+            _attributeRepository.Update(attribute);
+            await _attributeRepository.Save();
+        }
+
+        public async Task ShareModel(ModelDetailShare? dto)
         {
             if (await _modelRepository.Any(dto.Id))
             {
-                return "";
+                return;
             }
 
             ModelEntity model = _mapper.Map<ModelEntity>(dto);
@@ -418,11 +416,9 @@ namespace BPMS_BL.Facades
                                                           targetAgenda.AdministratorId);
            
             await _modelRepository.Save();
-
-            return "";
         }
 
-        public async Task<string> IsModelRunable(WorkflowShare? dto)
+        public async Task IsModelRunable(WorkflowShare? dto)
         {
             ModelEntity model = await _modelRepository.StateAgendaPool(dto.ModelId, _system.Id);
             if (!await _workflowRepository.Any(dto.Workflow.Id))
@@ -441,26 +437,21 @@ namespace BPMS_BL.Facades
             {
                 throw new Exception(); // TODO
             }
-
-            return "";
         }
 
-        public async Task<string> RunModel(ModelIdWorkflowDTO? dto)
+        public async Task RunModel(ModelIdWorkflowDTO? dto)
         {
             await new WorkflowHelper(_context).CreateWorkflow(dto.ModelId, dto.WorkflowId);
             await _context.SaveChangesAsync();
-
-            return "";   
         }
 
-        public async Task<string> CreateSystem(SystemEntity? system)
+        public async Task CreateSystem(SystemEntity? system)
         {
             await _systemRepository.Create(system);
             await NotificationHub.CreateSendNotifications(_notificationRepository, system.Id, NotificationTypeEnum.NewSystem, "",
                                                           await _userRepository.Admins());
             
             await _systemAgendaRepository.Save();
-            return "";
         }
 
         public async Task<string> AuthorizeSystem(string auth, HttpRequest request, string? action)

@@ -37,75 +37,101 @@ namespace BPMS.Controllers
         [DisableRequestSizeLimit]
         public async Task<IActionResult> ShareModel()
         {
-            return Ok(await _communicationFacade.ShareModel(JsonConvert.DeserializeObject<ModelDetailShare>(_data)));
+            await _communicationFacade.ShareModel(JsonConvert.DeserializeObject<ModelDetailShare>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> IsModelRunable()
         {
-            return Ok(await _communicationFacade.IsModelRunable(JsonConvert.DeserializeObject<WorkflowShare>(_data)));
+            await _communicationFacade.IsModelRunable(JsonConvert.DeserializeObject<WorkflowShare>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> RunModel()
         {
-            return Ok(await _communicationFacade.RunModel(JsonConvert.DeserializeObject<ModelIdWorkflowDTO>(_data)));
+            await _communicationFacade.RunModel(JsonConvert.DeserializeObject<ModelIdWorkflowDTO>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRecieverAttribute()
         {
-            return Ok(await _communicationFacade.CreateRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data)));
+            await _communicationFacade.CreateRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateForeignRecieverAttribute()
         {
-            return Ok(await _communicationFacade.CreateForeignRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data)));
+            await _communicationFacade.CreateForeignRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data));
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateRecieverAttribute()
+        {
+            await _communicationFacade.UpdateRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data));
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateForeignRecieverAttribute()
+        {
+            await _communicationFacade.UpdateForeignRecieverAttribute(JsonConvert.DeserializeObject<AttributeEntity>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> RemoveRecieverAttribute()
         {
-            return Ok(await _communicationFacade.RemoveRecieverAttribute(JsonConvert.DeserializeObject<Guid>(_data)));
+            await _communicationFacade.RemoveRecieverAttribute(JsonConvert.DeserializeObject<Guid>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> RemoveForeignRecieverAttribute()
         {
-            return Ok(await _communicationFacade.RemoveForeignRecieverAttribute(JsonConvert.DeserializeObject<Guid>(_data)));
+            await _communicationFacade.RemoveForeignRecieverAttribute(JsonConvert.DeserializeObject<Guid>(_data));
+            return Ok();
         }
 
         [HttpPost]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Message()
         {
-            return Ok(await _communicationFacade.Message(JsonConvert.DeserializeObject<MessageShare>(_data)));
+            await _communicationFacade.Message(JsonConvert.DeserializeObject<MessageShare>(_data));
+            return Ok();
         }
 
         [HttpPost]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> ForeignMessage()
         {
-            return Ok(await _communicationFacade.ForeignMessage(JsonConvert.DeserializeObject<MessageShare>(_data)));
+            await _communicationFacade.ForeignMessage(JsonConvert.DeserializeObject<MessageShare>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> BlockActivity()
         {
-            return Ok(await _communicationFacade.BlockActivity(JsonConvert.DeserializeObject<List<BlockWorkflowActivityDTO>>(_data)));
+            await _communicationFacade.BlockActivity(JsonConvert.DeserializeObject<List<BlockWorkflowActivityDTO>>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSystem()
         {
-            return Ok(await _communicationFacade.CreateSystem(JsonConvert.DeserializeObject<SystemEntity>(_data)));
+            await _communicationFacade.CreateSystem(JsonConvert.DeserializeObject<SystemEntity>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> ActivateSystem()
         {
-            return Ok(await _communicationFacade.ActivateSystem());
+            await _communicationFacade.ActivateSystem();
+            return Ok();
         }
 
         [HttpPut] 
@@ -147,7 +173,8 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveReciever()
         {
-            return Ok(await _communicationFacade.RemoveReciever(JsonConvert.DeserializeObject<BlockIdSenderIdDTO>(_data)));
+            await _communicationFacade.RemoveReciever(JsonConvert.DeserializeObject<BlockIdSenderIdDTO>(_data));
+            return Ok();
         }
 
         [HttpPost]
@@ -159,19 +186,22 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> DeactivateSystem()
         {
-            return Ok(await _communicationFacade.DeactivateSystem());
+            await _communicationFacade.DeactivateSystem();
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> ReactivateSystem()
         {
-            return Ok(await _communicationFacade.ReactivateSystem(JsonConvert.DeserializeObject<ConnectionRequestEntity>(_data)));
+            await _communicationFacade.ReactivateSystem(JsonConvert.DeserializeObject<ConnectionRequestEntity>(_data));
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> ChangeEncryption()
         {
-            return Ok(await _communicationFacade.ChangeEncryption(Enum.Parse<EncryptionLevelEnum>(_data)));
+            await _communicationFacade.ChangeEncryption(Enum.Parse<EncryptionLevelEnum>(_data));
+            return Ok();
         }
     }
 }

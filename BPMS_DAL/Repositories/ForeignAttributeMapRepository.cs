@@ -15,9 +15,11 @@ namespace BPMS_DAL.Repositories
     {
         public ForeignAttributeMapRepository(BpmsDbContext context) : base(context) {}
 
-        public Task<List<ForeignAttributeMapEntity>> ForeignAttribs(Guid foreignAttributeId)
+        public Task<List<AttributeEntity?>> ForeignAttribs(Guid foreignAttributeId)
         {
-            return _dbSet.Where(x => x.ForeignAttributeId == foreignAttributeId)
+            return _dbSet.Include(x => x.Attribute)
+                         .Where(x => x.ForeignAttributeId == foreignAttributeId)
+                         .Select(x => x.Attribute)
                          .ToListAsync();
         }
 

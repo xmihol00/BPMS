@@ -83,11 +83,27 @@ namespace BPMS_BL.Facades
             {
                 if (removedIds.Contains(schema.ParentId))
                 {
-                    removedIds.Add(schema.Id);
-                    _dataSchemaRepository.Remove(schema);
+                    if (schema.Data.Count == 0)
+                    {
+                        removedIds.Add(schema.Id);
+                        _dataSchemaRepository.Remove(schema);
+                    }
+                    else
+                    {
+                        schema.Disabled = true;
+                    }
                 }
             }
-            _dataSchemaRepository.Remove(new DataSchemaEntity() { Id = id });
+
+            DataSchemaEntity topSchema = await _dataSchemaRepository.ForRemoval(id);
+            if (topSchema.Data.Count == 0)
+            {
+                _dataSchemaRepository.Remove(topSchema);
+            }
+            else
+            {
+                topSchema.Disabled = true;
+            }
 
             await _dataSchemaRepository.Save();
         }
@@ -272,6 +288,7 @@ namespace BPMS_BL.Facades
             
             if (current != null)
             {
+                current.Disabled = false;
                 return current.Id;
             }
             
