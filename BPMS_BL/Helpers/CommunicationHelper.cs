@@ -226,6 +226,14 @@ namespace BPMS_BL.Helpers
             }
         }
 
+        public static async Task<bool> ChangeEncryption(IAddressAuth addressAuth, EncryptionLevelEnum encryption)
+        {
+            object payload = encryption.ToString();
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ChangeEncryption");
+            List<AttributeEntity> dto = JsonConvert.DeserializeObject<List<AttributeEntity>>(await response.Content.ReadAsStringAsync());
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         private static async Task<HttpResponseMessage> SendMessage(IAddressAuth addressAuth, object payload, string path, HttpMethod? method = null)
         {
             using HttpClientHandler httpClientHandler = new HttpClientHandler();

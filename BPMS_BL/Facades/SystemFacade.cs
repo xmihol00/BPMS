@@ -80,13 +80,28 @@ namespace BPMS_BL.Facades
 
         public async Task<SystemInfoCardDTO> Edit(SystemEditDTO dto)
         {
-            SystemEntity entity = _mapper.Map<SystemEntity>(dto);
-            _systemRepository.Update(entity);
-            _systemRepository.Entry(entity, x => 
+            SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
+            DstAddressDTO address = new DstAddressDTO
             {
-                x.Property(x => x.Key).IsModified = false;
-                x.Property(x => x.State).IsModified = false;
-            });
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption,
+                SystemId = entity.Id,
+                Key = entity.Key,
+                URL = StaticData.ThisSystemURL
+            };
+
+            if (entity.Encryption != dto.Encryption)
+            {
+                if (!await CommunicationHelper.ChangeEncryption(address, dto.Encryption))
+                {
+                    throw new Exception();
+                }
+            }
+
+            entity.Encryption = dto.Encryption;
+            entity.Description = dto.Description;
+            entity.Name = dto.Name;
+            entity.URL = dto.URL;
 
             await _systemRepository.Save();
             return await _systemRepository.InfoCard(dto.Id);

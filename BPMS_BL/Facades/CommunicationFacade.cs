@@ -128,6 +128,14 @@ namespace BPMS_BL.Facades
             return "";
         }
 
+        public async Task<string> ChangeEncryption(EncryptionLevelEnum encryption)
+        {
+            _system.ForeignEncryption = encryption;
+            await _systemRepository.Save();
+
+            return "";
+        }
+
         public async Task<string> ReactivateSystem(ConnectionRequestEntity? request)
         {
             _system.State = SystemStateEnum.Reactivated;
@@ -464,12 +472,12 @@ namespace BPMS_BL.Facades
 
             using StreamReader stream = new StreamReader(request.Body);
             string data = await stream.ReadToEndAsync();
-            if (authSystem.PayloadKey != null)
+            if (_system.Encryption == EncryptionLevelEnum.Encrypted || _system.ForeignEncryption == EncryptionLevelEnum.Encrypted)
             {
                 data = await SymetricCipherHelper.Decrypt(data, authSystem.PayloadKey, authSystem.PayloadIV);
             }
 
-            if (authSystem.PayloadHash != null)
+            if (_system.Encryption >= EncryptionLevelEnum.Hash || _system.ForeignEncryption >= EncryptionLevelEnum.Hash)
             {
                 if (!SymetricCipherHelper.ArraysMatch(authSystem.PayloadHash, new Rfc2898DeriveBytes(data, authSystem.MessageId.ToByteArray(), 1000).GetBytes(32)))
                 {

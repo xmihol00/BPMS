@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using BPMS_BL.Facades;
+using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Sharing;
 using BPMS_DTOs.BlockModel;
@@ -165,6 +166,12 @@ namespace BPMS.Controllers
         public async Task<IActionResult> ReactivateSystem()
         {
             return Ok(await _communicationFacade.ReactivateSystem(JsonConvert.DeserializeObject<ConnectionRequestEntity>(_data)));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeEncryption()
+        {
+            return Ok(await _communicationFacade.ChangeEncryption(Enum.Parse<EncryptionLevelEnum>(_data)));
         }
     }
 }
