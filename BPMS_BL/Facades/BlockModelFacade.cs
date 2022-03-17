@@ -318,6 +318,7 @@ namespace BPMS_BL.Facades
         public async Task<bool> ToggleSendMap(Guid blockId, Guid attributeId)
         {
             AttributeEntity attrib = await _attributeRepository.Bare(attributeId);
+            Guid startBlockId = attrib.BlockId;
 
             bool remove = await _attributeMapRepository.Any(blockId, attributeId);
             bool success = true;
@@ -348,6 +349,7 @@ namespace BPMS_BL.Facades
                 }
             }
 
+            attrib.BlockId = startBlockId;
             if (success)
             {
                 AttributeMapEntity entity = new AttributeMapEntity()
