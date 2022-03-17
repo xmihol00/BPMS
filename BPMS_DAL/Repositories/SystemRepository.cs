@@ -130,6 +130,7 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              URL = x.URL,
                              State = x.State,
+                             Encryption = x.Encryption,
                              Agendas = x.Agendas.Select(y => y.Agenda)
                                                 .Select(y => new AgendaAllDTO
                                                 {
