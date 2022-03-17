@@ -231,7 +231,6 @@ namespace BPMS_BL.Facades
 
         public async Task RemoveAttribute(Guid id)
         {
-            // TODO if any TASKS set disabled
             AttributeEntity attrib = await _attributeRepository.ForRemoval(id);
             
             foreach (BlockModelEntity mappedBlock in attrib.MappedBlocks.Select(x => x.Block))
