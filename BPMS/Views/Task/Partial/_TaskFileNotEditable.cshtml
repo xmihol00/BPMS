@@ -3,7 +3,14 @@
 <div class="col-12 col-xl-6 mt-3">
     <label class="input" @Html.Raw(String.IsNullOrEmpty(Model.Description) ? "" : $"data-title='{Model.Description}'")>
         <div class="readonly-div d-flex justify-content-between">
-            <span>@Model.FileName</span>
+            @if (String.IsNullOrEmpty(Model.FileName))
+            {
+                <span class="text-placeholder">Nevyplněno</span>
+            }
+            else
+            {
+                <span>@Model.FileName</span>
+            }
             <i class="fas fa-download my-auto text-prim-edit pointer" onclick="window.location.href = '/Task/DownloadFile/@Model.Id'"></i>
         </div>
         <span class="input-label">@Model.Name</span>
