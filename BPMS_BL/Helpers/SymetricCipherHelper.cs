@@ -54,18 +54,21 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static Task<string> Decrypt(Stream cipherStream, byte[] key, byte[] iv)
+        public static Task<string> Decrypt(string cipherText, byte[] key, byte[] iv)
         {
             using Aes aes = Aes.Create();
             aes.Key = key;
-            aes.IV = StaticData.IV;
+            aes.IV = iv;
             ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
             
-            using (CryptoStream cryptoStream = new CryptoStream(cipherStream, decryptor, CryptoStreamMode.Read))
+            using (MemoryStream memStream = new MemoryStream(Convert.FromBase64String(cipherText)))
             {
-                using (StreamReader streamReader = new StreamReader(cryptoStream))
+                using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read))
                 {
-                    return streamReader.ReadToEndAsync();
+                    using (StreamReader streamReader = new StreamReader(cryptoStream))
+                    {
+                        return streamReader.ReadToEndAsync();
+                    }
                 }
             }
         }

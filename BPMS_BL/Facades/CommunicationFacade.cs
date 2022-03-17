@@ -462,17 +462,11 @@ namespace BPMS_BL.Facades
             _system = _systemRepository.Bare(id);
             SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
-            string data;
+            using StreamReader stream = new StreamReader(request.Body);
+            string data = await stream.ReadToEndAsync();
             if (authSystem.PayloadKey != null)
             {
-                data = await SymetricCipherHelper.Decrypt(request.Body, authSystem.PayloadKey, authSystem.PayloadIV);
-            }
-            else
-            {
-                using (StreamReader stream = new StreamReader(request.Body))
-                {
-                    data = await stream.ReadToEndAsync();
-                }
+                data = await SymetricCipherHelper.Decrypt(data, authSystem.PayloadKey, authSystem.PayloadIV);
             }
 
             if (authSystem.PayloadHash != null)
