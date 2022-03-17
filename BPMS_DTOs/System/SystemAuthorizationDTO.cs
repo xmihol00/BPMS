@@ -14,5 +14,6 @@ namespace BPMS_DTOs.System
         public string URL { get; set; } = string.Empty;
         public byte[]? PayloadHash { get; set; }
         public byte[]? PayloadKey { get; set; }
+        public byte[]? PayloadIV { get; set; }
     }
 }

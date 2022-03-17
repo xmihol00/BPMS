@@ -9,7 +9,7 @@ namespace BPMS_BL.Helpers
 {
     public static class SymetricCipherHelper
     {
-        public static string JsonEncrypt(IAddressAuth data)
+        public static string AuthEncrypt(IAddressAuth data)
         {
             using Aes aes = Aes.Create();
             aes.Key = data.Key;
@@ -35,7 +35,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static async Task<T?> JsonDecrypt<T>(string cipherText, byte[] key) where T : class
+        public static async Task<T?> AuthDecrypt<T>(string cipherText, byte[] key) where T : class
         {
             using Aes aes = Aes.Create();
             aes.Key = key;
@@ -54,7 +54,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public static Task<string> Decrypt(Stream cipherStream, byte[] key)
+        public static Task<string> Decrypt(Stream cipherStream, byte[] key, byte[] iv)
         {
             using Aes aes = Aes.Create();
             aes.Key = key;
@@ -66,6 +66,30 @@ namespace BPMS_BL.Helpers
                 using (StreamReader streamReader = new StreamReader(cryptoStream))
                 {
                     return streamReader.ReadToEndAsync();
+                }
+            }
+        }
+
+        public static async Task<string> Encrypt(string payload, IAddressAuth auth)
+        {
+            using Aes aes = Aes.Create();
+            aes.KeySize = StaticData.KeySize;
+            aes.GenerateKey();
+            aes.GenerateIV();
+            auth.Key = aes.Key;
+            auth.PayloadIV = aes.IV;
+            
+            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+            
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                using (CryptoStream cryptoStream = new CryptoStream(memStream, encryptor, CryptoStreamMode.Write))
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
+                    {
+                        await streamWriter.WriteAsync(payload);
+                        return Convert.ToBase64String(memStream.ToArray());
+                    }
                 }
             }
         }

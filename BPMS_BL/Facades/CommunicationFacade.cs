@@ -460,12 +460,12 @@ namespace BPMS_BL.Facades
             auth = auth["Bearer ".Length..];
             (Guid id, auth) = SymetricCipherHelper.ExtractGuid(auth);
             _system = _systemRepository.Bare(id);
-            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.JsonDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
+            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
 
             string data;
             if (authSystem.PayloadKey != null)
             {
-                data = await SymetricCipherHelper.Decrypt(request.Body, authSystem.PayloadKey);
+                data = await SymetricCipherHelper.Decrypt(request.Body, authSystem.PayloadKey, authSystem.PayloadIV);
             }
             else
             {

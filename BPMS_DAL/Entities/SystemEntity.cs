@@ -16,6 +16,8 @@ namespace BPMS_DAL.Entities
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public SystemStateEnum State { get; set; }
+        public EncryptionLevelEnum Encryption { get; set; }
+        public EncryptionLevelEnum ForeignEncryption { get; set; }
 
         [JsonIgnore]
         public List<SystemAgendaEntity> Agendas { get; set; } = new List<SystemAgendaEntity>();

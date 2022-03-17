@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
+using BPMS_Common.Enums;
 using BPMS_Common.Interfaces;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Sharing;
@@ -239,19 +240,24 @@ namespace BPMS_BL.Helpers
                 body = JsonConvert.SerializeObject(payload);
             }
 
+            if (addressAuth.Encryption >= EncryptionLevelEnum.Hash)
+            {
+                addressAuth.PayloadHash = new Rfc2898DeriveBytes(body, addressAuth.MessageId.ToByteArray(), 1000).GetBytes(32);
+            }
+
+            if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)
+            {
+                body = await SymetricCipherHelper.Encrypt(body, addressAuth);
+            }
+
             using HttpClient client = new HttpClient(httpClientHandler);
             using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = method ?? HttpMethod.Post,
                 RequestUri = new Uri(addressAuth.DestinationURL + path), 
                 Content = new StringContent(body)
-                {
-                    Headers = { 
-                        ContentType = new MediaTypeHeaderValue("application/json")
-                    }
-                }
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", SymetricCipherHelper.JsonEncrypt(addressAuth));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", SymetricCipherHelper.AuthEncrypt(addressAuth));
 
             return await client.SendAsync(request);
         }

@@ -11,6 +11,12 @@
         <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
     </div>
     <div class="row">
+        <div class="col-12 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="URL" value="" />
+                <span class="input-label">URL systému</span>
+            </label>
+        </div>
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
                 <input required class="input-field" type="text" placeholder=" " name="Name" value="" />
@@ -19,8 +25,13 @@
         </div>
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
-                <input required class="input-field" type="text" placeholder=" " name="URL" value="" />
-                <span class="input-label">URL systému</span>
+                <select class="input-select" name="AdministratorId"> 
+                    @foreach (EncryptionLevelEnum value in Enum.GetValues<EncryptionLevelEnum>())
+                    {
+                        <option value="@value">@value.ToLabel()</option>
+                    }
+                </select>
+                <span class="input-label">Zabezbečení</span>
             </label>
         </div>
         <div class="col-12 mb-2">
