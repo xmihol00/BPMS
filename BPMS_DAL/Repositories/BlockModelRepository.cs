@@ -443,7 +443,9 @@ namespace BPMS_DAL.Repositories
                                   SystemId = x.Pool.System.Id,
                                   Key = x.Pool.System.Key,
                                   BlockId = x.Id,
-                                  ModelId = x.Pool.ModelId
+                                  ModelId = x.Pool.ModelId,
+                                  Encryption = x.Pool.System.Encryption > x.Pool.System.ForeignEncryption ? 
+                                               x.Pool.System.Encryption : x.Pool.System.ForeignEncryption
                               })
                               .ToListAsync();
         }

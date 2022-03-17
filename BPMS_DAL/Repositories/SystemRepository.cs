@@ -182,7 +182,8 @@ namespace BPMS_DAL.Repositories
                          {
                              DestinationURL = x.URL,
                              Key = x.Key,
-                             SystemId = x.Id
+                             SystemId = x.Id,
+                             Encryption = x.Encryption > x.ForeignEncryption ? x.Encryption : x.ForeignEncryption
                          })
                          .FirstAsync(x => x.SystemId == systemId);
         }

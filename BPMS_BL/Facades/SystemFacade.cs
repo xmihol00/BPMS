@@ -108,7 +108,8 @@ namespace BPMS_BL.Facades
                 Key = entity.Key,
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL,
-                DestinationURL = entity.URL
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
 
             if (!await CommunicationHelper.ActivateSystem(address))
@@ -129,7 +130,8 @@ namespace BPMS_BL.Facades
                 Key = entity.Key,
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL,
-                DestinationURL = entity.URL
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
             ConnectionRequestEntity request = new ConnectionRequestEntity
             {
@@ -158,7 +160,8 @@ namespace BPMS_BL.Facades
                 Key = entity.Key,
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL,
-                DestinationURL = entity.URL
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
 
             if (!await CommunicationHelper.DeactivateSystem(address))
@@ -191,14 +194,17 @@ namespace BPMS_BL.Facades
                         SenderName = _userName,
                         Text = dto.Text,
                     }
-                }
+                },
+                Encryption = dto.Encryption,
+                ForeignEncryption = dto.Encryption
             };
             DstAddressDTO address = new DstAddressDTO
             {
                 Key = StaticData.Key,
                 SystemId = StaticData.ThisSystemId,
                 URL = dto.URL,
-                DestinationURL = dto.URL
+                DestinationURL = dto.URL,
+                Encryption = entity.Encryption
             };
 
             if (!await CommunicationHelper.CreateSystem(address, entity))

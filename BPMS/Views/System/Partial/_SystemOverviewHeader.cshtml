@@ -25,7 +25,7 @@
         </div>
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
-                <select class="input-select" name="AdministratorId"> 
+                <select class="input-select" name="Encryption"> 
                     @foreach (EncryptionLevelEnum value in Enum.GetValues<EncryptionLevelEnum>())
                     {
                         <option value="@value">@value.ToLabel()</option>
