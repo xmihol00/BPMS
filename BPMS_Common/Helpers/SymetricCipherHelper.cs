@@ -40,7 +40,8 @@ namespace BPMS_Common.Helpers
         public static async Task<T?> AuthDecrypt<T>(byte[] cipherArray, byte[] key) where T : class
         {
             using Aes aes = Aes.Create();
-            ICryptoTransform decryptor = aes.CreateDecryptor(await DecryptKey(key), _thisIV);
+            key = await DecryptKey(key);
+            ICryptoTransform decryptor = aes.CreateDecryptor(key, _thisIV);
             
             using (MemoryStream memStream = new MemoryStream(cipherArray))
             {
@@ -121,7 +122,7 @@ namespace BPMS_Common.Helpers
             using Aes aes = Aes.Create();
             ICryptoTransform decryptor = aes.CreateDecryptor(_keyKey, _keyIV);
             
-            using (MemoryStream memStream = new MemoryStream(key))
+            using (MemoryStream memStream = new MemoryStream())
             {
                 using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Write))
                 {
