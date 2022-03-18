@@ -28,7 +28,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            _agendaFacade.SetFilters(_filters, _userId);
+            _agendaFacade.SetFilters(_filters);
         }
 
         [HttpGet]

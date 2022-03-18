@@ -30,16 +30,15 @@ namespace BPMS_BL.Facades
             _notificationRepository = notificationRepository;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _notificationRepository.Filters = filters;
-            _notificationRepository.UserId = userId;
-            _userId = userId;
+            _notificationRepository.UserId = UserId;
         }
 
         public async Task<List<NotificationAllDTO>> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _notificationRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _notificationRepository.All();
         }

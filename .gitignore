@@ -47,10 +47,6 @@ FileStorePublished/
 
 mono_crash.*
 
-Migrations/
-
-SystemSeed.cs
-Migrations/
 .vscode/
 DB_reset.sql
 reset_DB.sh

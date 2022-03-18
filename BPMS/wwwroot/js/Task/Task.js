@@ -22,7 +22,7 @@ function SaveUserTask()
 {
     let form = document.getElementById("TaskDataFormId");
     form.setAttribute("action", "/Task/SaveUserTask");
-    AjaxFormSubmit(form, "DetailDivId");
+    AjaxFormSubmit(form, "DetailDivId", false, false, null, () => ShowAlert("Výstupní data úkolu byla úspěšně uložena."));
 }
 
 function SaveServiceTask()
@@ -47,6 +47,7 @@ function SaveServiceTask()
     .done((result) => 
     {
         document.getElementById("DetailDivId").innerHTML = result;
+        ShowAlert("Data úkolu byla úspěšně uložena.")
     })
     .fail(() => 
     {

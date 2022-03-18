@@ -62,17 +62,16 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _modelRepository.Filters = filters;
-            _modelRepository.UserId = userId;
-            _userRepository.UserId = userId;
-            _userId = userId;
+            _modelRepository.UserId = UserId;
+            _userRepository.UserId = UserId;
         }
 
         public async Task<List<ModelAllDTO>> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _modelRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _modelRepository.All();
         }
@@ -214,7 +213,7 @@ namespace BPMS_BL.Facades
 
             if (run)
             {
-                WorkflowHelper workflowHelper = new WorkflowHelper(_context);
+                WorkflowHelper workflowHelper = new WorkflowHelper(_context, UserId);
                 await workflowHelper.CreateWorkflow(dto.Id, workflow);
             }
             else

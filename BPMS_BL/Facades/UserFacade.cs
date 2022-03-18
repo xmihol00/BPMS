@@ -37,25 +37,24 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _userRepository.Filters = filters;
-            _userRepository.UserId = userId;
+            _userRepository.UserId = UserId;
             _notificationRepository.Filters = filters;
-            _notificationRepository.UserId = userId;
-            _userId = userId;
+            _notificationRepository.UserId = UserId;
         }
 
         public async Task<List<UserAllDTO>> FilterUsers(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _userRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _userRepository.All();
         }
 
         public async Task<List<NotificationAllDTO>> FilterNotifications(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _userRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _notificationRepository.All();
         }

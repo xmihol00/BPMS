@@ -29,7 +29,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            _userFacade.SetFilters(_filters, _userId);
+            _userFacade.SetFilters(_filters);
         }
 
         [HttpGet]

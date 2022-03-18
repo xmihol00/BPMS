@@ -19,7 +19,7 @@ namespace BPMS_BL.Facades
 {
     public class BaseFacade
     {
-        protected Guid _userId { get; set; }
+        public Guid UserId { get; set; }
         protected readonly FilterRepository _filterRepository;
 
         public BaseFacade(FilterRepository filterRepository)

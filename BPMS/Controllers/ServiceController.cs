@@ -26,7 +26,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            _serviceFacade.SetFilters(_filters, _userId);
+            _serviceFacade.SetFilters(_filters);
         }
 
         [HttpPost]

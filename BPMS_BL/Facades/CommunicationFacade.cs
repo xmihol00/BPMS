@@ -121,7 +121,7 @@ namespace BPMS_BL.Facades
         {
             _system.State = SystemStateEnum.Deactivated;
             await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.DeactivatedSystem, 
-                                                          _system.Name, await _userRepository.Admins());
+                                                          _system.Name, null, await _userRepository.Admins());
             await _systemRepository.Save();
         }
 
@@ -135,7 +135,7 @@ namespace BPMS_BL.Facades
         {
             _system.State = SystemStateEnum.Reactivated;
             await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.ReactivateSystem, 
-                                                          _system.Name, await _userRepository.Admins());
+                                                          _system.Name, null, await _userRepository.Admins());
             await _connectionRequestRepository.Create(request);
             await _connectionRequestRepository.Save();
         }
@@ -170,7 +170,7 @@ namespace BPMS_BL.Facades
             _system.State = SystemStateEnum.Active;
             _systemRepository.Update(_system);
             await NotificationHub.CreateSendNotifications(_notificationRepository, _system.Id, NotificationTypeEnum.ActivatedSystem, 
-                                                          _system.Name, await _userRepository.Admins());
+                                                          _system.Name, null, await _userRepository.Admins());
 
             await _systemRepository.Save();
         }
@@ -412,7 +412,7 @@ namespace BPMS_BL.Facades
 
             await _flowRepository.CreateRange(dto.Flows);
 
-            await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.NewModel, model.Name,
+            await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.NewModel, model.Name, null,
                                                           targetAgenda.AdministratorId);
            
             await _modelRepository.Save();
@@ -429,7 +429,7 @@ namespace BPMS_BL.Facades
             }
 
             model.Pools[0].StartedId = model.Pools[0].Blocks.First(x => x is IStartEventModelEntity).Id;
-            await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.ModelRun, model.Name,
+            await NotificationHub.CreateSendNotifications(_notificationRepository, model.Id, NotificationTypeEnum.ModelRun, model.Name, null,
                                                           model.Agenda.AdministratorId);
             await _workflowRepository.Save();
 
@@ -448,7 +448,7 @@ namespace BPMS_BL.Facades
         public async Task CreateSystem(SystemEntity? system)
         {
             await _systemRepository.Create(system);
-            await NotificationHub.CreateSendNotifications(_notificationRepository, system.Id, NotificationTypeEnum.NewSystem, "",
+            await NotificationHub.CreateSendNotifications(_notificationRepository, system.Id, NotificationTypeEnum.NewSystem, "", null,
                                                           await _userRepository.Admins());
             
             await _systemAgendaRepository.Save();

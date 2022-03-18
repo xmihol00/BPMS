@@ -40,18 +40,17 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId, string userName)
+        public void SetFilters(bool[] filters, string userName)
         {
             _systemRepository.Filters = filters;
-            _systemRepository.UserId = userId;
-            _userRepository.UserId = userId;
-            _userId = userId;
+            _systemRepository.UserId = UserId;
+            _userRepository.UserId = UserId;
             _userName = userName;
         }
 
         public async Task<List<SystemAllDTO>> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _systemRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _systemRepository.All();
         }
@@ -151,7 +150,7 @@ namespace BPMS_BL.Facades
             ConnectionRequestEntity request = new ConnectionRequestEntity
             {
                 Date = DateTime.Now,
-                ForeignUserId = _userId,
+                ForeignUserId = UserId,
                 SystemId = dto.Id,
                 SenderName = _userName,
                 Text = dto.Text
@@ -205,7 +204,7 @@ namespace BPMS_BL.Facades
                     new ConnectionRequestEntity
                     {
                         Date = DateTime.Now,
-                        ForeignUserId = _userId,
+                        ForeignUserId = UserId,
                         SenderName = _userName,
                         Text = dto.Text,
                     }

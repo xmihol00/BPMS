@@ -33,7 +33,7 @@ namespace BPMS_BL.Hubs
         }
 
         public static async Task CreateSendNotifications(NotificationRepository notificationRepository, Guid targetId, NotificationTypeEnum type,
-                                                  string info, params Guid[] userIds)
+                                                         string info, Guid? currentUserId, params Guid[] userIds)
         {
             IHubContext<NotificationHub> hub = StaticData.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
             
@@ -46,7 +46,7 @@ namespace BPMS_BL.Hubs
                 Date = DateTime.Now.ToString()
             };
 
-            foreach (Guid userId in userIds)
+            foreach (Guid userId in userIds.Where(x => x != currentUserId))
             {
                 NotificationEntity notification = new NotificationEntity
                 {

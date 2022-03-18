@@ -82,7 +82,7 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<ServiceRequestDTO> ForRequest(Guid id)
+        public Task<ServiceRequestDTO?> ForRequest(Guid? id)
         {
             return _dbSet.Include(x => x.Headers)
                          .Select(x => new ServiceRequestDTO 
@@ -102,7 +102,7 @@ namespace BPMS_DAL.Repositories
                                                 })
                                                 .ToList()
                          })
-                         .FirstAsync(x => x.Id == id);
+                         .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public Task<List<ServiceIdNameDTO>> AllIdNames()

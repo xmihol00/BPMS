@@ -44,16 +44,15 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _serviceRepository.Filters = filters;
-            _serviceRepository.UserId = userId;
-            _userId = userId;
+            _serviceRepository.UserId = UserId;
         }
 
         public async Task<List<ServiceAllDTO>> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _serviceRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _serviceRepository.All();
         }
@@ -156,7 +155,7 @@ namespace BPMS_BL.Facades
 
         public async Task<ServiceCallResultDTO> SendRequest(IFormCollection data)
         {
-            ServiceRequestDTO service = await _serviceRepository.ForRequest(Guid.Parse(data["ServiceId"].First()));
+            ServiceRequestDTO service = await _serviceRepository.ForRequest(Guid.Parse(data["ServiceId"].FirstOrDefault()));
             service.Nodes = await CreateRequestTree(service.Id, data);
             ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
             FormatResult(result);

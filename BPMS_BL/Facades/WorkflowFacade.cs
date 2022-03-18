@@ -26,11 +26,10 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _workflowRepository.Filters = filters;
-            _workflowRepository.UserId = userId;
-            _userId = userId;
+            _workflowRepository.UserId = UserId;
         }
 
         public async Task<WorkflowOverviewDTO> Overview()
@@ -85,7 +84,7 @@ namespace BPMS_BL.Facades
 
         public async Task<WorkflowOverviewDTO> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _workflowRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             WorkflowOverviewDTO overview = new WorkflowOverviewDTO()
             {

@@ -80,7 +80,7 @@ function ShowAlert(message, error = false)
         alert.classList.remove("alert-danger");
     }
 
-    AlertTimeout = setTimeout(() => HideStart(alertDiv), 6000);
+    AlertTimeout = setTimeout(() => HideStart(alertDiv), error ? 2500 : 5000);
 }
 
 function ConnectionAlert()
@@ -90,8 +90,8 @@ function ConnectionAlert()
 
 function HideStart(element)
 {
-    AlertInterval = setInterval(() => { element.style.opacity -= 0.01; }, 35);
-    AlertTimeout = setTimeout(HideAlert, 3500);
+    AlertInterval = setInterval(() => { element.style.opacity -= 0.01; }, 30);
+    AlertTimeout = setTimeout(HideAlert, 3000);
 }
 
 function HideAlert()

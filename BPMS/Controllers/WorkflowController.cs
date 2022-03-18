@@ -25,7 +25,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            _workflowFacade.SetFilters(_filters, _userId);
+            _workflowFacade.SetFilters(_filters);
         }
 
         [HttpGet]

@@ -48,6 +48,7 @@ namespace BPMS.Controllers
                 else if (claim.Type == ClaimTypes.NameIdentifier)
                 {
                     _userId = Guid.Parse(claim.Value);
+                    _baseFacade.UserId = _userId;
                     ViewBag.Id = _userId;
                 }                    
             }

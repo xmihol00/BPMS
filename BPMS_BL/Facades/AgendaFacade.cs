@@ -56,16 +56,15 @@ namespace BPMS_BL.Facades
             _mapper = mapper;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _agendaRepository.Filters = filters;
-            _agendaRepository.UserId = userId;
-            _userId = userId;
+            _agendaRepository.UserId = UserId;
         }
 
         public async Task<List<AgendaAllDTO>> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _agendaRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _agendaRepository.All();
         }
@@ -98,7 +97,7 @@ namespace BPMS_BL.Facades
             AgendaEntity entity = _mapper.Map<AgendaEntity>(dto);
             await _agendaRepository.Create(entity);
             await NotificationHub.CreateSendNotifications(_notificationRepository, entity.Id, NotificationTypeEnum.NewAgenda, 
-                                                          entity.Name, entity.AdministratorId);
+                                                          entity.Name, UserId, entity.AdministratorId);
             await _agendaRepository.Save();
             return entity.Id;
         }
@@ -132,7 +131,7 @@ namespace BPMS_BL.Facades
 
             AgendaIdNameDTO agenda = await _agendaRoleRepository.AgendaIdName(agendaRoleId);
             await NotificationHub.CreateSendNotifications(_notificationRepository, agenda.Id, NotificationTypeEnum.NewRole, 
-                                                          agenda.Name, userId);
+                                                          agenda.Name, UserId, userId);
 
             await _agendaRoleRepository.Save();
         }
@@ -143,7 +142,7 @@ namespace BPMS_BL.Facades
             _userRoleRepository.Remove(await _userRoleRepository.RoleForRemoval(userId, agendaRoleId));
             
             await NotificationHub.CreateSendNotifications(_notificationRepository, agenda.Id, NotificationTypeEnum.RemovedRole, 
-                                                          agenda.Name, userId);
+                                                          agenda.Name, UserId, userId);
 
             await _userRoleRepository.Save();
         }
@@ -192,7 +191,7 @@ namespace BPMS_BL.Facades
             }
 
             await NotificationHub.CreateSendNotifications(_notificationRepository, agendaRole.AgendaId, NotificationTypeEnum.RemovedRole, 
-                                                          agendaRole.Agenda.Name, agendaRole.UserRoles.Select(x => x.UserId).ToArray());
+                                                          agendaRole.Agenda.Name, UserId, agendaRole.UserRoles.Select(x => x.UserId).ToArray());
 
             _agendaRoleRepository.Remove(agendaRole);
             await _agendaRoleRepository.Save();

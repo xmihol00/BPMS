@@ -816,8 +816,9 @@ a:hover {
 }
 
 .fa-info-circle, .fa-chevron-circle-left {
-  font-size: 1.3em;
+  font-size: 1.3em !important;
 }
+
 
 .map-src, .map-dst, .target {
   border: 2px solid var(--color-border-dark);

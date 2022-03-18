@@ -22,7 +22,7 @@ namespace BPMS.Controllers
         {
             base.OnActionExecuting(context);
 
-            _notificationFacade.SetFilters(_filters, _userId);
+            _notificationFacade.SetFilters(_filters);
         }
 
         [HttpPost]

@@ -40,9 +40,10 @@ namespace BPMS_BL.Helpers
         private Dictionary<Guid, BlockWorkflowEntity> _createdUserTasks = new Dictionary<Guid, BlockWorkflowEntity>();
         private Dictionary<(Guid, Guid), TaskDataEntity> _createdServiceData = new Dictionary<(Guid, Guid), TaskDataEntity>();
         private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
+        private readonly Guid? _currentUserId;
 
         #pragma warning disable CS8618
-        public WorkflowHelper(BpmsDbContext context)
+        public WorkflowHelper(BpmsDbContext context, Guid? currentUserId = null)
         {
             _modelRepository = new ModelRepository(context);
             _workflowRepository = new WorkflowRepository(context);
@@ -55,6 +56,7 @@ namespace BPMS_BL.Helpers
             _serviceRepository = new ServiceRepository(context);
             _poolRepository = new PoolRepository(context);
             _notificationRepository = new NotificationRepository(context);
+            _currentUserId = currentUserId;
         }
         #pragma warning restore CS8618
 
@@ -74,8 +76,8 @@ namespace BPMS_BL.Helpers
             await StartNextTask(workflow.Blocks[0]);
             await _modelRepository.Save();
             await ShareActivity(startEvent.PoolId, workflow.Id, model.Id);
-            await NotificationHub.CreateSendNotifications(_notificationRepository, workflow.Id, NotificationTypeEnum.NewWorkflow, 
-                                                          workflow.Name, workflow.AdministratorId.Value);
+            await NotificationHub.CreateSendNotifications(_notificationRepository, workflow.Id, NotificationTypeEnum.NewWorkflow,
+                                                          workflow.Name, _currentUserId, workflow.AdministratorId.Value);
         }
 
         public async Task CreateWorkflow(Guid modelId, Guid workflowId)
@@ -90,9 +92,16 @@ namespace BPMS_BL.Helpers
             ServiceCallResultDTO? result = null;
             try
             {
-                ServiceRequestDTO service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId.Value);
-                service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
-                result = await new WebServiceHelper(service).SendRequest();
+                ServiceRequestDTO? service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId);
+                if (service != null)
+                {
+                    service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
+                    result = await new WebServiceHelper(service).SendRequest();
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch
             {
@@ -498,15 +507,18 @@ namespace BPMS_BL.Helpers
 
             try
             {
-                ServiceRequestDTO service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId.Value);
-                service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
-                ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
-                serviceTask.FailedResponse = result.RecievedData;
-                if (result.StatusCode != HttpStatusCode.OK)
+                ServiceRequestDTO? service = await _serviceRepository.ForRequest(serviceTaskModel.ServiceId);
+                if (service != null)
                 {
-                    throw new Exception();
+                    service.Nodes = await CreateRequestTree(serviceTaskModel.ServiceId.Value, serviceTask.Id);
+                    ServiceCallResultDTO result = await new WebServiceHelper(service).SendRequest();
+                    serviceTask.FailedResponse = result.RecievedData;
+                    if (result.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception();
+                    }
+                    await MapRequestResult(result, serviceTask.Id, serviceTask.WorkflowId);
                 }
-                await MapRequestResult(result, serviceTask.Id, serviceTask.WorkflowId);
 
                 await StartNextTask(task);
                 serviceTask.State = BlockWorkflowStateEnum.NotStarted;
@@ -518,7 +530,7 @@ namespace BPMS_BL.Helpers
                 serviceTask.UserId = await _agendaRoleRepository.LeastBussyUser(serviceTaskModel.RoleId ?? Guid.Empty) ??
                                                                                 serviceTask.Workflow.AdministratorId;
                 await NotificationHub.CreateSendNotifications(_notificationRepository, serviceTask.Id, NotificationTypeEnum.NewServiceTask,
-                                                              serviceTask.BlockModel.Name, serviceTask.UserId.Value);
+                                                              serviceTask.BlockModel.Name, _currentUserId, serviceTask.UserId.Value);
             }
         }
 
@@ -803,7 +815,7 @@ namespace BPMS_BL.Helpers
                               userTask.Workflow.AdministratorId;
 
             await NotificationHub.CreateSendNotifications(_notificationRepository, userTask.Id, NotificationTypeEnum.NewUserTask, 
-                                                          userTaskModel.Name, userTask.UserId.Value);
+                                                          userTaskModel.Name, _currentUserId, userTask.UserId.Value);
         }
 
         public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)

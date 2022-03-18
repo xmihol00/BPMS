@@ -219,7 +219,7 @@ namespace BPMS_BL.Facades
 
         public async Task<List<TaskAllDTO>> Filter(FilterDTO dto)
         {
-            await FilterHelper.ChnageFilterState(_filterRepository, dto, _userId);
+            await FilterHelper.ChnageFilterState(_filterRepository, dto, UserId);
             _taskRepository.Filters[((int)dto.Filter)] = !dto.Removed;
             return await _taskRepository.All();
         }
@@ -318,11 +318,10 @@ namespace BPMS_BL.Facades
             return file;
         }
 
-        public void SetFilters(bool[] filters, Guid userId)
+        public void SetFilters(bool[] filters)
         {
             _taskRepository.Filters = filters;
-            _taskRepository.UserId = userId;
-            _userId = userId;
+            _taskRepository.UserId = UserId;
         }
 
         public struct TaskArrayCount
