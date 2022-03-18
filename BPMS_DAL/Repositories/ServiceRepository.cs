@@ -69,7 +69,6 @@ namespace BPMS_DAL.Repositories
                             Serialization = x.Serialization,
                             Type = x.Type,
                             URL = x.URL,
-                            AppId = x.AppId,
                             AuthType = x.AuthType,
                             Headers = x.Headers.Select(y => new HeaderAllDTO
                                                {

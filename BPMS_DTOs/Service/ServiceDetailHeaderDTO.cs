@@ -12,6 +12,5 @@ namespace BPMS_DTOs.Service
 {
     public class ServiceDetailHeaderDTO : ServiceDetailInfoDTO
     {
-        public string? AppId { get; set; }
     }
 }

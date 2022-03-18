@@ -24,6 +24,8 @@ namespace BPMS_BL.Profiles
 
             CreateMap<ServiceCreateEditDTO, ServiceEntity>()
                 .ForMember(dst => dst.Description, opt => opt.MapFrom(src => src.Description == null ? "" : src.Description))
+                .ForMember(dst => dst.AppId, opt => opt.Ignore())
+                .ForMember(dst => dst.AppSecret, opt => opt.Ignore())
                 .ForMember(dst => dst.URL, opt => opt.MapFrom(src => src.URL.ToString()));
 
             CreateMap<HeaderCreateEditDTO, ServiceHeaderEntity>();

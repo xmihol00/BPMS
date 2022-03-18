@@ -133,8 +133,8 @@
         </div>
         <div id="AppIdId" class="col-12 col-md-6 mb-3 @(Model.AuthType == ServiceAuthEnum.Basic ? "" : "d-none")">
             <label class="input">
-                <input name="AppId" class="input-field" type="text" placeholder=" " value="@Model.AppId"/>
-                <span class="input-label">Identifikátor</span>
+                <input name="AppId" class="input-field" type="text" placeholder=" " value=""/>
+                <span class="input-label">Nový identifikátor</span>
             </label>
         </div>
         <div id="AppSecretId" class="col-12 mb-3 @(Model.AuthType == ServiceAuthEnum.Basic ? "col-md-6" : "") @(Model.AuthType == ServiceAuthEnum.None ? "d-none" : "")">

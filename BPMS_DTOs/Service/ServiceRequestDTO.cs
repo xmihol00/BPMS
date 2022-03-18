@@ -17,8 +17,8 @@ namespace BPMS_DTOs.Service
         public SerializationEnum Serialization { get; set; }
         public HttpMethodEnum HttpMethod { get; set; }
         public ServiceAuthEnum AuthType { get; set; }
-        public string? AppId { get; set; }
-        public string? AppSecret { get; set; }
+        public byte[]? AppId { get; set; }
+        public byte[]? AppSecret { get; set; }
         public string URL { get; set; } = string.Empty;
         public IEnumerable<DataSchemaDataDTO> Nodes { get; set; } = new List<DataSchemaDataDTO>();
         public List<HeaderRequestDTO> Headers { get; set; } = new List<HeaderRequestDTO>();

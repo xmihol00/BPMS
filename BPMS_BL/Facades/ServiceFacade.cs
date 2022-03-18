@@ -232,14 +232,19 @@ namespace BPMS_BL.Facades
             ServiceEntity entity = await _serviceRepository.Bare(dto.Id);
             if (dto.AuthType == ServiceAuthEnum.None)
             {
-                dto.AppId = null;
-                dto.AppSecret = null;
+                entity.AppId = null;
+                entity.AppSecret = null;
             }
             else
             {
-                if (dto.AppSecret == null)
+                if (dto.AppSecret != null)
                 {
-                    dto.AppSecret = entity.AppSecret;
+                    entity.AppSecret = await SymetricCipherHelper.EncryptSecret(dto.AppSecret);
+                }
+
+                if (dto.AppId != null)
+                {
+                    entity.AppId = await SymetricCipherHelper.EncryptSecret(dto.AppId);
                 }
             }
             _mapper.Map<ServiceCreateEditDTO, ServiceEntity>(dto, entity);
