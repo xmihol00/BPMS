@@ -75,12 +75,6 @@
     <div id="Main" role="main" class="pb-3 @(ViewBag.Signed ? "main-content-large main-content" : "")">
         @RenderBody()
     </div>
-    <div id="AlertDivId" class="custom-alert"><div class="alert alert-danger mx-4 d-flex justify-content-between"><span></span>
-            <button type="button" class="btn close my-auto" onclick="HideAlert()">
-                <i class="fas fa-times my-auto close-icon"></i>
-            </button>
-        </div>
-    </div>
     <footer id="Footer" class="border-top footer text-muted @(ViewBag.Signed ? "footer-large" : "footer-full")">
         <div class="container">
             &copy; 2022 - David Mihola
@@ -88,5 +82,11 @@
     </footer>
     @await RenderSectionAsync("Scripts", required: false)
     <div id="ModalBackgroundId" class="modal-background" onclick="HideModal()"></div>
+    <div id="AlertDivId" class="custom-alert"><div class="alert alert-danger d-flex justify-content-between"><span></span>
+            <button type="button" class="btn close my-auto py-0 pe-0 ms-2" onclick="HideAlert()">
+                <i class="fas fa-times my-auto alert-close"></i>
+            </button>
+        </div>
+    </div>
 </body>
 </html>

@@ -56,7 +56,7 @@ window.addEventListener('DOMContentLoaded', () =>
 function ShowAlert(message, error = false) 
 {
     let alertDiv = document.getElementById("AlertDivId");
-    alertDiv.style.display = "block";
+    alertDiv.style.display = "flex";
     alertDiv.style.opacity = "1";
     
     let alert = alertDiv.firstChild;
@@ -80,7 +80,7 @@ function ShowAlert(message, error = false)
         alert.classList.remove("alert-danger");
     }
 
-    //AlertTimeout = setTimeout(() => HideStart(alertDiv), 6000);
+    AlertTimeout = setTimeout(() => HideStart(alertDiv), 6000);
 }
 
 function ConnectionAlert()

@@ -62,11 +62,20 @@ body {
 }
 
 .custom-alert {
-  display: none; 
+  display: none;
   position: fixed;
-  z-index: 100000;
+  z-index: 999999;
   top: 65px;
-  margin: 0px max(calc(50vw - 700px), 1em);
+  width: 100vw;
+  justify-content: center;
+  height: 1px;
+  overflow: visible;
+}
+
+.custom-alert > div {
+  max-width: 1400px;
+  min-height: max-content;
+  height: fit-content !important;
 }
 
 .signin-position {
@@ -375,6 +384,15 @@ a:hover {
 .shadow-box-in {
   -webkit-box-shadow: inset 0px 0px 2px 1px #aaa; 
   box-shadow: inset 0px 0px 2px 1px #aaa;  
+}
+
+.alert-close {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.alert-close:hover {
+  color: #000 !important;
 }
 
 .close-icon {
