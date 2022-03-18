@@ -198,7 +198,7 @@ namespace BPMS_BL.Facades
             {
                 URL = StaticData.ThisSystemURL,
                 State = SystemStateEnum.Inactive,
-                Key = SymetricCipherHelper.NewKey(),
+                Key = await SymetricCipherHelper.NewKey(),
                 ConnectionRequests = new List<ConnectionRequestEntity>
                 {
                     new ConnectionRequestEntity
@@ -214,7 +214,7 @@ namespace BPMS_BL.Facades
             };
             DstAddressDTO address = new DstAddressDTO
             {
-                Key = StaticData.Key,
+                Key = null,
                 SystemId = StaticData.ThisSystemId,
                 URL = dto.URL,
                 DestinationURL = dto.URL,

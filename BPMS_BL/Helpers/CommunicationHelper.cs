@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
 using BPMS_Common.Enums;
+using BPMS_Common.Helpers;
 using BPMS_Common.Interfaces;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Sharing;
@@ -267,7 +268,7 @@ namespace BPMS_BL.Helpers
 
             if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)
             {
-                body = await SymetricCipherHelper.Encrypt(body, addressAuth);
+                body = await SymetricCipherHelper.EncryptMessage(body, addressAuth);
             }
 
             using HttpClient client = new HttpClient(httpClientHandler);
@@ -277,7 +278,7 @@ namespace BPMS_BL.Helpers
                 RequestUri = new Uri(addressAuth.DestinationURL + path), 
                 Content = new StringContent(body)
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", SymetricCipherHelper.AuthEncrypt(addressAuth));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await SymetricCipherHelper.AuthEncrypt(addressAuth));
 
             return await client.SendAsync(request);
         }

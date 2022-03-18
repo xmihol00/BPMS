@@ -7,14 +7,14 @@
         {
             <li>
                 <div class="d-flex justify-content-between">
-                    <div>
+                    <div @Html.Raw(String.IsNullOrEmpty(node.Description) ? "" : $"data-title='{node.Description}'")>
                         <b>@node.Name</b> <span>@(String.IsNullOrEmpty(node.Alias) ? "" : $"({node.Alias})")</span> <span class="text-code ps-4">@node.Type.ToLabel()</span>
                     </div>
                     <div id="@node.Id" class="schema-btns">
                         <span class="badge @(node.Compulsory ? "bg-primary" : "bg-secondary") rounded-pill text-1em">
                             <i class="fas fa-check-circle"></i>
                         </span>
-                        <span id="@node.ParentId" class="btn btn-sm p-icon" onclick="EditOutputAttribute(this)" data-data="@node.StaticData" data-desc="@node.Description"><i class="fas fa-edit"></i></span>
+                        <span id="@node.ParentId" class="btn btn-sm p-icon" onclick="EditOutputAttribute(this)" data-data="@node.StaticData"><i class="fas fa-edit"></i></span>
                         <button type="button" class="btn btn-sm p-icon" onclick="RemoveAttribute(this)"><i class="fas fa-times"></i></button>
                     </div>
                 </div>

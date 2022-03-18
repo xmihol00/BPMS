@@ -20,7 +20,7 @@ namespace BPMS_DAL.Entities.BlockDataTypes
 
         public override bool HasData()
         {
-            return FileName != null;
+            return FileName != null || !Schema.Compulsory;;
         }
     }
 }

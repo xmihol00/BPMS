@@ -13,7 +13,7 @@ namespace BPMS_DAL.Entities.BlockDataTypes
 
         public override bool HasData()
         {
-            return Value != null;
+            return Value != null || !Schema.Compulsory;
         }
     }
 }

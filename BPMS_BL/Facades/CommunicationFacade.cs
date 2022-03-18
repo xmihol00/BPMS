@@ -5,6 +5,7 @@ using BPMS_BL.Helpers;
 using BPMS_BL.Hubs;
 using BPMS_Common;
 using BPMS_Common.Enums;
+using BPMS_Common.Helpers;
 using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.BlockDataTypes;
@@ -457,15 +458,15 @@ namespace BPMS_BL.Facades
         public async Task<string> AuthorizeSystem(string auth, HttpRequest request, string? action)
         {
             auth = auth["Bearer ".Length..];
-            (Guid id, auth) = SymetricCipherHelper.ExtractGuid(auth);
+            (Guid id, byte[] byteAuth) = SymetricCipherHelper.ExtractGuid(auth);
             _system = _systemRepository.Bare(id);
-            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(auth, _system.Key);
+            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, _system.Key);
 
             using StreamReader stream = new StreamReader(request.Body);
             string data = await stream.ReadToEndAsync();
             if (_system.Encryption == EncryptionLevelEnum.Encrypted || _system.ForeignEncryption == EncryptionLevelEnum.Encrypted)
             {
-                data = await SymetricCipherHelper.Decrypt(data, authSystem.PayloadKey, authSystem.PayloadIV);
+                data = await SymetricCipherHelper.DecryptMessage(data, authSystem.PayloadKey, authSystem.PayloadIV);
             }
 
             if (_system.Encryption >= EncryptionLevelEnum.Hash || _system.ForeignEncryption >= EncryptionLevelEnum.Hash)

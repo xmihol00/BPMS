@@ -275,7 +275,6 @@ namespace BPMS_BL.Facades
             if (entity.Direction == DirectionEnum.Output)
             {
                 _dataSchemaRepository.Entry(entity, x => x.Property(y => y.Type).IsModified = false);
-                entity.Compulsory = true;
             }
 
             await _dataSchemaRepository.Save();

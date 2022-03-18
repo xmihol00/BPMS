@@ -1,5 +1,6 @@
 using BPMS_Common;
 using BPMS_Common.Enums;
+using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,7 +19,7 @@ namespace BPMS_DAL.Seeds
             {
                 Id = StaticData.ThisSystemId,
                 Name = "Tento systém",
-                Key = StaticData.Key,
+                Key = SymetricCipherHelper.EncryptKey().Result,
                 URL = "https://localhost:5001/",
                 State = SystemStateEnum.ThisSystem,
                 Encryption = EncryptionLevelEnum.Encrypted,

@@ -128,7 +128,7 @@ function EditAtrribute(form, btn, disabled)
     let btnParent = btn.parentNode;
     let type = btnParent.parentNode.getElementsByClassName("text-code")[0].innerText;
     let staticData = btn.getAttribute("data-data");
-    document.getElementById("DescriptionId").value = btn.getAttribute("data-desc");
+    document.getElementById("DescriptionId").value = btn.parentNode.parentNode.children[0].getAttribute("data-title");
     document.getElementById("IdId").value = btnParent.id;
     document.getElementById("ParentId").value = btn.id;    
 
@@ -177,7 +177,6 @@ function EditAtrribute(form, btn, disabled)
     }
     
     let compulsory = document.getElementById("CompulsoryId");
-    compulsory.disabled = disabled;
     compulsory.checked = btnParent.children[0].classList.contains("bg-primary");
     let idAlias = btnParent.parentNode.children[0];
     document.getElementById("NameId").value = idAlias.children[0].innerText;
