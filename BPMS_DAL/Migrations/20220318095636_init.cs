@@ -51,7 +51,9 @@ namespace BPMS_DAL.Migrations
                     URL = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<int>(type: "int", nullable: false)
+                    State = table.Column<int>(type: "int", nullable: false),
+                    Encryption = table.Column<int>(type: "int", nullable: false),
+                    ForeignEncryption = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,6 +92,7 @@ namespace BPMS_DAL.Migrations
                     Type = table.Column<int>(type: "int", nullable: false),
                     Direction = table.Column<int>(type: "int", nullable: false),
                     ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Disabled = table.Column<bool>(type: "bit", nullable: false),
                     ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -884,6 +887,7 @@ namespace BPMS_DAL.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Specification = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Compulsory = table.Column<bool>(type: "bit", nullable: false),
+                    Disabled = table.Column<bool>(type: "bit", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     BlockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ConditionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -943,14 +947,12 @@ namespace BPMS_DAL.Migrations
                         name: "FK_ForeignAttributeMaps_Attributes_AttributeId",
                         column: x => x.AttributeId,
                         principalTable: "Attributes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ForeignAttributeMaps_ForeignSendEvents_ForeignSendEventId",
                         column: x => x.ForeignSendEventId,
                         principalTable: "ForeignSendEvents",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1147,37 +1149,38 @@ namespace BPMS_DAL.Migrations
                 columns: new[] { "Id", "AppId", "AppSecret", "AuthType", "Description", "HttpMethod", "Name", "Serialization", "Type", "URL" },
                 values: new object[,]
                 {
-                    { new Guid("23bdf844-8587-4ccb-92c3-66513ade014a"), "UserName", "Password", 1, "Ozvěna vstupu serializovaného do JSON    .", 1, "Echo API - JSON", 0, 0, "TODO" },
+                    { new Guid("23bdf844-8587-4ccb-92c3-66513ade014a"), "UserName", "Password", 1, "Ozvěna vstupu serializovaného do JSON    .", 1, "Echo API - JSON", 0, 0, "TODO/EchoJson" },
                     { new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, null, 0, "Počasí zadávané názvem města. Sereializace odpovědi v JSON.", 0, "Počasí - město (JSON)", 3, 0, "http://api.openweathermap.org/data/2.5/weather" },
                     { new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, null, 0, "Počasí zadávané názvem města. Sereializace odpovědi v XML.", 0, "Počasí - město (XML)", 3, 0, "http://api.openweathermap.org/data/2.5/weather" },
-                    { new Guid("45adf844-8587-4bbb-92c3-66513ade014a"), null, "AppSecret", 2, "Ozvěna vstupu serializovaného do XML atributů.", 2, "Echo API - XML atributy", 2, 0, "TODO" },
-                    { new Guid("45adf844-8587-4ffb-92c3-66513ade014a"), null, null, 0, "Ozvěna vstupu serializovaného do XML tagů.", 2, "Echo API - XML tagy", 1, 0, "TODO" },
+                    { new Guid("45adf844-8587-4bbb-92c3-66513ade014a"), null, "AppSecret", 2, "Ozvěna vstupu serializovaného do XML atributů.", 2, "Echo API - XML atributy", 2, 0, "TODO/EchoXml" },
+                    { new Guid("45adf844-8587-4ffb-92c3-66513ade014a"), null, null, 0, "Ozvěna vstupu serializovaného do XML tagů.", 2, "Echo API - XML tagy", 1, 0, "TODO/EchoXml" },
+                    { new Guid("45adf844-8587-4ffb-92c3-99a23ade014a"), "MyUserName", "LongAndSecurePassword", 1, "Ozvěna vstupu serializovaného do XML tagů.", 2, "Echo API - Hlavičky", 1, 0, "TODO/EchoHeaders" },
                     { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, null, 0, "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou.", 0, "Počasí - zeměpisná délka a šířka", 3, 0, "http://api.openweathermap.org/data/2.5/weather" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Systems",
-                columns: new[] { "Id", "Description", "Key", "Name", "State", "URL" },
-                values: new object[] { new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"), null, new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 }, "Tento systém", 5, "https://localhost:5001/" });
+                columns: new[] { "Id", "Description", "Encryption", "ForeignEncryption", "Key", "Name", "State", "URL" },
+                values: new object[] { new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"), null, 0, 0, new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 }, "Tento systém", 5, "https://localhost:5001/" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "efBAtZwnw28i7emXw2MYnAWzZXMnRmJ7fLWV03DuTnI3USyKbPxRhvXtC1AGqAsfL29kWjQTcVEc2e0iNXW4npXQ", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "krnBjVKRMbBIpJ2iNTKeCHANiUyNUfNgzWDuVA7Yba7nabxDT+oNpZa56B/6cuxn1/5AySJ9DIs4G3CGUHinuKW0", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
-                columns: new[] { "Id", "Alias", "Array", "Compulsory", "Direction", "Name", "Order", "ParentId", "ServiceId", "StaticData", "Type" },
+                columns: new[] { "Id", "Alias", "Array", "Compulsory", "Direction", "Disabled", "Name", "Order", "ParentId", "ServiceId", "StaticData", "Type" },
                 values: new object[,]
                 {
-                    { new Guid("aab873d3-4806-40f6-b454-b35380ebd838"), "mode", false, true, 0, "Mód", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "xml", 0 },
-                    { new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, 0 },
-                    { new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd838"), "appid", false, true, 0, "Klíč", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b45380ebd838"), "lat", false, true, 0, "Zeměpisná šířka", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 },
-                    { new Guid("ec2873d3-4877-40f6-b4a4-b35380ebd838"), "lon", false, true, 0, "Zeměpisná délka", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 }
+                    { new Guid("aab873d3-4806-40f6-b454-b35380ebd838"), "mode", false, true, 0, false, "Mód", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "xml", 0 },
+                    { new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, false, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, 0 },
+                    { new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
+                    { new Guid("ec2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, false, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, 0 },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), "7622a0a6b0f63a523986e6021e727f81", 0 },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-b45380ebd838"), "lat", false, true, 0, false, "Zeměpisná šířka", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 },
+                    { new Guid("ec2873d3-4877-40f6-b4a4-b35380ebd838"), "lon", false, true, 0, false, "Zeměpisná délka", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 }
                 });
 
             migrationBuilder.InsertData(

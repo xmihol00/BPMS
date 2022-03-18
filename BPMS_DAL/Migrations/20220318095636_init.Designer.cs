@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    [Migration("20220316125035_edit1")]
-    partial class edit1
+    [Migration("20220318095636_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,6 +89,9 @@ namespace BPMS_DAL.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Disabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -282,6 +285,9 @@ namespace BPMS_DAL.Migrations
                     b.Property<int>("Direction")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Disabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -317,6 +323,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Město",
                             Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
@@ -329,6 +336,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Klíč",
                             Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
@@ -342,6 +350,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Zeměpisná délka",
                             Order = 0L,
                             ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
@@ -354,6 +363,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Zeměpisná šířka",
                             Order = 0L,
                             ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
@@ -366,6 +376,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Klíč",
                             Order = 0L,
                             ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
@@ -379,6 +390,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Město",
                             Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
@@ -391,6 +403,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Klíč",
                             Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
@@ -404,6 +417,7 @@ namespace BPMS_DAL.Migrations
                             Array = false,
                             Compulsory = true,
                             Direction = 0,
+                            Disabled = false,
                             Name = "Mód",
                             Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
@@ -803,6 +817,12 @@ namespace BPMS_DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Encryption")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ForeignEncryption")
+                        .HasColumnType("int");
+
                     b.Property<byte[]>("Key")
                         .HasColumnType("varbinary(max)");
 
@@ -828,6 +848,8 @@ namespace BPMS_DAL.Migrations
                         new
                         {
                             Id = new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"),
+                            Encryption = 0,
+                            ForeignEncryption = 0,
                             Key = new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 },
                             Name = "Tento systém",
                             State = 5,
@@ -950,7 +972,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "p7vltOmUFfyIlgoLmpz5Mp7MIuiX/NB5Bo/Mu1yVcnUQ1jAB9yjnTegD6PqGlmLUjLetUhWd2gzaNaR5IOovqm68",
+                            Password = "krnBjVKRMbBIpJ2iNTKeCHANiUyNUfNgzWDuVA7Yba7nabxDT+oNpZa56B/6cuxn1/5AySJ9DIs4G3CGUHinuKW0",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
@@ -1308,13 +1330,13 @@ namespace BPMS_DAL.Migrations
                     b.HasOne("BPMS_DAL.Entities.AttributeEntity", "Attribute")
                         .WithMany("MappedBlocks")
                         .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("BPMS_DAL.Entities.BlockModelEntity", "Block")
                         .WithMany("MappedAttributes")
                         .HasForeignKey("BlockId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Attribute");
@@ -1500,13 +1522,13 @@ namespace BPMS_DAL.Migrations
                     b.HasOne("BPMS_DAL.Entities.AttributeEntity", "Attribute")
                         .WithOne("MappedForeignBlock")
                         .HasForeignKey("BPMS_DAL.Entities.ForeignAttributeMapEntity", "AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("BPMS_DAL.Entities.ForeignSendEventEntity", "ForeignSendEvent")
                         .WithMany("MappedAttributes")
                         .HasForeignKey("ForeignSendEventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Attribute");

@@ -970,7 +970,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "D2F3F9+WGzr2BC+RdpUyNWwJYO3LPrVfyMBUI3yYI2Fc8FmGV8naBgfXQjXJ5ZIpWxqq8j/jkiMx2QhJC/DEiykj",
+                            Password = "krnBjVKRMbBIpJ2iNTKeCHANiUyNUfNgzWDuVA7Yba7nabxDT+oNpZa56B/6cuxn1/5AySJ9DIs4G3CGUHinuKW0",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
