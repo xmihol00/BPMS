@@ -109,6 +109,30 @@ namespace BPMS_DAL.Seeds
                 ParentId = null,
                 ServiceId = Guid.Parse("23bdf847-0e87-4eeb-92c3-66513ade014a")
             },
+            new DataSchemaEntity()
+            {
+                Id = Guid.Parse("aab873d3-4806-40f6-b454-b35380eb5566"),
+                Alias = "ico",
+                Compulsory = true,
+                Type = DataTypeEnum.String,
+                StaticData = null,
+                Name = "IČO",
+                Direction = DirectionEnum.Input,
+                ParentId = null,
+                ServiceId = Guid.Parse("23bdf847-0e87-4eeb-92c3-66513ade1234")
+            },
+            new DataSchemaEntity()
+            {
+                Id = Guid.Parse("aab873d3-4806-40f6-b454-b35380eb6677"),
+                Alias = "obchodni_firma",
+                Compulsory = true,
+                Type = DataTypeEnum.String,
+                StaticData = null,
+                Name = "Obchodní firma",
+                Direction = DirectionEnum.Input,
+                ParentId = null,
+                ServiceId = Guid.Parse("23bdf847-0e87-4eeb-92c3-66513ade4567")
+            },
         };
 
         public static void SeedDataSchemas(this ModelBuilder modelBuilder)

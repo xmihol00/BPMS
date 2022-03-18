@@ -80,11 +80,12 @@ function ShowAlert(message, error = false)
         alert.classList.remove("alert-danger");
     }
 
-    AlertTimeout = setTimeout(() => HideStart(alertDiv), error ? 2500 : 5000);
+    AlertTimeout = setTimeout(() => HideStart(alertDiv), error ? 6000 : 3000);
 }
 
 function ConnectionAlert()
 {
+    HideModal();
     ShowAlert("Operaci se nepodařilo provést, zkontrolujte připojení k internetu.", true);
 }
 

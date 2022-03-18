@@ -12,7 +12,7 @@ namespace BPMS_DAL.Entities
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
-        public string? StaticData { get; set; } = string.Empty;
+        public string? StaticData { get; set; }
         public uint Order { get; set; } 
         public bool Compulsory { get; set; }
         public bool Array { get; set; }

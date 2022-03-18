@@ -1149,30 +1149,30 @@ namespace BPMS_DAL.Migrations
                 columns: new[] { "Id", "AppId", "AppSecret", "AuthType", "Description", "HttpMethod", "Name", "Serialization", "Type", "URL" },
                 values: new object[,]
                 {
-                    { new Guid("23bdf844-8587-4ccb-92c3-66513ade014a"), "UserName", "Password", 1, "Ozvěna vstupu serializovaného do JSON    .", 1, "Echo API - JSON", 0, 0, "TODO/EchoJson" },
                     { new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, null, 0, "Počasí zadávané názvem města. Sereializace odpovědi v JSON.", 0, "Počasí - město (JSON)", 3, 0, "http://api.openweathermap.org/data/2.5/weather" },
                     { new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, null, 0, "Počasí zadávané názvem města. Sereializace odpovědi v XML.", 0, "Počasí - město (XML)", 3, 0, "http://api.openweathermap.org/data/2.5/weather" },
-                    { new Guid("45adf844-8587-4bbb-92c3-66513ade014a"), null, "AppSecret", 2, "Ozvěna vstupu serializovaného do XML atributů.", 2, "Echo API - XML atributy", 2, 0, "TODO/EchoXml" },
-                    { new Guid("45adf844-8587-4ffb-92c3-66513ade014a"), null, null, 0, "Ozvěna vstupu serializovaného do XML tagů.", 2, "Echo API - XML tagy", 1, 0, "TODO/EchoXml" },
-                    { new Guid("45adf844-8587-4ffb-92c3-99a23ade014a"), "MyUserName", "LongAndSecurePassword", 1, "Ozvěna vstupu serializovaného do XML tagů.", 2, "Echo API - Hlavičky", 1, 0, "TODO/EchoHeaders" },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, null, 0, "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou.", 0, "Počasí - zeměpisná délka a šířka", 3, 0, "http://api.openweathermap.org/data/2.5/weather" }
+                    { new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"), null, null, 0, "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí IČO.", 0, "ARES - IČO", 3, 0, "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi" },
+                    { new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"), null, null, 0, "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí názvu obchodní firmy.", 0, "ARES - Obchodní firma", 3, 0, "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi" },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, null, 0, "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou. Sereializace odpovědi v JSON.", 0, "Počasí - zeměpisná délka a šířka", 3, 0, "http://api.openweathermap.org/data/2.5/weather" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Systems",
                 columns: new[] { "Id", "Description", "Encryption", "ForeignEncryption", "Key", "Name", "State", "URL" },
-                values: new object[] { new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"), null, 0, 0, new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 }, "Tento systém", 5, "https://localhost:5001/" });
+                values: new object[] { new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"), null, 2, 0, new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 }, "Tento systém", 5, "https://localhost:5001/" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "krnBjVKRMbBIpJ2iNTKeCHANiUyNUfNgzWDuVA7Yba7nabxDT+oNpZa56B/6cuxn1/5AySJ9DIs4G3CGUHinuKW0", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "8c7qaxIit0oWzK7FGoDbgs+Sh0KkDe2ZJy7QjGaOIiTA5/szc9ZOnlD020sfbXTy8aFJ8pUYfpXc2wHi/JLc3O0z", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
                 columns: new[] { "Id", "Alias", "Array", "Compulsory", "Direction", "Disabled", "Name", "Order", "ParentId", "ServiceId", "StaticData", "Type" },
                 values: new object[,]
                 {
+                    { new Guid("aab873d3-4806-40f6-b454-b35380eb5566"), "ico", false, true, 0, false, "IČO", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"), null, 0 },
+                    { new Guid("aab873d3-4806-40f6-b454-b35380eb6677"), "obchodni_firma", false, true, 0, false, "Obchodní firma", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"), null, 0 },
                     { new Guid("aab873d3-4806-40f6-b454-b35380ebd838"), "mode", false, true, 0, false, "Mód", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "xml", 0 },
                     { new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, false, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, 0 },
                     { new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    [Migration("20220318095636_init")]
+    [Migration("20220318105700_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -423,6 +423,32 @@ namespace BPMS_DAL.Migrations
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
                             StaticData = "xml",
                             Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("aab873d3-4806-40f6-b454-b35380eb5566"),
+                            Alias = "ico",
+                            Array = false,
+                            Compulsory = true,
+                            Direction = 0,
+                            Disabled = false,
+                            Name = "IČO",
+                            Order = 0L,
+                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"),
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("aab873d3-4806-40f6-b454-b35380eb6677"),
+                            Alias = "obchodni_firma",
+                            Array = false,
+                            Compulsory = true,
+                            Direction = 0,
+                            Disabled = false,
+                            Name = "Obchodní firma",
+                            Order = 0L,
+                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"),
+                            Type = 0
                         });
                 });
 
@@ -683,7 +709,7 @@ namespace BPMS_DAL.Migrations
                         {
                             Id = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
                             AuthType = 0,
-                            Description = "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou.",
+                            Description = "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou. Sereializace odpovědi v JSON.",
                             HttpMethod = 0,
                             Name = "Počasí - zeměpisná délka a šířka",
                             Serialization = 3,
@@ -703,52 +729,25 @@ namespace BPMS_DAL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("23bdf844-8587-4ccb-92c3-66513ade014a"),
-                            AppId = "UserName",
-                            AppSecret = "Password",
-                            AuthType = 1,
-                            Description = "Ozvěna vstupu serializovaného do JSON    .",
-                            HttpMethod = 1,
-                            Name = "Echo API - JSON",
-                            Serialization = 0,
-                            Type = 0,
-                            URL = "TODO/EchoJson"
-                        },
-                        new
-                        {
-                            Id = new Guid("45adf844-8587-4bbb-92c3-66513ade014a"),
-                            AppSecret = "AppSecret",
-                            AuthType = 2,
-                            Description = "Ozvěna vstupu serializovaného do XML atributů.",
-                            HttpMethod = 2,
-                            Name = "Echo API - XML atributy",
-                            Serialization = 2,
-                            Type = 0,
-                            URL = "TODO/EchoXml"
-                        },
-                        new
-                        {
-                            Id = new Guid("45adf844-8587-4ffb-92c3-66513ade014a"),
+                            Id = new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"),
                             AuthType = 0,
-                            Description = "Ozvěna vstupu serializovaného do XML tagů.",
-                            HttpMethod = 2,
-                            Name = "Echo API - XML tagy",
-                            Serialization = 1,
+                            Description = "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí IČO.",
+                            HttpMethod = 0,
+                            Name = "ARES - IČO",
+                            Serialization = 3,
                             Type = 0,
-                            URL = "TODO/EchoXml"
+                            URL = "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi"
                         },
                         new
                         {
-                            Id = new Guid("45adf844-8587-4ffb-92c3-99a23ade014a"),
-                            AppId = "MyUserName",
-                            AppSecret = "LongAndSecurePassword",
-                            AuthType = 1,
-                            Description = "Ozvěna vstupu serializovaného do XML tagů.",
-                            HttpMethod = 2,
-                            Name = "Echo API - Hlavičky",
-                            Serialization = 1,
+                            Id = new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"),
+                            AuthType = 0,
+                            Description = "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí názvu obchodní firmy.",
+                            HttpMethod = 0,
+                            Name = "ARES - Obchodní firma",
+                            Serialization = 3,
                             Type = 0,
-                            URL = "TODO/EchoHeaders"
+                            URL = "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi"
                         });
                 });
 
@@ -848,7 +847,7 @@ namespace BPMS_DAL.Migrations
                         new
                         {
                             Id = new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"),
-                            Encryption = 0,
+                            Encryption = 2,
                             ForeignEncryption = 0,
                             Key = new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 },
                             Name = "Tento systém",
@@ -972,7 +971,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "krnBjVKRMbBIpJ2iNTKeCHANiUyNUfNgzWDuVA7Yba7nabxDT+oNpZa56B/6cuxn1/5AySJ9DIs4G3CGUHinuKW0",
+                            Password = "8c7qaxIit0oWzK7FGoDbgs+Sh0KkDe2ZJy7QjGaOIiTA5/szc9ZOnlD020sfbXTy8aFJ8pUYfpXc2wHi/JLc3O0z",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"

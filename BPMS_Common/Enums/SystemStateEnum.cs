@@ -32,7 +32,7 @@ namespace BPMS_Common.Enums
                     return "obnovení spojení";
                 
                 case SystemStateEnum.Waiting:
-                    return "spojení zažádáno";
+                    return "spojení vyžádáno";
                 
                 case SystemStateEnum.Active:
                     return "aktivní spojení";

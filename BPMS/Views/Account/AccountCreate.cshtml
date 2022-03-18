@@ -1,13 +1,13 @@
 @model SignInDTO
 @{
-    ViewData["Title"] = "Tvorba účtu";
+    ViewData["Title"] = "První přihlášení";
 }
 
 <div class="container-fluid">
     <div class="d-flex justify-content-center signin-position">
         <div class="col-12 col-md-6 col-lg-4 p-2">
             <div class="shadow-box p-3 my-card bradius-card">
-                <h2 class="border-bottom text-center">Tvorba účtu — BPMS</h2>
+                <h2 class="border-bottom text-center">První přihlášení — BPMS</h2>
                 <form id="AccountCreateId" method="POST" action="/Account/Create" oninput="PasswordValidator(this)" novalidate>
                     <input type="hidden" name="ReturnURL" value="@Model.ReturnURL" />
                     <label class="input mt-2 mb-3">
@@ -16,7 +16,7 @@
                     </label>
                     <label class="input mb-3">
                         <input id="PasswordId" required class="input-field" type="password" placeholder=" " name="Password" />
-                        <span class="input-label">Heslo</span>
+                        <span class="input-label">Nové heslo</span>
                     </label>
                     <label class="input mb-3">
                         <input id="PasswordCheckId" required class="input-field" type="password" placeholder=" " name="PasswordCheck" />
@@ -28,8 +28,8 @@
                         <div class="signin-fail">Nezámé uživatelské jméno</div>
                     }
                     <div class="d-flex justify-content-between mx-4">
-                        <button type="submit" form="AccountCreateId" class="butn btn-s" disabled>Vytvořit</button>
-                        <a class="butn btn-p" href="/Account/SignIn">Přihlášení</a>
+                        <button type="submit" form="AccountCreateId" class="butn btn-s" disabled>Přihlásit se</button>
+                        <a class="butn btn-p" href="/Account/SignIn">Běžné přihlášení</a>
                     </div>
                 </form>
             </div>

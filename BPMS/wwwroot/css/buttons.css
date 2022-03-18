@@ -133,3 +133,7 @@ a.butn:hover {
     min-width: 90px;
     justify-content: end;
 }
+
+.schema-btns {
+    min-width: 118px;
+}
