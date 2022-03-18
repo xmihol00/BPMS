@@ -83,7 +83,7 @@ namespace BPMS_BL.Facades
             DstAddressDTO address = new DstAddressDTO
             {
                 DestinationURL = entity.URL,
-                Encryption = entity.Encryption,
+                Encryption = entity.State == SystemStateEnum.ThisSystem ? EncryptionLevelEnum.Encrypted : entity.Encryption,
                 SystemId = entity.Id,
                 Key = entity.Key,
                 URL = StaticData.ThisSystemURL
@@ -97,7 +97,7 @@ namespace BPMS_BL.Facades
                 }
             }
 
-            entity.Encryption = dto.Encryption;
+            entity.Encryption = entity.State == SystemStateEnum.ThisSystem ? EncryptionLevelEnum.Encrypted : dto.Encryption;
             entity.Description = dto.Description;
             entity.Name = dto.Name;
             entity.URL = dto.URL;

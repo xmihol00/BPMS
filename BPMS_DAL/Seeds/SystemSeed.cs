@@ -20,7 +20,8 @@ namespace BPMS_DAL.Seeds
                 Name = "Tento systém",
                 Key = StaticData.Key,
                 URL = "https://localhost:5001/",
-                State = SystemStateEnum.ThisSystem
+                State = SystemStateEnum.ThisSystem,
+                Encryption = EncryptionLevelEnum.Encrypted,
             },
         };
 

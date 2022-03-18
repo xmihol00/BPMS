@@ -54,15 +54,22 @@
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
                 <select class="input-select" name="Encryption"> 
-                    @foreach (EncryptionLevelEnum value in Enum.GetValues<EncryptionLevelEnum>())
+                    @if (Model.State == SystemStateEnum.ThisSystem)
                     {
-                        @if (value == Model.Encryption)
+                        <option value="@EncryptionLevelEnum.Encrypted">@EncryptionLevelEnum.Encrypted.ToLabel()</option>
+                    }
+                    else
+                    {
+                        @foreach (EncryptionLevelEnum value in Enum.GetValues<EncryptionLevelEnum>())
                         {
-                            <option value="@value" selected>@value.ToLabel()</option>
-                        }
-                        else
-                        {
-                            <option value="@value">@value.ToLabel()</option>
+                            @if (value == Model.Encryption)
+                            {
+                                <option value="@value" selected>@value.ToLabel()</option>
+                            }
+                            else
+                            {
+                                <option value="@value">@value.ToLabel()</option>
+                            }
                         }
                     }
                 </select>
