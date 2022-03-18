@@ -262,10 +262,6 @@ namespace BPMS_BL.Facades
         public async Task<IEnumerable<DataSchemaNodeDTO>> CreateEditSchema(DataSchemaCreateEditDTO dto)
         {
             DataSchemaEntity entity = _mapper.Map<DataSchemaEntity>(dto);
-            if (entity.Direction == DirectionEnum.Output)
-            {
-                entity.Compulsory = true;
-            }
             
             if (dto.Id == Guid.Empty)
             {
@@ -274,6 +270,12 @@ namespace BPMS_BL.Facades
             else
             {
                 _dataSchemaRepository.Update(entity);
+            }
+            
+            if (entity.Direction == DirectionEnum.Output)
+            {
+                _dataSchemaRepository.Entry(entity, x => x.Property(y => y.Type).IsModified = false);
+                entity.Compulsory = true;
             }
 
             await _dataSchemaRepository.Save();
