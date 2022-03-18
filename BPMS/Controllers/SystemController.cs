@@ -1,5 +1,6 @@
 using BPMS_BL.Facades;
 using BPMS_BL.Helpers;
+using BPMS_Common.Enums;
 using BPMS_DTOs.Filter;
 using BPMS_DTOs.Header;
 using BPMS_DTOs.System;
@@ -72,6 +73,7 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SystemCreateDTO dto)
         {
+            dto.Encryption = EncryptionLevelEnum.Encrypted;
             return Redirect($"/System/Detail/{await _systemFacade.Create(dto)}");
         }
 
