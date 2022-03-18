@@ -123,15 +123,16 @@ namespace BPMS_Common.Helpers
             using Aes aes = Aes.Create();
             ICryptoTransform decryptor = aes.CreateDecryptor(_keyKey, _keyIV);
             
-            using (MemoryStream memStream = new MemoryStream())
+            using (MemoryStream memStream = new MemoryStream(key))
             {
                 using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read))
                 {
-                    await cryptoStream.WriteAsync(key, 0, key.Length);
-                    await cryptoStream.FlushFinalBlockAsync();
+                    using (MemoryStream resultStream = new MemoryStream())
+                    {
+                        await cryptoStream.CopyToAsync(resultStream);
+                        return resultStream.ToArray();
+                    }
                 }
-
-                return memStream.ToArray();
             }
         }
 
