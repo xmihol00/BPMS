@@ -12,7 +12,8 @@ namespace BPMS_DTOs.DataSchema
     {
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
-        public string? StaticData { get; set; } = string.Empty;
+        public string? StaticData { get; set; }
+        public string? Description { get; set; }
         public bool Compulsory { get; set; }
     }
 }

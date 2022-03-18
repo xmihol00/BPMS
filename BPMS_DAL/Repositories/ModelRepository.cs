@@ -280,6 +280,7 @@ namespace BPMS_DAL.Repositories
                              FullName = $"{x.User.Title} {x.User.Name} {x.User.Surname}",
                              Id = x.User.Id
                          })
+                         .Distinct()
                          .ToListAsync();
         }
 

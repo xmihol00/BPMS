@@ -15,7 +15,7 @@ namespace BPMS_DTOs.DataSchema
         public Guid? ParentId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
-        public uint Order { get; set; }
+        public string? Description { get; set; }
         public string? StaticData { get; set; }
         public string? Compulsory { get; set; }
         public string? DataToggle { get; set; }

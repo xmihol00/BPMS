@@ -12,6 +12,7 @@ namespace BPMS_DTOs.DataSchema
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public bool Compulsory { get; set; }
         public DataTypeEnum Type { get; set; }
         public bool Mapped { get; set; }

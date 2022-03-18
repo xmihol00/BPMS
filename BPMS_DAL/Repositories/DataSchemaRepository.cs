@@ -26,7 +26,7 @@ namespace BPMS_DAL.Repositories
                             Name = x.Name,
                             Compulsory = x.Compulsory,
                             Type = x.Type,
-                            Order = x.Order,
+                            Description = x.Description,
                             ServiceId = x.ServiceId,
                             StaticData = x.StaticData
                          })
@@ -44,7 +44,8 @@ namespace BPMS_DAL.Repositories
                             Name = x.Name,
                             Type = x.Type,
                             Compulsory = x.Compulsory,
-                            StaticData = x.StaticData
+                            StaticData = x.StaticData,
+                            Description = x.Description
                          })
                          .ToListAsync();
         }
@@ -60,7 +61,7 @@ namespace BPMS_DAL.Repositories
                             Name = x.Name,
                             Type = x.Type,
                             StaticData = x.StaticData,
-                            Compulsory = x.Compulsory
+                            Compulsory = x.Compulsory,
                          })
                          .ToListAsync();
         }

@@ -30,6 +30,7 @@ function ResetForm(form, direction, btn, parentId = "")
     document.getElementById("NameId").value = "";
     document.getElementById("DataToogleId").classList.remove("d-none");
     document.getElementById("CompulsoryDivId").classList.remove("d-none");
+    document.getElementById("DescriptionId").value = "";
     let alias = document.getElementById("AliasId");
     alias.value = "";
     alias.readOnly = false;
@@ -127,6 +128,7 @@ function EditAtrribute(form, btn, disabled)
     let btnParent = btn.parentNode;
     let type = btnParent.parentNode.getElementsByClassName("text-code")[0].innerText;
     let staticData = btn.getAttribute("data-data");
+    document.getElementById("DescriptionId").value = btn.getAttribute("data-desc");
     document.getElementById("IdId").value = btnParent.id;
     document.getElementById("ParentId").value = btn.id;    
 
