@@ -20,7 +20,7 @@ namespace BPMS_Common.Helpers
         public static async Task<string> AuthEncrypt(IAddressAuth data)
         {
             using Aes aes = Aes.Create();
-            ICryptoTransform encryptor = aes.CreateEncryptor(await DecryptKey(data.Key ?? _thisKey), _thisIV);
+            ICryptoTransform encryptor = aes.CreateEncryptor(data.Key != null ? await DecryptKey(data.Key) : _thisKey, _thisIV);
 
             using (MemoryStream memStream = new MemoryStream())
             {
@@ -125,14 +125,13 @@ namespace BPMS_Common.Helpers
             
             using (MemoryStream memStream = new MemoryStream(key))
             {
-                using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read))
+                using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Write))
                 {
-                    using (MemoryStream resultStream = new MemoryStream())
-                    {
-                        await cryptoStream.CopyToAsync(resultStream);
-                        return resultStream.ToArray();
-                    }
+                    await cryptoStream.WriteAsync(key, 0, key.Length);
+                    await cryptoStream.FlushFinalBlockAsync();
                 }
+
+                return memStream.ToArray();
             }
         }
 
