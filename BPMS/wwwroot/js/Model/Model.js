@@ -280,8 +280,7 @@ function ToggleTaskMap(attribId, button)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -314,8 +313,7 @@ function ToggleSendMap(attribId, button)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -344,8 +342,7 @@ function ToggleServiceMap(button, dataSchemaId, serviceTaskId)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -365,8 +362,7 @@ function RemoveAttribute(element)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -387,8 +383,7 @@ function ShareModel()
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -420,8 +415,7 @@ function RemoveModel()
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });    
 }
 
@@ -455,8 +449,7 @@ function ChangeSender(id)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -474,8 +467,7 @@ function SystemChange(select)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });   
 }
 
@@ -493,8 +485,7 @@ function AgendaChange(select)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });   
 }
 
@@ -512,8 +503,7 @@ function ModelChange(select)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });   
 }
 
@@ -531,8 +521,7 @@ function PoolChange(select)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });   
 }
 
@@ -597,8 +586,7 @@ function SchemaDragDrop(event)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -618,8 +606,7 @@ function RemoveMap(btn, serviceTaskId)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 

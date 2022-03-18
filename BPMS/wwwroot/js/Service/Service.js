@@ -223,8 +223,7 @@ function RemoveAttribute(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     }); 
 }
 
@@ -269,8 +268,7 @@ function GenerateOutAttributes(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });    
 }
 
@@ -312,8 +310,7 @@ function RemoveHeader(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     }); 
 }
 

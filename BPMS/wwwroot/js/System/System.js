@@ -35,7 +35,6 @@ function Deactive()
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }

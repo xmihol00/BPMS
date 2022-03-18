@@ -50,8 +50,7 @@ function SaveServiceTask()
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -103,8 +102,7 @@ function AddArrayInput(btn, type)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     }); 
 }
 

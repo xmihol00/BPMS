@@ -62,8 +62,7 @@ function EditRole(btn)
         })
         .fail(() => 
         {
-            // TODO
-            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+            ConnectionAlert();
         });
     
         for (let ele of target.getElementsByClassName("role-remove-btn"))
@@ -104,8 +103,7 @@ function AddUserToRole(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -123,8 +121,7 @@ function RemoveRole(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -155,8 +152,7 @@ function RemoveUser(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -192,7 +188,6 @@ function RemoveSystem(btn, event)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }

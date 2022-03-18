@@ -1,4 +1,5 @@
-﻿
+﻿var AlertTimeout = null;
+var AlertInterval = null;
 var ModalContentId = null;
 var LoadedElements = [];
 var Callback = null;
@@ -52,6 +53,56 @@ window.addEventListener('DOMContentLoaded', () =>
     ResizeTextAreas(document);
     ActivateIcons();
 });
+
+function ShowAlert(message, error = false) 
+{
+    let alertDiv = document.getElementById("AlertDivId");
+    alertDiv.style.display = "block";
+    alertDiv.style.opacity = "1";
+    
+    let alert = alertDiv.firstChild;
+    alert.firstChild.innerHTML = message;
+
+    if (AlertTimeout != null)
+    {
+        clearTimeout(AlertTimeout);
+        clearInterval(AlertInterval);
+        AlertTimeout = null;
+    }
+    
+    if (error) 
+    {
+        alert.classList.remove("alert-success");
+        alert.classList.add("alert-danger");
+    } 
+    else 
+    {
+        alert.classList.add("alert-success");
+        alert.classList.remove("alert-danger");
+    }
+
+    //AlertTimeout = setTimeout(() => HideStart(alertDiv), 6000);
+}
+
+function ConnectionAlert()
+{
+    ShowAlert("Operaci se nepodařilo provést, zkontrolujte připojení k internetu.", true);
+}
+
+function HideStart(element)
+{
+    AlertInterval = setInterval(() => { element.style.opacity -= 0.01; }, 35);
+    AlertTimeout = setTimeout(HideAlert, 3500);
+}
+
+function HideAlert()
+{
+    let alert = document.getElementById("AlertDivId");
+    alert.style.display = "none";
+
+    clearTimeout(AlertTimeout);
+    clearInterval(AlertInterval);
+}
 
 function ActivateIcons()
 {
@@ -190,8 +241,7 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, hide
             })
             .fail(() => 
             {
-                // TODO
-                //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+                ConnectionAlert();
             });
         }
     }
@@ -293,8 +343,7 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
         {
             failCallback();
         }
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });        
 }
 
@@ -396,8 +445,7 @@ function GetAjaxRequest(url, targetId)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     }); 
 }
 
@@ -436,8 +484,7 @@ function OverviewTransition(path)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -498,8 +545,7 @@ function DetailTransition(element, path, blocks = false, succesCallback = null, 
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -560,8 +606,7 @@ function FilterChanges(event, path, blocks = false)
         })
         .fail(() => 
         {
-            // TODO
-            //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+            ConnectionAlert();
         });
     }
 }
@@ -587,8 +632,7 @@ function ShowNotifications(event)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -611,8 +655,7 @@ function NotificationSeen(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -645,8 +688,7 @@ function NotificationMark(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -687,8 +729,7 @@ function NotifFilterChange(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
 
@@ -707,7 +748,6 @@ function NotificationRemove(btn)
     })
     .fail(() => 
     {
-        // TODO
-        //ShowAlert("Nepodařilo se získat potřebná data, zkontrolujte připojení k internetu.", true);
+        ConnectionAlert();
     });
 }
