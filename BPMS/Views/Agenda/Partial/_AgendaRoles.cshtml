@@ -9,7 +9,7 @@
                 @if ((bool)ViewData[SystemRoleEnum.Admin.ToString()] || (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()])
                 {
                     <button class="btn btn-role-edit text-prim-edit" type="button" onclick="EditRole(this)"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-remove btn-role-remove d-none" type="button" onclick="RemoveRole(this)"><i class="fas fa-times"></i></button>
+                    <button class="butn butn-sm btn-d d-none" type="button" onclick="RemoveRole(this)">Smazat</button>
                 }
                 <h5 @Html.Raw((String.IsNullOrEmpty(role.Description) ? "" : $"data-title='{role.Description}'"))
                     class="text-center border-bottom">@role.Name</h5>

@@ -258,9 +258,9 @@ namespace BPMS_DAL.Repositories
                          .Include(x => x.Pools)
                             .ThenInclude(x => x.Blocks)
                                 .ThenInclude(x => x.MappedAttributes)
+                                    .ThenInclude(x => x.Attribute)
                          .Include(x => x.Pools)
                             .ThenInclude(x => x.Blocks)
-                                .ThenInclude(x => x.DataSchemas)
                          .FirstAsync(x => x.Id == id);
         }
 

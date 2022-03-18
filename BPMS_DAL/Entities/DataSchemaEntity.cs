@@ -20,6 +20,7 @@ namespace BPMS_DAL.Entities
         public DirectionEnum Direction { get; set; }
         public Guid? ParentId { get; set; }
         public DataSchemaEntity? Parent { get; set; }
+        public bool Disabled { get; set; }
         public List<DataSchemaEntity> Children { get; set; } = new List<DataSchemaEntity>();
         public Guid ServiceId { get; set; }
         public ServiceEntity? Service { get; set; }

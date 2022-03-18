@@ -15,5 +15,6 @@ namespace BPMS_DTOs.System
         public string URL { get; set; } = string.Empty;
         public string? Description { get; set; }
         public SystemStateEnum State { get; set; }
+        public EncryptionLevelEnum Encryption { get; set; }
     }
 }

@@ -176,8 +176,8 @@ namespace BPMS_DAL
             modelBuilder.Entity<ServiceHeaderEntity>().HasOne(x => x.Service).WithMany(x => x.Headers).HasForeignKey(x => x.ServiceId);
 
             modelBuilder.Entity<AttributeMapEntity>().HasKey(x => new { x.AttributeId, x.BlockId });
-            modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Block).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.BlockId).OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<AttributeMapEntity>().HasOne(x => x.Attribute).WithMany(x => x.MappedBlocks).HasForeignKey(x => x.AttributeId).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<AuditMessageEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<AuditMessageEntity>().Property(x => x.Id).ValueGeneratedNever();
@@ -192,8 +192,8 @@ namespace BPMS_DAL
             modelBuilder.Entity<ForeignSendEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignSenedrs).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.ForeignSendEventId });
-            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithOne(x => x.MappedForeignBlock).HasForeignKey<ForeignAttributeMapEntity>(x => x.AttributeId);
-            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.ForeignSendEvent).WithMany(x => x.MappedAttributes).HasForeignKey(x => x.ForeignSendEventId);
+            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithOne(x => x.MappedForeignBlock).OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.ForeignSendEvent).WithMany(x => x.MappedAttributes).OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<NotificationEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<NotificationEntity>().Property(x => x.Id).ValueGeneratedNever();

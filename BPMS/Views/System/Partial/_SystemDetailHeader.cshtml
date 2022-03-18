@@ -39,6 +39,12 @@
     </div>
     <input id="IdId" type="hidden" name="Id" value="@Model.Id" />
     <div class="row">
+        <div class="col-12 mb-3">
+            <label class="input">
+                <input required class="input-field" type="text" placeholder=" " name="URL" value="@Model.URL" />
+                <span class="input-label">URL systému</span>
+            </label>
+        </div>
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
                 <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
@@ -47,8 +53,20 @@
         </div>
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
-                <input required class="input-field" type="text" placeholder=" " name="URL" value="@Model.URL" />
-                <span class="input-label">URL systému</span>
+                <select class="input-select" name="Encryption"> 
+                    @foreach (EncryptionLevelEnum value in Enum.GetValues<EncryptionLevelEnum>())
+                    {
+                        @if (value == Model.Encryption)
+                        {
+                            <option value="@value" selected>@value.ToLabel()</option>
+                        }
+                        else
+                        {
+                            <option value="@value">@value.ToLabel()</option>
+                        }
+                    }
+                </select>
+                <span class="input-label">Zabezbečení</span>
             </label>
         </div>
         <div class="col-12 mb-2">

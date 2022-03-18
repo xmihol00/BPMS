@@ -231,13 +231,8 @@ namespace BPMS_BL.Facades
 
         public async Task RemoveAttribute(Guid id)
         {
-            // TODO if any TASKS set disabled
-            AttributeEntity attrib = new AttributeEntity()
-            { 
-                Id = id,
-                MappedBlocks = await _attributeRepository.MappedBlocks(id)
-            };
-
+            AttributeEntity attrib = await _attributeRepository.ForRemoval(id);
+            
             foreach (BlockModelEntity mappedBlock in attrib.MappedBlocks.Select(x => x.Block))
             {
                 if (mappedBlock is ISendEventModelEntity)
@@ -254,7 +249,14 @@ namespace BPMS_BL.Facades
                 }
             }
 
-            _attributeRepository.Remove(attrib);
+            if (attrib.Data.Count > 0)
+            {
+                attrib.Disabled = true;
+            }
+            else
+            {
+                _attributeRepository.Remove(attrib);
+            }
             await _attributeRepository.Save();
         }
 
@@ -268,6 +270,22 @@ namespace BPMS_BL.Facades
             }
             else
             {
+                foreach (BlockModelEntity block in (await _attributeMapRepository.MappedBlocks(dto.Id)).Where(x => x is ISendEventModelEntity))
+                {
+                    foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(block.Id))
+                    {
+                        entity.BlockId = recieverAddress.BlockId;
+                        await CommunicationHelper.UpdateRecieverAttribute(recieverAddress, entity);
+                    }
+
+                    foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(block.Id))
+                    {
+                        entity.BlockId = recieverAddress.ForeignBlockId;
+                        await CommunicationHelper.UpdateForeignRecieverAttribute(recieverAddress, entity);
+                    }
+                }
+
+                entity.BlockId = dto.BlockId;
                 _attributeRepository.Update(entity);
             }
 
@@ -299,6 +317,7 @@ namespace BPMS_BL.Facades
         public async Task<bool> ToggleSendMap(Guid blockId, Guid attributeId)
         {
             AttributeEntity attrib = await _attributeRepository.Bare(attributeId);
+            Guid startBlockId = attrib.BlockId;
 
             bool remove = await _attributeMapRepository.Any(blockId, attributeId);
             bool success = true;
@@ -306,13 +325,11 @@ namespace BPMS_BL.Facades
             {
                 foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
                 {
-                    attrib.BlockId = recieverAddress.BlockId;
                     success &= await CommunicationHelper.RemoveRecieverAttribute(recieverAddress, attributeId);
                 }
 
                 foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
                 {
-                    attrib.BlockId = recieverAddress.ForeignBlockId;
                     success &= await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress, attributeId);
                 }
             }
@@ -331,6 +348,7 @@ namespace BPMS_BL.Facades
                 }
             }
 
+            attrib.BlockId = startBlockId;
             if (success)
             {
                 AttributeMapEntity entity = new AttributeMapEntity()
@@ -430,7 +448,7 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
         {
             RecieveEventModelConfigDTO dto = new RecieveEventModelConfigDTO();
-            dto.OutputAttributes = await _attributeRepository.Details(recieveEvent.Id);
+            dto.OutputAttributes = await _attributeRepository.OutputAttributes(recieveEvent.Id);
 
             if (recieveEvent.SenderId != null)
             {
@@ -473,7 +491,7 @@ namespace BPMS_BL.Facades
         private async Task<BlockModelConfigDTO> UserTaskConfig(IUserTaskModelEntity userTask)
         {
             UserTaskModelConfigDTO dto = new UserTaskModelConfigDTO();
-            dto.OutputAttributes = await _attributeRepository.Details(userTask.Id);
+            dto.OutputAttributes = await _attributeRepository.OutputAttributes(userTask.Id);
             dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
             dto.InputAttributes.AddRange(await _blockModelRepository.RecieveEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
             

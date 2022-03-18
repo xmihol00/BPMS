@@ -137,6 +137,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.MappedAttributes)
                          .Select(x => x.Attribute)
+                         .Where(x => !x.Disabled)
                          .ToListAsync();
         }
 
@@ -231,6 +232,16 @@ namespace BPMS_DAL.Repositories
                            .ToListAsync();
         }
 
+        public Task<List<BlockModelDataSchemaEntity>> DataShemas(Guid id)
+        {
+            return _dbSet.Include(x => x.DataSchemas)
+                            .ThenInclude(x => x.DataSchema)
+                         .Where(x => x.Id == id)
+                         .SelectMany(x => x.DataSchemas)
+                         .Where(x => !x.DataSchema.Disabled)
+                         .ToListAsync();
+        }
+
         public Task<List<ServiceTaskModelEntity>> RolesForRemovalServiceTaks(Guid roleId)
         {
             return _context.Set<ServiceTaskModelEntity>()
@@ -256,7 +267,7 @@ namespace BPMS_DAL.Repositories
                                     Name = x.Name,
                                     Attributes = x.Service.DataSchemas
                                                   .Where(y => y.Direction == DirectionEnum.Output && y.StaticData == null && y.Type != DataTypeEnum.Object &&
-                                                              y.Array == false)
+                                                              y.Array == false && !y.Disabled)
                                                   .Select(y => new DataSchemaAttributeDTO
                                                   {
                                                       Id = y.Id,
@@ -351,7 +362,7 @@ namespace BPMS_DAL.Repositories
                                     Name = x.Name,
                                     Attributes = x.Service.DataSchemas
                                                   .Where(y => y.Direction == DirectionEnum.Input && y.StaticData == null && y.Type != DataTypeEnum.Object &&
-                                                              y.Array == false)
+                                                              y.Array == false && !y.Disabled)
                                                   .Select(y => new DataSchemaAttributeDTO
                                                   {
                                                       Id = y.Id,
@@ -371,6 +382,7 @@ namespace BPMS_DAL.Repositories
                                        .ThenInclude(x => x.MappedBlocks)
                                     .Where(x => x.PoolId == poolId && x.Order < order)
                                     .SelectMany(x => x.Attributes)
+                                    .Where(x => !x.Disabled)
                                     .Select(x => new InputAttributeDTO
                                     {
                                         BlockName = x.Block.Name,
@@ -392,6 +404,7 @@ namespace BPMS_DAL.Repositories
                                           .ThenInclude(x => x.MappedBlocks)
                                        .Where(x => x.PoolId == poolId && x.Order < order)
                                        .SelectMany(x => x.Attributes)
+                                       .Where(x => !x.Disabled)
                                        .Select(x => new InputAttributeDTO
                                        {
                                            BlockName = x.Block.Name,
@@ -443,7 +456,9 @@ namespace BPMS_DAL.Repositories
                                   SystemId = x.Pool.System.Id,
                                   Key = x.Pool.System.Key,
                                   BlockId = x.Id,
-                                  ModelId = x.Pool.ModelId
+                                  ModelId = x.Pool.ModelId,
+                                  Encryption = x.Pool.System.Encryption > x.Pool.System.ForeignEncryption ? 
+                                               x.Pool.System.Encryption : x.Pool.System.ForeignEncryption
                               })
                               .ToListAsync();
         }

@@ -17,10 +17,11 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<TaskDataEntity?>> MappedUserTaskData(Guid id)
         {
-            return _dbSet.Include(x => x.Task)
-                            .ThenInclude(x => x.BlockModel)
-                         .Include(x => x.TaskData)
+            return _dbSet.Include(x => x.TaskData)
                             .ThenInclude(x => x.Attribute)
+                         .Include(x => x.TaskData)
+                            .ThenInclude(x => x.OutputTask)
+                                .ThenInclude(x => x.BlockModel)
                          .Where(x => x.TaskId == id)
                          .Select(x => x.TaskData)
                          .Where(x => x.AttributeId != null)

@@ -17,10 +17,10 @@ using BPMS_DTOs.DataSchema;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.SignalR;
 using BPMS_BL.Hubs;
 using System.Net;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace BPMS_BL.Helpers
 {
@@ -134,7 +134,7 @@ namespace BPMS_BL.Helpers
             switch (blockModel)
             {
                 case IUserTaskModelEntity:
-                    blockWorkflow = CreateUserTask(blockModel);
+                    blockWorkflow = await CreateUserTask(blockModel);
                     break;
 
                 case IServiceTaskModelEntity serviceTask:
@@ -186,7 +186,7 @@ namespace BPMS_BL.Helpers
         {
             BlockWorkflowEntity blockWorkflow = new SendEventWorkflowEntity();
 
-            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes.Where(x => !x.Attribute.Disabled))
             {
                 TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
                 if (taskData != null)
@@ -202,7 +202,7 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private BlockWorkflowEntity CreateUserTask(BlockModelEntity blockModel)
+        private async Task<BlockWorkflowEntity> CreateUserTask(BlockModelEntity blockModel)
         {
             BlockWorkflowEntity blockWorkflow = new UserTaskWorkflowEntity()
             {
@@ -212,7 +212,7 @@ namespace BPMS_BL.Helpers
             IUserTaskWorkflowEntity uTask = blockWorkflow as IUserTaskWorkflowEntity;
 
             _createdUserTasks[blockModel.Id] = blockWorkflow;
-            foreach (BlockModelDataSchemaEntity schema in blockModel.DataSchemas)
+            foreach (BlockModelDataSchemaEntity schema in await _blockModelRepository.DataShemas(blockModel.Id))
             {
                 TaskDataEntity? taskData = _createdServiceData.GetValueOrDefault((schema.DataSchemaId, schema.ServiceTaskId));
                 if (taskData != null)
@@ -225,7 +225,7 @@ namespace BPMS_BL.Helpers
                 }
             }
 
-            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes)
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes.Where(x => !x.Attribute.Disabled))
             {
                 TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
                 if (taskData != null)
@@ -300,7 +300,7 @@ namespace BPMS_BL.Helpers
         private List<TaskDataEntity> CrateUserTaskData(List<AttributeEntity> attributes)
         {
             List<TaskDataEntity> data = new List<TaskDataEntity>();
-            foreach(AttributeEntity attribute in attributes)
+            foreach (AttributeEntity attribute in attributes.Where(x => !x.Disabled))
             {
                 TaskDataEntity taskData = CreateUserTaskData(attribute.Type);
                 taskData.AttributeId = attribute.Id;
@@ -534,6 +534,7 @@ namespace BPMS_BL.Helpers
                     break;
                 
                 case SerializationEnum.XMLMarks:
+                case SerializationEnum.XMLAttributes:
                     MapRequestResultXml(XDocument.Parse(result.RecievedData), data, mappedData);
                     break;
 
@@ -552,28 +553,34 @@ namespace BPMS_BL.Helpers
 
         private void MapRequestResultXml(XDocument xml, List<TaskDataEntity> data, List<DataSchemaDataMap> mappedData)
         {
-            Guid? parentId = null;
             if (xml.Root.HasAttributes)
             {
-                MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, null);
-            }
-
-            if (xml.Root.HasElements)
-            {
-                MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, null);
-            }
-
-            if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
-            {
-                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName, parentId);
+                (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, xml.Root.Name.LocalName);
                 if (currentData != null)
                 {
-                    MapRequestResultXmlValue(currentData, mappedCurrent, xml.Root.Value);
+                    if (xml.Root.HasAttributes)
+                    {
+                        MapRequestResultXmlAttributes(xml.Root.Attributes(), data, mappedData, currentData.SchemaId);
+                    }
+
+                    if (xml.Root.HasElements)
+                    {
+                        MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData, currentData.SchemaId);
+                    }
+
+                    if (!xml.Root.HasElements && !xml.Root.HasAttributes) 
+                    {
+                        MapRequestResultXmlValue(currentData, mappedCurrent, xml.Root.Value);
+                    }
                 }
+            }
+            else if (xml.Root.HasElements)
+            {
+                MapRequestResultXmlNodes(xml.Root.Nodes(), data, mappedData);
             }
         }
 
-        private void MapRequestResultXmlNodes(IEnumerable<XNode> nodes, IEnumerable<TaskDataEntity> data, IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId)
+        private void MapRequestResultXmlNodes(IEnumerable<XNode> nodes, IEnumerable<TaskDataEntity> data, IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId = null)
         {
             foreach (XElement child in nodes)
             {
@@ -600,7 +607,7 @@ namespace BPMS_BL.Helpers
         private void MapRequestResultXmlAttributes(IEnumerable<XAttribute> attributes, IEnumerable<TaskDataEntity> data, 
                                                    IEnumerable<DataSchemaDataMap> mappedData, Guid? parentId)
         {
-            foreach (XAttribute attribute in attributes)
+            foreach (XAttribute attribute in attributes.Where(x => !Regex.Match(x.ToString(), "^(xmlns:|xsi:|xsi:|xslt:).*").Success))
             {
                 (TaskDataEntity currentData, List<TaskDataEntity> mappedCurrent) = GetDataToMap(data, mappedData, attribute.Name.LocalName, parentId);
                 if (currentData != null)

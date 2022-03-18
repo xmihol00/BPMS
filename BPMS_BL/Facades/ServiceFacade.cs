@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BPMS_DTOs.Filter;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace BPMS_BL.Facades
 {
@@ -83,10 +84,26 @@ namespace BPMS_BL.Facades
                 if (removedIds.Contains(schema.ParentId))
                 {
                     removedIds.Add(schema.Id);
-                    _dataSchemaRepository.Remove(schema);
+                    if (schema.Data.Count == 0)
+                    {
+                        _dataSchemaRepository.Remove(schema);
+                    }
+                    else
+                    {
+                        schema.Disabled = true;
+                    }
                 }
             }
-            _dataSchemaRepository.Remove(new DataSchemaEntity() { Id = id });
+
+            DataSchemaEntity topSchema = await _dataSchemaRepository.ForRemoval(id);
+            if (topSchema.Data.Count == 0)
+            {
+                _dataSchemaRepository.Remove(topSchema);
+            }
+            else
+            {
+                topSchema.Disabled = true;
+            }
 
             await _dataSchemaRepository.Save();
         }
@@ -271,6 +288,7 @@ namespace BPMS_BL.Facades
             
             if (current != null)
             {
+                current.Disabled = false;
                 return current.Id;
             }
             
@@ -435,7 +453,7 @@ namespace BPMS_BL.Facades
 
         private async Task ParseXMLAttributes(XElement node, Guid? parentId = null)
         {
-            foreach (XAttribute attrib in node.Attributes())
+            foreach (XAttribute attrib in node.Attributes().Where(x => !Regex.Match(x.ToString(), "^(xmlns:|xsi:|xsi:|xslt:).*").Success))
             {
                 await ParseXMLValue(attrib.Name.LocalName, attrib.Value, parentId);
             }

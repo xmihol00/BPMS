@@ -76,7 +76,8 @@ namespace BPMS_DAL.Repositories
                              Key = x.System.Key,
                              PoolId = x.Id,
                              DestinationURL = x.System.URL,
-                             SystemId = x.System.Id, 
+                             SystemId = x.System.Id,
+                             Encryption = x.System.Encryption > x.System.ForeignEncryption ? x.System.Encryption : x.System.ForeignEncryption
                          })
                          .ToListAsync();
         }

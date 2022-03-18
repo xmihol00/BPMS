@@ -16,5 +16,6 @@ namespace BPMS_Common.Interfaces
         public EncryptionLevelEnum Encryption { get; set; }
         public byte[]? PayloadHash { get; set; }
         public byte[]? PayloadKey { get; set; }
+        public byte[]? PayloadIV { get; set; }
     }
 }

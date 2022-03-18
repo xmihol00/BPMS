@@ -80,13 +80,28 @@ namespace BPMS_BL.Facades
 
         public async Task<SystemInfoCardDTO> Edit(SystemEditDTO dto)
         {
-            SystemEntity entity = _mapper.Map<SystemEntity>(dto);
-            _systemRepository.Update(entity);
-            _systemRepository.Entry(entity, x => 
+            SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
+            DstAddressDTO address = new DstAddressDTO
             {
-                x.Property(x => x.Key).IsModified = false;
-                x.Property(x => x.State).IsModified = false;
-            });
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption,
+                SystemId = entity.Id,
+                Key = entity.Key,
+                URL = StaticData.ThisSystemURL
+            };
+
+            if (entity.Encryption != dto.Encryption)
+            {
+                if (!await CommunicationHelper.ChangeEncryption(address, dto.Encryption))
+                {
+                    throw new Exception();
+                }
+            }
+
+            entity.Encryption = dto.Encryption;
+            entity.Description = dto.Description;
+            entity.Name = dto.Name;
+            entity.URL = dto.URL;
 
             await _systemRepository.Save();
             return await _systemRepository.InfoCard(dto.Id);
@@ -108,7 +123,8 @@ namespace BPMS_BL.Facades
                 Key = entity.Key,
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL,
-                DestinationURL = entity.URL
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
 
             if (!await CommunicationHelper.ActivateSystem(address))
@@ -129,7 +145,8 @@ namespace BPMS_BL.Facades
                 Key = entity.Key,
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL,
-                DestinationURL = entity.URL
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
             ConnectionRequestEntity request = new ConnectionRequestEntity
             {
@@ -158,7 +175,8 @@ namespace BPMS_BL.Facades
                 Key = entity.Key,
                 SystemId = entity.Id,
                 URL = StaticData.ThisSystemURL,
-                DestinationURL = entity.URL
+                DestinationURL = entity.URL,
+                Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
 
             if (!await CommunicationHelper.DeactivateSystem(address))
@@ -191,14 +209,17 @@ namespace BPMS_BL.Facades
                         SenderName = _userName,
                         Text = dto.Text,
                     }
-                }
+                },
+                Encryption = dto.Encryption,
+                ForeignEncryption = dto.Encryption
             };
             DstAddressDTO address = new DstAddressDTO
             {
                 Key = StaticData.Key,
                 SystemId = StaticData.ThisSystemId,
                 URL = dto.URL,
-                DestinationURL = dto.URL
+                DestinationURL = dto.URL,
+                Encryption = entity.Encryption
             };
 
             if (!await CommunicationHelper.CreateSystem(address, entity))

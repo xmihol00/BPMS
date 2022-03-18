@@ -35,7 +35,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<DataSchemaNodeDTO>> DataSchemas(Guid serviceId, DirectionEnum direction)
         {
-            return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == direction)
+            return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == direction && !x.Disabled)
                          .Select(x => new DataSchemaNodeDTO 
                          {
                             Id = x.Id,
@@ -67,9 +67,9 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<DataSchemaEntity>> SchemasForRemoval(Guid id)
         {
-            return _dbSet.AsNoTracking()
-                         .Include(x => x.Service)
+            return _dbSet.Include(x => x.Service)
                             .ThenInclude(x => x.DataSchemas)
+                                .ThenInclude(x => x.Data)
                          .Where(x => x.Id == id)
                          .SelectMany(x => x.Service.DataSchemas)
                          .ToListAsync();
@@ -77,7 +77,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<DataSchemaAllDTO>> Test(Guid serviceId)
         {
-            return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input)
+            return _dbSet.Where(x => x.ServiceId == serviceId && x.Direction == DirectionEnum.Input && !x.Disabled)
                          .Select(x => new DataSchemaAllDTO 
                          {
                              Alias = x.Alias,
@@ -90,9 +90,15 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<DataSchemaEntity> ForRemoval(Guid id)
+        {
+            return _dbSet.Include(x => x.Data)
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<DataSchemaEntity?> Find(Guid serviceId, string alias, Guid? parentId, DirectionEnum direction)
         {
-            return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && 
+            return _dbSet.FirstOrDefaultAsync(x => x.ServiceId == serviceId && x.Alias == alias && !x.Disabled &&
                                                    x.ParentId == parentId && x.Direction == direction);
         }
 
@@ -123,7 +129,7 @@ namespace BPMS_DAL.Repositories
         public Task<List<DataSchemaEntity>> AllWithMaps(Guid? serviceId)
         {
             return _dbSet.Include(x => x.Blocks)
-                         .Where(x => x.ServiceId == serviceId)
+                         .Where(x => x.ServiceId == serviceId && !x.Disabled)
                          .Select(x => new DataSchemaEntity 
                          {
                              Type = x.Type,

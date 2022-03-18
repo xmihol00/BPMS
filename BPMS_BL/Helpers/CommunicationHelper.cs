@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using BPMS_Common;
+using BPMS_Common.Enums;
 using BPMS_Common.Interfaces;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Sharing;
@@ -44,6 +45,18 @@ namespace BPMS_BL.Helpers
         public static async Task<bool> CreateForeignRecieverAttribute(IAddressAuth addressAuth, object payload)
         {
             using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/CreateForeignRecieverAttribute");
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> UpdateRecieverAttribute(IAddressAuth addressAuth, object payload)
+        {
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/UpdateRecieverAttribute");
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static async Task<bool> UpdateForeignRecieverAttribute(IAddressAuth addressAuth, object payload)
+        {
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/UpdateForeignRecieverAttribute");
             return response.StatusCode == HttpStatusCode.OK;
         }
 
@@ -225,6 +238,14 @@ namespace BPMS_BL.Helpers
             }
         }
 
+        public static async Task<bool> ChangeEncryption(IAddressAuth addressAuth, EncryptionLevelEnum encryption)
+        {
+            object payload = encryption.ToString();
+            using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ChangeEncryption");
+            List<AttributeEntity> dto = JsonConvert.DeserializeObject<List<AttributeEntity>>(await response.Content.ReadAsStringAsync());
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         private static async Task<HttpResponseMessage> SendMessage(IAddressAuth addressAuth, object payload, string path, HttpMethod? method = null)
         {
             using HttpClientHandler httpClientHandler = new HttpClientHandler();
@@ -239,19 +260,24 @@ namespace BPMS_BL.Helpers
                 body = JsonConvert.SerializeObject(payload);
             }
 
+            if (addressAuth.Encryption >= EncryptionLevelEnum.Hash)
+            {
+                addressAuth.PayloadHash = new Rfc2898DeriveBytes(body, addressAuth.MessageId.ToByteArray(), 1000).GetBytes(32);
+            }
+
+            if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)
+            {
+                body = await SymetricCipherHelper.Encrypt(body, addressAuth);
+            }
+
             using HttpClient client = new HttpClient(httpClientHandler);
             using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = method ?? HttpMethod.Post,
                 RequestUri = new Uri(addressAuth.DestinationURL + path), 
                 Content = new StringContent(body)
-                {
-                    Headers = { 
-                        ContentType = new MediaTypeHeaderValue("application/json")
-                    }
-                }
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", SymetricCipherHelper.JsonEncrypt(addressAuth));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", SymetricCipherHelper.AuthEncrypt(addressAuth));
 
             return await client.SendAsync(request);
         }

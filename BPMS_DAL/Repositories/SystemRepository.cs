@@ -130,6 +130,7 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              URL = x.URL,
                              State = x.State,
+                             Encryption = x.Encryption,
                              Agendas = x.Agendas.Select(y => y.Agenda)
                                                 .Select(y => new AgendaAllDTO
                                                 {
@@ -182,7 +183,8 @@ namespace BPMS_DAL.Repositories
                          {
                              DestinationURL = x.URL,
                              Key = x.Key,
-                             SystemId = x.Id
+                             SystemId = x.Id,
+                             Encryption = x.Encryption > x.ForeignEncryption ? x.Encryption : x.ForeignEncryption
                          })
                          .FirstAsync(x => x.SystemId == systemId);
         }

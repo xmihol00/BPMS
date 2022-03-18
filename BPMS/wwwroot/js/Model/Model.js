@@ -295,7 +295,6 @@ function ToggleSendMap(attribId, button)
     })
     .done((result) => 
     {
-        console.log(result);
         button.innerHTML = "<i class='fas fa-check-circle'></i>"
         if (result)
         {
