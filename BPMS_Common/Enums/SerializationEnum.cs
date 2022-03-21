@@ -22,16 +22,16 @@ namespace BPMS_Common.Enums
             switch (value)
             {
                 case SerializationEnum.JSON:
-                    return "application/json";
+                    return "JSON";
                 
                 case SerializationEnum.XMLMarks:
-                    return "text/xml (značky)";
+                    return "XML (značky)";
 
                 case SerializationEnum.XMLAttributes:
-                    return "text/xml (atributy)";
+                    return "XML (atributy)";
                 
                 case SerializationEnum.URL:
-                    return "application/x-www-form-urlencoded";
+                    return "URL query";
                 
                 case SerializationEnum.Replace:
                     return "nahradit v URL";
