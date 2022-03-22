@@ -12,7 +12,6 @@ namespace BPMS_DAL.Entities.ModelBlocks
     {
         public UserTaskModelEntity() : base() {}
         public UserTaskModelEntity(PoolEntity pool) : base(pool) { }
-
-        public TimeSpan Difficulty { get; set; }
+        public int Difficulty { get; set; }
     }
 }

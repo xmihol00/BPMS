@@ -194,6 +194,7 @@ namespace BPMS_BL.Facades
 
         public async Task<Guid> Create(SystemCreateDTO dto)
         {
+            UserEntity user = await _userRepository.Bare();
             SystemEntity entity = new SystemEntity
             {
                 URL = StaticData.ThisSystemURL,
@@ -205,8 +206,10 @@ namespace BPMS_BL.Facades
                     {
                         Date = DateTime.Now,
                         ForeignUserId = UserId,
-                        SenderName = _userName,
+                        SenderName = user.Name,
                         Text = dto.Text,
+                        SenderEmail = user.Email,
+                        SenderPhone = user.PhoneNumber
                     }
                 },
                 Encryption = dto.Encryption,

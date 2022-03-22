@@ -95,6 +95,18 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
+        public Task<List<UserIdNameDTO>> Keepers(SystemRoleEnum role)
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Where(x => x.SystemRoles.Any(y => y.Role == role))
+                         .Select(x => new UserIdNameDTO
+                         {
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
+                             Id = x.Id
+                         })
+                         .ToListAsync();
+        }
+
         public Task<List<UserAllDTO>> All(Guid? id = null)
         {
             IQueryable<UserEntity> query = _dbSet.Include(x => x.SystemRoles)
@@ -205,16 +217,9 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<UserIdNameDTO>> AgendaKeepers()
+        public Task<UserEntity> Bare()
         {
-            return _dbSet.Include(x => x.SystemRoles)
-                         .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper))
-                         .Select(x => new UserIdNameDTO
-                         {
-                             FullName = $"{x.Title} {x.Name} {x.Surname}",
-                             Id = x.Id
-                         })
-                         .ToListAsync();
+            return _dbSet.FirstAsync(x => x.Id == UserId);
         }
 
         public Task<Guid[]> Admins()

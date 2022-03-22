@@ -1,5 +1,6 @@
 using BPMS_BL.Facades;
 using BPMS_BL.Helpers;
+using BPMS_Common.Enums;
 using BPMS_DTOs.Filter;
 using BPMS_DTOs.Header;
 using BPMS_DTOs.Workflow;
@@ -54,11 +55,13 @@ namespace BPMS.Controllers
         public async Task<IActionResult> DetailPartial(Guid id)
         {
             WorkflowDetailPartialDTO dto = await _workflowFacade.DetailPartial(id);
+            dto.Editable |= (bool)ViewData[SystemRoleEnum.Admin.ToString()];
             return Ok(new
             {
                 detail = await this.RenderViewAsync("Partial/_WorkflowDetail", dto, true),
                 header = await this.RenderViewAsync("Partial/_WorkflowDetailHeader", dto, true),
                 activeBlock = dto.ActiveBlock,
+                editable = dto.Editable
             });
         }
 
@@ -84,6 +87,13 @@ namespace BPMS.Controllers
                 info = await this.RenderViewAsync("Partial/_WorkflowDetailInfo", infoCard, true),
                 card = await this.RenderViewAsync("Partial/_WorkflowCard", (infoCard.SelectedWorkflow, true), true),
             });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Keepers(Guid id)
+        {
+            return PartialView("Partial/_WorkflowAdminChange", await _workflowFacade.Keepers(id));            
         }
     }
 }

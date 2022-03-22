@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    [Migration("20220318213059_edit2")]
-    partial class edit2
+    [Migration("20220322133438_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -248,8 +248,15 @@ namespace BPMS_DAL.Migrations
                     b.Property<Guid>("ForeignUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SenderName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderPhone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SystemId")
@@ -650,11 +657,11 @@ namespace BPMS_DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("AppId")
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("AppSecret")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("AppSecret")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("AuthType")
                         .HasColumnType("int");
@@ -961,7 +968,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "ISaWTbZCvnHDDVXb5Y8YEIVJjBTbBqKHAu7XOgz2jnYEaUWBpiXZGI1Zzd7YB+aZnyE7CpPOIRN3kDG/92QrU7GX",
+                            Password = "7nfgJv29qmTR78+wRQRxMaRKow6Il6DqYDkQjVyNIMe46lX9ZO1Cwc5NRcw+k+rdAJo2yODgKx1kFmanrsDeyi+l",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
@@ -1192,8 +1199,8 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<TimeSpan>("Difficulty")
-                        .HasColumnType("time");
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");

@@ -21,8 +21,8 @@ namespace BPMS_DAL.Migrations
                     HttpMethod = table.Column<int>(type: "int", nullable: false),
                     URL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthType = table.Column<int>(type: "int", nullable: false),
-                    AppId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AppSecret = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    AppId = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    AppSecret = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,8 +85,8 @@ namespace BPMS_DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Alias = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StaticData = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Order = table.Column<long>(type: "bigint", nullable: false),
                     Compulsory = table.Column<bool>(type: "bit", nullable: false),
                     Array = table.Column<bool>(type: "bit", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
@@ -160,7 +160,9 @@ namespace BPMS_DAL.Migrations
                     SenderName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ForeignUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SenderEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderPhone = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -610,7 +612,7 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Difficulty = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Difficulty = table.Column<int>(type: "int", nullable: false),
                     RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -1159,28 +1161,28 @@ namespace BPMS_DAL.Migrations
             migrationBuilder.InsertData(
                 table: "Systems",
                 columns: new[] { "Id", "Description", "Encryption", "ForeignEncryption", "Key", "Name", "State", "URL" },
-                values: new object[] { new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"), null, 2, 0, new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 }, "Tento systém", 5, "https://localhost:5001/" });
+                values: new object[] { new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"), null, 2, 0, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "8c7qaxIit0oWzK7FGoDbgs+Sh0KkDe2ZJy7QjGaOIiTA5/szc9ZOnlD020sfbXTy8aFJ8pUYfpXc2wHi/JLc3O0z", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "7nfgJv29qmTR78+wRQRxMaRKow6Il6DqYDkQjVyNIMe46lX9ZO1Cwc5NRcw+k+rdAJo2yODgKx1kFmanrsDeyi+l", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
-                columns: new[] { "Id", "Alias", "Array", "Compulsory", "Direction", "Disabled", "Name", "Order", "ParentId", "ServiceId", "StaticData", "Type" },
+                columns: new[] { "Id", "Alias", "Array", "Compulsory", "Description", "Direction", "Disabled", "Name", "ParentId", "ServiceId", "StaticData", "Type" },
                 values: new object[,]
                 {
-                    { new Guid("aab873d3-4806-40f6-b454-b35380eb5566"), "ico", false, true, 0, false, "IČO", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"), null, 0 },
-                    { new Guid("aab873d3-4806-40f6-b454-b35380eb6677"), "obchodni_firma", false, true, 0, false, "Obchodní firma", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"), null, 0 },
-                    { new Guid("aab873d3-4806-40f6-b454-b35380ebd838"), "mode", false, true, 0, false, "Mód", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "xml", 0 },
-                    { new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, false, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, 0 },
-                    { new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, 0, false, "Město", 0L, null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd838"), "appid", false, true, 0, false, "Klíč", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b45380ebd838"), "lat", false, true, 0, false, "Zeměpisná šířka", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 },
-                    { new Guid("ec2873d3-4877-40f6-b4a4-b35380ebd838"), "lon", false, true, 0, false, "Zeměpisná délka", 0L, null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 }
+                    { new Guid("aab873d3-4806-40f6-b454-b35380eb5566"), "ico", false, true, null, 0, false, "IČO", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"), null, 0 },
+                    { new Guid("aab873d3-4806-40f6-b454-b35380eb6677"), "obchodni_firma", false, true, null, 0, false, "Obchodní firma", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"), null, 0 },
+                    { new Guid("aab873d3-4806-40f6-b454-b35380ebd838"), "mode", false, true, null, 0, false, "Mód", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "xml", 0 },
+                    { new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, null, 0, false, "Město", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, 0 },
+                    { new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, null, 0, false, "Klíč", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
+                    { new Guid("ec2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, null, 0, false, "Klíč", null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, null, 0, false, "Město", null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, 0 },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd838"), "appid", false, true, null, 0, false, "Klíč", null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), "7622a0a6b0f63a523986e6021e727f81", 0 },
+                    { new Guid("ec2873d3-4806-40f6-b4a4-b45380ebd838"), "lat", false, true, null, 0, false, "Zeměpisná šířka", null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 },
+                    { new Guid("ec2873d3-4877-40f6-b4a4-b35380ebd838"), "lon", false, true, null, 0, false, "Zeměpisná délka", null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 }
                 });
 
             migrationBuilder.InsertData(

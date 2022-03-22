@@ -87,6 +87,18 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
+        public Task<bool> IsKeeper(Guid id)
+        {
+            return _dbSet.AnyAsync(x => x.Id == id && x.AdministratorId == UserId);
+        }
+
+        public Task<Guid?> Keeper(Guid id)
+        {
+            return _dbSet.Where(x => x.Id == id)
+                         .Select(x => x.AdministratorId)
+                         .FirstAsync();
+        }
+
         public Task<WorkflowDetailDTO> Detail(Guid id)
         {
             return _dbSet.Include(x => x.Model)
@@ -104,6 +116,7 @@ namespace BPMS_DAL.Repositories
                              Name = x.Name,
                              State = x.State,
                              SVG = x.Model.SVG,
+                             ExpectedEnd = x.ExpectedEnd,
                              AdministratorEmail = x.Administrator.Email,
                              AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}",
                          })
@@ -151,6 +164,39 @@ namespace BPMS_DAL.Repositories
                         .ToListAsync();
         }
 
+        public Task<WorkflowInfoCardDTO> InfoCard(Guid id)
+        {
+            return _dbSet.Include(x => x.Model)
+                         .Include(x => x.Agenda)
+                         .Include(x => x.Administrator)
+                         .Where(x => x.Id == id)
+                         .Select(x => new WorkflowInfoCardDTO
+                         {
+                            AdministratorEmail = x.Administrator.Email,
+                            AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}",
+                            Description = x.Description,
+                            Id = x.Id,
+                            Name = x.Name,
+                            State = x.State,
+                            ExpectedEnd = x.ExpectedEnd,
+                            SelectedWorkflow = new WorkflowAllDTO
+                            {
+                                AgendaId = x.AgendaId,
+                                AgendaName = x.Agenda.Name,
+                                Description = x.Description,
+                                Id = x.Id,
+                                ModelId = x.ModelId,
+                                ModelName = x.Model.Name,
+                                Name = x.Name,
+                                State = x.State,
+                                SVG = x.Model.SVG,
+                                AdministratorEmail = x.Administrator.Email,
+                                AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}"
+                            }                           
+                         })
+                         .FirstAsync();
+        }
+
         public Task<WorkflowAllDTO> Selected(Guid id)
         {
             return _dbSet.Include(x => x.Model)
@@ -177,12 +223,6 @@ namespace BPMS_DAL.Repositories
         public Task<WorkflowEntity> Bare(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
-        }
-
-        public Task<WorkflowEntity> BareAdmin(Guid id)
-        {
-            return _dbSet.Include(x => x.Administrator)
-                         .FirstAsync(x => x.Id == id);
         }
 
         public Task<WorkflowEntity?> WaitingOrDefault(Guid modelId)

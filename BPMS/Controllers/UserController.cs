@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BPMS.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly UserFacade _userFacade;
@@ -29,18 +29,22 @@ namespace BPMS.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
             CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
             return PartialView("Partial/_UserOverview", await _userFacade.FilterUsers(dto));
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Overview()
         {
             return View("UserOverview", await _userFacade.Overview());
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> OverviewPartial()
         {
             return Ok(new
@@ -50,11 +54,15 @@ namespace BPMS.Controllers
             });
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Detail(Guid id)
         {
             return View("UserDetail", await _userFacade.Detail(id));
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
             UserDetailPartialDTO dto = await _userFacade.DetailPartial(id);
@@ -67,6 +75,8 @@ namespace BPMS.Controllers
             });
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(UserCreateEditDTO dto)
         {
             UserInfoCardDTO infoCard = await _userFacade.Edit(dto);
@@ -77,9 +87,24 @@ namespace BPMS.Controllers
             });
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(UserCreateEditDTO dto)
         {
             return Redirect($"/User/Detail/{await _userFacade.Create(dto)}");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyDetail()
+        {
+            return View("UserMyDetail", await _userFacade.MyDetail());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PwdChange(UserPasswordChangeDTO dto)
+        {
+            await _userFacade.ChangePassword(dto);
+            return Ok();
         }
     }
 }

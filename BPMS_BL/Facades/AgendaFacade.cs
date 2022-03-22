@@ -111,21 +111,18 @@ namespace BPMS_BL.Facades
 
         public async Task<AgendaInfoCardDTO> Edit(AgendaEditDTO dto)
         {
-            AgendaEntity agenda = await _agendaRepository.BareAdmin(dto.Id);
+            AgendaEntity agenda = await _agendaRepository.Bare(dto.Id);
             agenda.Name = dto.Name;
-            agenda.Description = dto.Description ?? "";
+            agenda.Description = dto.Description;
+            if (dto.AdministratorId != null && dto.AdministratorId != agenda.AdministratorId)
+            {   
+                agenda.AdministratorId = dto.AdministratorId.Value;
+                await NotificationHub.CreateSendNotifications(_notificationRepository, dto.Id, NotificationTypeEnum.NewAgenda, agenda.Name, 
+                                                              UserId, agenda.AdministratorId);
+            }
             await _agendaRepository.Save();
 
-            return new AgendaInfoCardDTO()
-            {
-                AdministratorEmail = agenda.Administrator.Email,
-                AdministratorId = agenda.AdministratorId,
-                AdministratorName = $"{agenda.Administrator.Name} {agenda.Administrator.Surname}",
-                Description = agenda.Description,
-                Id = agenda.Id,
-                Name = agenda.Name,
-                SelectedAgenda = await _agendaRepository.Selected(agenda.Id)
-            };
+            return await _agendaRepository.InfoCard(agenda.Id);
         }
 
         public async Task AddUserRole(Guid userId, Guid agendaRoleId)
@@ -159,7 +156,7 @@ namespace BPMS_BL.Facades
             return new AgendaAdminChangeDTO
             {
                 CurrentAdminId = await _agendaRepository.CurrentAdmin(agendaId),
-                OtherAdmins = await _userRepository.AgendaKeepers()
+                OtherAdmins = await _userRepository.Keepers(SystemRoleEnum.AgendaKeeper)
             };
         }
 

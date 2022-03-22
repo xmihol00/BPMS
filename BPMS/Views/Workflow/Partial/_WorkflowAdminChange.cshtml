@@ -1,0 +1,18 @@
+@model WorkflowAdminChangeDTO
+
+<label class="input">
+    <select class="input-select" name="AdministratorId"> 
+        @foreach (UserIdNameDTO item in Model.OtherAdmins)
+        {
+            if (item.Id == Model.CurrentAdminId)
+            {
+                <option value="@item.Id" selected>@item.FullName</option>
+            }
+            else
+            {
+                <option value="@item.Id">@item.FullName</option>
+            }
+        }
+    </select>
+    <span class="input-label">Správce</span>
+</label>

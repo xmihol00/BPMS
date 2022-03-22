@@ -155,6 +155,38 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<AgendaInfoCardDTO> InfoCard(Guid id)
+        {
+            return _dbSet.Include(x => x.Models)
+                         .Include(x => x.Systems)
+                         .Include(x => x.Workflows)
+                         .Include(x => x.AgendaRoles)
+                            .ThenInclude(x => x.UserRoles)
+                         .Select(x => new AgendaInfoCardDTO
+                         {
+                             SelectedAgenda = new AgendaAllDTO 
+                                              {
+                                                  Id = x.Id,
+                                                  Name = x.Name,
+                                                  ActiveWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Active).Count(),
+                                                  PausedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Paused || y.State == WorkflowStateEnum.Waiting).Count(),
+                                                  FinishedWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Finished).Count(),
+                                                  CanceledWorkflowsCount = x.Workflows.Where(y => y.State == WorkflowStateEnum.Canceled).Count(),
+                                                  ModelsCount = x.Models.Count(),
+                                                  SystemsCount = x.Systems.Count(),
+                                                  UserCount = x.AgendaRoles.SelectMany(x => x.UserRoles).Count(),
+                                                  MissingRolesCount = x.AgendaRoles.Where(y => y.UserRoles.Count == 0).Count(),
+                                              },
+                            AdministratorId = x.AdministratorId,
+                            AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}",
+                            AdministratorEmail = x.Administrator.Email,
+                            Id = x.Id,
+                            Name = x.Name,
+                            Description = x.Description
+                         })
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<Guid> CurrentAdmin(Guid agendaId)
         {
             return _dbSet.Where(x => x.Id == agendaId)
@@ -223,10 +255,9 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<AgendaEntity> BareAdmin(Guid id)
+        public Task<AgendaEntity> Bare(Guid id)
         {
-            return _dbSet.Include(x => x.Administrator)
-                         .FirstAsync(x => x.Id == id);
+            return _dbSet.FirstAsync(x => x.Id == id);
         }
 
         public Task<List<SystemAllDTO>> Systems(Guid id)

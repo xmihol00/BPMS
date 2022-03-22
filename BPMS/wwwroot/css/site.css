@@ -26,6 +26,7 @@
   --color-secondary: #6c757d;
   --color-bad-map: #750000;
   --color-ok-map: #007bff;
+  --color-danger: #fc6a00;
 }
 
 html {
@@ -556,6 +557,7 @@ a:hover {
   transition: all 1.0s;
   display: block;
   overflow: hidden;
+  padding-bottom: 0.25rem;
   width: 0%;
 }
 
@@ -819,6 +821,9 @@ a:hover {
   font-size: 1.3em !important;
 }
 
+.fa-user {
+  width: 30px;
+}
 
 .map-src, .map-dst, .target {
   border: 2px solid var(--color-border-dark);

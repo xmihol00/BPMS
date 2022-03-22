@@ -7,7 +7,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-12 col-lg-6">
+    <div class="col-12 col-md-6 col-lg-4">
         <h4 class="text-center text-font my-1">Správce</h4>
         <div class="d-flex justify-content-center">
             <div class="me-1">
@@ -20,7 +20,24 @@
             </b>
         </div>
     </div>
-    <div class="col-12 col-lg-6">
+    <div class="col-12 col-md-6 col-lg-4">
+        <h4 class="text-center text-font my-1">Očekávané datum dokončení</h4>
+        <div class="d-flex justify-content-center">
+            @if (Model.ExpectedEnd < DateTime.Now)
+            {
+                <b class="text-danger">@Model.ExpectedEnd.ToLongDateString()</b>
+            }
+            else if (Model.ExpectedEnd < DateTime.Now.AddDays(3))
+            {
+                <b class="text-alert">@Model.ExpectedEnd.ToLongDateString()</b>
+            }
+            else
+            {
+                <b>@Model.ExpectedEnd.ToLongDateString()</b>
+            }
+        </div>
+    </div>
+    <div class="col-12 col-md-12 col-lg-4">
         <h4 class="text-center text-font my-1">Popis</h4>
         @if (String.IsNullOrEmpty(Model.Description))
         {

@@ -26,6 +26,8 @@ namespace BPMS_DAL.Repositories
                              Id = x.Id,
                              Text = x.Text,
                              UserName = x.SenderName,
+                             UserEmail = x.SenderEmail,
+                             UserPhone = x.SenderPhone,
                              URL = x.System.URL
                          })
                          .OrderByDescending(x => x.Date)

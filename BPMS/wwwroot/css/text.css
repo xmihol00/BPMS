@@ -98,3 +98,12 @@
 .text-remove:hover {
   color: red;
 }
+
+.user-name {
+  font-size: medium !important;
+  color: #fff;
+}
+
+.text-alert {
+  color: var(--color-danger);
+}

@@ -16,6 +16,7 @@ namespace BPMS_DAL.Entities
         public WorkflowStateEnum State { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public DateTime ExpectedEnd { get; set; }
         public Guid AgendaId { get; set; }
 
         [JsonIgnore]

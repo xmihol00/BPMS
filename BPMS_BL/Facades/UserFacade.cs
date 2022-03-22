@@ -89,6 +89,23 @@ namespace BPMS_BL.Facades
             return ClaimsAndProperties(_mapper.Map<UserAuthDTO>(entity));
         }
 
+        public async Task ChangePassword(UserPasswordChangeDTO dto)
+        {
+            if (dto.PasswordCheck == dto.NewPassword)
+            {
+                UserEntity user = await _userRepository.Bare();
+                if (PasswordHelper.Authenticate(user.Password, dto.OldPassword))
+                {
+                    user.Password = PasswordHelper.HashPassword(dto.NewPassword);
+                    await _userRepository.Save();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+        }
+
         public async Task<Guid> Create(UserCreateEditDTO dto)
         {
             UserEntity entity = _mapper.Map<UserEntity>(dto);
@@ -203,6 +220,11 @@ namespace BPMS_BL.Facades
             detail.SelectedUser = await _userRepository.Selected(id);
 
             return detail;
+        }
+
+        public Task<UserDetailDTO> MyDetail()
+        {
+            return _userRepository.Detail(UserId);
         }
     }
 }
