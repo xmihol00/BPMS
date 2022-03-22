@@ -155,6 +155,18 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<Guid> CurrentAdmin(Guid agendaId)
+        {
+            return _dbSet.Where(x => x.Id == agendaId)
+                         .Select(x => x.AdministratorId)
+                         .FirstAsync();
+        }
+
+        public Task<bool> Keeper(Guid id)
+        {
+            return _dbSet.AnyAsync(x => x.Id == id && x.AdministratorId == UserId);
+        }
+
         public Task<List<AgendaIdNameDTO>> AdminOfAgendas()
         {
             return _dbSet.Where(x => x.AdministratorId == UserId)

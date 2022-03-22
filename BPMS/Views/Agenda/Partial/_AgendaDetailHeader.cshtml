@@ -1,6 +1,7 @@
 @model AgendaDetailHeaderDTO
 @{
-    bool show = (bool)ViewData[SystemRoleEnum.Admin.ToString()] || (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()];
+    bool admin = (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+    bool show = admin || ((bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()] && Model.Editable);
 }
 <div class="d-flex justify-content-between px-4 page-navbar-content">
     <div class="my-auto">   
@@ -15,7 +16,7 @@
         {
             <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
             <button type="button" class="butn btn-p my-auto" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
-            <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
+            <button class="butn btn-p" onclick="ShowModal('UploadModelFormId', '@(admin ? $"/Agenda/Keepers/{Model.Id}" : "")', '@(admin ? "AdminEditId" : "")')">Nahrát model</button>
             <button class="butn btn-p" onclick="ShowModal('EditAgendaId')">Upravit</button>
         }
     </div>
@@ -67,12 +68,16 @@
             <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
         </div>
         <div class="row">
-            <div class="col-12 mt-1">
+            <div class="col-12 @(admin ? "col-lg-6" : "") mt-1">
                 <label class="input">
                     <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
                     <span class="input-label">Název</span>
                 </label>
             </div>
+            @if (admin)
+            {
+                <div id="AdminEditId" class="col-12 col-lg-6"></div>
+            }
             <div class="col-12 mt-3">
                 <label class="input mb-1">
                     <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>

@@ -1,7 +1,6 @@
 @model AgendaOverviewDTO
 @{
     ViewData["Title"] = "Agendy";
-    bool show = (bool)ViewData[SystemRoleEnum.Admin.ToString()] || (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()];
 }
 <script src="~/js/Agenda/Agenda.js"></script>
 <script src="~/js/Model/Model.js"></script>

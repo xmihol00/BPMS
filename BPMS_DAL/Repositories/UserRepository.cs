@@ -205,6 +205,18 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<List<UserIdNameDTO>> AgendaKeepers()
+        {
+            return _dbSet.Include(x => x.SystemRoles)
+                         .Where(x => x.SystemRoles.Any(y => y.Role == SystemRoleEnum.AgendaKeeper))
+                         .Select(x => new UserIdNameDTO
+                         {
+                             FullName = $"{x.Title} {x.Name} {x.Surname}",
+                             Id = x.Id
+                         })
+                         .ToListAsync();
+        }
+
         public Task<Guid[]> Admins()
         {
             return _dbSet.Include(x => x.SystemRoles)

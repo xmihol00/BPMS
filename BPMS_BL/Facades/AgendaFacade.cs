@@ -69,9 +69,16 @@ namespace BPMS_BL.Facades
             return await _agendaRepository.All();
         }
 
+        public async Task<AgendaDetailDTO> DetailPartial(Guid id)
+        {
+            AgendaDetailDTO detail = await _agendaRepository.Detail(id);
+            detail.Editable = await _agendaRepository.Keeper(id);
+            return detail;
+        }
+
         public async Task<AgendaDetailDTO> Detail(Guid id)
         {
-            AgendaDetailDTO dto = await _agendaRepository.Detail(id);
+            AgendaDetailDTO dto = await DetailPartial(id);
             
             dto.AllAgendas = await _agendaRepository.All(id);
             dto.SelectedAgenda = await _agendaRepository.Selected(id);
@@ -147,6 +154,15 @@ namespace BPMS_BL.Facades
             await _userRoleRepository.Save();
         }
 
+        public async Task<AgendaAdminChangeDTO> Keepers(Guid agendaId)
+        {
+            return new AgendaAdminChangeDTO
+            {
+                CurrentAdminId = await _agendaRepository.CurrentAdmin(agendaId),
+                OtherAdmins = await _userRepository.AgendaKeepers()
+            };
+        }
+
         public async Task RemoveSystem(Guid agendaId, Guid systemId)
         {
             _systemAgendaRepository.Remove(new SystemAgendaEntity 
@@ -205,11 +221,6 @@ namespace BPMS_BL.Facades
         public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
         {
             return _userRepository.MissingInRole(agendaId, roleId);
-        }
-
-        public Task<AgendaDetailDTO> DetailPartial(Guid id)
-        {
-            return _agendaRepository.Detail(id);
         }
 
         public async Task<List<RoleAllDTO>> AddRole(Guid agendaId)

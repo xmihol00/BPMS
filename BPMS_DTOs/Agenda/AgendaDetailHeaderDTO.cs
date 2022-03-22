@@ -13,5 +13,6 @@ namespace BPMS_DTOs.Agenda
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
+        public bool Editable { get; set; }
     }
 }
