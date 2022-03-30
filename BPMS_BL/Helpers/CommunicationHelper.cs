@@ -188,7 +188,7 @@ namespace BPMS_BL.Helpers
         {
             object payload = encryption.ToString();
             using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ChangeEncryption");
-            
+            addressAuth.Encryption = encryption;
             return await CheckResponse(addressAuth, response);
         }
 
