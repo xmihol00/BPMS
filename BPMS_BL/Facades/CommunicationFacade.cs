@@ -401,14 +401,13 @@ namespace BPMS_BL.Facades
                 PoolEntity poolEntity = _mapper.Map<PoolEntity>(poolDTO);
                 XElement element = svg.Descendants().First(x => x.Attribute("id")?.Value == poolEntity.Id.ToString());
 
-                if (poolDTO.SystemURL == StaticData.ThisSystemURL)
+                poolEntity.SystemId = await _systemRepository.IdFromUrl(poolDTO.SystemURL);
+                if (poolEntity.SystemId == StaticData.ThisSystemId)
                 {
-                    poolEntity.SystemId = StaticData.ThisSystemId;
                     element.Attribute("class").SetValue("djs-group bpmn-pool bpmn-this-sys");
                 }
                 else
                 {
-                    poolEntity.SystemId = await _systemRepository.IdFromUrl(poolDTO.SystemURL);
                     if (poolEntity.SystemId == Guid.Empty)
                     {
                         poolEntity.SystemId = null;
