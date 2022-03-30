@@ -839,7 +839,7 @@ namespace BPMS_DAL.Migrations
                         new
                         {
                             Id = new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"),
-                            Encryption = 2,
+                            Encryption = 3,
                             ForeignEncryption = 0,
                             Key = new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 },
                             Name = "Tento systém",
@@ -963,7 +963,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "dyEeq/hBhE8LpUCSoX5ESI/EQp0xmpWKq4Q0J4NDLUHL6+AipH5oIm8SrJ6qHQMBVFQNwVrIPdbWtDj7G5FwKssE",
+                            Password = "UDtXlUYg+fuK/P7HiBmKeRIXhAVabRbQGQCZqlNUMiFx8HZ1sGuXOdIDDbU5/cWssVkY1vpzNW/Iro0Zg/tYfG6z",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
