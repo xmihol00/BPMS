@@ -17,7 +17,7 @@ namespace BPMS_DAL.Seeds
         {
             new SystemEntity()
             {
-                Id = StaticData.ThisSystemId,
+                Id = Guid.NewGuid(),
                 Name = "Tento systém",
                 Key = SymetricCipherHelper.EncryptKey().Result,
                 URL = "https://localhost:5001/",

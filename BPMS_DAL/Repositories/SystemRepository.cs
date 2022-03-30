@@ -253,5 +253,10 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.FirstAsync(x => x.Id == id);
         }
+
+        public SystemEntity Bare(object p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

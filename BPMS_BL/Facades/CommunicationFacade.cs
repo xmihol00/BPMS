@@ -121,9 +121,9 @@ namespace BPMS_BL.Facades
             return await CreateResult(await _blockModelRepository.MappedBareAttributes(dto.SenderId));
         }
 
-        public Task<IActionResult> Agendas()
+        public async Task<IActionResult> Agendas()
         {
-            return CreateResult(_agendaRepository.AgendasSystem(_system.Id));
+            return await CreateResult(await _agendaRepository.AgendasSystem(_system.Id));
         }
 
         public async Task<IActionResult> DeactivateSystem()
@@ -152,29 +152,29 @@ namespace BPMS_BL.Facades
             return await CreateResult();
         }
 
-        public Task<IActionResult> SenderBlocks(Guid poolId)
+        public async Task<IActionResult> SenderBlocks(Guid poolId)
         {
-            return CreateResult(_blockModelRepository.SenderBlocks(poolId));
+            return await CreateResult(await _blockModelRepository.SenderBlocks(poolId));
         }
 
-        public Task<IActionResult> Pools(Guid modelId)
+        public async Task<IActionResult> Pools(Guid modelId)
         {
-            return CreateResult(_poolRepository.Pools(modelId));
+            return await CreateResult(await _poolRepository.Pools(modelId));
         }
 
-        public Task<IActionResult> Models(Guid agendaId)
+        public async Task<IActionResult> Models(Guid agendaId)
         {
-            return CreateResult(_modelRepository.Models(agendaId));
+            return await CreateResult(await _modelRepository.Models(agendaId));
         }
 
-        public Task<IActionResult> SenderInfo(Guid id)
+        public async Task<IActionResult> SenderInfo(Guid id)
         {
-            return CreateResult(_blockModelRepository.SenderInfo(id));
+            return await CreateResult(await _blockModelRepository.SenderSignalInfo(id));
         }
 
-        public Task<IActionResult> ForeignRecieverInfo(Guid id)
+        public async Task<IActionResult> ForeignRecieverInfo(Guid id)
         {
-            return CreateResult(_blockModelRepository.ForeignRecieverInfo(id));
+            return await CreateResult(await _blockModelRepository.ForeignRecieverInfo(id));
         }
 
         public async Task<IActionResult> ActivateSystem()
@@ -488,8 +488,14 @@ namespace BPMS_BL.Facades
             _response = response;
             auth = auth["Bearer ".Length..];
             (Guid id, byte[] byteAuth) = SymetricCipherHelper.ExtractGuid(auth);
-            _system = _systemRepository.Bare(id);
+            _system = _systemRepository.Bare(action == "CreateSystem" ? StaticData.ThisSystemId : id);
             SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, _system.Key);
+
+            bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
+            if (_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem && active)
+            {
+                throw new UnauthorizedAccessException();
+            }
 
             using StreamReader stream = new StreamReader(request.Body);
             string data = await stream.ReadToEndAsync();
@@ -504,13 +510,6 @@ namespace BPMS_BL.Facades
                 {
                     throw new UnauthorizedAccessException();    
                 }
-            }
-
-            bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
-            if ((_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem && active) || 
-                (action == "CreateSystem" ^ id == StaticData.ThisSystemId))
-            {
-                throw new UnauthorizedAccessException();
             }
 
             if (_system.Encryption >= EncryptionLevelEnum.Audit)

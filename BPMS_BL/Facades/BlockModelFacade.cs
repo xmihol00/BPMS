@@ -1,6 +1,7 @@
 using AutoMapper;
 using BPMS_BL.Helpers;
 using BPMS_Common;
+using BPMS_DAL;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_DAL.Repositories;
@@ -461,14 +462,14 @@ namespace BPMS_BL.Facades
         {
             RecieveMessageEventModelConfigDTO dto = new RecieveMessageEventModelConfigDTO();
             dto.OutputAttributes = await _attributeRepository.OutputAttributes(recieveEvent.Id);
-            dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.Id);
+            dto.Sender = await _blockModelRepository.SenderMessageInfo(recieveEvent.Id);
 
             return dto;
         }
 
         private async Task<BlockModelConfigDTO> RecieveSignalEventConfig(IRecieveSignalEventModelEntity recieveEvent)
         {
-            RecieveMessageEventModelConfigDTO dto = new RecieveMessageEventModelConfigDTO();
+            RecieveSignalEventModelConfigDTO dto = new RecieveSignalEventModelConfigDTO();
             dto.OutputAttributes = await _attributeRepository.OutputAttributes(recieveEvent.Id);
 
             if (recieveEvent.ForeignSenderId != null)

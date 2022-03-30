@@ -114,7 +114,7 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<PoolIdNameDTO>> Pools(Guid modelId)
         {
-            return _dbSet.Where(x => x.ModelId == modelId)
+            return _dbSet.Where(x => x.ModelId == modelId && x.SystemId == StaticData.ThisSystemId)
                          .Select(x => new PoolIdNameDTO
                          {
                              Id = x.Id,

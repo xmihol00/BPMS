@@ -244,9 +244,9 @@ namespace BPMS_BL.Helpers
 
         private static async Task<T> CheckResponse<T>(IAddressAuth addressAuth, HttpResponseMessage response) where T : class
         {
-            await Authenticate(addressAuth, response);
+            string data = await Authenticate(addressAuth, response);
 
-            T dto = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+            T dto = JsonConvert.DeserializeObject<T>(data);
             if (dto != null)
             {
                 return dto;

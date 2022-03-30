@@ -100,13 +100,14 @@ namespace BPMS_DAL.Repositories
 
         public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
         {
-            return _sendSignalEvents.Where(x => x.PoolId == poolId)
-                              .Select(x => new BlockIdNameDTO
-                              {
-                                  Id = x.Id,
-                                  Name = x.Name
-                              })
-                              .ToListAsync();
+            return _sendSignalEvents.Include(x => x.Pool)
+                                    .Where(x => x.PoolId == poolId && x.Pool.SystemId == StaticData.ThisSystemId)
+                                    .Select(x => new BlockIdNameDTO
+                                    {
+                                        Id = x.Id,
+                                        Name = x.Name
+                                    })
+                                    .ToListAsync();
         }
 
         public Task<BlockModelEntity> Bare(Guid id)
@@ -281,7 +282,7 @@ namespace BPMS_DAL.Repositories
                                 .ToListAsync();;
         }
 
-        public Task<SenderRecieverConfigDTO> SenderInfo(Guid id)
+        public Task<SenderRecieverConfigDTO> SenderMessageInfo(Guid id)
         {
             return _sendMessageEvents.Include(x => x.Pool)
                                         .ThenInclude(x => x.Model)
@@ -296,6 +297,23 @@ namespace BPMS_DAL.Repositories
                                          PoolName = x.Pool.Name
                                      })
                                      .FirstAsync();
+        }
+
+        public Task<SenderRecieverConfigDTO> SenderSignalInfo(Guid id)
+        {
+            return _sendSignalEvents.Include(x => x.Pool)
+                                       .ThenInclude(x => x.Model)
+                                    .Include(x => x.Pool)
+                                       .ThenInclude(x => x.System)
+                                    .Where(x => x.Id == id)
+                                    .Select(x => new SenderRecieverConfigDTO
+                                    {
+                                        SystemName = x.Pool.System.Name,
+                                        BlockName = x.Name,
+                                        ModelName = x.Pool.Model.Name,
+                                        PoolName = x.Pool.Name
+                                    })
+                                    .FirstAsync();
         }
 
         public Task<List<SenderRecieverAddressDTO>> ForeignRecieverAddresses(Guid id)

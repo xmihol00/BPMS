@@ -12,6 +12,7 @@ using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_Common;
+using BPMS_DAL;
 
 namespace BPMS_BL.Facades
 {

@@ -27,7 +27,8 @@ namespace BPMS_DAL.Repositories
                              Key = x.System.Key,
                              SystemId = x.SystemId,
                              ForeignBlockId = x.ForeignBlockId,
-                             SystemName = x.System.Name
+                             SystemName = x.System.Name,
+                             Encryption = x.System.Encryption > x.System.ForeignEncryption ? x.System.Encryption : x.System.ForeignEncryption
                          })
                          .FirstAsync();
         }

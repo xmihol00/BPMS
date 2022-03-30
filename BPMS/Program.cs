@@ -1,11 +1,11 @@
 using BPMS_BL.Hubs;
 using BPMS_BL.Facades;
 using BPMS_BL.Profiles;
-using BPMS_Common;
 using BPMS_DAL;
 using BPMS_DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using BPMS_BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,6 +97,7 @@ app.MapHub<NotificationHub>("/Notification");
 StaticData.ServiceProvider = app.Services.CreateScope().ServiceProvider;
 BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();
+StaticData.Load(context);
 context?.Dispose();
 
 app.Run();
