@@ -67,15 +67,12 @@ namespace BPMS_Common.Helpers
         {
             using Aes aes = Aes.Create();
             aes.KeySize = _keyBitSize;
-            if (auth.PayloadKey == null)
-            {
-                aes.GenerateKey();
-                aes.GenerateIV();
-                auth.PayloadKey = aes.Key;
-                auth.PayloadIV = aes.IV;
-            }
+            aes.GenerateKey();
+            aes.GenerateIV();
+            auth.PayloadKey = aes.Key;
+            auth.PayloadIV = aes.IV;
             
-            ICryptoTransform encryptor = aes.CreateEncryptor(auth.PayloadKey, auth.PayloadIV);
+            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
             
             using (MemoryStream memStream = new MemoryStream())
             {

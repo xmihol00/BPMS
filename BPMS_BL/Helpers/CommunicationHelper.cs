@@ -272,7 +272,7 @@ namespace BPMS_BL.Helpers
 
             if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)
             {
-                data = await SymetricCipherHelper.DecryptMessage(data, addressAuth.PayloadKey, addressAuth.PayloadIV);
+                data = await SymetricCipherHelper.DecryptMessage(data, authSystem.PayloadKey, authSystem.PayloadIV);
             }
 
             if (addressAuth.Encryption >= EncryptionLevelEnum.Hash)
