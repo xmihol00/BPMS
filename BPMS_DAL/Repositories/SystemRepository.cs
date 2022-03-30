@@ -151,6 +151,7 @@ namespace BPMS_DAL.Repositories
                                                            Date = y.Date,
                                                            Text = y.Text
                                                        })
+                                                       .OrderByDescending(x => x.Date)
                                                        .ToList()
                          })
                         .FirstAsync(x => x.Id == id);
