@@ -44,7 +44,7 @@
         {
             <button type="button" id="NewAttBtnId" class="butn btn-p" onclick="ShowAddAttrib()">Přidat atribut</button>
         }
-        @if (Model is IRecieverConfig && (Model as IRecieverConfig).Sender.Editable)
+        @if (Model is IRecieveSignalEventModelConfig)
         {
             <button type="button" id="ChangeSenderBtnId" class="butn btn-p" onclick="ChangeSender('@Model.Id')">Změnit odesílatele</button>
         }

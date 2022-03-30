@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace BPMS_DAL.Entities
 {
-    public class ForeignRecieveEventEntity
+    public class ForeignSignalRecieveEventEntity
     {
         public Guid SenderId { get; set; }
-        public SendEventModelEntity? Sender { get; set; }
+        public SendSignalEventModelEntity? Sender { get; set; }
         public Guid SystemId { get; set; }
         public SystemEntity? System { get; set; }
         public Guid ForeignBlockId { get; set; }

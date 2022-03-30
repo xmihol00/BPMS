@@ -23,8 +23,10 @@ namespace BPMS_DAL.Sharing
         public IEnumerable<ServiceTaskModelEntity> ServiceTasks { get; set; } = new List<ServiceTaskModelEntity>();
         public IEnumerable<StartEventModelEntity> StartEvents { get; set; } = new List<StartEventModelEntity>();
         public IEnumerable<EndEventModelEntity> EndEvents { get; set; } = new List<EndEventModelEntity>();
-        public IEnumerable<SendEventModelEntity> SendEvents { get; set; } = new List<SendEventModelEntity>();
-        public IEnumerable<RecieveEventModelEntity> RecieveEvents { get; set; } = new List<RecieveEventModelEntity>();
+        public IEnumerable<SendMessageEventModelEntity> SendMessageEvents { get; set; } = new List<SendMessageEventModelEntity>();
+        public IEnumerable<RecieveMessageEventModelEntity> RecieveMessageEvents { get; set; } = new List<RecieveMessageEventModelEntity>();
+        public IEnumerable<SendSignalEventModelEntity> SendSignalEvents { get; set; } = new List<SendSignalEventModelEntity>();
+        public IEnumerable<RecieveSignalEventModelEntity> RecieveSignalEvents { get; set; } = new List<RecieveSignalEventModelEntity>();
         public IEnumerable<ParallelGatewayModelEntity> ParallelGateways { get; set; } = new List<ParallelGatewayModelEntity>();
         public IEnumerable<ExclusiveGatewayModelEntity> ExclusiveGateways { get; set; } = new List<ExclusiveGatewayModelEntity>();
         public IEnumerable<FlowEntity> Flows { get; set; } = new List<FlowEntity>();

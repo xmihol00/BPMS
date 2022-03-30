@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.IConfigTypes
 {
-    public interface ISenderConfig
+    public interface ISendMessageEventModelConfig
     {
-        List<SenderRecieverConfigDTO> Recievers { get; set; }
+        SenderRecieverConfigDTO Reciever { get; set; }
     }
 }

@@ -292,7 +292,19 @@ namespace BPMS_BL.Facades
                     {
                         throw new ParsingException("Blok typu 'Intermediate Throw Event' musí mít právě jeden příchozí a maximálně jeden odchozí řídící tok.");
                     }
-                    blockModel = new SendEventModelEntity(_currentPool);
+
+                    if (block.Elements().Any(x => x.Name.LocalName == "messageEventDefinition"))
+                    {
+                        blockModel = new SendMessageEventModelEntity(_currentPool);
+                    }
+                    else if (block.Elements().Any(x => x.Name.LocalName == "signalEventDefinition"))
+                    {
+                        blockModel = new SendSignalEventModelEntity(_currentPool);
+                    }
+                    else
+                    {
+                        goto default;
+                    }
                     break;
 
                 case "intermediateCatchEvent":
@@ -300,7 +312,19 @@ namespace BPMS_BL.Facades
                     {
                         throw new ParsingException("Blok typu 'Intermediate Catch Event' musí mít právě jeden příchozí a maximálně jeden odchozí řídící tok.");
                     }
-                    blockModel = new RecieveEventModelEntity(_currentPool);
+
+                    if (block.Elements().Any(x => x.Name.LocalName == "messageEventDefinition"))
+                    {
+                        blockModel = new RecieveMessageEventModelEntity(_currentPool);
+                    }
+                    else if (block.Elements().Any(x => x.Name.LocalName == "signalEventDefinition"))
+                    {
+                        blockModel = new RecieveSignalEventModelEntity(_currentPool);
+                    }
+                    else
+                    {
+                        goto default;
+                    }
                     break;
                 
                 case "exclusiveGateway":
@@ -389,19 +413,15 @@ namespace BPMS_BL.Facades
             {
                 BlockModelEntity? sourceBlock = _blocksDict[source];
                 BlockModelEntity? destinationBlock = _blocksDict[destination];
-                if (_blocksDict.TryGetValue(source, out sourceBlock) && 
-                    _blocksDict.TryGetValue(destination, out destinationBlock))
+                if (_blocksDict.TryGetValue(source, out sourceBlock) && _blocksDict.TryGetValue(destination, out destinationBlock) && 
+                    sourceBlock is ISendMessageEventModelEntity && destinationBlock is IRecieveMessageEventModelEntity)
                 {
-                    if (sourceBlock is ISendEventModelEntity && destinationBlock is IRecieveEventModelEntity)
-                    {
-                        (destinationBlock as IRecieveEventModelEntity).Editable = false;
-                        (destinationBlock as IRecieveEventModelEntity).SenderId = sourceBlock.Id;
-                        return;
-                    }
+                    (sourceBlock as ISendMessageEventModelEntity).RecieverId = destinationBlock.Id;
+                    return;
                 }
             }
 
-            throw new ParsingException("Spojení typu 'Message Flow' může spojovat pouze blok typu 'Intermediate Throw Event' s blokem typu 'Intermediate Catch Event'.");
+            throw new ParsingException("Spojení typu 'Message Flow' musí spojovat blok typu 'Intermediate Message Throw Event' s blokem typu 'Intermediate Message Catch Event'.");
         }
 
         private void CheckExecutability()

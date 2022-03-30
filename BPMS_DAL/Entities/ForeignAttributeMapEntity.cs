@@ -13,7 +13,7 @@ namespace BPMS_DAL.Entities
     public class ForeignAttributeMapEntity
     {
         public Guid ForeignSendEventId { get; set; }
-        public ForeignSendEventEntity? ForeignSendEvent { get; set; }
+        public ForeignSendSignalEventEntity? ForeignSendEvent { get; set; }
         public Guid AttributeId { get; set; }
         public AttributeEntity? Attribute { get; set; }
         public Guid ForeignAttributeId { get; set; }

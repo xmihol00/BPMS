@@ -98,7 +98,7 @@ namespace BPMS_BL.Facades
 
         public async Task<IActionResult> RemoveReciever(BlockIdSenderIdDTO? dto)
         {
-            _foreignRecieveEventRepository.Remove(new ForeignRecieveEventEntity
+            _foreignRecieveEventRepository.Remove(new ForeignSignalRecieveEventEntity
             {
                 ForeignBlockId = dto.BlockId,
                 SenderId = dto.SenderId,
@@ -110,7 +110,7 @@ namespace BPMS_BL.Facades
 
         public async Task<IActionResult> AddReciever(BlockIdSenderIdDTO? dto)
         {
-            await _foreignRecieveEventRepository.Create(new ForeignRecieveEventEntity
+            await _foreignRecieveEventRepository.Create(new ForeignSignalRecieveEventEntity
             {
                 ForeignBlockId = dto.BlockId,
                 SenderId = dto.SenderId,
@@ -215,7 +215,7 @@ namespace BPMS_BL.Facades
             return await CreateResult();
         }
         private async Task<IActionResult> AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData, 
-                                         List<RecieveEventWorkflowEntity> recieveEvents)
+                                         List<RecieveMessageEventWorkflowEntity> recieveEvents)
         {
             foreach (StringDataEntity data in message.Strings)
             {
@@ -260,7 +260,7 @@ namespace BPMS_BL.Facades
                 await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, data.Data);
             }
 
-            foreach (RecieveEventWorkflowEntity recieveEvent in recieveEvents)
+            foreach (RecieveMessageEventWorkflowEntity recieveEvent in recieveEvents)
             {
                 WorkflowHelper workflowHelper = new WorkflowHelper(_context);
                 recieveEvent.Delivered = true;
@@ -278,7 +278,7 @@ namespace BPMS_BL.Facades
         public async Task<IActionResult> Message(MessageShare? message)
         {
             Dictionary<Guid, TaskDataEntity> taskData;
-            List<RecieveEventWorkflowEntity> recieveEvents;
+            List<RecieveMessageEventWorkflowEntity> recieveEvents;
             if (message.WorkflowId != null)
             {
                 taskData = await _taskDataRepository.OfRecieveEvent(message.WorkflowId.Value, message.BlockId);
@@ -339,7 +339,7 @@ namespace BPMS_BL.Facades
 
         public async Task<IActionResult> CreateForeignRecieverAttribute(AttributeEntity? attribute)
         {
-            foreach (ForeignSendEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
+            foreach (ForeignSendSignalEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
             {
                 if (!await _foreignAttributeMapRepository.Any(attribute.Id))
                 {
@@ -429,8 +429,10 @@ namespace BPMS_BL.Facades
             await _blockModelRepository.CreateRange(dto.ServiceTasks);
             await _blockModelRepository.CreateRange(dto.ParallelGateways);
             await _blockModelRepository.CreateRange(dto.ExclusiveGateways);
-            await _blockModelRepository.CreateRange(dto.SendEvents);
-            await _blockModelRepository.CreateRange(dto.RecieveEvents);
+            await _blockModelRepository.CreateRange(dto.SendMessageEvents);
+            await _blockModelRepository.CreateRange(dto.RecieveMessageEvents);
+            await _blockModelRepository.CreateRange(dto.SendSignalEvents);
+            await _blockModelRepository.CreateRange(dto.RecieveSignalEvents);
 
             await _flowRepository.CreateRange(dto.Flows);
 

@@ -28,8 +28,8 @@ namespace BPMS_DAL
         public DbSet<ConnectionRequestEntity>? ConnectionRequests { get; set; }
         public DbSet<FlowEntity>? Flows { get; set; }
         public DbSet<ForeignAttributeMapEntity>? ForeignAttributeMaps { get; set; }
-        public DbSet<ForeignRecieveEventEntity>? ForeignRecieveEvents { get; set; }
-        public DbSet<ForeignSendEventEntity>? ForeignSendEvents { get; set; }
+        public DbSet<ForeignSignalRecieveEventEntity>? ForeignRecieveEvents { get; set; }
+        public DbSet<ForeignSendSignalEventEntity>? ForeignSendEvents { get; set; }
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<NotificationEntity>? Notifications { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
@@ -94,16 +94,18 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockModelEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Pool).WithMany(x => x.Blocks).HasForeignKey(x => x.PoolId);
             modelBuilder.Entity<UserTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.UserTasks).HasForeignKey(x => x.RoleId);
-            modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.Sender).WithMany(x => x.Recievers).HasForeignKey(x => x.SenderId);
+            modelBuilder.Entity<SendMessageEventModelEntity>().HasOne(x => x.Reciever).WithOne(x => x.Sender).HasForeignKey<SendMessageEventModelEntity>(x => x.RecieverId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.ServiceTask).HasForeignKey(x => x.RoleId);
-            modelBuilder.Entity<RecieveEventModelEntity>().HasOne(x => x.ForeignSender).WithOne(x => x.Reciever).HasForeignKey<RecieveEventModelEntity>(x => x.ForeignSenderId);
+            modelBuilder.Entity<RecieveSignalEventModelEntity>().HasOne(x => x.ForeignSender).WithOne(x => x.Reciever).HasForeignKey<RecieveSignalEventModelEntity>(x => x.ForeignSenderId);
             modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
-            modelBuilder.Entity<RecieveEventModelEntity>().ToTable("RecieveEventsModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
             modelBuilder.Entity<ParallelGatewayModelEntity>().ToTable("ParallelGatewaysModel");
             modelBuilder.Entity<ExclusiveGatewayModelEntity>().ToTable("ExclusiveGatewaysModel");
-            modelBuilder.Entity<SendEventModelEntity>().ToTable("SendEventsModel");
+            modelBuilder.Entity<SendMessageEventModelEntity>().ToTable("SendMessageEventsModel");
+            modelBuilder.Entity<RecieveMessageEventModelEntity>().ToTable("RecieveMessageEventsModel");
+            modelBuilder.Entity<SendSignalEventModelEntity>().ToTable("SendSignalEventsModel");
+            modelBuilder.Entity<RecieveSignalEventModelEntity>().ToTable("RecieveSignalEventsModel");
             modelBuilder.Entity<StartEventModelEntity>().ToTable("StartEventsModel");
             modelBuilder.Entity<EndEventModelEntity>().ToTable("EndEventsModel");
 
@@ -145,8 +147,10 @@ namespace BPMS_DAL
             modelBuilder.Entity<ServiceTaskWorkflowEntity>().ToTable("ServiceTasksWorkflow");
             modelBuilder.Entity<StartEventWorkflowEntity>().ToTable("StartEventsWorkflow");
             modelBuilder.Entity<EndEventWorkflowEntity>().ToTable("EndEventsWorkflow");
-            modelBuilder.Entity<RecieveEventWorkflowEntity>().ToTable("RecieveEventsWorkflow");
-            modelBuilder.Entity<SendEventWorkflowEntity>().ToTable("SendEventsWorkflow");
+            modelBuilder.Entity<RecieveMessageEventWorkflowEntity>().ToTable("RecieveMessageEventsWorkflow");
+            modelBuilder.Entity<SendMessageEventWorkflowEntity>().ToTable("SendMessageEventsWorkflow");
+            modelBuilder.Entity<RecieveSignalEventWorkflowEntity>().ToTable("RecieveSignalEventsWorkflow");
+            modelBuilder.Entity<SendSignalEventWorkflowEntity>().ToTable("SendSignalEventsWorkflow");
 
             modelBuilder.Entity<TaskDataEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<TaskDataEntity>().HasOne(x => x.OutputTask).WithMany(x => x.OutputData).HasForeignKey(x => x.OutputTaskId);
@@ -182,13 +186,13 @@ namespace BPMS_DAL
             modelBuilder.Entity<AuditMessageEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<AuditMessageEntity>().HasOne(x => x.System).WithMany(x => x.AuditMessages).HasForeignKey(x => x.SystemId);
 
-            modelBuilder.Entity<ForeignRecieveEventEntity>().HasKey(x => new { x.SenderId, x.SystemId, x.ForeignBlockId });
-            modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.Sender).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SenderId);
-            modelBuilder.Entity<ForeignRecieveEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SystemId);
+            modelBuilder.Entity<ForeignSignalRecieveEventEntity>().HasKey(x => new { x.SenderId, x.SystemId, x.ForeignBlockId });
+            modelBuilder.Entity<ForeignSignalRecieveEventEntity>().HasOne(x => x.Sender).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SenderId);
+            modelBuilder.Entity<ForeignSignalRecieveEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignRecievers).HasForeignKey(x => x.SystemId);
 
-            modelBuilder.Entity<ForeignSendEventEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<ForeignSendEventEntity>().Property(x => x.Id).ValueGeneratedNever();
-            modelBuilder.Entity<ForeignSendEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignSenedrs).HasForeignKey(x => x.SystemId);
+            modelBuilder.Entity<ForeignSendSignalEventEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<ForeignSendSignalEventEntity>().Property(x => x.Id).ValueGeneratedNever();
+            modelBuilder.Entity<ForeignSendSignalEventEntity>().HasOne(x => x.System).WithMany(x => x.ForeignSenedrs).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasKey(x => new { x.AttributeId, x.ForeignSendEventId });
             modelBuilder.Entity<ForeignAttributeMapEntity>().HasOne(x => x.Attribute).WithOne(x => x.MappedForeignBlock).OnDelete(DeleteBehavior.ClientCascade);

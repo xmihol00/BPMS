@@ -13,7 +13,7 @@ using BPMS_Common;
 
 namespace BPMS_DAL.Repositories
 {
-    public class ForeignSendEventRepository : BaseRepository<ForeignSendEventEntity>
+    public class ForeignSendEventRepository : BaseRepository<ForeignSendSignalEventEntity>
     {
         public ForeignSendEventRepository(BpmsDbContext context) : base(context) {}
 
@@ -32,12 +32,12 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync();
         }
 
-        public Task<ForeignSendEventEntity?> Bare(Guid systemId, Guid blockId)
+        public Task<ForeignSendSignalEventEntity?> Bare(Guid systemId, Guid blockId)
         {
             return _dbSet.FirstOrDefaultAsync(x => x.SystemId == systemId && x.ForeignBlockId == blockId);
         }
 
-        public Task<ForeignSendEventEntity> ForRemoval(Guid id)
+        public Task<ForeignSendSignalEventEntity> ForRemoval(Guid id)
         {
             return _dbSet.Include(x => x.MappedAttributes)
                             .ThenInclude(x => x.Attribute)
@@ -45,7 +45,7 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
-        public Task<List<ForeignSendEventEntity>> BareReciever(Guid recieverId)
+        public Task<List<ForeignSendSignalEventEntity>> BareReciever(Guid recieverId)
         {
             return _dbSet.Include(x => x.Reciever)
                          .Where(x => x.Reciever.Id == recieverId)

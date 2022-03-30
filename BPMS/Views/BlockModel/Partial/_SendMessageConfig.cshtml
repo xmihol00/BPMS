@@ -1,0 +1,15 @@
+@model ISendMessageEventModelConfig
+
+<h4 class="mt-2">Příjemci</h4>
+<div class="row border-bottom-2">
+    <div class="col-3 text-center text-bold">Název bloku</div>
+    <div class="col-3 text-center text-bold">Název bazénu</div>
+    <div class="col-3 text-center text-bold">Název modelu</div>
+    <div class="col-3 text-center text-bold">Název systému</div>
+</div>
+<div class="row mb-3">
+    <div class="col-3 text-center empty-name">@Model.Reciever.BlockName</div>
+    <div class="col-3 text-center empty-name">@Model.Reciever.PoolName</div>
+    <div class="col-3 text-center empty-name">@Model.Reciever.ModelName</div>
+    <div class="col-3 text-center empty-name">@Model.Reciever.SystemName</div>
+</div>

@@ -516,29 +516,7 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("ForeignAttributeMaps");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ForeignRecieveEventEntity", b =>
-                {
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SystemId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ForeignBlockId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ForeignBlockName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SenderId", "SystemId", "ForeignBlockId");
-
-                    b.HasIndex("SystemId");
-
-                    b.ToTable("ForeignRecieveEvents");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSendEventEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSendSignalEventEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -558,6 +536,28 @@ namespace BPMS_DAL.Migrations
                     b.HasIndex("SystemId");
 
                     b.ToTable("ForeignSendEvents");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSignalRecieveEventEntity", b =>
+                {
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SystemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ForeignBlockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ForeignBlockName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SenderId", "SystemId", "ForeignBlockId");
+
+                    b.HasIndex("SystemId");
+
+                    b.ToTable("ForeignRecieveEvents");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelEntity", b =>
@@ -963,7 +963,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "UDtXlUYg+fuK/P7HiBmKeRIXhAVabRbQGQCZqlNUMiFx8HZ1sGuXOdIDDbU5/cWssVkY1vpzNW/Iro0Zg/tYfG6z",
+                            Password = "kQ/nOUOsDiS9gvY0lnogg/uFA3TtAvOb+dWYBMcxWGZ1a0Rz+rg+G0Kzpa9m+H971nIxeEzjoFz+Oibc3eVuh2QZ",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
@@ -1137,33 +1137,46 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("ParallelGatewaysModel", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveMessageEventModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<bool>("Editable")
-                        .HasColumnType("bit");
+                    b.ToTable("RecieveMessageEventsModel", (string)null);
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveSignalEventModelEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
                     b.Property<Guid?>("ForeignSenderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasIndex("ForeignSenderId")
                         .IsUnique()
                         .HasFilter("[ForeignSenderId] IS NOT NULL");
 
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("RecieveEventsModel", (string)null);
+                    b.ToTable("RecieveSignalEventsModel", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendMessageEventModelEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.ToTable("SendEventsModel", (string)null);
+                    b.Property<Guid>("RecieverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("RecieverId")
+                        .IsUnique()
+                        .HasFilter("[RecieverId] IS NOT NULL");
+
+                    b.ToTable("SendMessageEventsModel", (string)null);
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendSignalEventModelEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
+
+                    b.ToTable("SendSignalEventsModel", (string)null);
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.ServiceTaskModelEntity", b =>
@@ -1215,21 +1228,38 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("EndEventsWorkflow", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.RecieveEventWorkflowEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.RecieveMessageEventWorkflowEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockWorkflowEntity");
 
                     b.Property<bool>("Delivered")
                         .HasColumnType("bit");
 
-                    b.ToTable("RecieveEventsWorkflow", (string)null);
+                    b.ToTable("RecieveMessageEventsWorkflow", (string)null);
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.SendEventWorkflowEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.RecieveSignalEventWorkflowEntity", b =>
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockWorkflowEntity");
 
-                    b.ToTable("SendEventsWorkflow", (string)null);
+                    b.Property<bool>("Delivered")
+                        .HasColumnType("bit");
+
+                    b.ToTable("RecieveSignalEventsWorkflow", (string)null);
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.SendMessageEventWorkflowEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.BlockWorkflowEntity");
+
+                    b.ToTable("SendMessageEventsWorkflow", (string)null);
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.SendSignalEventWorkflowEntity", b =>
+                {
+                    b.HasBaseType("BPMS_DAL.Entities.BlockWorkflowEntity");
+
+                    b.ToTable("SendSignalEventsWorkflow", (string)null);
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.ServiceTaskWorkflowEntity", b =>
@@ -1519,7 +1549,7 @@ namespace BPMS_DAL.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("BPMS_DAL.Entities.ForeignSendEventEntity", "ForeignSendEvent")
+                    b.HasOne("BPMS_DAL.Entities.ForeignSendSignalEventEntity", "ForeignSendEvent")
                         .WithMany("MappedAttributes")
                         .HasForeignKey("ForeignSendEventId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -1530,9 +1560,20 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("ForeignSendEvent");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ForeignRecieveEventEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSendSignalEventEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", "Sender")
+                    b.HasOne("BPMS_DAL.Entities.SystemEntity", "System")
+                        .WithMany("ForeignSenedrs")
+                        .HasForeignKey("SystemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("System");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSignalRecieveEventEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.SendSignalEventModelEntity", "Sender")
                         .WithMany("ForeignRecievers")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1545,17 +1586,6 @@ namespace BPMS_DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Sender");
-
-                    b.Navigation("System");
-                });
-
-            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSendEventEntity", b =>
-                {
-                    b.HasOne("BPMS_DAL.Entities.SystemEntity", "System")
-                        .WithMany("ForeignSenedrs")
-                        .HasForeignKey("SystemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("System");
                 });
@@ -1824,32 +1854,52 @@ namespace BPMS_DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveMessageEventModelEntity", b =>
                 {
-                    b.HasOne("BPMS_DAL.Entities.ForeignSendEventEntity", "ForeignSender")
+                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.RecieveMessageEventModelEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveSignalEventModelEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.ForeignSendSignalEventEntity", "ForeignSender")
                         .WithOne("Reciever")
-                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.RecieveEventModelEntity", "ForeignSenderId");
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.RecieveSignalEventModelEntity", "ForeignSenderId");
 
                     b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.RecieveEventModelEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.RecieveSignalEventModelEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", "Sender")
-                        .WithMany("Recievers")
-                        .HasForeignKey("SenderId");
-
                     b.Navigation("ForeignSender");
-
-                    b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendMessageEventModelEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.SendMessageEventModelEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("BPMS_DAL.Entities.ModelBlocks.RecieveMessageEventModelEntity", "Reciever")
+                        .WithOne("Sender")
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.SendMessageEventModelEntity", "RecieverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reciever");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendSignalEventModelEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockModelEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.SendSignalEventModelEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
@@ -1908,20 +1958,38 @@ namespace BPMS_DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.RecieveEventWorkflowEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.RecieveMessageEventWorkflowEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockWorkflowEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.RecieveEventWorkflowEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.RecieveMessageEventWorkflowEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.SendEventWorkflowEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.RecieveSignalEventWorkflowEntity", b =>
                 {
                     b.HasOne("BPMS_DAL.Entities.BlockWorkflowEntity", null)
                         .WithOne()
-                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.SendEventWorkflowEntity", "Id")
+                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.RecieveSignalEventWorkflowEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.SendMessageEventWorkflowEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockWorkflowEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.SendMessageEventWorkflowEntity", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.SendSignalEventWorkflowEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.BlockWorkflowEntity", null)
+                        .WithOne()
+                        .HasForeignKey("BPMS_DAL.Entities.WorkflowBlocks.SendSignalEventWorkflowEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
@@ -2027,7 +2095,7 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Targets");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSendEventEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ForeignSendSignalEventEntity", b =>
                 {
                     b.Navigation("MappedAttributes");
 
@@ -2113,11 +2181,14 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Conditions");
                 });
 
-            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendEventModelEntity", b =>
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.RecieveMessageEventModelEntity", b =>
+                {
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.SendSignalEventModelEntity", b =>
                 {
                     b.Navigation("ForeignRecievers");
-
-                    b.Navigation("Recievers");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelBlocks.ServiceTaskModelEntity", b =>

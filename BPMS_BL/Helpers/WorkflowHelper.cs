@@ -166,12 +166,20 @@ namespace BPMS_BL.Helpers
                     blockWorkflow = new StartEventWorkflowEntity();
                     break;
 
-                case ISendEventModelEntity:
-                    blockWorkflow = CreateSendEvent(blockModel);
+                case ISendMessageEventModelEntity:
+                    blockWorkflow = CreateSendMessageEvent(blockModel);
                     break;
 
-                case IRecieveEventModelEntity:
-                    blockWorkflow = CreateRecieveEvent(blockModel);
+                case IRecieveMessageEventModelEntity:
+                    blockWorkflow = CreateRecieveMessageEvent(blockModel);
+                    break;
+                
+                case ISendSignalEventModelEntity:
+                    blockWorkflow = CreateSendSignalEvent(blockModel);
+                    break;
+
+                case IRecieveSignalEventModelEntity:
+                    blockWorkflow = CreateRecieveSignalEvent(blockModel);
                     break;
 
                 default:
@@ -184,18 +192,47 @@ namespace BPMS_BL.Helpers
             return blockWorkflow;
         }
 
-        private BlockWorkflowEntity CreateRecieveEvent(BlockModelEntity blockModel)
+        private BlockWorkflowEntity CreateRecieveMessageEvent(BlockModelEntity blockModel)
         {
-            IRecieveEventModelEntity recieveEvent = blockModel as IRecieveEventModelEntity;
-            RecieveEventWorkflowEntity blockWorkflow = new RecieveEventWorkflowEntity();
+            IRecieveMessageEventModelEntity recieveEvent = blockModel as IRecieveMessageEventModelEntity;
+            RecieveMessageEventWorkflowEntity blockWorkflow = new RecieveMessageEventWorkflowEntity();
             blockWorkflow.OutputData = CrateUserTaskData(blockModel.Attributes);
-            blockWorkflow.Delivered = recieveEvent.SenderId == null && recieveEvent.ForeignSenderId == null;
+            blockWorkflow.Delivered = false;
             return blockWorkflow;
         }
 
-        private BlockWorkflowEntity CreateSendEvent(BlockModelEntity blockModel)
+        private BlockWorkflowEntity CreateRecieveSignalEvent(BlockModelEntity blockModel)
         {
-            BlockWorkflowEntity blockWorkflow = new SendEventWorkflowEntity();
+            IRecieveSignalEventModelEntity recieveEvent = blockModel as IRecieveSignalEventModelEntity;
+            RecieveSignalEventWorkflowEntity blockWorkflow = new RecieveSignalEventWorkflowEntity();
+            blockWorkflow.OutputData = CrateUserTaskData(blockModel.Attributes);
+            blockWorkflow.Delivered = recieveEvent.ForeignSenderId == null;
+            return blockWorkflow;
+        }
+
+        private BlockWorkflowEntity CreateSendMessageEvent(BlockModelEntity blockModel)
+        {
+            BlockWorkflowEntity blockWorkflow = new SendMessageEventWorkflowEntity();
+
+            foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes.Where(x => !x.Attribute.Disabled))
+            {
+                TaskDataEntity? taskData = _createdTaskData.GetValueOrDefault(mappedAttribs.AttributeId);
+                if (taskData != null)
+                {
+                    blockWorkflow.InputData.Add(new TaskDataMapEntity
+                    {
+                        Task = blockWorkflow,
+                        TaskData = taskData
+                    });
+                }
+            }
+
+            return blockWorkflow;
+        }
+
+        private BlockWorkflowEntity CreateSendSignalEvent(BlockModelEntity blockModel)
+        {
+            BlockWorkflowEntity blockWorkflow = new SendSignalEventWorkflowEntity();
 
             foreach (AttributeMapEntity mappedAttribs in blockModel.MappedAttributes.Where(x => !x.Attribute.Disabled))
             {
@@ -391,20 +428,28 @@ namespace BPMS_BL.Helpers
                         await FinishWorkflow(task);
                         break;
                     
-                    case ISendEventWorkflowEntity:
-                        await SendData(task);
+                    case ISendMessageEventWorkflowEntity:
+                        await SendMessageData(task);
                         break;
                     
-                    case IRecieveEventWorkflowEntity:
-                        await RecieveData(task);
+                    case IRecieveMessageEventWorkflowEntity:
+                        await RecieveMessageData(task);
+                        break;
+                    
+                    case ISendSignalEventWorkflowEntity:
+                        await SendSignalData(task);
+                        break;
+                    
+                    case IRecieveSignalEventWorkflowEntity:
+                        await RecieveSignalData(task);
                         break;
                 }
             }
         }
 
-        private async Task RecieveData(BlockWorkflowEntity task)
+        private async Task RecieveMessageData(BlockWorkflowEntity task)
         {
-            if ((task as IRecieveEventWorkflowEntity).Delivered)
+            if ((task as IRecieveMessageEventWorkflowEntity).Delivered)
             {
                 await StartNextTask(task);
             }
@@ -414,71 +459,54 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task SendData(BlockWorkflowEntity task)
+        private async Task RecieveSignalData(BlockWorkflowEntity task)
+        {
+            if ((task as IRecieveSignalEventWorkflowEntity).Delivered)
+            {
+                await StartNextTask(task);
+            }
+            else
+            {
+                task.State = BlockWorkflowStateEnum.Active;
+            }
+        }
+
+        private async Task SendMessageData(BlockWorkflowEntity task)
         {
             MessageShare dto = new MessageShare();
-
-            foreach (var group in (await _taskDataRepository.MappedSendEventData(task.Id)).GroupBy(x => x.GetType()))
-            {
-                switch (group.First())
-                {
-                    case IStringDataEntity:
-                        dto.Strings = group.Cast<StringDataEntity>();
-                        break;
-                    
-                    case INumberDataEntity:
-                        dto.Numbers = group.Cast<NumberDataEntity>();
-                        break;
-                    
-                    case ITextDataEntity:
-                        dto.Texts = group.Cast<TextDataEntity>();
-                        break;
-                    
-                    case ISelectDataEntity:
-                        dto.Selects = group.Cast<SelectDataEntity>();
-                        break;
-                    
-                    case IFileDataEntity:
-                        dto.Files = group.Cast<FileDataEntity>();
-                        foreach (IFileDataEntity file in dto.Files)
-                        {
-                            if (file.FileName != null)
-                            {
-                                file.Data = await File.ReadAllBytesAsync(StaticData.FileStore + file.Id);
-                            }
-                        }
-                        break;
-
-                    case IBoolDataEntity:
-                        dto.Bools = group.Cast<BoolDataEntity>();
-                        break;
-                    
-                    case IArrayDataEntity:
-                        dto.Arrays = group.Cast<ArrayDataEntity>();
-                        break;
-                    
-                    case IDateDataEntity:
-                        dto.Dates = group.Cast<DateDataEntity>();
-                        break;
-                }
-            }
+            await CreateSendData(task, dto);
 
             bool recieved = true;
-            foreach (BlockAddressDTO address in await _blockModelRepository.RecieverAddresses(task.BlockModelId))
+            BlockAddressDTO address = await _blockModelRepository.RecieverAddress(task.BlockModelId);
+            if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
             {
-                if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
-                {
-                    dto.WorkflowId = task.WorkflowId;
-                }
-                else
-                {
-                    dto.WorkflowId = null;
-                }
-                dto.BlockId = address.BlockId;
-
-                recieved &= await CommunicationHelper.Message(address, dto);
+                dto.WorkflowId = task.WorkflowId;
             }
+            else
+            {
+                dto.WorkflowId = null;
+            }
+            dto.BlockId = address.BlockId;
 
+            recieved &= await CommunicationHelper.Message(address, dto);
+
+            if (recieved)
+            {
+                task.State = BlockWorkflowStateEnum.NotStarted;
+                await StartNextTask(task);
+            }
+            else
+            {
+                task.State = BlockWorkflowStateEnum.Active;
+            }
+        }
+
+        private async Task SendSignalData(BlockWorkflowEntity task)
+        {
+            MessageShare dto = new MessageShare();
+            await CreateSendData(task, dto);
+
+            bool recieved = true;
             foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieversAddresses(task.BlockModelId))
             {
                 dto.BlockId = address.ForeignBlockId;
@@ -493,6 +521,54 @@ namespace BPMS_BL.Helpers
             else
             {
                 task.State = BlockWorkflowStateEnum.Active;
+            }
+        }
+
+        private async Task CreateSendData(BlockWorkflowEntity task, MessageShare dto)
+        {
+            foreach (var group in (await _taskDataRepository.MappedSendEventData(task.Id)).GroupBy(x => x.GetType()))
+            {
+                switch (group.First())
+                {
+                    case IStringDataEntity:
+                        dto.Strings = group.Cast<StringDataEntity>();
+                        break;
+
+                    case INumberDataEntity:
+                        dto.Numbers = group.Cast<NumberDataEntity>();
+                        break;
+
+                    case ITextDataEntity:
+                        dto.Texts = group.Cast<TextDataEntity>();
+                        break;
+
+                    case ISelectDataEntity:
+                        dto.Selects = group.Cast<SelectDataEntity>();
+                        break;
+
+                    case IFileDataEntity:
+                        dto.Files = group.Cast<FileDataEntity>();
+                        foreach (IFileDataEntity file in dto.Files)
+                        {
+                            if (file.FileName != null)
+                            {
+                                file.Data = await File.ReadAllBytesAsync(StaticData.FileStore + file.Id);
+                            }
+                        }
+                        break;
+
+                    case IBoolDataEntity:
+                        dto.Bools = group.Cast<BoolDataEntity>();
+                        break;
+
+                    case IArrayDataEntity:
+                        dto.Arrays = group.Cast<ArrayDataEntity>();
+                        break;
+
+                    case IDateDataEntity:
+                        dto.Dates = group.Cast<DateDataEntity>();
+                        break;
+                }
             }
         }
 

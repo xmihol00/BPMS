@@ -129,8 +129,10 @@ namespace BPMS_BL.Facades
             model.ServiceTasks = GetCorrectBlocks<ServiceTaskModelEntity>(allBlocks);
             model.ParallelGateways = GetCorrectBlocks<ParallelGatewayModelEntity>(allBlocks);
             model.ExclusiveGateways = GetCorrectBlocks<ExclusiveGatewayModelEntity>(allBlocks);
-            model.SendEvents = GetCorrectBlocks<SendEventModelEntity>(allBlocks);
-            model.RecieveEvents = GetCorrectBlocks<RecieveEventModelEntity>(allBlocks);
+            model.SendMessageEvents = GetCorrectBlocks<SendMessageEventModelEntity>(allBlocks);
+            model.RecieveMessageEvents = GetCorrectBlocks<RecieveMessageEventModelEntity>(allBlocks);
+            model.SendSignalEvents = GetCorrectBlocks<SendSignalEventModelEntity>(allBlocks);
+            model.RecieveSignalEvents = GetCorrectBlocks<RecieveSignalEventModelEntity>(allBlocks);
 
             string serilizedModel = JsonConvert.SerializeObject(model);
             

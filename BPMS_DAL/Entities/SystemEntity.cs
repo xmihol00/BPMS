@@ -29,10 +29,10 @@ namespace BPMS_DAL.Entities
         public List<AuditMessageEntity> AuditMessages { get; set; } = new List<AuditMessageEntity>();
 
         [JsonIgnore]
-        public List<ForeignRecieveEventEntity> ForeignRecievers { get; set; } = new List<ForeignRecieveEventEntity>();
+        public List<ForeignSignalRecieveEventEntity> ForeignRecievers { get; set; } = new List<ForeignSignalRecieveEventEntity>();
 
         [JsonIgnore]
-        public List<ForeignSendEventEntity> ForeignSenedrs { get; set; } = new List<ForeignSendEventEntity>();
+        public List<ForeignSendSignalEventEntity> ForeignSenedrs { get; set; } = new List<ForeignSendSignalEventEntity>();
 
         public List<ConnectionRequestEntity> ConnectionRequests { get; set; } = new List<ConnectionRequestEntity>();
     }

@@ -548,16 +548,54 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SendEventsModel",
+                name: "RecieveMessageEventsModel",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SendEventsModel", x => x.Id);
+                    table.PrimaryKey("PK_RecieveMessageEventsModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SendEventsModel_BlockModels_Id",
+                        name: "FK_RecieveMessageEventsModel_BlockModels_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockModels",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecieveSignalEventsModel",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ForeignSenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecieveSignalEventsModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecieveSignalEventsModel_BlockModels_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockModels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RecieveSignalEventsModel_ForeignSendEvents_ForeignSenderId",
+                        column: x => x.ForeignSenderId,
+                        principalTable: "ForeignSendEvents",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SendSignalEventsModel",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SendSignalEventsModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SendSignalEventsModel_BlockModels_Id",
                         column: x => x.Id,
                         principalTable: "BlockModels",
                         principalColumn: "Id");
@@ -648,7 +686,7 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RecieveEventsWorkflow",
+                name: "RecieveMessageEventsWorkflow",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -656,25 +694,58 @@ namespace BPMS_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RecieveEventsWorkflow", x => x.Id);
+                    table.PrimaryKey("PK_RecieveMessageEventsWorkflow", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RecieveEventsWorkflow_BlockWorkflows_Id",
+                        name: "FK_RecieveMessageEventsWorkflow_BlockWorkflows_Id",
                         column: x => x.Id,
                         principalTable: "BlockWorkflows",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "SendEventsWorkflow",
+                name: "RecieveSignalEventsWorkflow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Delivered = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecieveSignalEventsWorkflow", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecieveSignalEventsWorkflow_BlockWorkflows_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockWorkflows",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SendMessageEventsWorkflow",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SendEventsWorkflow", x => x.Id);
+                    table.PrimaryKey("PK_SendMessageEventsWorkflow", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SendEventsWorkflow_BlockWorkflows_Id",
+                        name: "FK_SendMessageEventsWorkflow_BlockWorkflows_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockWorkflows",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SendSignalEventsWorkflow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SendSignalEventsWorkflow", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SendSignalEventsWorkflow_BlockWorkflows_Id",
                         column: x => x.Id,
                         principalTable: "BlockWorkflows",
                         principalColumn: "Id");
@@ -768,6 +839,29 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SendMessageEventsModel",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RecieverId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SendMessageEventsModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SendMessageEventsModel_BlockModels_Id",
+                        column: x => x.Id,
+                        principalTable: "BlockModels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SendMessageEventsModel_RecieveMessageEventsModel_RecieverId",
+                        column: x => x.RecieverId,
+                        principalTable: "RecieveMessageEventsModel",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ForeignRecieveEvents",
                 columns: table => new
                 {
@@ -780,9 +874,9 @@ namespace BPMS_DAL.Migrations
                 {
                     table.PrimaryKey("PK_ForeignRecieveEvents", x => new { x.SenderId, x.SystemId, x.ForeignBlockId });
                     table.ForeignKey(
-                        name: "FK_ForeignRecieveEvents_SendEventsModel_SenderId",
+                        name: "FK_ForeignRecieveEvents_SendSignalEventsModel_SenderId",
                         column: x => x.SenderId,
-                        principalTable: "SendEventsModel",
+                        principalTable: "SendSignalEventsModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -791,35 +885,6 @@ namespace BPMS_DAL.Migrations
                         principalTable: "Systems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RecieveEventsModel",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Editable = table.Column<bool>(type: "bit", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ForeignSenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RecieveEventsModel", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RecieveEventsModel_BlockModels_Id",
-                        column: x => x.Id,
-                        principalTable: "BlockModels",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_RecieveEventsModel_ForeignSendEvents_ForeignSenderId",
-                        column: x => x.ForeignSenderId,
-                        principalTable: "ForeignSendEvents",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_RecieveEventsModel_SendEventsModel_SenderId",
-                        column: x => x.SenderId,
-                        principalTable: "SendEventsModel",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1167,7 +1232,7 @@ namespace BPMS_DAL.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "UDtXlUYg+fuK/P7HiBmKeRIXhAVabRbQGQCZqlNUMiFx8HZ1sGuXOdIDDbU5/cWssVkY1vpzNW/Iro0Zg/tYfG6z", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "kQ/nOUOsDiS9gvY0lnogg/uFA3TtAvOb+dWYBMcxWGZ1a0Rz+rg+G0Kzpa9m+H971nIxeEzjoFz+Oibc3eVuh2QZ", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
@@ -1338,16 +1403,18 @@ namespace BPMS_DAL.Migrations
                 column: "SystemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecieveEventsModel_ForeignSenderId",
-                table: "RecieveEventsModel",
+                name: "IX_RecieveSignalEventsModel_ForeignSenderId",
+                table: "RecieveSignalEventsModel",
                 column: "ForeignSenderId",
                 unique: true,
                 filter: "[ForeignSenderId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecieveEventsModel_SenderId",
-                table: "RecieveEventsModel",
-                column: "SenderId");
+                name: "IX_SendMessageEventsModel_RecieverId",
+                table: "SendMessageEventsModel",
+                column: "RecieverId",
+                unique: true,
+                filter: "[RecieverId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceTasksModel_RoleId",
@@ -1486,16 +1553,25 @@ namespace BPMS_DAL.Migrations
                 name: "ParallelGatewaysModel");
 
             migrationBuilder.DropTable(
-                name: "RecieveEventsModel");
+                name: "RecieveMessageEventsWorkflow");
 
             migrationBuilder.DropTable(
-                name: "RecieveEventsWorkflow");
+                name: "RecieveSignalEventsModel");
+
+            migrationBuilder.DropTable(
+                name: "RecieveSignalEventsWorkflow");
 
             migrationBuilder.DropTable(
                 name: "SelectTaskData");
 
             migrationBuilder.DropTable(
-                name: "SendEventsWorkflow");
+                name: "SendMessageEventsModel");
+
+            migrationBuilder.DropTable(
+                name: "SendMessageEventsWorkflow");
+
+            migrationBuilder.DropTable(
+                name: "SendSignalEventsWorkflow");
 
             migrationBuilder.DropTable(
                 name: "ServiceTasksWorkflow");
@@ -1534,10 +1610,13 @@ namespace BPMS_DAL.Migrations
                 name: "ServiceTasksModel");
 
             migrationBuilder.DropTable(
+                name: "SendSignalEventsModel");
+
+            migrationBuilder.DropTable(
                 name: "ForeignSendEvents");
 
             migrationBuilder.DropTable(
-                name: "SendEventsModel");
+                name: "RecieveMessageEventsModel");
 
             migrationBuilder.DropTable(
                 name: "TaskDatas");

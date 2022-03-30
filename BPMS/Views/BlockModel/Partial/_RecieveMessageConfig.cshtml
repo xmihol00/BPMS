@@ -1,0 +1,22 @@
+@model IRecieveMessageEventModelConfig
+
+<h4 class="mt-2">Odesílatel</h4>
+@if (Model.Sender != null)
+{
+    <div class="row border-bottom-2">
+        <div class="col-3 text-center text-bold">Název bloku</div>
+        <div class="col-3 text-center text-bold">Název bazénu</div>
+        <div class="col-3 text-center text-bold">Název modelu</div>
+        <div class="col-3 text-center text-bold">Název systému</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-3 text-center empty-name">@Model.Sender.BlockName</div>
+        <div class="col-3 text-center empty-name">@Model.Sender.PoolName</div>
+        <div class="col-3 text-center empty-name">@Model.Sender.ModelName</div>
+        <div class="col-3 text-center empty-name">@Model.Sender.SystemName</div>
+    </div>
+}
+else
+{
+    <div class="text-placeholder mb-3">Blok nemá nakonfigurovaného odesílatele.</div>
+}

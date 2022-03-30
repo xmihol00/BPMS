@@ -10,7 +10,6 @@ namespace BPMS_DTOs.BlockModel
 {
     public class SenderRecieverConfigDTO
     {
-        public bool Editable { get; set; } 
         public string BlockName { get; set;} = string.Empty;
         public string PoolName { get; set; } = string.Empty;
         public string ModelName { get; set; } = string.Empty;

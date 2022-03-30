@@ -7,8 +7,7 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_DAL.Entities.WorkflowBlocks
 {
-    public class RecieveEventWorkflowEntity : BlockWorkflowEntity, IRecieveEventWorkflowEntity
+    public class SendMessageEventWorkflowEntity : BlockWorkflowEntity, ISendMessageEventWorkflowEntity
     {
-        public bool Delivered { get; set; }
     }
 }

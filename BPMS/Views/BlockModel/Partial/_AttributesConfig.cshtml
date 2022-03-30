@@ -47,22 +47,26 @@
     </div>
 </form>
 
-@if (Model is IRecieverConfig)
+@if (Model is IRecieveMessageEventModelConfig)
+{
+    @await Html.PartialAsync("Partial/_RecieveMessageConfig", Model)
+}
+@if (Model is IRecieveSignalEventModelConfig)
 {
     <form id="SenderChangeFormId" class="d-none mt-2" action="/BlockModel/SenderChange" 
         onsubmit="AjaxFormSubmit(event, 'AttributesConfigId', false, false, null, CancelAddAttrib)" oninput="InputValidator(this, true)">
     </form>
     <div id="RecieverId">
-        @await Html.PartialAsync("Partial/_RecieverConfig", Model)
+        @await Html.PartialAsync("Partial/_RecieveSignalConfig", Model)
     </div>
 }
-@if (Model is ISenderConfig)
+@if (Model is ISendMessageEventModelConfig)
 {
-    @await Html.PartialAsync("Partial/_SenderConfig", Model)
+    @await Html.PartialAsync("Partial/_SendMessageConfig", Model)
 }
 @if (Model is IOutputAttributesConfig)
 {   
-    @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IOutputAttributesConfig, Model is IRecieverConfig))
+    @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IOutputAttributesConfig, Model is IRecieveMessageEventModelConfig))
 }
 @if (Model is IServiceInputAttributes)
 {

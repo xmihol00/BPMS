@@ -7,7 +7,7 @@ using BPMS_DAL.Interfaces.WorkflowBlocks;
 
 namespace BPMS_DAL.Entities.WorkflowBlocks
 {
-    public class SendEventWorkflowEntity : BlockWorkflowEntity, ISendEventWorkflowEntity
+    public class SendSignalEventWorkflowEntity : BlockWorkflowEntity, ISendSignalEventWorkflowEntity
     {
     }
 }

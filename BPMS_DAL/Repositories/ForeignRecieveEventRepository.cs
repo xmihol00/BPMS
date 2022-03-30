@@ -11,7 +11,7 @@ using BPMS_DTOs.Pool;
 
 namespace BPMS_DAL.Repositories
 {
-    public class ForeignRecieveEventRepository : BaseRepository<ForeignRecieveEventEntity>
+    public class ForeignRecieveEventRepository : BaseRepository<ForeignSignalRecieveEventEntity>
     {
         public ForeignRecieveEventRepository(BpmsDbContext context) : base(context) {}
     }

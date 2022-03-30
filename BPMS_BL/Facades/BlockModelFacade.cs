@@ -124,19 +124,18 @@ namespace BPMS_BL.Facades
 
         public async Task<BlockModelConfigDTO> SenderChange(SenderChangeDTO dto)
         {
-            IRecieveEventModelEntity entity = await _blockModelRepository.Bare(dto.Id) as IRecieveEventModelEntity;
+            IRecieveSignalEventModelEntity entity = await _blockModelRepository.Bare(dto.Id) as IRecieveSignalEventModelEntity;
             if (entity.ForeignSenderId != null)
             {
                 SenderRecieverAddressDTO recieverAddress = await _foreignSendEventRepository.SenderAddress(entity.ForeignSenderId.Value);
                 await CommunicationHelper.RemoveReciever(recieverAddress, dto.Id, recieverAddress.ForeignBlockId);
                 _foreignSendEventRepository.Remove(await _foreignSendEventRepository.ForRemoval(entity.ForeignSenderId.Value));
-                // TODO check if all is removed
             }
             
             DstAddressDTO address = await _systemRepository.Address(dto.SystemId);
             List<AttributeEntity> attributes = await CommunicationHelper.AddReciever(address, dto.Id, dto.BlockId);
             
-            ForeignSendEventEntity foreignEntity = new ForeignSendEventEntity
+            ForeignSendSignalEventEntity foreignEntity = new ForeignSendSignalEventEntity
             {
                 ForeignBlockId = dto.BlockId,
                 SystemId = dto.SystemId
@@ -236,13 +235,13 @@ namespace BPMS_BL.Facades
             
             foreach (BlockModelEntity mappedBlock in attrib.MappedBlocks.Select(x => x.Block))
             {
-                if (mappedBlock is ISendEventModelEntity)
+                if (mappedBlock is ISendMessageEventModelEntity)
                 {
-                    foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(mappedBlock.Id))
-                    {
-                        await CommunicationHelper.RemoveRecieverAttribute(recieverAddress, id);
-                    }
-
+                    BlockAddressDTO recieverAddress = await _blockModelRepository.RecieverAddress(mappedBlock.Id);
+                    await CommunicationHelper.RemoveRecieverAttribute(recieverAddress, id);
+                }
+                else if (mappedBlock is ISendSignalEventModelEntity)
+                {
                     foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(mappedBlock.Id))
                     {
                         await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress, id);
@@ -271,14 +270,16 @@ namespace BPMS_BL.Facades
             }
             else
             {
-                foreach (BlockModelEntity block in (await _attributeMapRepository.MappedBlocks(dto.Id)).Where(x => x is ISendEventModelEntity))
+                List<BlockModelEntity?> blocks = await _attributeMapRepository.MappedBlocks(dto.Id);
+                foreach (BlockModelEntity block in blocks.Where(x => x is ISendMessageEventModelEntity))
                 {
-                    foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(block.Id))
-                    {
-                        entity.BlockId = recieverAddress.BlockId;
-                        await CommunicationHelper.UpdateRecieverAttribute(recieverAddress, entity);
-                    }
+                    BlockAddressDTO recieverAddress = await _blockModelRepository.RecieverAddress(block.Id);
+                    entity.BlockId = recieverAddress.BlockId;
+                    await CommunicationHelper.UpdateRecieverAttribute(recieverAddress, entity);
+                }
 
+                foreach (BlockModelEntity block in blocks.Where(x => x is ISendSignalEventModelEntity))
+                {
                     foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(block.Id))
                     {
                         entity.BlockId = recieverAddress.ForeignBlockId;
@@ -324,28 +325,30 @@ namespace BPMS_BL.Facades
             bool success = true;
             if (remove)
             {
-                foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
+                BlockAddressDTO? recieverAddress = await _blockModelRepository.RecieverAddress(blockId);
+                if (recieverAddress != null)
                 {
                     success &= await CommunicationHelper.RemoveRecieverAttribute(recieverAddress, attributeId);
                 }
 
-                foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
+                foreach (SenderRecieverAddressDTO recvAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
                 {
-                    success &= await CommunicationHelper.RemoveForeignRecieverAttribute(recieverAddress, attributeId);
+                    success &= await CommunicationHelper.RemoveForeignRecieverAttribute(recvAddress, attributeId);
                 }
             }
             else
             {
-                foreach (BlockAddressDTO recieverAddress in await _blockModelRepository.RecieverAddresses(blockId))
+                BlockAddressDTO? recieverAddress = await _blockModelRepository.RecieverAddress(blockId);
+                if (recieverAddress != null)
                 {
                     attrib.BlockId = recieverAddress.BlockId;
                     success &= await CommunicationHelper.CreateRecieverAttribute(recieverAddress, attrib);
                 }
 
-                foreach (SenderRecieverAddressDTO recieverAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
+                foreach (SenderRecieverAddressDTO recvAddress in await _blockModelRepository.ForeignRecieverAddresses(blockId))
                 {
-                    attrib.BlockId = recieverAddress.ForeignBlockId;
-                    success &= await CommunicationHelper.CreateForeignRecieverAttribute(recieverAddress, attrib);
+                    attrib.BlockId = recvAddress.ForeignBlockId;
+                    success &= await CommunicationHelper.CreateForeignRecieverAttribute(recvAddress, attrib);
                 }
             }
 
@@ -411,11 +414,11 @@ namespace BPMS_BL.Facades
                     break;
 
                 case IStartEventModelEntity startEvent:
-                    dto = new BlockModelConfigDTO(); //TODO
+                    dto = new BlockModelConfigDTO();
                     break;
 
                 case IEndEventModelEntity endEvent:
-                    dto = new BlockModelConfigDTO(); //TODO
+                    dto = new BlockModelConfigDTO();
                     break;
                 
                 case IExclusiveGatewayModelEntity exclusiveGateway:
@@ -426,12 +429,20 @@ namespace BPMS_BL.Facades
                     dto = new BlockModelConfigDTO();
                     break;
 
-                case ISendEventModelEntity sendEvent:
-                    dto = await SendEventConfig(sendEvent);
+                case ISendMessageEventModelEntity sendMessageEvent:
+                    dto = await SendMessageEventConfig(sendMessageEvent);
+                    break;
+                
+                case ISendSignalEventModelEntity sendSignalEvent:
+                    dto = await SendSignalEventConfig(sendSignalEvent);
                     break;
 
-                case IRecieveEventModelEntity recieveEvent:
-                    dto = await RecieveEventConfig(recieveEvent);
+                case IRecieveMessageEventModelEntity recieveMessageEvent:
+                    dto = await RecieveMessageEventConfig(recieveMessageEvent);
+                    break;
+                
+                case IRecieveSignalEventModelEntity recieveSignalEvent:
+                    dto = await RecieveSignalEventConfig(recieveSignalEvent);
                     break;
 
                 default:
@@ -446,16 +457,21 @@ namespace BPMS_BL.Facades
             return dto;
         }
 
-        private async Task<BlockModelConfigDTO> RecieveEventConfig(IRecieveEventModelEntity recieveEvent)
+        private async Task<BlockModelConfigDTO> RecieveMessageEventConfig(IRecieveMessageEventModelEntity recieveEvent)
         {
-            RecieveEventModelConfigDTO dto = new RecieveEventModelConfigDTO();
+            RecieveMessageEventModelConfigDTO dto = new RecieveMessageEventModelConfigDTO();
+            dto.OutputAttributes = await _attributeRepository.OutputAttributes(recieveEvent.Id);
+            dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.Id);
+
+            return dto;
+        }
+
+        private async Task<BlockModelConfigDTO> RecieveSignalEventConfig(IRecieveSignalEventModelEntity recieveEvent)
+        {
+            RecieveMessageEventModelConfigDTO dto = new RecieveMessageEventModelConfigDTO();
             dto.OutputAttributes = await _attributeRepository.OutputAttributes(recieveEvent.Id);
 
-            if (recieveEvent.SenderId != null)
-            {
-                dto.Sender = await _blockModelRepository.SenderInfo(recieveEvent.SenderId.Value);
-            }
-            else if (recieveEvent.ForeignSenderId != null)
+            if (recieveEvent.ForeignSenderId != null)
             {
                 SenderRecieverAddressDTO address = await _foreignSendEventRepository.SenderAddress(recieveEvent.ForeignSenderId.Value);
                 dto.Sender = await CommunicationHelper.SenderInfo(address, address.ForeignBlockId);
@@ -466,15 +482,22 @@ namespace BPMS_BL.Facades
                 dto.Sender = new SenderRecieverConfigDTO();
             }
 
-            dto.Sender.Editable = recieveEvent.Editable;
             return dto;
         }
 
-        private async Task<BlockModelConfigDTO> SendEventConfig(ISendEventModelEntity sendEvent)
+        private async Task<BlockModelConfigDTO> SendMessageEventConfig(ISendMessageEventModelEntity sendEvent)
         {
-            SendEventModelConfigDTO dto = new SendEventModelConfigDTO();
+            SendMessageEventModelConfigDTO dto = new SendMessageEventModelConfigDTO();
             dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
-            dto.Recievers = await _blockModelRepository.RecieversInfo(sendEvent.Id);
+            dto.Reciever = await _blockModelRepository.RecieversInfo(sendEvent.Id);
+
+            return dto;
+        }
+
+        private async Task<BlockModelConfigDTO> SendSignalEventConfig(ISendSignalEventModelEntity sendEvent)
+        {
+            SendSignalEventModelConfigDTO dto = new SendSignalEventModelConfigDTO();
+            dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(sendEvent.Id, sendEvent.Order, sendEvent.PoolId);
             foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieverAddresses(sendEvent.Id))
             {
                 try

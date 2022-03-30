@@ -10,7 +10,6 @@ namespace BPMS_DTOs.BlockModel.ShareTypes
 {
     public class RecieveEventShareDTO : BlockModelShareDTO
     {
-        public Guid? SenderId { get; set; }
-        public bool Editable { get; set; }
+        
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
-    public class SendEventModelConfigDTO : BlockModelConfigDTO, IInputAttributesConfig, ISenderConfig
+    public class SendSignalEventModelConfigDTO : BlockModelConfigDTO, IInputAttributesConfig, ISendSignalEventModelConfig
     {
         public List<IGrouping<string, InputAttributeDTO>> InputAttributes { get; set; } = new List<IGrouping<string, InputAttributeDTO>>();
         public List<SenderRecieverConfigDTO> Recievers { get; set; } = new List<SenderRecieverConfigDTO>();
