@@ -506,8 +506,8 @@ namespace BPMS_BL.Facades
             }
 
             bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
-            if ((_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem && active) || authSystem.URL != _system.URL || 
-                (action == "CreateSystem" && id != StaticData.ThisSystemId) || (action != "CreateSystem" && id == StaticData.ThisSystemId))
+            if ((_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem && active) || 
+                (action == "CreateSystem" ^ id == StaticData.ThisSystemId))
             {
                 throw new UnauthorizedAccessException();
             }
