@@ -262,7 +262,8 @@ function ToggleTaskMap(attribId, button)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ToggleTaskMap/${BlockId}/${attribId}`
+        url: `/BlockModel/ToggleTaskMap/${BlockId}/${attribId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -291,7 +292,8 @@ function ToggleSendMap(attribId, button)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ToggleSendMap/${BlockId}/${attribId}`
+        url: `/BlockModel/ToggleSendMap/${BlockId}/${attribId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -323,7 +325,8 @@ function ToggleServiceMap(button, dataSchemaId, serviceTaskId)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ToggleServiceMap/${BlockId}/${dataSchemaId}/${serviceTaskId}`
+        url: `/BlockModel/ToggleServiceMap/${BlockId}/${dataSchemaId}/${serviceTaskId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -353,7 +356,8 @@ function RemoveAttribute(element)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/RemoveAttribute/${attrib.id}`
+        url: `/BlockModel/RemoveAttribute/${attrib.id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -373,7 +377,8 @@ function ShareModel()
     {
         async: true,
         type: "POST",
-        url: `/Model/Share/${modelId}`
+        url: `/Model/Share/${modelId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -406,7 +411,8 @@ function RemoveModel()
     {
         async: true,
         type: "POST",
-        url: `/Model/Remove/${modelId}`
+        url: `/Model/Remove/${modelId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -437,7 +443,8 @@ function ChangeSender(id)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/ChangeSender/${modelId}/${id}`
+        url: `/BlockModel/ChangeSender/${modelId}/${id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -458,7 +465,8 @@ function SystemChange(select)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/Agendas/${select.value}`
+        url: `/BlockModel/Agendas/${select.value}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -476,7 +484,8 @@ function AgendaChange(select)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/Models/${document.getElementById("SystemIdId").value}/${select.value}`
+        url: `/BlockModel/Models/${document.getElementById("SystemIdId").value}/${select.value}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -494,7 +503,8 @@ function ModelChange(select)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/Pools/${document.getElementById("SystemIdId").value}/${select.value}`
+        url: `/BlockModel/Pools/${document.getElementById("SystemIdId").value}/${select.value}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -512,7 +522,8 @@ function PoolChange(select)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/SenderBlocks/${document.getElementById("SystemIdId").value}/${select.value}`
+        url: `/BlockModel/SenderBlocks/${document.getElementById("SystemIdId").value}/${select.value}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -577,7 +588,8 @@ function SchemaDragDrop(event)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/AddMap/${document.getElementById("BlockIdId").value}/${DragTarget.id}/${target.id}`
+        url: `/BlockModel/AddMap/${document.getElementById("BlockIdId").value}/${DragTarget.id}/${target.id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -597,7 +609,8 @@ function RemoveMap(btn, serviceTaskId)
     {
         async: true,
         type: "POST",
-        url: `/BlockModel/RemoveMap/${serviceTaskId}/${parent.children[0].id}/${parent.children[2].id}`
+        url: `/BlockModel/RemoveMap/${serviceTaskId}/${parent.children[0].id}/${parent.children[2].id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {

@@ -263,7 +263,7 @@ namespace BPMS_BL.Helpers
 
             if (addressAuth.Encryption >= EncryptionLevelEnum.Hash)
             {
-                addressAuth.PayloadHash = new Rfc2898DeriveBytes(body, addressAuth.MessageId.ToByteArray(), 1000).GetBytes(32);
+                addressAuth.PayloadHash = SymetricCipherHelper.HashMessage(body, addressAuth.MessageId);
             }
 
             if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)

@@ -85,8 +85,7 @@ namespace BPMS_BL.Facades
                 DestinationURL = entity.URL,
                 Encryption = entity.State == SystemStateEnum.ThisSystem ? EncryptionLevelEnum.Encrypted : entity.Encryption,
                 SystemId = entity.Id,
-                Key = entity.Key,
-                URL = StaticData.ThisSystemURL
+                Key = entity.Key
             };
 
             if (entity.Encryption != dto.Encryption)
@@ -121,7 +120,6 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = StaticData.ThisSystemURL,
                 DestinationURL = entity.URL,
                 Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
@@ -143,7 +141,6 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = StaticData.ThisSystemURL,
                 DestinationURL = entity.URL,
                 Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
@@ -173,7 +170,6 @@ namespace BPMS_BL.Facades
             {
                 Key = entity.Key,
                 SystemId = entity.Id,
-                URL = StaticData.ThisSystemURL,
                 DestinationURL = entity.URL,
                 Encryption = entity.Encryption > entity.ForeignEncryption ? entity.Encryption : entity.ForeignEncryption
             };
@@ -216,7 +212,6 @@ namespace BPMS_BL.Facades
             {
                 Key = null,
                 SystemId = StaticData.ThisSystemId,
-                URL = dto.URL,
                 DestinationURL = dto.URL,
                 Encryption = entity.Encryption
             };

@@ -13,16 +13,26 @@ using Newtonsoft.Json;
 
 namespace BPMS_DTOs.Account
 {
-    public class AddressDTO
+    public class AddressDTO : IAuth
     {
-        public string URL { get; set; } = StaticData.ThisSystemURL;
+        public AddressDTO(Guid? messageId = null) 
+        {
+            if (messageId == null)
+            {
+                MessageId = Guid.NewGuid();
+            }
+            else
+            {
+                MessageId = messageId.Value;
+            }
+        }
 
         [JsonIgnore]
         public byte[]? Key { get; set; }
 
         [JsonIgnore]
         public Guid SystemId { get; set; }
-        public Guid MessageId { get; set; } = Guid.NewGuid();
+        public Guid MessageId { get; set; }
         
         [JsonIgnore]
         public EncryptionLevelEnum Encryption { get; set; }

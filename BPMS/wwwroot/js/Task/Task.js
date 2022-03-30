@@ -43,6 +43,7 @@ function SaveServiceTask()
         data: formData1,
         contentType: false,
         processData: false,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -93,6 +94,7 @@ function AddArrayInput(btn, type)
         async: true,
         type: "POST",
         url: `/Task/AddToArray/${target.id}/${type}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {

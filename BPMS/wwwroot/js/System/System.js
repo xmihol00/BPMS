@@ -24,6 +24,7 @@ function Deactive()
         async: true,
         type: "POST",
         url: `/System/Deactivate/${document.getElementById("IdId").value}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {

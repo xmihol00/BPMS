@@ -26,7 +26,6 @@ namespace BPMS_DAL.Repositories
                              DestinationURL = x.System.URL,
                              Key = x.System.Key,
                              SystemId = x.SystemId,
-                             URL = StaticData.ThisSystemURL,
                              ForeignBlockId = x.ForeignBlockId,
                              SystemName = x.System.Name
                          })

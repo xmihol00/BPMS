@@ -216,7 +216,8 @@ function RemoveAttribute(btn)
     {
         async: true,
         type: "POST",
-        url: `/Service/RemoveSchema/${btn.parentNode.id}`
+        url: `/Service/RemoveSchema/${btn.parentNode.id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -260,7 +261,8 @@ function GenerateOutAttributes(btn)
                 RecievedData: document.getElementById("ResponseTextId").innerText,
                 ServiceId: btn.getAttribute("data-id"),
                 Serialization: btn.getAttribute("data-type")
-             }
+             },
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -304,6 +306,7 @@ function RemoveHeader(btn)
         async: true,
         type: "POST",
         url: "/Service/RemoveHeader/" + btn.parentNode.id,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {

@@ -52,7 +52,8 @@ function EditRole(btn)
         {
             async: true,
             type: "GET",
-            url: `/Agenda/MissingInRole/${agendaId}/${roleId}`
+            url: `/Agenda/MissingInRole/${agendaId}/${roleId}`,
+            statusCode: { 401: HandleRedirect }
         })
         .done((result) => 
         {
@@ -86,7 +87,8 @@ function AddUserToRole(btn)
     {
         async: true,
         type: "POST",
-        url: `/Agenda/AddUserRole/${userId}/${roleId}`
+        url: `/Agenda/AddUserRole/${userId}/${roleId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -113,7 +115,8 @@ function RemoveRole(btn)
     {
         async: true,
         type: "POST",
-        url: `/Agenda/RemoveAgendaRole/${btn.parentNode.id}`
+        url: `/Agenda/RemoveAgendaRole/${btn.parentNode.id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -136,7 +139,8 @@ function RemoveUser(btn)
     {
         async: true,
         type: "POST",
-        url: `/Agenda/RemoveUserRole/${userId}/${agendaRoleId}`
+        url: `/Agenda/RemoveUserRole/${userId}/${agendaRoleId}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -180,7 +184,8 @@ function RemoveSystem(btn, event)
     {
         async: true,
         type: "POST",
-        url: `/Agenda/RemoveSystem/${agendaId}/${btn.id}`
+        url: `/Agenda/RemoveSystem/${agendaId}/${btn.id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {

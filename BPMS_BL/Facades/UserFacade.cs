@@ -176,7 +176,7 @@ namespace BPMS_BL.Facades
             AuthenticationProperties authProperties = new AuthenticationProperties()
             {
                 AllowRefresh = true,
-                ExpiresUtc = DateTimeOffset.Now.AddHours(3),
+                ExpiresUtc = DateTimeOffset.Now.AddHours(0.5),
                 IsPersistent = true,
             };
 

@@ -175,6 +175,16 @@ function HistoryBack()
     history.back();
 }
 
+function HandleRedirect()
+{
+    window.location.href = `/Account/SignIn?ReturnUrl=${encodeURIComponent(window.location.pathname)}`;
+}
+
+function HandleError(result, statusCode)
+{
+    console.log(result, statusCode);
+}
+
 function KeyDownHandler(event)
 {
     if (event.key == "Escape")
@@ -223,7 +233,8 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, hide
             {
                 async: true,
                 type: "GET",
-                url: url
+                url: url,
+                statusCode: { 401: HandleRedirect }
             })
             .done((result) => 
             {
@@ -313,6 +324,7 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
         data: dto,
         contentType: false,
         processData: false,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -435,7 +447,8 @@ function GetAjaxRequest(url, targetId)
     {
         async: true,
         type: "GET",
-        url: url
+        url: url,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -472,7 +485,8 @@ function OverviewTransition(path)
     {
         async: true,
         type: "GET",
-        url: path
+        url: path,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -520,7 +534,8 @@ function DetailTransition(element, path, blocks = false, succesCallback = null, 
     {
         async: true,
         type: "GET",
-        url: path + element.id
+        url: path + element.id,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -581,7 +596,8 @@ function FilterChanges(event, path, blocks = false)
             async: true,
             type: "POST",
             url: path,
-            data: dto
+            data: dto,
+            statusCode: { 401: HandleRedirect }
         })
         .done((result) => 
         {
@@ -620,7 +636,8 @@ function ShowNotifications(event)
     {
         async: true,
         type: "GET",
-        url: "/Notification/All"
+        url: "/Notification/All",
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -643,7 +660,8 @@ function NotificationSeen(btn)
     {
         async: true,
         type: "POST",
-        url: "/Notification/Seen/" + btn.parentNode.id
+        url: "/Notification/Seen/" + btn.parentNode.id,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -667,7 +685,8 @@ function NotificationMark(btn)
     {
         async: true,
         type: "POST",
-        url: `/Notification/Mark/${btn.parentNode.id}/${marked}`
+        url: `/Notification/Mark/${btn.parentNode.id}/${marked}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
@@ -717,7 +736,8 @@ function NotifFilterChange(btn)
         async: true,
         type: "POST",
         url: "/Notification/Filter",
-        data: dto
+        data: dto,
+        statusCode: { 401: HandleRedirect }
     })
     .done((result) => 
     {
@@ -741,6 +761,7 @@ function NotificationRemove(btn)
         async: true,
         type: "POST",
         url: `/Notification/Remove/${parent.id}`,
+        statusCode: { 401: HandleRedirect }
     })
     .done(() => 
     {
