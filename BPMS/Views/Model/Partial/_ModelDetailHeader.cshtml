@@ -1,6 +1,8 @@
 @model ModelDetailHeaderDTO
 @{
-    bool show = (bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+    bool admin = (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+    bool modelKeeper = (bool)ViewData[SystemRoleEnum.ModelKeeper.ToString()] || admin;
+    bool AgendaKeeper = (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()] || admin;
 }
 
 <div class="d-flex justify-content-between px-4 page-navbar-content">
@@ -12,7 +14,7 @@
     </div>
     <h1 class="my-auto text-font">Detail modelu</h1>
     <div class="my-auto nav-placeholder">
-        @if (show)
+        @if (modelKeeper)
         {
             <button class="butn btn-p" onclick="ShowModal('EditModelId')" >Upravit</button>
             @switch (Model.State)
@@ -24,7 +26,12 @@
                 case ModelStateEnum.Shareable:
                     <button class="butn btn-s" onclick="ShareModel(this)">Sdílet</button>
                     break;
-
+            }
+        }
+        @if (AgendaKeeper)
+        {
+            @switch (Model.State)
+            {  
                 case ModelStateEnum.Executable:
                     <button class="butn btn-s" onclick="ShowModal('RunModelId', '/Model/Run/@Model.Id', 'RunModelTargetId', true, null, ValidateStart)">Spustit</button>
                     break;
@@ -36,7 +43,7 @@
         }
     </div>
 </div>
-@if (show)
+@if (modelKeeper)
 {
     <form id="EditModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Edit" 
         onsubmit="AjaxFormSubmit(event, null, true, false, null, InfoCardUpdate)" oninput="InputValidator(this)">
@@ -82,6 +89,9 @@
             <div class="loading-content"></div>
         </div>
     </div>
+}
+@if (AgendaKeeper && Model.State == ModelStateEnum.Executable)
+{
     <form id="RunModelId" class="mx-4 mt-4 mb-2 d-none" action="/Model/Run" method="POST"
         onsubmit="AjaxFormSubmit(event, null, true, false, null, ModelRunCB)" oninput="InputValidator(this)">
         <input type="hidden" name="Id" value="@Model.Id">

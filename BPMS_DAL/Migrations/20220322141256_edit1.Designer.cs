@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    [Migration("20220318105700_init")]
-    partial class init
+    [Migration("20220322141256_edit1")]
+    partial class edit1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -248,8 +248,15 @@ namespace BPMS_DAL.Migrations
                     b.Property<Guid>("ForeignUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SenderName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderPhone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SystemId")
@@ -282,6 +289,9 @@ namespace BPMS_DAL.Migrations
                     b.Property<bool>("Compulsory")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Direction")
                         .HasColumnType("int");
 
@@ -291,9 +301,6 @@ namespace BPMS_DAL.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Order")
-                        .HasColumnType("bigint");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uniqueidentifier");
@@ -325,7 +332,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Město",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
                             Type = 0
                         },
@@ -338,7 +344,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Klíč",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
                             StaticData = "7622a0a6b0f63a523986e6021e727f81",
                             Type = 0
@@ -352,7 +357,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Zeměpisná délka",
-                            Order = 0L,
                             ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
                             Type = 1
                         },
@@ -365,7 +369,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Zeměpisná šířka",
-                            Order = 0L,
                             ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
                             Type = 1
                         },
@@ -378,7 +381,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Klíč",
-                            Order = 0L,
                             ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
                             StaticData = "7622a0a6b0f63a523986e6021e727f81",
                             Type = 0
@@ -392,7 +394,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Město",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
                             Type = 0
                         },
@@ -405,7 +406,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Klíč",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
                             StaticData = "7622a0a6b0f63a523986e6021e727f81",
                             Type = 0
@@ -419,7 +419,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Mód",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
                             StaticData = "xml",
                             Type = 0
@@ -433,7 +432,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "IČO",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"),
                             Type = 0
                         },
@@ -446,7 +444,6 @@ namespace BPMS_DAL.Migrations
                             Direction = 0,
                             Disabled = false,
                             Name = "Obchodní firma",
-                            Order = 0L,
                             ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"),
                             Type = 0
                         });
@@ -660,11 +657,11 @@ namespace BPMS_DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("AppId")
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("AppSecret")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("AppSecret")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("AuthType")
                         .HasColumnType("int");
@@ -849,7 +846,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("26ea2c26-f4c9-43b0-8607-f7de1dad9fcd"),
                             Encryption = 2,
                             ForeignEncryption = 0,
-                            Key = new byte[] { 50, 115, 53, 118, 56, 121, 47, 66, 63, 69, 40, 72, 43, 77, 98, 81, 101, 84, 104, 86, 109, 89, 113, 51, 116, 54, 119, 57, 122, 36, 67, 38 },
+                            Key = new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 },
                             Name = "Tento systém",
                             State = 5,
                             URL = "https://localhost:5001/"
@@ -971,7 +968,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "8c7qaxIit0oWzK7FGoDbgs+Sh0KkDe2ZJy7QjGaOIiTA5/szc9ZOnlD020sfbXTy8aFJ8pUYfpXc2wHi/JLc3O0z",
+                            Password = "MX/BSM2/Zy5Bfxl7a2TFUXqKIUVgCGEcCl7iLaxFZugrCc7Slg7nNRIspJaPH29MJQONWNgOxq32DxvfJ/cOothF",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
@@ -1008,6 +1005,9 @@ namespace BPMS_DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpectedEnd")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModelId")
@@ -1202,8 +1202,8 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<TimeSpan>("Difficulty")
-                        .HasColumnType("time");
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");

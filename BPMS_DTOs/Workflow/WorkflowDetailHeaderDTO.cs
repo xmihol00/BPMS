@@ -14,5 +14,7 @@ namespace BPMS_DTOs.Workflow
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public WorkflowStateEnum State { get; set; }
+        public bool Editable { get; set; }
+        public DateTime ExpectedEnd { get; set; }
     }
 }

@@ -9,43 +9,33 @@ namespace BPMS_DAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Order",
-                table: "DataSchemas");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "DataSchemas",
-                type: "nvarchar(max)",
-                nullable: true);
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ExpectedEnd",
+                table: "Workflows",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                 column: "Password",
-                value: "0D4Goyxhm3BVmcRZjILlAmmcYVXzA/r4F3EuTgPs9/IceLePOrWev0OuL3p5zMLN29kLXg8THR9DllAmtRugzG4P");
+                value: "MX/BSM2/Zy5Bfxl7a2TFUXqKIUVgCGEcCl7iLaxFZugrCc7Slg7nNRIspJaPH29MJQONWNgOxq32DxvfJ/cOothF");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Description",
-                table: "DataSchemas");
-
-            migrationBuilder.AddColumn<long>(
-                name: "Order",
-                table: "DataSchemas",
-                type: "bigint",
-                nullable: false,
-                defaultValue: 0L);
+                name: "ExpectedEnd",
+                table: "Workflows");
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                 column: "Password",
-                value: "8c7qaxIit0oWzK7FGoDbgs+Sh0KkDe2ZJy7QjGaOIiTA5/szc9ZOnlD020sfbXTy8aFJ8pUYfpXc2wHi/JLc3O0z");
+                value: "7nfgJv29qmTR78+wRQRxMaRKow6Il6DqYDkQjVyNIMe46lX9ZO1Cwc5NRcw+k+rdAJo2yODgKx1kFmanrsDeyi+l");
         }
     }
 }

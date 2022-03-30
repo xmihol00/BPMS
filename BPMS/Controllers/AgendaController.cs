@@ -177,5 +177,12 @@ namespace BPMS.Controllers
         {
             return PartialView("Partial/_AgendaSelect", await _agendaFacade.UploadModel());
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Keepers(Guid id)
+        {
+            return PartialView("Partial/_AgendaAdminChange", await _agendaFacade.Keepers(id));
+        }
     }
 }

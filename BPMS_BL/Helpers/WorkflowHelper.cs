@@ -41,6 +41,7 @@ namespace BPMS_BL.Helpers
         private Dictionary<(Guid, Guid), TaskDataEntity> _createdServiceData = new Dictionary<(Guid, Guid), TaskDataEntity>();
         private Dictionary<Guid, TaskDataEntity> _createdTaskData = new Dictionary<Guid, TaskDataEntity>();
         private readonly Guid? _currentUserId;
+        private int _workflowDifficulty = 0;
 
         #pragma warning disable CS8618
         public WorkflowHelper(BpmsDbContext context, Guid? currentUserId = null)
@@ -71,6 +72,7 @@ namespace BPMS_BL.Helpers
             workflow.State = WorkflowStateEnum.Active;
             workflow.Blocks = await CreateBlocks(startEvent);
             workflow.Blocks[0].SolvedDate = DateTime.Now;
+            workflow.ExpectedEnd = DateTime.Now.AddDays(_workflowDifficulty);
             await _modelRepository.Save();
 
             await StartNextTask(workflow.Blocks[0]);
@@ -213,6 +215,7 @@ namespace BPMS_BL.Helpers
 
         private async Task<BlockWorkflowEntity> CreateUserTask(BlockModelEntity blockModel)
         {
+            _workflowDifficulty += (blockModel as IUserTaskModelEntity).Difficulty;
             BlockWorkflowEntity blockWorkflow = new UserTaskWorkflowEntity()
             {
                 UserId = null,
@@ -358,7 +361,7 @@ namespace BPMS_BL.Helpers
                 IUserTaskModelEntity taskModel = blockModel as IUserTaskModelEntity;
                 IUserTaskWorkflowEntity taskWorkflow = blockWorkflow as IUserTaskWorkflowEntity;
                 taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? workflow.AdministratorId;
-                taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty.TotalDays);
+                taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty);
             }
             else if (blockWorkflow is IUserTaskWorkflowEntity)
             {
@@ -810,7 +813,7 @@ namespace BPMS_BL.Helpers
             IUserTaskWorkflowEntity userTask = task as IUserTaskWorkflowEntity;
             userTask.State = BlockWorkflowStateEnum.Active;
             UserTaskModelEntity userTaskModel = await _blockModelRepository.UserTaskForSolve(userTask.BlockModelId);
-            userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty.TotalDays);
+            userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty);
             userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
                               userTask.Workflow.AdministratorId;
 

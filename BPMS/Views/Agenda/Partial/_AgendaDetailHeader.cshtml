@@ -1,10 +1,11 @@
 @model AgendaDetailHeaderDTO
 @{
-    bool show = (bool)ViewData[SystemRoleEnum.Admin.ToString()] || (bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()];
+    bool admin = (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+    bool show = admin || ((bool)ViewData[SystemRoleEnum.AgendaKeeper.ToString()] && Model.Editable);
 }
 <div class="d-flex justify-content-between px-4 page-navbar-content">
     <div class="my-auto">   
-        <button type="button" class="btn btn-sm my-auto" onclick="OverviewTransition('/Agenda/OverviewPartial')">
+        <button type="button" class="btn my-auto" onclick="OverviewTransition('/Agenda/OverviewPartial')">
             <i class="fas fa-chevron-circle-left"></i>
         </button>
         <button type="button" class="btn my-auto @(show ? "mr-100" : "")"><i class="fas fa-info-circle my-auto"></i></button>
@@ -16,7 +17,7 @@
             <button class="butn btn-p" onclick="ShowModal('AddRoleFormId', '/Agenda/AddRole/@Model.Id', 'AddRoleId', false)">Přidat roli</button>
             <button type="button" class="butn btn-p my-auto" onclick="ShowModal('AddSystemFormId', '/Agenda/AddSystem/@Model.Id', 'AddSystemId', false)">Přidat systém</button>
             <button class="butn btn-p" onclick="ShowModal('UploadModelFormId')">Nahrát model</button>
-            <button class="butn btn-p" onclick="ShowModal('EditAgendaId')">Upravit</button>
+            <button class="butn btn-p" onclick="ShowModal('EditAgendaId', '@(admin ? $"/Agenda/Keepers/{Model.Id}" : "")', '@(admin ? "AdminEditId" : "")')">Upravit</button>
         }
     </div>
 </div>
@@ -30,7 +31,7 @@
             <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
         </div>
         <div class="row">
-            <div class="col-12 mt-1">
+            <div class="col-12">
                 <label class="input">
                     <input required class="input-field" type="text" placeholder=" " name="Name" />
                     <span id="ModelNameLabelId" class="input-label">Název</span>
@@ -67,13 +68,17 @@
             <i class="fas fa-times my-auto close-icon" onclick="HideModal()"></i>
         </div>
         <div class="row">
-            <div class="col-12 mt-1">
+            <div class="col-12 @(admin ? "col-lg-6" : "") mb-3">
                 <label class="input">
                     <input required class="input-field" type="text" placeholder=" " name="Name" value="@Model.Name" />
                     <span class="input-label">Název</span>
                 </label>
             </div>
-            <div class="col-12 mt-3">
+            @if (admin)
+            {
+                <div id="AdminEditId" class="col-12 col-lg-6 mb-3"></div>
+            }
+            <div class="col-12">
                 <label class="input mb-1">
                     <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
                     <span class="input-label">Popis</span>

@@ -355,7 +355,10 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
         {
             failCallback();
         }
-        ConnectionAlert();
+        else
+        {
+            ConnectionAlert();
+        }
     });        
 }
 
@@ -430,7 +433,9 @@ function InputValidator(form, select = false)
 function PasswordValidator(form)
 {
     InputValidator(form);
-    if (document.getElementById("PasswordCheckId").value != document.getElementById("PasswordId").value)
+    let pwd = document.getElementById("PasswordId").value;
+    let check = document.getElementById("PasswordCheckId").value;
+    if (check && check != pwd)
     {
         document.getElementById("PasswordMismatchId").classList.remove("d-none");
         document.querySelector("[form=AccountCreateId]").disabled = true;
@@ -438,6 +443,16 @@ function PasswordValidator(form)
     else
     {
         document.getElementById("PasswordMismatchId").classList.add("d-none");
+    }
+
+    if (pwd && !document.getElementById("PasswordId").value.match(/(?=.*[A-Z])(?=.*[!@#$&._%()*-/+$^&{}])(?=.*[0-9])(?=.*[a-z]).{10}/))
+    {
+        document.getElementById("PasswordWeakId").classList.remove("d-none");
+        document.querySelector("[form=AccountCreateId]").disabled = true;
+    }
+    else
+    {
+        document.getElementById("PasswordWeakId").classList.add("d-none");
     }
 }
 

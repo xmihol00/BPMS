@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
-    public class UserTaskModelConfigDTO : BlockModelConfigDTO, IOutputAttributesConfig, IInputAttributesConfig, IServiceInputAttributes, IServiceOutputAttributes, IRoleConfig
+    public class UserTaskModelConfigDTO : BlockModelConfigDTO, IOutputAttributesConfig, IInputAttributesConfig, IServiceInputAttributes, IServiceOutputAttributes, IRoleConfig, IDifficultyConfig
     {
         public List<AttributeDTO> OutputAttributes { get; set; } = new List<AttributeDTO>();
         public List<IGrouping<string, InputAttributeDTO>> InputAttributes { get; set; } = new List<IGrouping<string, InputAttributeDTO>>();
@@ -20,5 +20,6 @@ namespace BPMS_DTOs.BlockModel.ConfigTypes
         public List<ServiceTaskDataSchemaDTO>? ServiceInputAttributes { get; set; }
         public List<RoleAllDTO> Roles { get; set; } = new List<RoleAllDTO>();
         public Guid? CurrentRole { get; set; }
+        public int Difficulty { get; set; }
     }
 }

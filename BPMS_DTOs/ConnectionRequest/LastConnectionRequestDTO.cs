@@ -13,6 +13,8 @@ namespace BPMS_DTOs.ConnectionRequest
         public string URL { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
+        public string UserEmail { get; set; } = string.Empty;
+        public string? UserPhone { get; set; }
         public DateTime Date { get; set; }
     }
 }

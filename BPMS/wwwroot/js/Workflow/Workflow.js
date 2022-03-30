@@ -7,13 +7,13 @@ window.addEventListener('DOMContentLoaded', () =>
     AddEventListeners();
 });
 
-function AddEventListeners()
+function AddEventListeners(result = null)
 {
     let model = document.querySelector("[id='WorkflowModelId']");
     if (model)
     {
         let workflowId = document.getElementById("WorkflowIdId").value;
-        if (RoleForEdit)
+        if (RoleForEdit && (!result || result.editable))
         {
             for (let pool of model.getElementsByClassName("bpmn-pool"))
             {

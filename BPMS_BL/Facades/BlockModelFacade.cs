@@ -224,6 +224,7 @@ namespace BPMS_BL.Facades
             else if (block is IUserTaskModelEntity)
             {
                 (block as IUserTaskModelEntity).RoleId = dto.RoleId;
+                (block as IUserTaskModelEntity).Difficulty = dto.Difficulty;
             }
 
             await _blockModelRepository.Save();
@@ -503,6 +504,7 @@ namespace BPMS_BL.Facades
                 Name = "Nevybrána",
             });
             roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(userTask.PoolId));
+            (dto as IDifficultyConfig).Difficulty = userTask.Difficulty;
 
             dto.ServiceInputAttributes = await _blockModelRepository.ServiceInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
             dto.ServiceOutputAttributes = await _blockModelRepository.ServiceOutputAttributes(userTask.Id, userTask.Order, userTask.PoolId);

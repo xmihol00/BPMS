@@ -14,5 +14,6 @@ namespace BPMS_DTOs.BlockModel
         public string? Description { get; set; }
         public Guid? ServiceId { get; set; }
         public Guid? RoleId { get; set; }
+        public int Difficulty { get; set; }
     }
 }

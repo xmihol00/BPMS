@@ -246,8 +246,15 @@ namespace BPMS_DAL.Migrations
                     b.Property<Guid>("ForeignUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SenderName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderPhone")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SystemId")
@@ -648,11 +655,11 @@ namespace BPMS_DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("AppId")
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("AppSecret")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("AppSecret")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("AuthType")
                         .HasColumnType("int");
@@ -959,7 +966,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "ISaWTbZCvnHDDVXb5Y8YEIVJjBTbBqKHAu7XOgz2jnYEaUWBpiXZGI1Zzd7YB+aZnyE7CpPOIRN3kDG/92QrU7GX",
+                            Password = "MX/BSM2/Zy5Bfxl7a2TFUXqKIUVgCGEcCl7iLaxFZugrCc7Slg7nNRIspJaPH29MJQONWNgOxq32DxvfJ/cOothF",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
@@ -996,6 +1003,9 @@ namespace BPMS_DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpectedEnd")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModelId")
@@ -1190,8 +1200,8 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<TimeSpan>("Difficulty")
-                        .HasColumnType("time");
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");

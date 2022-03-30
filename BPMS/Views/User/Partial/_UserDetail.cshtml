@@ -3,16 +3,7 @@
 <div id="DetailInfoId">
     @await Html.PartialAsync("Partial/_UserDetailInfo", Model)
 </div>
-@if (Model.Tasks.Count > 0)
-{
-    <h3 class="text-font text-center mt-2">Přiřazené úkoly</h3>
-    <div class="row">
-        @foreach (TaskAllDTO task in Model.Tasks)
-        {
-            @await Html.PartialAsync("../Task/Partial/_TaskCard", (task, false));
-        }
-    </div>
-}
+
 @if (Model.Agendas.Count > 0)
 {
     <h3 class="text-font text-center mt-2">Správce agend</h3>

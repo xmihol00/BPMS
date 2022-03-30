@@ -21,7 +21,18 @@
                     Dokončit do: 
                 </div>
                 <div class="col-6 ps-0">
-                    <b>@Model.task.SolveDate.ToString("dd. MM. yyyy")</b>
+                    @if (Model.task.SolveDate < DateTime.Now)
+                    {
+                        <b class="text-danger">@Model.task.SolveDate.ToShortDateString()</b>
+                    }
+                    else if (Model.task.SolveDate < DateTime.Now.AddDays(3))
+                    {
+                        <b class="text-alert">@Model.task.SolveDate.ToShortDateString()</b>
+                    }
+                    else
+                    {
+                        <b>@Model.task.SolveDate.ToShortDateString()</b>
+                    }
                 </div>
             </div>
         }

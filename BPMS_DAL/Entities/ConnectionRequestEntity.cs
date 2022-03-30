@@ -17,5 +17,7 @@ namespace BPMS_DAL.Entities
         public Guid ForeignUserId { get; set; }
         public Guid SystemId { get; set; }
         public SystemEntity? System { get; set; }
+        public string SenderEmail { get; set; } = string.Empty;
+        public string? SenderPhone { get; set; }
     }
 }

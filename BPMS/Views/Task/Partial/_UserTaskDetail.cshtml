@@ -18,7 +18,18 @@
                 Typ úkolu:
             </div>
             <b class="d-block">
-                @Model.SolveDate<br>
+                @if (Model.SolveDate < DateTime.Now)
+                {
+                    <b class="text-danger">@Model.SolveDate.ToLongDateString()</b>
+                }
+                else if (Model.SolveDate < DateTime.Now.AddDays(3))
+                {
+                    <b class="text-alert">@Model.SolveDate.ToLongDateString()</b>
+                }
+                else
+                {
+                    <b>@Model.SolveDate.ToLongDateString()</b>
+                }<br>
                 @TaskTypeEnum.UserTask.ToLabel()
             </b>
         </div>

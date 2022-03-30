@@ -168,7 +168,7 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<TimeSpan> UserTaskDifficulty(Guid id)
+        public Task<int> UserTaskDifficulty(Guid id)
         {
             return _userTasks.Where(x => x.Id == id)
                              .Select(x => x.Difficulty)

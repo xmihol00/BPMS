@@ -69,9 +69,16 @@ namespace BPMS_BL.Facades
             return await _agendaRepository.All();
         }
 
+        public async Task<AgendaDetailDTO> DetailPartial(Guid id)
+        {
+            AgendaDetailDTO detail = await _agendaRepository.Detail(id);
+            detail.Editable = await _agendaRepository.Keeper(id);
+            return detail;
+        }
+
         public async Task<AgendaDetailDTO> Detail(Guid id)
         {
-            AgendaDetailDTO dto = await _agendaRepository.Detail(id);
+            AgendaDetailDTO dto = await DetailPartial(id);
             
             dto.AllAgendas = await _agendaRepository.All(id);
             dto.SelectedAgenda = await _agendaRepository.Selected(id);
@@ -104,21 +111,18 @@ namespace BPMS_BL.Facades
 
         public async Task<AgendaInfoCardDTO> Edit(AgendaEditDTO dto)
         {
-            AgendaEntity agenda = await _agendaRepository.BareAdmin(dto.Id);
+            AgendaEntity agenda = await _agendaRepository.Bare(dto.Id);
             agenda.Name = dto.Name;
-            agenda.Description = dto.Description ?? "";
+            agenda.Description = dto.Description;
+            if (dto.AdministratorId != null && dto.AdministratorId != agenda.AdministratorId)
+            {   
+                agenda.AdministratorId = dto.AdministratorId.Value;
+                await NotificationHub.CreateSendNotifications(_notificationRepository, dto.Id, NotificationTypeEnum.NewAgenda, agenda.Name, 
+                                                              UserId, agenda.AdministratorId);
+            }
             await _agendaRepository.Save();
 
-            return new AgendaInfoCardDTO()
-            {
-                AdministratorEmail = agenda.Administrator.Email,
-                AdministratorId = agenda.AdministratorId,
-                AdministratorName = $"{agenda.Administrator.Name} {agenda.Administrator.Surname}",
-                Description = agenda.Description,
-                Id = agenda.Id,
-                Name = agenda.Name,
-                SelectedAgenda = await _agendaRepository.Selected(agenda.Id)
-            };
+            return await _agendaRepository.InfoCard(agenda.Id);
         }
 
         public async Task AddUserRole(Guid userId, Guid agendaRoleId)
@@ -145,6 +149,15 @@ namespace BPMS_BL.Facades
                                                           agenda.Name, UserId, userId);
 
             await _userRoleRepository.Save();
+        }
+
+        public async Task<AgendaAdminChangeDTO> Keepers(Guid agendaId)
+        {
+            return new AgendaAdminChangeDTO
+            {
+                CurrentAdminId = await _agendaRepository.CurrentAdmin(agendaId),
+                OtherAdmins = await _userRepository.Keepers(SystemRoleEnum.AgendaKeeper)
+            };
         }
 
         public async Task RemoveSystem(Guid agendaId, Guid systemId)
@@ -205,11 +218,6 @@ namespace BPMS_BL.Facades
         public Task<List<UserIdNameDTO>> MissingInRole(Guid agendaId, Guid roleId)
         {
             return _userRepository.MissingInRole(agendaId, roleId);
-        }
-
-        public Task<AgendaDetailDTO> DetailPartial(Guid id)
-        {
-            return _agendaRepository.Detail(id);
         }
 
         public async Task<List<RoleAllDTO>> AddRole(Guid agendaId)

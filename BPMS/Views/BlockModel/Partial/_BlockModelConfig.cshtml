@@ -14,12 +14,25 @@
             <span class="input-label">Popis</span>
         </label>
     </div>
-    @if (Model is IRoleConfig)
+    @if (Model is IRoleConfig && Model is IDifficultyConfig)
+    {
+        <div class="col-12 col-lg-6 mb-3">
+            @await Html.PartialAsync("Partial/_RoleConfig", Model)
+        </div>
+        <div class="col-12 col-lg-6 mb-3">
+            <label class="input">
+                <input class="input-field" type="number" placeholder=" " name="Difficulty" value="@((Model as IDifficultyConfig).Difficulty)" />
+                <span class="input-label">Obtížnost (dny)</span>
+            </label>
+        </div>
+    }
+    else if (Model is IRoleConfig)
     {
         <div class="col-12 mb-3">
             @await Html.PartialAsync("Partial/_RoleConfig", Model)
         </div>
     }
+
     @if (Model is IServiceConfig)
     {
         <div class="col-12 mb-3">
