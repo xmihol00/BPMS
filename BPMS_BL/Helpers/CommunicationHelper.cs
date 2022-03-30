@@ -98,7 +98,7 @@ namespace BPMS_BL.Helpers
         public static async Task<bool> CreateSystem(IAddressAuth addressAuth, SystemEntity payload)
         {
             using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/CreateSystem");
-            return await CheckResponse(addressAuth, response, payload.Key);
+            return await CheckResponse(addressAuth, response);
         }
 
         public static async Task<bool> ActivateSystem(IAddressAuth addressAuth)
@@ -228,11 +228,11 @@ namespace BPMS_BL.Helpers
             return await client.SendAsync(request);
         }
 
-        private static async Task<bool> CheckResponse(IAddressAuth addressAuth, HttpResponseMessage response, byte[]? key = null)
+        private static async Task<bool> CheckResponse(IAddressAuth addressAuth, HttpResponseMessage response)
         {
             try
             {
-                await Authenticate(addressAuth, response, key);
+                await Authenticate(addressAuth, response);
             }
             catch
             {
@@ -242,9 +242,9 @@ namespace BPMS_BL.Helpers
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        private static async Task<T> CheckResponse<T>(IAddressAuth addressAuth, HttpResponseMessage response, byte[]? key = null) where T : class
+        private static async Task<T> CheckResponse<T>(IAddressAuth addressAuth, HttpResponseMessage response) where T : class
         {
-            await Authenticate(addressAuth, response, key);
+            await Authenticate(addressAuth, response);
 
             T dto = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
             if (dto != null)
@@ -257,9 +257,8 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private static async Task<string> Authenticate(IAddressAuth addressAuth, HttpResponseMessage response, byte[]? key = null)
+        private static async Task<string> Authenticate(IAddressAuth addressAuth, HttpResponseMessage response)
         {
-            addressAuth.Key = key ?? addressAuth.Key;
             string auth = response.Headers.First(x => x.Key == "Authorization").Value.First()["Bearer ".Length..];
             string data = await response.Content.ReadAsStringAsync();
 
