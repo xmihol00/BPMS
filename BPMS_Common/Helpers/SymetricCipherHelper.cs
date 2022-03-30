@@ -23,7 +23,12 @@ namespace BPMS_Common.Helpers
         public static async Task<string> AuthEncrypt(IAuth data)
         {
             using Aes aes = Aes.Create();
-            ICryptoTransform encryptor = aes.CreateEncryptor(data.Key != null ? await DecryptKey(data.Key) : _thisKey, _thisIV);
+            if (data.Key == null)
+            {
+                throw new Exception();
+            }
+            
+            ICryptoTransform encryptor = aes.CreateEncryptor(await DecryptKey(data.Key), _thisIV);
 
             using (MemoryStream memStream = new MemoryStream())
             {

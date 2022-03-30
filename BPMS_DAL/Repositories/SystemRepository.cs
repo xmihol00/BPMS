@@ -166,6 +166,13 @@ namespace BPMS_DAL.Repositories
                   .Property(x => x.State).IsModified = true;
         }
 
+        public Task<byte[]?> ThisSystemKey()
+        {
+            return _dbSet.Where(x => x.Id == StaticData.ThisSystemId)
+                         .Select(x => x.Key)
+                         .FirstAsync();
+        }
+
         public Task<List<SystemIdNameDTO>> ThisSystemIdName()
         {
             return _dbSet.Where(x => x.Id == StaticData.ThisSystemId)

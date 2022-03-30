@@ -213,7 +213,7 @@ namespace BPMS_BL.Facades
             };
             DstAddressDTO address = new DstAddressDTO
             {
-                Key = null,
+                Key = await _systemRepository.ThisSystemKey(),
                 SystemId = StaticData.ThisSystemId,
                 DestinationURL = dto.URL,
                 Encryption = entity.Encryption
