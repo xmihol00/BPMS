@@ -184,11 +184,11 @@ namespace BPMS_BL.Helpers
             return await CheckResponse<List<AttributeEntity>>(addressAuth, response);
         }
 
-        public static async Task<bool> ChangeEncryption(IAddressAuth addressAuth, EncryptionLevelEnum encryption)
+        public static async Task<bool> ChangeEncryption(IAddressAuth addressAuth, EncryptionLevelEnum newEncryption, EncryptionLevelEnum foreignEncryption)
         {
-            object payload = encryption.ToString();
+            object payload = newEncryption.ToString();
             using HttpResponseMessage response = await SendMessage(addressAuth, payload, "Communication/ChangeEncryption");
-            addressAuth.Encryption = encryption;
+            addressAuth.Encryption = newEncryption > foreignEncryption ? newEncryption : foreignEncryption;
             return await CheckResponse(addressAuth, response);
         }
 
