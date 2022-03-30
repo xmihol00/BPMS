@@ -829,12 +829,9 @@ namespace BPMS_DAL.Migrations
 
                     b.Property<string>("URL")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("URL")
-                        .IsUnique();
 
                     b.ToTable("Systems");
 
@@ -966,7 +963,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "MX/BSM2/Zy5Bfxl7a2TFUXqKIUVgCGEcCl7iLaxFZugrCc7Slg7nNRIspJaPH29MJQONWNgOxq32DxvfJ/cOothF",
+                            Password = "dyEeq/hBhE8LpUCSoX5ESI/EQp0xmpWKq4Q0J4NDLUHL6+AipH5oIm8SrJ6qHQMBVFQNwVrIPdbWtDj7G5FwKssE",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"

@@ -48,7 +48,7 @@ namespace BPMS_DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Key = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    URL = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<int>(type: "int", nullable: false),
@@ -403,6 +403,7 @@ namespace BPMS_DAL.Migrations
                     State = table.Column<int>(type: "int", nullable: false),
                     Start = table.Column<DateTime>(type: "datetime2", nullable: false),
                     End = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpectedEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AgendaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AdministratorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -1166,7 +1167,7 @@ namespace BPMS_DAL.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "7nfgJv29qmTR78+wRQRxMaRKow6Il6DqYDkQjVyNIMe46lX9ZO1Cwc5NRcw+k+rdAJo2yODgKx1kFmanrsDeyi+l", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "dyEeq/hBhE8LpUCSoX5ESI/EQp0xmpWKq4Q0J4NDLUHL6+AipH5oIm8SrJ6qHQMBVFQNwVrIPdbWtDj7G5FwKssE", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
@@ -1367,12 +1368,6 @@ namespace BPMS_DAL.Migrations
                 name: "IX_SystemAgendas_SystemId",
                 table: "SystemAgendas",
                 column: "SystemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Systems_URL",
-                table: "Systems",
-                column: "URL",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskDataMaps_TaskId",

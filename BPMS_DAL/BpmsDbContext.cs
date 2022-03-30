@@ -53,7 +53,6 @@ namespace BPMS_DAL
 
             modelBuilder.Entity<SystemEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<SystemEntity>().Property(x => x.Id).ValueGeneratedNever();
-            modelBuilder.Entity<SystemEntity>().HasIndex(x => x.URL).IsUnique(true);
 
             modelBuilder.Entity<SystemAgendaEntity>().HasKey(x => new { x.AgendaId, x.SystemId });
             modelBuilder.Entity<SystemAgendaEntity>().HasOne(x => x.Agenda).WithMany(x => x.Systems).HasForeignKey(x => x.AgendaId);
