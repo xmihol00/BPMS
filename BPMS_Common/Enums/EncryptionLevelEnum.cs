@@ -9,8 +9,9 @@ namespace BPMS_Common.Enums
     public enum EncryptionLevelEnum
     {
         Auth,
+        Audit,
         Hash,
-        Encrypted
+        Encrypted,
     }
 
     public static class EncryptionLevel
@@ -22,11 +23,14 @@ namespace BPMS_Common.Enums
                 case EncryptionLevelEnum.Auth:
                     return "Autentizace";
                 
+                case EncryptionLevelEnum.Audit:
+                    return "Autentizace + Auditní zprávy";
+                
                 case EncryptionLevelEnum.Hash:
-                    return "Autentizace + Hash";
+                    return "Autentizace + Auditní zprávy + Hash";
                 
                 case EncryptionLevelEnum.Encrypted:
-                    return "Autentizace + Hash + Šifrování";
+                    return "Autentizace + Auditní zprávy + Hash + Šifrování";
                 
                 default:
                     return "";

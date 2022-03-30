@@ -511,7 +511,10 @@ namespace BPMS_BL.Facades
                 throw new UnauthorizedAccessException();
             }
 
-            await AuditMessageTextHelper.CreateAuditMessage(_auditMessageRepository, authSystem.MessageId, id, action, request.Method);
+            if (_system.Encryption >= EncryptionLevelEnum.Audit)
+            {
+                await AuditMessageTextHelper.CreateAuditMessage(_auditMessageRepository, authSystem.MessageId, id, action, request.Method);
+            }
             _messageId = authSystem.MessageId;
 
             return data;
