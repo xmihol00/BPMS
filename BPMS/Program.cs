@@ -95,7 +95,8 @@ app.MapControllerRoute(name: "default", pattern: "{controller=Task}/{action=Over
 app.MapHub<NotificationHub>("/Notification");
 
 StaticData.ServiceProvider = app.Services.CreateScope().ServiceProvider;
-using BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
+BpmsDbContext context = StaticData.ServiceProvider.GetService<BpmsDbContext>();
 context?.Database.Migrate();
+context?.Dispose();
 
 app.Run();

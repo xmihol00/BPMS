@@ -528,7 +528,7 @@ namespace BPMS_BL.Facades
             string body;
             if (data == null)
             {
-                body = "";
+                body = _messageId.ToString();
             }
             else
             {
