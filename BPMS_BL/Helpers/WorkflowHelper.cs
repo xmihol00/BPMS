@@ -501,18 +501,18 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        public async Task ResendMessageData(BlockWorkflowEntity task)
+        public async Task ResendMessageData(BlockWorkflowEntity sendEvent)
         {
             MessageShare dto = new MessageShare();
-            await CreateSendData(task, dto);
+            await CreateSendData(sendEvent, dto);
 
             bool recieved = true;
-            if (task is ISendMessageEventWorkflowEntity)
+            if (sendEvent is ISendMessageEventWorkflowEntity)
             {
-                BlockAddressDTO address = await _blockModelRepository.RecieverAddress(task.BlockModelId);
-                if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
+                BlockAddressDTO address = await _blockModelRepository.RecieverAddress(sendEvent.BlockModelId);
+                if (await _blockModelRepository.IsInModel(sendEvent.BlockModelId, address.ModelId))
                 {
-                    dto.WorkflowId = task.WorkflowId;
+                    dto.WorkflowId = sendEvent.WorkflowId;
                 }
                 else
                 {
@@ -524,7 +524,7 @@ namespace BPMS_BL.Helpers
             }
             else
             {
-                foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieversAddresses(task.BlockModelId))
+                foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieversAddresses(sendEvent.BlockModelId))
                 {
                     dto.BlockId = address.ForeignBlockId;
                     recieved &= await CommunicationHelper.ForeignMessage(address, dto);
@@ -533,15 +533,17 @@ namespace BPMS_BL.Helpers
 
             if (recieved)
             {
-                if (task.State == BlockWorkflowStateEnum.Active)
+                if (sendEvent.State == BlockWorkflowStateEnum.Active)
                 {
-                    task.State = BlockWorkflowStateEnum.NotStarted;
-                    await StartNextTask(task);
+                    sendEvent.State = BlockWorkflowStateEnum.NotStarted;
+                    await StartNextTask(sendEvent);
                 }
                 else
                 {
-                    task.State = BlockWorkflowStateEnum.NotStarted;
+                    sendEvent.State = BlockWorkflowStateEnum.NotStarted;
                 }
+
+                await ShareActivity(sendEvent.BlockModel.PoolId, sendEvent.WorkflowId, sendEvent.BlockModel.Pool.ModelId);
             }
         }
 
