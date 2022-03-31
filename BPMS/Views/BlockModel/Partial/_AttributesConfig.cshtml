@@ -64,7 +64,7 @@
 {
     @await Html.PartialAsync("Partial/_SendMessageConfig", Model)
 }
-@if (Model is ISendMessageEventModelConfig)
+@if (Model is ISendSignalEventModelConfig)
 {
     @await Html.PartialAsync("Partial/_SendSignalConfig", Model)
 }

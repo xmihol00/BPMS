@@ -1,7 +1,8 @@
 @model BlockModelConfigDTO
 @{
     string togleFunction;
-    if (Model.GetType() == typeof(SendMessageEventModelConfigDTO))
+    bool message = Model is ISendMessageEventModelConfig || Model is ISendSignalEventModelConfig;
+    if (message)
     {
         togleFunction = "ToggleSendMap";
     }
@@ -25,7 +26,7 @@
             Vždy vyplněný
         </div>
         <div class="col-2 text-center text-bold">
-            @if (Model.GetType() == typeof(SendMessageEventModelConfigDTO))
+            @if (message)
             {
                 <text>Odeslat</text>
             }
