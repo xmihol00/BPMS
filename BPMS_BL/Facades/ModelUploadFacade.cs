@@ -13,6 +13,7 @@ using BPMS_DTOs.Model;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_Common;
 using BPMS_DAL;
+using BPMS_BL.Helpers;
 
 namespace BPMS_BL.Facades
 {
@@ -224,7 +225,7 @@ namespace BPMS_BL.Facades
                     block.LaneId = lane.Id;
                 }
 
-                await AssignRole(lane, agendaId);
+                await RoleHelper.AssignRole(lane, agendaId, _currentPool.Name, _agendaRepository, _solvingRoleRepository, _agendaRoleRepository);
                 await _laneRepository.Create(lane);
             }
             else
@@ -238,7 +239,7 @@ namespace BPMS_BL.Facades
                     {
                         throw new ParsingException("Nepojmenovaná dráha.");
                     }
-                    await AssignRole(lane, agendaId);
+                    await RoleHelper.AssignRole(lane, agendaId, _currentPool.Name, _agendaRepository, _solvingRoleRepository, _agendaRoleRepository);
 
                     ChangeSvg(xLane.Attribute("id").Value, lane.Id, "bpmn-lane");
 
@@ -250,40 +251,6 @@ namespace BPMS_BL.Facades
                     await _laneRepository.Create(lane);
                 }
             }
-        }
-
-        private async Task AssignRole(LaneEntity lane, Guid agendaId)
-        {
-            string name = lane.Name ?? _currentPool.Name;
-            lane.RoleId = await _agendaRepository.RoleByName(name, agendaId);
-            if (lane.RoleId == Guid.Empty)
-            {
-                lane.RoleId = await _solvingRoleRepository.RoleByName(name);
-                if (lane.RoleId == Guid.Empty)
-                {
-                    lane.RoleId = null;
-                    lane.Role = new SolvingRoleEntity
-                    {
-                        Name = name,
-                        AgendaRoles = new List<AgendaRoleEntity>
-                        {
-                            new AgendaRoleEntity
-                            {
-                                AgendaId = agendaId
-                            }
-                        }
-                    };
-                }
-                else
-                {
-                    await _agendaRoleRepository.Create(new AgendaRoleEntity
-                    {
-                        AgendaId = agendaId,
-                        RoleId = lane.RoleId.Value
-                    });
-                }
-            }
-            lane.Pool = null;
         }
 
         private void ParseCollaboration(XElement? collaboration)

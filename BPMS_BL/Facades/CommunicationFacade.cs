@@ -54,6 +54,7 @@ namespace BPMS_BL.Facades
         private readonly AuditMessageRepository _auditMessageRepository;
         private readonly NotificationRepository _notificationRepository;
         private readonly LaneRepository _laneRepository;
+        private readonly SolvingRoleRepository _solvingRoleRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -70,7 +71,7 @@ namespace BPMS_BL.Facades
                                    AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
                                    ForeignAttributeMapRepository foreignAttributeMapRepository, FilterRepository filterRepository,
                                    ConnectionRequestRepository connectionRequestRepository, AuditMessageRepository auditMessageRepository,
-                                   NotificationRepository notificationRepository, LaneRepository laneRepository, 
+                                   NotificationRepository notificationRepository, LaneRepository laneRepository, SolvingRoleRepository solvingRoleRepository,
                                    BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
@@ -95,6 +96,7 @@ namespace BPMS_BL.Facades
             _auditMessageRepository = auditMessageRepository;
             _notificationRepository = notificationRepository;
             _laneRepository = laneRepository;
+            _solvingRoleRepository = solvingRoleRepository;
             _context = context;
             _mapper = mapper;
         }
@@ -497,6 +499,10 @@ namespace BPMS_BL.Facades
                 if (poolEntity.SystemId == StaticData.ThisSystemId)
                 {
                     element.Attribute("class").SetValue("djs-group bpmn-pool bpmn-this-sys");
+                    foreach (LaneEntity lane in dto.Lanes.Where(x => x.PoolId == poolEntity.Id))
+                    {
+                        await RoleHelper.AssignRole(lane, targetAgenda.Id, poolEntity.Name, _agendaRepository, _solvingRoleRepository, _agendaRoleRepository);
+                    }
                 }
                 else
                 {
