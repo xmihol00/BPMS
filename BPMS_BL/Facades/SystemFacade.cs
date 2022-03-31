@@ -218,7 +218,7 @@ namespace BPMS_BL.Facades
                 Key = await _systemRepository.ThisSystemKey(),
                 SystemId = StaticData.ThisSystemId,
                 DestinationURL = dto.URL,
-                Encryption = entity.Encryption
+                Encryption = EncryptionLevelEnum.Encrypted
             };
 
             if (!await CommunicationHelper.CreateSystem(address, entity))
