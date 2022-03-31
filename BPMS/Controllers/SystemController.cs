@@ -73,7 +73,6 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SystemCreateDTO dto)
         {
-            dto.Encryption = EncryptionLevelEnum.Encrypted;
             return Redirect($"/System/Detail/{await _systemFacade.Create(dto)}");
         }
 
