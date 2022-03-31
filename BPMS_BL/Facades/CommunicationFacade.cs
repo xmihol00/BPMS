@@ -352,8 +352,8 @@ namespace BPMS_BL.Facades
 
                     attribute.Id = map.AttributeId;
                     attribute.BlockId = even.Reciever.Id;
-                    _attributeRepository.Update(_mapper.Map<AttributeEntity>(attribute));
-                    _foreignAttributeMapRepository.Update(map);
+                    await _attributeRepository.Create(_mapper.Map<AttributeEntity>(attribute));
+                    await _foreignAttributeMapRepository.Create(map);
                 }
             }
 
