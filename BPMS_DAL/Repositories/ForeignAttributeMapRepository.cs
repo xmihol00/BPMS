@@ -23,18 +23,19 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<AttributeEntity?>> ForRemoval(Guid foreignAttributeId)
+        public Task<List<ForeignAttributeMapEntity>> ForRemoval(Guid foreignAttributeId)
         {
             return _dbSet.Include(x => x.Attribute)
                             .ThenInclude(x => x.MappedBlocks)
+                         .Include(x => x.Attribute)
+                            .ThenInclude(x => x.Data)
                          .Where(x => x.ForeignAttributeId == foreignAttributeId)
-                         .Select(x => x.Attribute)
                          .ToListAsync();
         }
 
-        public Task<bool> Any(Guid foreignAttributeId)
+        public Task<bool> Any(Guid foreignAttributeId, Guid foreignSendEventId)
         {
-            return _dbSet.AnyAsync(x => x.ForeignAttributeId == foreignAttributeId);
+            return _dbSet.AnyAsync(x => x.ForeignAttributeId == foreignAttributeId && x.ForeignSendEventId == foreignSendEventId);
         }
     }
 }

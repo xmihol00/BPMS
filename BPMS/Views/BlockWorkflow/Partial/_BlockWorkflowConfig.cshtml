@@ -59,6 +59,14 @@
         </div>
     </form>
 }
+else if (Model is ISendEventWorfklowConfig)
+{
+    <form id="ResendFormId" class="row" action="/Task/Resend/@Model.Id" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
+        <div class="d-flex justify-content-center mt-3 mb-1">
+            <button form="ResendFormId" type="submit" class="butn btn-s">Znovu odeslat</button>
+        </div>
+    </form>
+}
 else 
 {
     <div class="py-1"></div>

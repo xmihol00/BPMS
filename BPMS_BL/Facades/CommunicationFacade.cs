@@ -400,9 +400,16 @@ namespace BPMS_BL.Facades
 
         public async Task<IActionResult> RemoveForeignRecieverAttribute(Guid id)
         {
-            foreach (AttributeEntity attribute in await _foreignAttributeMapRepository.ForRemoval(id))
+            foreach (ForeignAttributeMapEntity attributeMap in await _foreignAttributeMapRepository.ForRemoval(id))
             {
-                _attributeRepository.Remove(attribute);
+                if (attributeMap.Attribute.Data.Count == 0)
+                {
+                    _attributeRepository.Remove(attributeMap.Attribute);
+                }
+                else
+                {
+                    attributeMap.Attribute.Disabled = true;
+                }
             }
             await _attributeRepository.Save();
             return await CreateResult();
@@ -422,7 +429,7 @@ namespace BPMS_BL.Facades
         {
             foreach (ForeignSendSignalEventEntity even in await _foreignSendEventRepository.BareReciever(attribute.BlockId))
             {
-                if (!await _foreignAttributeMapRepository.Any(attribute.Id))
+                if (!await _foreignAttributeMapRepository.Any(attribute.Id, even.Id))
                 {
                     ForeignAttributeMapEntity map = new ForeignAttributeMapEntity
                     {

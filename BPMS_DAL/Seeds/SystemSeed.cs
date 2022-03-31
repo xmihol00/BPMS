@@ -23,6 +23,7 @@ namespace BPMS_DAL.Seeds
                 URL = "https://localhost:5001/",
                 State = SystemStateEnum.ThisSystem,
                 Encryption = EncryptionLevelEnum.Encrypted,
+                ForeignEncryption = EncryptionLevelEnum.Encrypted,
             },
         };
 

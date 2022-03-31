@@ -330,7 +330,8 @@ namespace BPMS_DAL.Repositories
                                   ForeignBlockId = x.ForeignBlockId,
                                   Key = x.System.Key,
                                   SystemId = x.System.Id,
-                                  SystemName = x.System.Name
+                                  SystemName = x.System.Name,
+                                  Encryption = x.System.Encryption > x.System.ForeignEncryption ? x.System.Encryption : x.System.ForeignEncryption
                               })
                               .ToListAsync();
         }
@@ -472,7 +473,8 @@ namespace BPMS_DAL.Repositories
                                   DestinationURL = x.System.URL,
                                   ForeignBlockId = x.ForeignBlockId,
                                   Key = x.System.Key,
-                                  SystemId = x.SystemId
+                                  SystemId = x.SystemId,
+                                  Encryption = x.System.Encryption > x.System.ForeignEncryption ? x.System.Encryption : x.System.ForeignEncryption
                               })
                               .ToListAsync();
         }

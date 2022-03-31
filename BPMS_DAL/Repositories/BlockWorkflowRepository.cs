@@ -102,6 +102,12 @@ namespace BPMS_DAL.Repositories
             return tasks;
         }
 
+        public Task<BlockWorkflowEntity> SendEventForResend(Guid id)
+        {
+            return _dbSet.Include(x => x.Workflow)
+                         .FirstAsync(x => x.Id == id);
+        }
+
         public Task<UserIdNameDTO> WorkflowAdmin(Guid id)
         {
             return _dbSet.Include(x => x.Workflow)

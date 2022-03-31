@@ -104,6 +104,13 @@ namespace BPMS_BL.Facades
             return await ServiceTaskDetail(id);
         }
 
+        public async Task Resend(Guid id)
+        {
+            _worflowHelper = new WorkflowHelper(_context);
+            await _worflowHelper.ResendMessageData(await _blockWorkflowRepository.SendEventForResend(id));
+            await _blockModelRepository.Save();
+        }
+
         public async Task<TaskDataDTO> AddToArray(Guid taskDataId, DataTypeEnum type)
         {
             TaskDataEntity array = await _taskDataRepository.BareSchema(taskDataId);

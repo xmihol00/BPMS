@@ -132,5 +132,14 @@ namespace BPMS.Controllers
         {
             return PartialView($"Partial/_TaskData{type}", await _taskFacade.AddToArray(taskDataId, type));
         }
+
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, WorkflowKeeper")]
+        public async Task<IActionResult> Resend(Guid id)
+        {
+            await _taskFacade.Resend(id);
+            return Ok();
+        }
     }
 }

@@ -501,6 +501,50 @@ namespace BPMS_BL.Helpers
             }
         }
 
+        public async Task ResendMessageData(BlockWorkflowEntity task)
+        {
+            MessageShare dto = new MessageShare();
+            await CreateSendData(task, dto);
+
+            bool recieved = true;
+            if (task is ISendMessageEventWorkflowEntity)
+            {
+                BlockAddressDTO address = await _blockModelRepository.RecieverAddress(task.BlockModelId);
+                if (await _blockModelRepository.IsInModel(task.BlockModelId, address.ModelId))
+                {
+                    dto.WorkflowId = task.WorkflowId;
+                }
+                else
+                {
+                    dto.WorkflowId = null;
+                }
+                dto.BlockId = address.BlockId;
+
+                recieved &= await CommunicationHelper.Message(address, dto);
+            }
+            else
+            {
+                foreach (SenderRecieverAddressDTO address in await _blockModelRepository.ForeignRecieversAddresses(task.BlockModelId))
+                {
+                    dto.BlockId = address.ForeignBlockId;
+                    recieved &= await CommunicationHelper.ForeignMessage(address, dto);
+                }    
+            }
+
+            if (recieved)
+            {
+                if (task.State == BlockWorkflowStateEnum.Active)
+                {
+                    task.State = BlockWorkflowStateEnum.NotStarted;
+                    await StartNextTask(task);
+                }
+                else
+                {
+                    task.State = BlockWorkflowStateEnum.NotStarted;
+                }
+            }
+        }
+
         private async Task SendSignalData(BlockWorkflowEntity task)
         {
             MessageShare dto = new MessageShare();
