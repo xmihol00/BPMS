@@ -219,11 +219,9 @@ namespace BPMS_BL.Facades
             if (block is IServiceTaskModelEntity)
             {
                 (block as IServiceTaskModelEntity).ServiceId = dto.ServiceId;
-                (block as IServiceTaskModelEntity).RoleId = dto.RoleId;
             }
             else if (block is IUserTaskModelEntity)
             {
-                (block as IUserTaskModelEntity).RoleId = dto.RoleId;
                 (block as IUserTaskModelEntity).Difficulty = dto.Difficulty;
             }
 
@@ -521,14 +519,6 @@ namespace BPMS_BL.Facades
             dto.InputAttributes.AddRange(await _blockModelRepository.RecieveSignalEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
             dto.InputAttributes.AddRange(await _blockModelRepository.RecieveMessageEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
             
-            IRoleConfig roleConfig = dto as IRoleConfig;
-            roleConfig.CurrentRole = userTask.RoleId;
-            roleConfig.Roles.Add(new RoleAllDTO
-            {
-                Id = null,
-                Name = "Nevybrána",
-            });
-            roleConfig.Roles.AddRange(await _poolRepository.RolesOfAgenda(userTask.PoolId));
             (dto as IDifficultyConfig).Difficulty = userTask.Difficulty;
 
             dto.ServiceInputAttributes = await _blockModelRepository.ServiceInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
@@ -547,14 +537,6 @@ namespace BPMS_BL.Facades
                 Name = "Nevybrána"
             });
             dto.Services.AddRange(await _serviceRepository.AllIdNames());
-
-            dto.CurrentRole = serviceTask.RoleId;
-            dto.Roles.Add(new RoleAllDTO 
-            {
-                Id = null,
-                Name = "Nevybrána",
-            });
-            dto.Roles.AddRange(await _poolRepository.RolesOfAgenda(serviceTask.PoolId));
 
             dto.MappedSchemas = await _dataSchemaMapRepository.Mapped(serviceTask.Id);
             dto.TargetSchemas = await _dataSchemaRepository.Targets(serviceTask.ServiceId, serviceTask.Id);

@@ -31,5 +31,6 @@ namespace BPMS_DAL.Entities
         [JsonIgnore]
         public SystemEntity? System { get; set; }
         public List<BlockModelEntity> Blocks { get; set; } = new List<BlockModelEntity>();
+        public List<LaneEntity> Lanes { get; set; } = new List<LaneEntity>();
     }
 }

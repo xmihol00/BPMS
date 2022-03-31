@@ -9,7 +9,7 @@ using BPMS_DAL.Interfaces.ModelBlocks;
 
 namespace BPMS_DAL.Entities.ModelBlocks
 {
-    public class ServiceTaskModelEntity : TaskModelEntity, IServiceTaskModelEntity, IAttributes
+    public class ServiceTaskModelEntity : BlockModelEntity, IServiceTaskModelEntity, IAttributes
     {
         public ServiceTaskModelEntity() : base() {}
         public ServiceTaskModelEntity(PoolEntity pool) : base(pool) { }

@@ -13,7 +13,6 @@ namespace BPMS_DAL.Entities
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public List<AgendaRoleEntity> AgendaRoles { get; set; } = new List<AgendaRoleEntity>();
-        public List<UserTaskModelEntity> UserTasks { get; set; } = new List<UserTaskModelEntity>();
-        public List<ServiceTaskModelEntity> ServiceTask { get; set; } = new List<ServiceTaskModelEntity>();
+        public List<LaneEntity> Lanes { get; set; } = new List<LaneEntity>();
     }
 }

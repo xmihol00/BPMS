@@ -49,6 +49,26 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<List<UserIdNameDTO>> UserIdNamesRole(Guid blockId, Guid agendaId)
+        {
+            return _dbSet.Include(x => x.Lane)
+                            .ThenInclude(x => x.Role)
+                                .ThenInclude(x => x.AgendaRoles)
+                                    .ThenInclude(x => x.UserRoles)
+                                        .ThenInclude(x => x.User)
+                         .Select(x => x.Lane.Role)
+                         .SelectMany(x => x.AgendaRoles)
+                         .Where(x => x.AgendaId == agendaId)
+                         .SelectMany(x => x.UserRoles)
+                         .Select(x => x.User)
+                         .Select(x => new UserIdNameDTO
+                         {
+                             Id = x.Id,
+                             FullName = $"{x.Title} {x.Name} {x.Surname}"
+                         })
+                         .ToListAsync();
+        }
+
         public Task<string> ServiceName(Guid id)
         {
             return _serviceTasks.Include(x => x.Service)
@@ -82,24 +102,6 @@ namespace BPMS_DAL.Repositories
                          .ToListAsync();
         }
 
-        public Task<List<UserIdNameDTO>> UserIdNames<T>(Guid id, Guid agendaId, DbSet<T> set) where T : TaskModelEntity
-        {
-            return set.Include(x => x.Role)
-                         .ThenInclude(x => x.AgendaRoles)
-                             .ThenInclude(x => x.UserRoles)
-                                 .ThenInclude(x => x.User)
-                      .Where(x => x.Id == id)
-                      .SelectMany(x => x.Role.AgendaRoles)
-                      .Where(x => x.AgendaId == agendaId)
-                      .SelectMany(x => x.UserRoles)
-                      .Select(x => new UserIdNameDTO
-                      {
-                          FullName = $"{x.User.Title} {x.User.Name} {x.User.Surname}",
-                          Id = x.UserId
-                      })
-                      .ToListAsync();
-        }
-
         public Task<List<BlockIdNameDTO>> SenderBlocks(Guid poolId)
         {
             return _sendSignalEvents.Include(x => x.Pool)
@@ -115,16 +117,6 @@ namespace BPMS_DAL.Repositories
         public Task<BlockModelEntity> Bare(Guid id)
         {
             return _dbSet.FirstAsync(x => x.Id == id);
-        }
-
-        public Task<List<UserIdNameDTO>> UserIdNamesUser(Guid id, Guid agendaId)
-        {
-            return UserIdNames(id, agendaId, _userTasks);
-        }
-
-        public Task<List<UserIdNameDTO>> UserIdNamesService(Guid id, Guid agendaId)
-        {
-            return UserIdNames(id, agendaId, _serviceTasks);
         }
 
         public async Task<IEnumerable<IGrouping<Type, BlockModelEntity>>> ShareBlocks(Guid modelId)
@@ -228,13 +220,6 @@ namespace BPMS_DAL.Repositories
                         .FirstAsync();
         }
 
-        public Task<List<UserTaskModelEntity>> RolesForRemovalUserTaks(Guid roleId)
-        {
-            return _context.Set<UserTaskModelEntity>()
-                           .Where(x => x.RoleId == roleId)
-                           .ToListAsync();
-        }
-
         public Task<List<BlockModelDataSchemaEntity>> DataShemas(Guid id)
         {
             return _dbSet.Include(x => x.DataSchemas)
@@ -243,13 +228,6 @@ namespace BPMS_DAL.Repositories
                          .SelectMany(x => x.DataSchemas)
                          .Where(x => !x.DataSchema.Disabled)
                          .ToListAsync();
-        }
-
-        public Task<List<ServiceTaskModelEntity>> RolesForRemovalServiceTaks(Guid roleId)
-        {
-            return _context.Set<ServiceTaskModelEntity>()
-                           .Where(x => x.RoleId == roleId)
-                           .ToListAsync();
         }
 
         public Task<List<BlockModelEntity>> OfType(Type type)
@@ -526,6 +504,25 @@ namespace BPMS_DAL.Repositories
                                                        .ToList()
                                 })
                                 .ToListAsync();
+        }
+
+        public Task<Guid> LeastBussyUser(Guid id, Guid agendaId)
+        {
+            return _dbSet.Include(x => x.Lane)
+                            .ThenInclude(x => x.Role)
+                                .ThenInclude(x => x.AgendaRoles)
+                                    .ThenInclude(x => x.UserRoles)
+                                        .ThenInclude(x => x.User)
+                                            .ThenInclude(x => x.Tasks)
+                         .Where(x => x.Id == id)
+                         .Select(x => x.Lane.Role)
+                         .SelectMany(x => x.AgendaRoles)
+                         .Where(x => x.AgendaId == agendaId)
+                         .SelectMany(x => x.UserRoles)
+                         .Select(x => x.User)
+                         .OrderBy(x => x.Tasks.Count)
+                         .Select(x => x.Id)
+                         .FirstOrDefaultAsync();
         }
     }
 }

@@ -36,19 +36,6 @@ namespace BPMS_DAL.Repositories
             return _dbSet.FirstAsync(x => x.Id == id);
         }
 
-        public Task<Guid?> LeastBussyUser(Guid id)
-        {
-            return _dbSet.Include(x => x.UserRoles)
-                            .ThenInclude(x => x.User)
-                                .ThenInclude(x => x.Tasks)
-                         .Where(x => x.Id == id)
-                         .SelectMany(x => x.UserRoles)
-                         .Select(x => x.User)
-                         .OrderBy(x => x.Tasks.Count)
-                         .Select(x => (Guid?)x.Id)
-                         .FirstOrDefaultAsync();
-        }
-
         public Task<List<RoleDetailDTO>> Roles (Guid agendaId)
         {
             return _dbSet.Include(x => x.Role)

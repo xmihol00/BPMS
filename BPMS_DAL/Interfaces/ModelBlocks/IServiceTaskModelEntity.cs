@@ -12,8 +12,6 @@ namespace BPMS_DAL.Interfaces.ModelBlocks
     {
         public Guid? ServiceId { get; set; }
         public ServiceEntity? Service { get; set; }
-        public Guid? RoleId { get; set; }
-        public SolvingRoleEntity? Role { get; set; }
         public ServiceStateEnum State { get; set; }
         public List<DataSchemaMapEntity> MappedSchemas { get; set; }
     }

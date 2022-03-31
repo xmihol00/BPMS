@@ -12,11 +12,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace BPMS_DTOs.BlockModel.ConfigTypes
 {
-    public class ServiceTaskModelConfigDTO : BlockModelConfigDTO, IServiceConfig, IRoleConfig
+    public class ServiceTaskModelConfigDTO : BlockModelConfigDTO, IServiceConfig
     {
         public List<ServiceIdNameDTO> Services { get; set; } = new List<ServiceIdNameDTO>();
         public Guid? CurrentServiceId { get; set; }
-        public List<RoleAllDTO> Roles { get; set; } = new List<RoleAllDTO>();
         public Guid? CurrentRole { get; set; }
         public List<DataSchemaSourceDTO> SourceSchemas { get; set; } = new List<DataSchemaSourceDTO>();
         public List<DataSchemaMapDTO> TargetSchemas { get; set; } = new List<DataSchemaMapDTO>();

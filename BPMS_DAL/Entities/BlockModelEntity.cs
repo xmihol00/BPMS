@@ -22,9 +22,14 @@ namespace BPMS_DAL.Entities
         public string? Description { get; set; }
         public uint Order { get; set; }
         public Guid PoolId { get; set; }
+        public Guid LaneId { get; set; }
 
         [JsonIgnore]
         public PoolEntity? Pool { get; set; }
+
+        [JsonIgnore]
+        public LaneEntity? Lane { get; set; }
+
 
         [JsonIgnore]
         public List<FlowEntity> InFlows { get; set; } = new List<FlowEntity>();

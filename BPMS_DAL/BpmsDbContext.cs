@@ -93,10 +93,9 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockModelEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockModelEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Pool).WithMany(x => x.Blocks).HasForeignKey(x => x.PoolId);
-            modelBuilder.Entity<UserTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.UserTasks).HasForeignKey(x => x.RoleId);
+            modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Lane).WithMany(x => x.Blocks).HasForeignKey(x => x.LaneId);
             modelBuilder.Entity<SendMessageEventModelEntity>().HasOne(x => x.Reciever).WithOne(x => x.Sender).HasForeignKey<SendMessageEventModelEntity>(x => x.RecieverId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
-            modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Role).WithMany(x => x.ServiceTask).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<RecieveSignalEventModelEntity>().HasOne(x => x.ForeignSender).WithOne(x => x.Reciever).HasForeignKey<RecieveSignalEventModelEntity>(x => x.ForeignSenderId);
             modelBuilder.Entity<UserTaskModelEntity>().ToTable("UserTasksModel");
             modelBuilder.Entity<ServiceTaskModelEntity>().ToTable("ServiceTasksModel");
@@ -204,6 +203,10 @@ namespace BPMS_DAL
 
             modelBuilder.Entity<ConnectionRequestEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<ConnectionRequestEntity>().HasOne(x => x.System).WithMany(x => x.ConnectionRequests).HasForeignKey(x => x.SystemId);
+
+            modelBuilder.Entity<LaneEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<LaneEntity>().HasOne(x => x.Role).WithMany(x => x.Lanes).HasForeignKey(x => x.RoleId);
+            modelBuilder.Entity<LaneEntity>().HasOne(x => x.Pool).WithMany(x => x.Lanes).HasForeignKey(x => x.PoolId);
 
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();

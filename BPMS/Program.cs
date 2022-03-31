@@ -49,6 +49,7 @@ services.AddScoped<DataSchemaMapRepository>();
 services.AddScoped<NotificationRepository>();
 services.AddScoped<ConnectionRequestRepository>();
 services.AddScoped<AuditMessageRepository>();
+services.AddScoped<LaneRepository>();
 
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();

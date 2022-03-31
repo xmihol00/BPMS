@@ -31,7 +31,7 @@ namespace BPMS_BL.Helpers
         private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly AttributeRepository _attributeRepository;
         private readonly DataSchemaRepository _dataSchemaRepository;
-        private readonly BlockWorkflowRepository _taskRepository;
+        private readonly BlockWorkflowRepository _blockWorkflowRepository;
         private readonly TaskDataRepository _taskDataRepository;
         private readonly BlockModelRepository _blockModelRepository;
         private readonly ServiceRepository _serviceRepository;
@@ -51,7 +51,7 @@ namespace BPMS_BL.Helpers
             _agendaRoleRepository = new AgendaRoleRepository(context);
             _attributeRepository = new AttributeRepository(context);
             _dataSchemaRepository = new DataSchemaRepository(context);
-            _taskRepository = new BlockWorkflowRepository(context);
+            _blockWorkflowRepository = new BlockWorkflowRepository(context);
             _taskDataRepository = new TaskDataRepository(context);
             _blockModelRepository = new BlockModelRepository(context);
             _serviceRepository = new ServiceRepository(context);
@@ -390,29 +390,9 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private async Task ExecuteFirstBlock(BlockModelEntity blockModel, BlockWorkflowEntity blockWorkflow, WorkflowEntity workflow)
-        {
-            blockWorkflow.State = BlockWorkflowStateEnum.Active;
-            if (blockWorkflow is IUserTaskWorkflowEntity)
-            {
-                IUserTaskModelEntity taskModel = blockModel as IUserTaskModelEntity;
-                IUserTaskWorkflowEntity taskWorkflow = blockWorkflow as IUserTaskWorkflowEntity;
-                taskWorkflow.UserId = await _agendaRoleRepository.LeastBussyUser(taskModel.RoleId ?? Guid.Empty) ?? workflow.AdministratorId;
-                taskWorkflow.SolveDate = DateTime.Now.AddDays(taskModel.Difficulty);
-            }
-            else if (blockWorkflow is IUserTaskWorkflowEntity)
-            {
-                IServiceTaskModelEntity serviceModel = blockModel as IServiceTaskModelEntity;
-                (blockWorkflow as IServiceTaskWorkflowEntity).UserId =
-                        await _agendaRoleRepository.LeastBussyUser(serviceModel.RoleId ?? Guid.Empty) ?? workflow.AdministratorId;
-            }
-
-            await ShareActivity(blockWorkflow, workflow.Id, blockModel.Pool.ModelId);
-        }
-
         public async Task StartNextTask(BlockWorkflowEntity solvedTask)
         {
-            foreach (BlockWorkflowEntity task in await _taskRepository.NextBlocks(solvedTask.Id, solvedTask.WorkflowId))
+            foreach (BlockWorkflowEntity task in await _blockWorkflowRepository.NextBlocks(solvedTask.Id, solvedTask.WorkflowId))
             {
                 switch (task)
                 {
@@ -652,8 +632,8 @@ namespace BPMS_BL.Helpers
             catch
             {
                 serviceTask.State = BlockWorkflowStateEnum.Active;
-                serviceTask.UserId = await _agendaRoleRepository.LeastBussyUser(serviceTaskModel.RoleId ?? Guid.Empty) ??
-                                                                                serviceTask.Workflow.AdministratorId;
+                serviceTask.UserId = await _blockModelRepository.LeastBussyUser(serviceTaskModel.Id, serviceTask.Workflow.AgendaId);
+                serviceTask.UserId = serviceTask.UserId == Guid.Empty ? serviceTask.Workflow.AdministratorId : serviceTask.UserId;
                 await NotificationHub.CreateSendNotifications(_notificationRepository, serviceTask.Id, NotificationTypeEnum.NewServiceTask,
                                                               serviceTask.BlockModel.Name, _currentUserId, serviceTask.UserId.Value);
             }
@@ -936,8 +916,8 @@ namespace BPMS_BL.Helpers
             userTask.State = BlockWorkflowStateEnum.Active;
             UserTaskModelEntity userTaskModel = await _blockModelRepository.UserTaskForSolve(userTask.BlockModelId);
             userTask.SolveDate = DateTime.Now.AddDays(userTaskModel.Difficulty);
-            userTask.UserId = await _agendaRoleRepository.LeastBussyUser(userTaskModel.RoleId ?? Guid.Empty) ??
-                              userTask.Workflow.AdministratorId;
+            userTask.UserId = await _blockModelRepository.LeastBussyUser(userTaskModel.Id, userTask.Workflow.AgendaId);
+            userTask.UserId = userTask.UserId == Guid.Empty ? userTask.Workflow.AdministratorId : userTask.UserId;
 
             await NotificationHub.CreateSendNotifications(_notificationRepository, userTask.Id, NotificationTypeEnum.NewUserTask, 
                                                           userTaskModel.Name, _currentUserId, userTask.UserId.Value);
@@ -945,7 +925,7 @@ namespace BPMS_BL.Helpers
 
         public async Task ShareActivity(Guid poolId, Guid workflowId, Guid modelId)
         {
-            List<BlockWorkflowActivityDTO> activeBlocks = await _taskRepository.BlockActivity(poolId, workflowId);
+            List<BlockWorkflowActivityDTO> activeBlocks = await _blockWorkflowRepository.BlockActivity(poolId, workflowId);
 
             foreach (DstAddressDTO address in await _poolRepository.Addresses(modelId))
             {

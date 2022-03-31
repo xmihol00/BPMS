@@ -34,13 +34,14 @@ namespace BPMS_BL.Facades
         private readonly SystemAgendaRepository _systemAgendaRepository;
         private readonly UserRoleRepository _userRoleRepository;
         private readonly NotificationRepository _notificationRepository;
+        private readonly LaneRepository _laneRepository;
         private readonly IMapper _mapper;
 
         public AgendaFacade(AgendaRepository agendaRepository, UserRepository userRepository, ModelRepository modelRepository, 
                             SolvingRoleRepository solvingRoleRepository, AgendaRoleRepository agendaRoleRepository, 
                             BlockModelRepository blockModelRepository, SystemRepository systemRepository, FilterRepository filterRepository,
                             SystemAgendaRepository systemAgendaRepository, UserRoleRepository userRoleRepository, 
-                            NotificationRepository notificationRepository, IMapper mapper)
+                            NotificationRepository notificationRepository, LaneRepository laneRepository, IMapper mapper)
         : base(filterRepository)
         {
             _agendaRepository = agendaRepository;
@@ -53,6 +54,7 @@ namespace BPMS_BL.Facades
             _systemAgendaRepository = systemAgendaRepository;
             _userRoleRepository = userRoleRepository;
             _notificationRepository = notificationRepository;
+            _laneRepository = laneRepository;
             _mapper = mapper;
         }
 
@@ -191,16 +193,11 @@ namespace BPMS_BL.Facades
 
         public async Task RemoveAgendaRole(Guid id)
         {
-            AgendaRoleEntity agendaRole = await _agendaRoleRepository.RoleForRemoval(id); 
+            AgendaRoleEntity agendaRole = await _agendaRoleRepository.RoleForRemoval(id);
 
-            foreach (UserTaskModelEntity task in await _blockModelRepository.RolesForRemovalUserTaks(agendaRole.RoleId))
+            foreach (LaneEntity lane in await _laneRepository.ForRoleUnset(agendaRole.AgendaId, agendaRole.RoleId))
             {
-                task.RoleId = null;
-            }
-
-            foreach (ServiceTaskModelEntity task in await _blockModelRepository.RolesForRemovalServiceTaks(agendaRole.RoleId))
-            {
-                task.RoleId = null;
+                lane.RoleId = null;
             }
 
             await NotificationHub.CreateSendNotifications(_notificationRepository, agendaRole.AgendaId, NotificationTypeEnum.RemovedRole, 

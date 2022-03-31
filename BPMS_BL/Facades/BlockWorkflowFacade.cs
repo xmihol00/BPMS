@@ -39,7 +39,7 @@ namespace BPMS_BL.Facades
             if (dto is ITaskWorkflowConfigDTO)
             {
                 ITaskWorkflowConfigDTO taskConfig = dto as ITaskWorkflowConfigDTO;
-                taskConfig.UserIdNames = await _blockModelRepository.UserIdNamesService(blockId, entity.Workflow.AgendaId);
+                taskConfig.UserIdNames = await _blockModelRepository.UserIdNamesRole(blockId, entity.Workflow.AgendaId);
                 if (!taskConfig.UserIdNames.Any(x => x.Id == adminWF.Id))
                 {
                     taskConfig.UserIdNames.Add(adminWF);
