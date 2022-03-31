@@ -461,106 +461,82 @@ function ChangeSender(id)
 
 function SystemChange(select)
 {
-    if (!select.value)
+    let value = select.value || "0";
+    $.ajax(
     {
-        // TODO
-    }
-    else
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Agendas/${value}`,
+        statusCode: { 401: HandleRedirect }
+    })
+    .done((result) => 
     {
-        $.ajax(
-        {
-            async: true,
-            type: "POST",
-            url: `/BlockModel/Agendas/${select.value}`,
-            statusCode: { 401: HandleRedirect }
-        })
-        .done((result) => 
-        {
-            document.getElementById("AgendaPickerId").innerHTML = result;
-        })
-        .fail(() => 
-        {
-            ConnectionAlert();
-        });   
-    }
+        document.getElementById("AgendaPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        ConnectionAlert();
+    });   
 }   
 
 function AgendaChange(select)
 {
-    if (!select.value)
+    let value = select.value || "0";
+    $.ajax(
     {
-        // TODO
-    }
-    else
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Models/${document.getElementById("SystemIdId").value}/${value}`,
+        statusCode: { 401: HandleRedirect }
+    })
+    .done((result) => 
     {
-        $.ajax(
-        {
-            async: true,
-            type: "POST",
-            url: `/BlockModel/Models/${document.getElementById("SystemIdId").value}/${select.value}`,
-            statusCode: { 401: HandleRedirect }
-        })
-        .done((result) => 
-        {
-            document.getElementById("ModelPickerId").innerHTML = result;
-        })
-        .fail(() => 
-        {
-            ConnectionAlert();
-        });
-    }
+        document.getElementById("ModelPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        ConnectionAlert();
+    });
 }
 
 function ModelChange(select)
 {
-    if (!select.value)
+    let value = select.value || "0";
+    $.ajax(
     {
-        // TODO
-    }
-    else
+        async: true,
+        type: "POST",
+        url: `/BlockModel/Pools/${document.getElementById("SystemIdId").value}/${value}`,
+        statusCode: { 401: HandleRedirect }
+    })
+    .done((result) => 
     {
-        $.ajax(
-        {
-            async: true,
-            type: "POST",
-            url: `/BlockModel/Pools/${document.getElementById("SystemIdId").value}/${select.value}`,
-            statusCode: { 401: HandleRedirect }
-        })
-        .done((result) => 
-        {
-            document.getElementById("PoolPickerId").innerHTML = result;
-        })
-        .fail(() => 
-        {
-            ConnectionAlert();
-        });  
-    }
+        document.getElementById("PoolPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        ConnectionAlert();
+    });  
 }
 
 function PoolChange(select)
 {
-    if (!select.value)
+    let value = select.value || "0";
+    $.ajax(
     {
-        // TODO
-    }
-    else
+        async: true,
+        type: "POST",
+        url: `/BlockModel/SenderBlocks/${document.getElementById("SystemIdId").value}/${value}`,
+        statusCode: { 401: HandleRedirect }
+    })
+    .done((result) => 
     {
-        $.ajax(
-        {
-            async: true,
-            type: "POST",
-            url: `/BlockModel/SenderBlocks/${document.getElementById("SystemIdId").value}/${select.value}`,
-            statusCode: { 401: HandleRedirect }
-        })
-        .done((result) => 
-        {
-            document.getElementById("BlockPickerId").innerHTML = result;
-        })
-        .fail(() => 
-        {
-            ConnectionAlert();
-        });   
-    }
+        document.getElementById("BlockPickerId").innerHTML = result;
+    })
+    .fail(() => 
+    {
+        ConnectionAlert();
+    });
 }
 
 function SchemaDragStart(event)
