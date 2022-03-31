@@ -215,7 +215,7 @@ namespace BPMS_BL.Facades
             return await CreateResult();
         }
 
-        private async Task<IActionResult> AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData)
+        private async Task AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData)
         {
             foreach (StringDataEntity data in message.Strings)
             {
@@ -259,8 +259,76 @@ namespace BPMS_BL.Facades
                 file.FileName = data.FileName;
                 await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, data.Data);
             }
+        }
 
-            return await CreateResult();
+        private async Task AssignForeignMessage(MessageShare? message, IEnumerable<IGrouping<Guid, TaskDataEntity>> taskDataGroup)
+        {
+            foreach (StringDataEntity data in message.Strings)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as IStringDataEntity).Value = data.Value;
+                }
+            }
+
+            foreach (NumberDataEntity data in message.Numbers)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as INumberDataEntity).Value = data.Value;
+                }
+            }
+
+            foreach (TextDataEntity data in message.Texts)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as ITextDataEntity).Value = data.Value;
+                }
+            }
+
+            foreach (DateDataEntity data in message.Dates)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as IDateDataEntity).Value = data.Value;
+                }
+            }
+
+            foreach (BoolDataEntity data in message.Bools)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as IBoolDataEntity).Value = data.Value;
+                }
+            }
+
+            foreach (SelectDataEntity data in message.Selects)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as ISelectDataEntity).Value = data.Value;
+                }
+            }
+
+            foreach (ArrayDataEntity data in message.Arrays)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    (taskData as IArrayDataEntity).Type = data.Type;
+                }
+            }
+
+            foreach (FileDataEntity data in message.Files)
+            {
+                foreach (TaskDataEntity taskData in taskDataGroup.First(x => x.Key == data.AttributeId.Value))
+                {
+                    IFileDataEntity file = taskData as IFileDataEntity;
+                    file.MIMEType = data.MIMEType;
+                    file.FileName = data.FileName;
+                    await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, data.Data);
+                }
+            }
         }
 
         public async Task<IActionResult> Message(MessageShare? message)
@@ -298,7 +366,7 @@ namespace BPMS_BL.Facades
 
         public async Task<IActionResult> ForeignMessage(MessageShare? message)
         {
-            await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId));
+            await AssignForeignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId));
 
             WorkflowHelper workflowHelper = new WorkflowHelper(_context);
             foreach (RecieveSignalEventWorkflowEntity recieveEvent in await _blockWorkflowRepository.RecieveSignalEvents(message.BlockId))
