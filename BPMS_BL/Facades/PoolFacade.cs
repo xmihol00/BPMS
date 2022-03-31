@@ -13,6 +13,7 @@ using BPMS_DAL.Entities;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
+using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
 using BPMS_DTOs.User;
 
@@ -23,22 +24,24 @@ namespace BPMS_BL.Facades
         private readonly PoolRepository _poolRepository;
         private readonly SystemRepository _systemRepository;
         private readonly ModelRepository _modelRepository;
+        private readonly LaneRepository _laneRepository;
         private readonly IMapper _mapper;
 
         public PoolFacade(PoolRepository PoolRepository, SystemRepository systemRepository, ModelRepository modelRepository,
-                          FilterRepository filterRepository, IMapper mapper)
+                          LaneRepository laneRepository, FilterRepository filterRepository, IMapper mapper)
         : base(filterRepository)
         {
             _poolRepository = PoolRepository;
             _systemRepository = systemRepository;
             _modelRepository = modelRepository;
+            _laneRepository = laneRepository;
             _mapper = mapper;
         }
 
         public async Task<ModelDetailDTO> Edit(PoolEditDTO dto)
         {
             PoolEntity entity = await _poolRepository.DetailForEdit(dto.Id);
-            entity.Description = dto.Description ?? "";
+            entity.Description = dto.Description;
 
             if (dto.SystemId != entity.SystemId)
             {
@@ -57,30 +60,39 @@ namespace BPMS_BL.Facades
             }
 
             entity.SystemId = dto.SystemId;
-            entity.Model.State = ModelStateEnum.Shareable;
-            ModelStateEnum state = ModelStateEnum.Incorrect;
-            foreach (PoolEntity pool in entity.Model.Pools)
+            if (entity.Model.State < ModelStateEnum.Executable)
             {
-                if (pool.SystemId == null)
+                entity.Model.State = ModelStateEnum.Shareable;
+                ModelStateEnum state = ModelStateEnum.Incorrect;
+                foreach (PoolEntity pool in entity.Model.Pools)
                 {
-                    entity.Model.State = ModelStateEnum.Incorrect;
+                    if (pool.SystemId == null)
+                    {
+                        entity.Model.State = ModelStateEnum.Incorrect;
+                    }
+
+                    if (pool.SystemId == StaticData.ThisSystemId)
+                    {
+                        if (state == ModelStateEnum.Shareable)
+                        {
+                            state = ModelStateEnum.Incorrect;
+                            break;
+                        }
+                        else
+                        {
+                            state = ModelStateEnum.Shareable;
+                        }
+                    }
                 }
 
-                if (pool.SystemId == StaticData.ThisSystemId)
-                {
-                    if (state == ModelStateEnum.Shareable)
-                    {
-                        state = ModelStateEnum.Incorrect;
-                        break;
-                    }
-                    else
-                    {
-                        state = ModelStateEnum.Shareable;
-                    }
-                }
+                entity.Model.State = state == ModelStateEnum.Shareable ? entity.Model.State : state;
             }
 
-            entity.Model.State = state == ModelStateEnum.Shareable ? entity.Model.State : state;
+            if (dto.LaneId != null)
+            {
+                LaneEntity lane = await _laneRepository.Bare(dto.LaneId.Value);
+                lane.RoleId = dto.RoleId;
+            }
 
             await _poolRepository.Save();
             ModelDetailDTO detail = await _modelRepository.DetailNoWF(entity.ModelId);
@@ -100,6 +112,16 @@ namespace BPMS_BL.Facades
             dto.Systems.AddRange(await _poolRepository.OfAgenda(id));
             dto.Systems.Add(await _systemRepository.ThisSystem());
             dto.Systems = dto.Systems.Where(x => !assignedSystems.Contains(x.Id)).ToList();
+
+            if (dto.LaneId != null)
+            {
+                dto.Roles = await _poolRepository.RolesOfAgenda(id);
+                dto.Roles.Add(new RoleAllDTO
+                {
+                    Id = null,
+                    Name = "Nevybrána"
+                });
+            }
 
             return dto;
         }

@@ -1,30 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using AutoMapper;
 using BPMS_BL.Helpers;
-using BPMS_Common;
-using BPMS_Common.Helpers;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
 using BPMS_DAL.Repositories;
 using BPMS_DTOs.Model;
-using BPMS_DTOs.Pool;
 using BPMS_DTOs.User;
 using Newtonsoft.Json;
 using BPMS_DAL.Sharing;
-using BPMS_DAL.Interfaces.ModelBlocks;
 using BPMS_Common.Enums;
-using Microsoft.Extensions.DependencyInjection;
 using BPMS_DAL;
 using BPMS_DTOs.Account;
 using BPMS_DTOs.Filter;
 using BPMS_DTOs.Agenda;
 using Microsoft.EntityFrameworkCore.Storage;
+using BPMS_DTOs.Lane;
+using BPMS_DTOs.Role;
 
 namespace BPMS_BL.Facades
 {
@@ -39,14 +29,15 @@ namespace BPMS_BL.Facades
         private readonly AgendaRoleRepository _agendaRoleRepository;
         private readonly AttributeRepository _attributeRepository;
         private readonly DataSchemaRepository _dataSchemaRepository;
+        private readonly LaneRepository _laneRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
 
         public ModelFacade(UserRepository userRepository, ModelRepository modelRepository, FlowRepository flowRepository,
                            BlockModelRepository blockModelRepository, PoolRepository poolRepository, WorkflowRepository workflowRepository,
                            AgendaRoleRepository agendaRoleRepository, AttributeRepository attributeRepository, 
-                           FilterRepository filterRepository, DataSchemaRepository dataSchemaRepository, BpmsDbContext context, 
-                           IMapper mapper)
+                           FilterRepository filterRepository, DataSchemaRepository dataSchemaRepository, LaneRepository laneRepository, 
+                           BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _userRepository = userRepository;
@@ -58,6 +49,7 @@ namespace BPMS_BL.Facades
             _agendaRoleRepository = agendaRoleRepository;
             _attributeRepository = attributeRepository;
             _dataSchemaRepository = dataSchemaRepository;
+            _laneRepository = laneRepository;
             _context = context;
             _mapper = mapper;
         }
@@ -119,7 +111,6 @@ namespace BPMS_BL.Facades
         public async Task<ModelDetailDTO> Share(Guid id)
         {
             ModelDetailShare model = await _modelRepository.Share(id);
-            model.Pools = await _poolRepository.Share(id);
             model.Flows = await _flowRepository.Share(id);
 
             IEnumerable<IGrouping<Type, BlockModelEntity>> allBlocks = await _blockModelRepository.ShareBlocks(id);
@@ -151,6 +142,24 @@ namespace BPMS_BL.Facades
             ModelDetailDTO detail = await _modelRepository.DetailNoWF(id);
             detail.SelectedModel = await _modelRepository.Selected(id);
             return detail;
+        }
+
+        public async Task LaneEdit(LaneEditDTO dto)
+        {
+            LaneEntity entity = await _laneRepository.Bare(dto.Id);
+            entity.RoleId = dto.RoleId;
+            await _laneRepository.Save();
+        }
+
+        public async Task<LaneConfigDTO> LaneConfig(Guid id)
+        {
+            LaneConfigDTO lane = await _laneRepository.Config(id);
+            lane.Roles.Add(new RoleAllDTO
+            {
+                Id = null,
+                Name = "Nevybrána"
+            });
+            return lane;
         }
 
         public Task<List<UserIdNameDTO>> Run(Guid id)

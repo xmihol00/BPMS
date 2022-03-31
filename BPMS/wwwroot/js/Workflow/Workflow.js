@@ -31,8 +31,6 @@ function AddEventListeners(result = null)
                         block.addEventListener("click", (event) => event.stopPropagation());
                     }
                 }
-
-                pool.addEventListener("click", () => ShowPoolDetail(pool.id));
             }
         }
         else

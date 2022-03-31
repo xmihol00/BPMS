@@ -187,6 +187,18 @@ namespace BPMS_DAL.Repositories
                          .FirstAsync(x => x.Id == id);
         }
 
+        public Task<Guid> RoleByName(string roleName, Guid agendaId)
+        {
+            return _dbSet.Include(x => x.AgendaRoles)
+                            .ThenInclude(x => x.Role)
+                         .Where(x => x.Id == agendaId)
+                         .SelectMany(x => x.AgendaRoles)
+                         .Select(x => x.Role)
+                         .Where(x => x.Name == roleName)
+                         .Select(x => x.Id)
+                         .FirstOrDefaultAsync();
+        }
+
         public Task<Guid> CurrentAdmin(Guid agendaId)
         {
             return _dbSet.Where(x => x.Id == agendaId)

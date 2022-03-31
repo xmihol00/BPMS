@@ -36,6 +36,11 @@ function AddEventListeners()
             {
                 if (pool.classList.contains("bpmn-this-sys"))
                 {
+                    for (let lane of pool.getElementsByClassName("bpmn-lane"))
+                    {
+                        lane.addEventListener("click", (event) => ShowLaneDetail(event, lane.id));
+                    }
+
                     for (let block of pool.getElementsByClassName("bpmn-block"))
                     {
                         block.addEventListener("click", (event) => ShowBlockDetail(event, block.id));
@@ -49,7 +54,7 @@ function AddEventListeners()
                     }
                 }
         
-                pool.addEventListener("click", () => ShowPoolDetail(pool.id));
+                pool.addEventListener("click", (event) => ShowPoolDetail(event, pool.id));
             }
         }
         else
@@ -70,10 +75,16 @@ function ShowBlockDetail(event, blockId)
     BlockId = blockId;
 }
 
-function ShowPoolDetail(poolId)
+function ShowLaneDetail(event, laneId)
 {
+    event.stopPropagation();
+    ShowModal("LaneConfigId", "/Model/LaneConfig/" + laneId, "LaneConfigTargetId", false, HideModelHeader)
+}
+
+function ShowPoolDetail(event, poolId)
+{
+    event.stopPropagation();
     ShowModal("PoolConfigId", "/Pool/Config/" + poolId, "PoolConfigTargetId", false, HideModelHeader)
-    PoolId = poolId;
 }
 
 function ShowAddAttrib()

@@ -20,6 +20,7 @@ using BPMS_DTOs.Account;
 using BPMS_DTOs.Agenda;
 using BPMS_DTOs.BlockModel;
 using BPMS_DTOs.BlockWorkflow;
+using BPMS_DTOs.Lane;
 using BPMS_DTOs.Model;
 using BPMS_DTOs.Pool;
 using BPMS_DTOs.System;
@@ -52,6 +53,7 @@ namespace BPMS_BL.Facades
         private readonly ConnectionRequestRepository _connectionRequestRepository;
         private readonly AuditMessageRepository _auditMessageRepository;
         private readonly NotificationRepository _notificationRepository;
+        private readonly LaneRepository _laneRepository;
         private readonly BpmsDbContext _context;
         private readonly IMapper _mapper;
         private SystemEntity _system;
@@ -68,7 +70,8 @@ namespace BPMS_BL.Facades
                                    AgendaRepository agendaRepository, ForeignRecieveEventRepository foreignRecieveEventRepository, 
                                    ForeignAttributeMapRepository foreignAttributeMapRepository, FilterRepository filterRepository,
                                    ConnectionRequestRepository connectionRequestRepository, AuditMessageRepository auditMessageRepository,
-                                   NotificationRepository notificationRepository, BpmsDbContext context, IMapper mapper)
+                                   NotificationRepository notificationRepository, LaneRepository laneRepository, 
+                                   BpmsDbContext context, IMapper mapper)
         : base(filterRepository)
         {
             _userRepository = userRepository;
@@ -91,6 +94,7 @@ namespace BPMS_BL.Facades
             _connectionRequestRepository = connectionRequestRepository;
             _auditMessageRepository = auditMessageRepository;
             _notificationRepository = notificationRepository;
+            _laneRepository = laneRepository;
             _context = context;
             _mapper = mapper;
         }
@@ -506,6 +510,8 @@ namespace BPMS_BL.Facades
 
                 await _poolRepository.Create(poolEntity);
             }
+
+            await _laneRepository.CreateRange(dto.Lanes);
 
             model.SVG = svg.ToString(SaveOptions.DisableFormatting);
             model.AgendaId = targetAgenda.Id;

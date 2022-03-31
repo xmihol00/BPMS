@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BPMS_Common.Enums;
 using BPMS_DAL.Entities;
 using BPMS_DAL.Entities.ModelBlocks;
+using BPMS_DTOs.Lane;
 using BPMS_DTOs.Pool;
 
 namespace BPMS_DAL.Sharing
@@ -19,6 +20,7 @@ namespace BPMS_DAL.Sharing
         public string SenderURL { get; set; } = string.Empty;
         public ModelStateEnum State { get; set; }
         public IEnumerable<PoolShareDTO> Pools { get; set; } = new List<PoolShareDTO>();
+        public IEnumerable<LaneEntity> Lanes { get; set; } = new List<LaneEntity>();
         public IEnumerable<UserTaskModelEntity> UserTasks { get; set; } = new List<UserTaskModelEntity>();
         public IEnumerable<ServiceTaskModelEntity> ServiceTasks { get; set; } = new List<ServiceTaskModelEntity>();
         public IEnumerable<StartEventModelEntity> StartEvents { get; set; } = new List<StartEventModelEntity>();

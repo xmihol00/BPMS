@@ -15,5 +15,7 @@ namespace BPMS_DTOs.Pool
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public Guid? SystemId { get; set; }
+        public Guid? LaneId { get; set; }
+        public Guid? RoleId { get; set; }
     }
 }

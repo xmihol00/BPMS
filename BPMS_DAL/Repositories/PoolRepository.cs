@@ -30,12 +30,15 @@ namespace BPMS_DAL.Repositories
 
         public Task<PoolConfigDTO> Config(Guid id)
         {
-            return _dbSet.Select(x => new PoolConfigDTO
+            return _dbSet.Include(x => x.Lanes)
+                         .Select(x => new PoolConfigDTO
                          {
                              SystemId = x.SystemId,
                              Description = x.Description,
                              Id = x.Id,
                              Name = x.Name,
+                             LaneId = x.Lanes.Count == 1 ? x.Lanes.Where(x => x.Name == null).Select(x => x.Id).FirstOrDefault() : null,
+                             CurrentRoleId = x.Lanes.Select(x => x.RoleId).FirstOrDefault()
                          })
                          .FirstAsync(x => x.Id == id);
         }

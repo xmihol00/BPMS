@@ -10,11 +10,18 @@ namespace BPMS_DAL.Entities
 {
     public class LaneEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string? Name { get; set; }
         public Guid PoolId { get; set; }
+
+        [JsonIgnore]
         public PoolEntity? Pool { get; set; }
         public Guid? RoleId { get; set; }
+
+        [JsonIgnore]
         public SolvingRoleEntity? Role { get; set; }
+
+        [JsonIgnore]
         public List<BlockModelEntity> Blocks { get; set; } = new List<BlockModelEntity>();
     }
 }

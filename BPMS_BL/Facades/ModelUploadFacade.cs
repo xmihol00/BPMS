@@ -21,6 +21,10 @@ namespace BPMS_BL.Facades
         private readonly ModelRepository _modelRepository;
         private readonly PoolRepository _poolRepository;
         private readonly BlockModelRepository _blockModelRepository;
+        private readonly LaneRepository _laneRepository;
+        private readonly AgendaRepository _agendaRepository;
+        private readonly SolvingRoleRepository _solvingRoleRepository;
+        private readonly AgendaRoleRepository _agendaRoleRepository;
 
         private XDocument _svg = new XDocument();
         private Dictionary<string, BlockModelEntity> _blocksDict = new Dictionary<string, BlockModelEntity>();
@@ -33,12 +37,17 @@ namespace BPMS_BL.Facades
         private uint _order = 0;
 
         public ModelUploadFacade(ModelRepository modelRepository, PoolRepository poolRepository, BlockModelRepository blockModelRepository,
-                                 FilterRepository filterRepository)
+                                 LaneRepository laneRepository, AgendaRepository agendaRepository, SolvingRoleRepository solvingRoleRepository, 
+                                 AgendaRoleRepository agendaRoleRepository, FilterRepository filterRepository)
         : base(filterRepository)
         {
             _modelRepository = modelRepository;
             _poolRepository = poolRepository;
             _blockModelRepository = blockModelRepository;
+            _laneRepository = laneRepository;
+            _solvingRoleRepository = solvingRoleRepository;
+            _agendaRepository = agendaRepository;
+            _agendaRoleRepository = agendaRoleRepository;
         }
 
         public async Task<Guid> Upload(ModelCreateDTO dto)
@@ -48,8 +57,8 @@ namespace BPMS_BL.Facades
             {
                 bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()), LoadOptions.PreserveWhitespace);   
                 /*try
-                {
                 }
+                {
                 catch
                 {
                     return ("BPMN soubor je ve špatném formátu.", null);    
@@ -79,7 +88,7 @@ namespace BPMS_BL.Facades
                 throw new NotImplementedException();
             }
 
-                (XElement? collaboration, IEnumerable<XElement> processes) = ParseRoot(bpmn.Root ?? new XElement(""));
+                (XElement? collaboration, IEnumerable<XElement> processes) = ParseRoot(bpmn.Root);
 
                 ParseCollaboration(collaboration);
 
@@ -95,6 +104,8 @@ namespace BPMS_BL.Facades
                     {
                         ParseFlow(flow);
                     }
+
+                    await ParseLane(process, dto.AgendaId);
                 }
 
                 foreach (var messageFlow in _messageFlows)
@@ -103,13 +114,6 @@ namespace BPMS_BL.Facades
                 }
                 
                 CheckExecutability();
-            /*try
-            {
-            }
-            catch (ParsingException e)
-            {
-                return (e.Message, _svg.ToString(SaveOptions.DisableFormatting));
-            }*/
 
             _svg.Root?.Attribute("width")?.Remove();
             _svg.Root?.Attribute("height")?.Remove();
@@ -206,6 +210,80 @@ namespace BPMS_BL.Facades
                 element.Elements().Where(x => x.Name.LocalName == "collaboration").FirstOrDefault(),
                 element.Elements().Where(x => x.Name.LocalName == "process")
             );
+        }
+
+        private async Task ParseLane(XElement element, Guid agendaId)
+        {
+            XElement? laneSet = element.Elements().Where(x => x.Name.LocalName == "laneSet").FirstOrDefault();
+            if (laneSet == null)
+            {
+                LaneEntity lane = new LaneEntity();
+                lane.PoolId = _currentPool.Id;
+                foreach (BlockModelEntity block in _blocksDict.Where(x => x.Value.PoolId == _currentPool.Id).Select(x => x.Value))
+                {
+                    block.LaneId = lane.Id;
+                }
+
+                await AssignRole(lane, agendaId);
+                await _laneRepository.Create(lane);
+            }
+            else
+            {
+                foreach (XElement xLane in laneSet.Elements().Where(x => x.Name.LocalName == "lane"))
+                {
+                    LaneEntity lane = new LaneEntity();
+                    lane.PoolId = _currentPool.Id;
+                    lane.Name = xLane.Attribute("name").Value;
+                    if (lane.Name == null)
+                    {
+                        throw new ParsingException("Nepojmenovaná dráha.");
+                    }
+                    await AssignRole(lane, agendaId);
+
+                    ChangeSvg(xLane.Attribute("id").Value, lane.Id, "bpmn-lane");
+
+                    foreach(XElement block in xLane.Elements())
+                    {
+                        _blocksDict[block.Value].LaneId = lane.Id;
+                    }
+
+                    await _laneRepository.Create(lane);
+                }
+            }
+        }
+
+        private async Task AssignRole(LaneEntity lane, Guid agendaId)
+        {
+            string name = lane.Name ?? _currentPool.Name;
+            lane.RoleId = await _agendaRepository.RoleByName(name, agendaId);
+            if (lane.RoleId == Guid.Empty)
+            {
+                lane.RoleId = await _solvingRoleRepository.RoleByName(name);
+                if (lane.RoleId == Guid.Empty)
+                {
+                    lane.RoleId = null;
+                    lane.Role = new SolvingRoleEntity
+                    {
+                        Name = name,
+                        AgendaRoles = new List<AgendaRoleEntity>
+                        {
+                            new AgendaRoleEntity
+                            {
+                                AgendaId = agendaId
+                            }
+                        }
+                    };
+                }
+                else
+                {
+                    await _agendaRoleRepository.Create(new AgendaRoleEntity
+                    {
+                        AgendaId = agendaId,
+                        RoleId = lane.RoleId.Value
+                    });
+                }
+            }
+            lane.Pool = null;
         }
 
         private void ParseCollaboration(XElement? collaboration)
@@ -343,6 +421,9 @@ namespace BPMS_BL.Facades
                     }
                     blockModel = new ParallelGatewayModelEntity(_currentPool);
                     break;
+                
+                case "laneSet":
+                    return;
 
                 default:
                     throw new ParsingException("Nepodporaovaný BPMN prvek.");

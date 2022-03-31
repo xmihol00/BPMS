@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BPMS_Common.Enums;
+using BPMS_DTOs.Role;
 using BPMS_DTOs.System;
 using Microsoft.AspNetCore.Http;
 
@@ -16,5 +17,8 @@ namespace BPMS_DTOs.Pool
         public string? Description { get; set; }
         public Guid? SystemId { get; set; }
         public List<SystemPickerDTO> Systems { get; set; } = new List<SystemPickerDTO>();
+        public Guid? LaneId { get; set; }
+        public List<RoleAllDTO> Roles { get; set; } = new List<RoleAllDTO>();
+        public Guid? CurrentRoleId { get; set; }
     }
 }

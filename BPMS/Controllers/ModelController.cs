@@ -1,6 +1,7 @@
 using BPMS_BL.Facades;
 using BPMS_BL.Helpers;
 using BPMS_DTOs.Filter;
+using BPMS_DTOs.Lane;
 using BPMS_DTOs.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -127,6 +128,21 @@ namespace BPMS.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             await _modelFacade.Remove(id);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, ModelKeeper")]
+        public async Task<IActionResult> LaneConfig(Guid id)
+        {
+            return PartialView("Partial/_LaneConfig", await _modelFacade.LaneConfig(id));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, ModelKeeper")]
+        public async Task<IActionResult> LaneEdit(LaneEditDTO dto)
+        {
+            await _modelFacade.LaneEdit(dto);
             return Ok();
         }
     }

@@ -430,6 +430,31 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Lanes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lanes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lanes_Pools_PoolId",
+                        column: x => x.PoolId,
+                        principalTable: "Pools",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lanes_SolvingRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "SolvingRoles",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BlockModels",
                 columns: table => new
                 {
@@ -437,11 +462,17 @@ namespace BPMS_DAL.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Order = table.Column<long>(type: "bigint", nullable: false),
-                    PoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LaneId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BlockModels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BlockModels_Lanes_LaneId",
+                        column: x => x.LaneId,
+                        principalTable: "Lanes",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_BlockModels_Pools_PoolId",
                         column: x => x.PoolId,
@@ -607,8 +638,7 @@ namespace BPMS_DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ServiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    State = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -622,11 +652,6 @@ namespace BPMS_DAL.Migrations
                         name: "FK_ServiceTasksModel_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ServiceTasksModel_SolvingRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "SolvingRoles",
                         principalColumn: "Id");
                 });
 
@@ -651,8 +676,7 @@ namespace BPMS_DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Difficulty = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Difficulty = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -661,11 +685,6 @@ namespace BPMS_DAL.Migrations
                         name: "FK_UserTasksModel_BlockModels_Id",
                         column: x => x.Id,
                         principalTable: "BlockModels",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_UserTasksModel_SolvingRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "SolvingRoles",
                         principalColumn: "Id");
                 });
 
@@ -1227,12 +1246,12 @@ namespace BPMS_DAL.Migrations
             migrationBuilder.InsertData(
                 table: "Systems",
                 columns: new[] { "Id", "Description", "Encryption", "ForeignEncryption", "Key", "Name", "State", "URL" },
-                values: new object[] { new Guid("22d1c355-d0b1-4de7-a408-2e0cb5e5ab53"), null, 3, 0, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
+                values: new object[] { new Guid("7ca31816-1ab4-4dfc-bd28-31d82c0a35d3"), null, 3, 3, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "6LcHaahfULZ/YAMNetoLsAEseP9W5Og0G8Tph9mnT6g1Oa6+RItQ2CLzfdhwDNK5zHONeAwfPWc6FzTC3vuHAb5B", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "I7AL/HPGPrP6/bg7QGUSn+H9tA7njynJi/46JHE/XbWxQSYwvtEEtuDooU0qPw6Qf7aUlN5+L0DmFVmMhnxIMhEi", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
@@ -1305,6 +1324,11 @@ namespace BPMS_DAL.Migrations
                 name: "IX_BlockModelDataSchemaEntity_ServiceTaskId",
                 table: "BlockModelDataSchemaEntity",
                 column: "ServiceTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlockModels_LaneId",
+                table: "BlockModels",
+                column: "LaneId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BlockModels_PoolId",
@@ -1383,6 +1407,16 @@ namespace BPMS_DAL.Migrations
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Lanes_PoolId",
+                table: "Lanes",
+                column: "PoolId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lanes_RoleId",
+                table: "Lanes",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Models_AgendaId",
                 table: "Models",
                 column: "AgendaId");
@@ -1415,11 +1449,6 @@ namespace BPMS_DAL.Migrations
                 column: "RecieverId",
                 unique: true,
                 filter: "[RecieverId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServiceTasksModel_RoleId",
-                table: "ServiceTasksModel",
-                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceTasksModel_ServiceId",
@@ -1460,11 +1489,6 @@ namespace BPMS_DAL.Migrations
                 name: "IX_UserRoles_UserId",
                 table: "UserRoles",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserTasksModel_RoleId",
-                table: "UserTasksModel",
-                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserTasksWorkflow_UserId",
@@ -1631,9 +1655,6 @@ namespace BPMS_DAL.Migrations
                 name: "BlockWorkflows");
 
             migrationBuilder.DropTable(
-                name: "SolvingRoles");
-
-            migrationBuilder.DropTable(
                 name: "ConditionData");
 
             migrationBuilder.DropTable(
@@ -1652,7 +1673,13 @@ namespace BPMS_DAL.Migrations
                 name: "BlockModels");
 
             migrationBuilder.DropTable(
+                name: "Lanes");
+
+            migrationBuilder.DropTable(
                 name: "Pools");
+
+            migrationBuilder.DropTable(
+                name: "SolvingRoles");
 
             migrationBuilder.DropTable(
                 name: "Models");

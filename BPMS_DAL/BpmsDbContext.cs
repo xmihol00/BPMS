@@ -30,6 +30,7 @@ namespace BPMS_DAL
         public DbSet<ForeignAttributeMapEntity>? ForeignAttributeMaps { get; set; }
         public DbSet<ForeignSignalRecieveEventEntity>? ForeignRecieveEvents { get; set; }
         public DbSet<ForeignSendSignalEventEntity>? ForeignSendEvents { get; set; }
+        public DbSet<LaneEntity>? Lanes { get; set; }
         public DbSet<ModelEntity>? Models { get; set; }
         public DbSet<NotificationEntity>? Notifications { get; set; }
         public DbSet<PoolEntity>? Pools { get; set; }
@@ -93,7 +94,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<BlockModelEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<BlockModelEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Pool).WithMany(x => x.Blocks).HasForeignKey(x => x.PoolId);
-            modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Lane).WithMany(x => x.Blocks).HasForeignKey(x => x.LaneId);
+            modelBuilder.Entity<BlockModelEntity>().HasOne(x => x.Lane).WithMany(x => x.Blocks).HasForeignKey(x => x.LaneId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<SendMessageEventModelEntity>().HasOne(x => x.Reciever).WithOne(x => x.Sender).HasForeignKey<SendMessageEventModelEntity>(x => x.RecieverId);
             modelBuilder.Entity<ServiceTaskModelEntity>().HasOne(x => x.Service).WithMany(x => x.ServiceTasks).HasForeignKey(x => x.ServiceId);
             modelBuilder.Entity<RecieveSignalEventModelEntity>().HasOne(x => x.ForeignSender).WithOne(x => x.Reciever).HasForeignKey<RecieveSignalEventModelEntity>(x => x.ForeignSenderId);
@@ -205,6 +206,7 @@ namespace BPMS_DAL
             modelBuilder.Entity<ConnectionRequestEntity>().HasOne(x => x.System).WithMany(x => x.ConnectionRequests).HasForeignKey(x => x.SystemId);
 
             modelBuilder.Entity<LaneEntity>().HasKey(x => x.Id);
+            modelBuilder.Entity<LaneEntity>().Property(x => x.Id).ValueGeneratedNever();
             modelBuilder.Entity<LaneEntity>().HasOne(x => x.Role).WithMany(x => x.Lanes).HasForeignKey(x => x.RoleId);
             modelBuilder.Entity<LaneEntity>().HasOne(x => x.Pool).WithMany(x => x.Lanes).HasForeignKey(x => x.PoolId);
 

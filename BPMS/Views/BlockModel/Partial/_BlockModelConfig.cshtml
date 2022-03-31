@@ -2,23 +2,14 @@
 
 <form id="BlockEditFormId" class="row mt-1" action="/BlockModel/Edit" onsubmit="AjaxFormSubmit(event, null, true)" novalidate>
     <input type="hidden" name="Id" value="@Model.Id" />
-    <div class="col-12 mb-3">
+    <div class="col-12 @(Model is IDifficultyConfig ? "col-lg-6" : "") mb-3">
         <label class="input">
             <div class="readonly-div">@Model.Name</div>
             <span class="input-label">Název</span>
         </label>
     </div>
-    <div class="col-12 mb-2">
-        <label class="input mb-2">
-            <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
-            <span class="input-label">Popis</span>
-        </label>
-    </div>
-    @if (Model is IRoleConfig && Model is IDifficultyConfig)
+    @if (Model is IDifficultyConfig)
     {
-        <div class="col-12 col-lg-6 mb-3">
-            @await Html.PartialAsync("Partial/_RoleConfig", Model)
-        </div>
         <div class="col-12 col-lg-6 mb-3">
             <label class="input">
                 <input class="input-field" type="number" placeholder=" " name="Difficulty" value="@((Model as IDifficultyConfig).Difficulty)" />
@@ -26,12 +17,12 @@
             </label>
         </div>
     }
-    else if (Model is IRoleConfig)
-    {
-        <div class="col-12 mb-3">
-            @await Html.PartialAsync("Partial/_RoleConfig", Model)
-        </div>
-    }
+    <div class="col-12 mb-2">
+        <label class="input mb-2">
+            <textarea name="Description" class="input-field" placeholder=" ">@Model.Description</textarea>
+            <span class="input-label">Popis</span>
+        </label>
+    </div>
 
     @if (Model is IServiceConfig)
     {

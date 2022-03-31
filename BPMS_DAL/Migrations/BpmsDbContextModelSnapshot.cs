@@ -176,6 +176,9 @@ namespace BPMS_DAL.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("LaneId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -187,6 +190,8 @@ namespace BPMS_DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LaneId");
 
                     b.HasIndex("PoolId");
 
@@ -560,6 +565,29 @@ namespace BPMS_DAL.Migrations
                     b.ToTable("ForeignRecieveEvents");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.LaneEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PoolId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Lanes");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.ModelEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -838,9 +866,9 @@ namespace BPMS_DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("22d1c355-d0b1-4de7-a408-2e0cb5e5ab53"),
+                            Id = new Guid("7ca31816-1ab4-4dfc-bd28-31d82c0a35d3"),
                             Encryption = 3,
-                            ForeignEncryption = 0,
+                            ForeignEncryption = 3,
                             Key = new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 },
                             Name = "Tento systém",
                             State = 5,
@@ -963,7 +991,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "6LcHaahfULZ/YAMNetoLsAEseP9W5Og0G8Tph9mnT6g1Oa6+RItQ2CLzfdhwDNK5zHONeAwfPWc6FzTC3vuHAb5B",
+                            Password = "I7AL/HPGPrP6/bg7QGUSn+H9tA7njynJi/46JHE/XbWxQSYwvtEEtuDooU0qPw6Qf7aUlN5+L0DmFVmMhnxIMhEi",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"
@@ -1183,16 +1211,11 @@ namespace BPMS_DAL.Migrations
                 {
                     b.HasBaseType("BPMS_DAL.Entities.BlockModelEntity");
 
-                    b.Property<Guid?>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
-
-                    b.HasIndex("RoleId");
 
                     b.HasIndex("ServiceId");
 
@@ -1212,11 +1235,6 @@ namespace BPMS_DAL.Migrations
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("int");
-
-                    b.Property<Guid?>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("UserTasksModel", (string)null);
                 });
@@ -1408,11 +1426,19 @@ namespace BPMS_DAL.Migrations
 
             modelBuilder.Entity("BPMS_DAL.Entities.BlockModelEntity", b =>
                 {
+                    b.HasOne("BPMS_DAL.Entities.LaneEntity", "Lane")
+                        .WithMany("Blocks")
+                        .HasForeignKey("LaneId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("BPMS_DAL.Entities.PoolEntity", "Pool")
                         .WithMany("Blocks")
                         .HasForeignKey("PoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Lane");
 
                     b.Navigation("Pool");
                 });
@@ -1588,6 +1614,23 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Sender");
 
                     b.Navigation("System");
+                });
+
+            modelBuilder.Entity("BPMS_DAL.Entities.LaneEntity", b =>
+                {
+                    b.HasOne("BPMS_DAL.Entities.PoolEntity", "Pool")
+                        .WithMany("Lanes")
+                        .HasForeignKey("PoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BPMS_DAL.Entities.SolvingRoleEntity", "Role")
+                        .WithMany("Lanes")
+                        .HasForeignKey("RoleId");
+
+                    b.Navigation("Pool");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ModelEntity", b =>
@@ -1912,15 +1955,9 @@ namespace BPMS_DAL.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("BPMS_DAL.Entities.SolvingRoleEntity", "Role")
-                        .WithMany("ServiceTask")
-                        .HasForeignKey("RoleId");
-
                     b.HasOne("BPMS_DAL.Entities.ServiceEntity", "Service")
                         .WithMany("ServiceTasks")
                         .HasForeignKey("ServiceId");
-
-                    b.Navigation("Role");
 
                     b.Navigation("Service");
                 });
@@ -1941,12 +1978,6 @@ namespace BPMS_DAL.Migrations
                         .HasForeignKey("BPMS_DAL.Entities.ModelBlocks.UserTaskModelEntity", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
-
-                    b.HasOne("BPMS_DAL.Entities.SolvingRoleEntity", "Role")
-                        .WithMany("UserTasks")
-                        .HasForeignKey("RoleId");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.WorkflowBlocks.EndEventWorkflowEntity", b =>
@@ -2102,6 +2133,11 @@ namespace BPMS_DAL.Migrations
                     b.Navigation("Reciever");
                 });
 
+            modelBuilder.Entity("BPMS_DAL.Entities.LaneEntity", b =>
+                {
+                    b.Navigation("Blocks");
+                });
+
             modelBuilder.Entity("BPMS_DAL.Entities.ModelEntity", b =>
                 {
                     b.Navigation("Pools");
@@ -2112,6 +2148,8 @@ namespace BPMS_DAL.Migrations
             modelBuilder.Entity("BPMS_DAL.Entities.PoolEntity", b =>
                 {
                     b.Navigation("Blocks");
+
+                    b.Navigation("Lanes");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceEntity", b =>
@@ -2127,9 +2165,7 @@ namespace BPMS_DAL.Migrations
                 {
                     b.Navigation("AgendaRoles");
 
-                    b.Navigation("ServiceTask");
-
-                    b.Navigation("UserTasks");
+                    b.Navigation("Lanes");
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.SystemEntity", b =>

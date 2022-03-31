@@ -445,7 +445,7 @@ function PasswordValidator(form)
         document.getElementById("PasswordMismatchId").classList.add("d-none");
     }
 
-    if (pwd && !document.getElementById("PasswordId").value.match(/(?=.*[A-Z])(?=.*[!@#$&._%()*-/+$^&{}])(?=.*[0-9])(?=.*[a-z]).{10}/))
+    if (pwd && !document.getElementById("PasswordId").value.match(/(?=.*[A-Z])(?=.*[!@#$&._%()*-/+$^&{}:])(?=.*[0-9])(?=.*[a-z]).{10}/))
     {
         document.getElementById("PasswordWeakId").classList.remove("d-none");
         document.querySelector("[form=AccountCreateId]").disabled = true;

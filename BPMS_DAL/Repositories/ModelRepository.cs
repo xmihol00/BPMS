@@ -15,6 +15,7 @@ using BPMS_Common.Enums;
 using BPMS_DTOs.User;
 using BPMS_DTOs.Workflow;
 using BPMS_DTOs.System;
+using BPMS_DTOs.Lane;
 
 namespace BPMS_DAL.Repositories
 {
@@ -191,14 +192,34 @@ namespace BPMS_DAL.Repositories
 
         public Task<ModelDetailShare> Share(Guid id)
         {
-            return _dbSet.Select(x => new ModelDetailShare
+            return _dbSet.Include(x => x.Pools)
+                            .ThenInclude(x => x.Lanes)
+                         .Include(x => x.Pools)
+                            .ThenInclude(x => x.System)
+                         .Select(x => new ModelDetailShare
                          {
                              Description = x.Description,
                              Id = x.Id,
                              Name = x.Name,
                              State = x.State,
                              SVG = x.SVG,
-                             SenderURL = StaticData.ThisSystemURL
+                             SenderURL = StaticData.ThisSystemURL,
+                             Pools = x.Pools.Select(y => new PoolShareDTO
+                                            {
+                                                Description = y.Description,
+                                                Id = y.Id,
+                                                ModelId = y.ModelId,
+                                                Name = y.Name,
+                                                SystemURL = y.System.URL
+                                            })
+                                            .ToList(),
+                            Lanes = x.Pools.SelectMany(x => x.Lanes)
+                                           .Select(x => new LaneEntity
+                                           {
+                                               Id = x.Id,
+                                               Name = x.Name,
+                                               PoolId = x.PoolId
+                                           })
                          })
                          .FirstAsync(x => x.Id == id);
         }

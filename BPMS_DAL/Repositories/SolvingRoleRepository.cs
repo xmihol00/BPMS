@@ -29,5 +29,12 @@ namespace BPMS_DAL.Repositories
                          })
                          .ToListAsync();
         }
+
+        public Task<Guid> RoleByName(string name)
+        {
+            return _dbSet.Where(x => x.Name == name)
+                         .Select(x => x.Id)
+                         .FirstOrDefaultAsync();
+        }
     }
 }
