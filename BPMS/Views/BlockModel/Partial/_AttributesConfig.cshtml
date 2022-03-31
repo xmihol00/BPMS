@@ -64,6 +64,10 @@
 {
     @await Html.PartialAsync("Partial/_SendMessageConfig", Model)
 }
+@if (Model is ISendMessageEventModelConfig)
+{
+    @await Html.PartialAsync("Partial/_SendSignalConfig", Model)
+}
 @if (Model is IOutputAttributesConfig)
 {   
     @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IOutputAttributesConfig, Model is IRecieveMessageEventModelConfig))
