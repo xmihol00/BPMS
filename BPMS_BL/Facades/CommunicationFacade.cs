@@ -214,8 +214,8 @@ namespace BPMS_BL.Facades
             await _blockWorkflowRepository.Save();
             return await CreateResult();
         }
-        private async Task<IActionResult> AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData, 
-                                         List<RecieveMessageEventWorkflowEntity> recieveEvents)
+
+        private async Task<IActionResult> AssignMessage(MessageShare message, Dictionary<Guid, TaskDataEntity> taskData)
         {
             foreach (StringDataEntity data in message.Strings)
             {
@@ -260,18 +260,6 @@ namespace BPMS_BL.Facades
                 await File.WriteAllBytesAsync(StaticData.FileStore + file.Id, data.Data);
             }
 
-            foreach (RecieveMessageEventWorkflowEntity recieveEvent in recieveEvents)
-            {
-                WorkflowHelper workflowHelper = new WorkflowHelper(_context);
-                recieveEvent.Delivered = true;
-                if (recieveEvent.State == BlockWorkflowStateEnum.Active)
-                {
-                    recieveEvent.State = BlockWorkflowStateEnum.Solved;
-                    await workflowHelper.StartNextTask(recieveEvent);
-                    //await _taskDataRepository.Save(); // TODO
-                }
-                await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.ModelId);
-            }
             return await CreateResult();
         }
 
@@ -282,23 +270,48 @@ namespace BPMS_BL.Facades
             if (message.WorkflowId != null)
             {
                 taskData = await _taskDataRepository.OfRecieveEvent(message.WorkflowId.Value, message.BlockId);
-                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.WorkflowId.Value, message.BlockId);
+                recieveEvents = await _blockWorkflowRepository.RecieveMessageEvents(message.WorkflowId.Value, message.BlockId);
             }
             else
             {
                 taskData = await _taskDataRepository.OfRecieveEvent(message.BlockId);
-                recieveEvents = await _blockWorkflowRepository.RecieveEvents(message.BlockId);
+                recieveEvents = await _blockWorkflowRepository.RecieveMessageEvents(message.BlockId);
             }
 
-            await AssignMessage(message, taskData, recieveEvents);
+            await AssignMessage(message, taskData);
+            
+            WorkflowHelper workflowHelper = new WorkflowHelper(_context);
+            foreach (RecieveMessageEventWorkflowEntity recieveEvent in recieveEvents)
+            {
+                recieveEvent.Delivered = true;
+                if (recieveEvent.State == BlockWorkflowStateEnum.Active)
+                {
+                    recieveEvent.State = BlockWorkflowStateEnum.Solved;
+                    await workflowHelper.StartNextTask(recieveEvent);
+                }
+                await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.ModelId);
+            }
+
             await _taskDataRepository.Save();
             return await CreateResult();
         }
 
         public async Task<IActionResult> ForeignMessage(MessageShare? message)
         {
-            await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId), 
-                                await _blockWorkflowRepository.RecieveEvents(message.BlockId));
+            await AssignMessage(message, await _taskDataRepository.OfForeignRecieveEvent(message.BlockId));
+
+            WorkflowHelper workflowHelper = new WorkflowHelper(_context);
+            foreach (RecieveSignalEventWorkflowEntity recieveEvent in await _blockWorkflowRepository.RecieveSignalEvents(message.BlockId))
+            {
+                recieveEvent.Delivered = true;
+                if (recieveEvent.State == BlockWorkflowStateEnum.Active)
+                {
+                    recieveEvent.State = BlockWorkflowStateEnum.Solved;
+                    await workflowHelper.StartNextTask(recieveEvent);
+                }
+                await workflowHelper.ShareActivity(recieveEvent.BlockModel.PoolId, recieveEvent.WorkflowId, recieveEvent.BlockModel.Pool.ModelId);
+            }
+
             await _taskDataRepository.Save();
             return await CreateResult();
         }

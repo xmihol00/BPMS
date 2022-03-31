@@ -26,6 +26,7 @@ namespace BPMS_DAL.Repositories
         private readonly DbSet<ServiceTaskModelEntity> _serviceTasks;
         private readonly DbSet<UserTaskModelEntity> _userTasks;
         private readonly DbSet<RecieveSignalEventModelEntity> _recieveSignalEvens;
+        private readonly DbSet<RecieveMessageEventModelEntity> _recieveMessageEvens;
         private readonly DbSet<SendSignalEventModelEntity> _sendSignalEvents;
         private readonly DbSet<SendMessageEventModelEntity> _sendMessageEvents;
 
@@ -34,6 +35,7 @@ namespace BPMS_DAL.Repositories
             _serviceTasks = context.Set<ServiceTaskModelEntity>();
             _userTasks = context.Set<UserTaskModelEntity>();
             _recieveSignalEvens = context.Set<RecieveSignalEventModelEntity>();
+            _recieveMessageEvens = context.Set<RecieveMessageEventModelEntity>();
             _sendSignalEvents = context.Set<SendSignalEventModelEntity>();
             _sendMessageEvents = context.Set<SendMessageEventModelEntity>();
         }
@@ -415,9 +417,31 @@ namespace BPMS_DAL.Repositories
                                     .ToList();
         }
 
-        public async Task<List<IGrouping<string, InputAttributeDTO>>> RecieveEventAttribures(Guid blockId, uint order, Guid poolId)
+        public async Task<List<IGrouping<string, InputAttributeDTO>>> RecieveSignalEventAttribures(Guid blockId, uint order, Guid poolId)
         {
             return (await _recieveSignalEvens.Include(x => x.Attributes)
+                                          .ThenInclude(x => x.MappedBlocks)
+                                       .Where(x => x.PoolId == poolId && x.Order < order)
+                                       .SelectMany(x => x.Attributes)
+                                       .Where(x => !x.Disabled)
+                                       .Select(x => new InputAttributeDTO
+                                       {
+                                           BlockName = x.Block.Name,
+                                           Compulsory = x.Compulsory,
+                                           Description = x.Description,
+                                           Id = x.Id,
+                                           Name = x.Name,
+                                           Specification = x.Specification,
+                                           Type = x.Type,
+                                           Mapped = x.MappedBlocks.Any(x => x.BlockId == blockId)
+                                       }).ToListAsync())
+                                       .GroupBy(x => x.BlockName)
+                                       .ToList();
+        }
+
+        public async Task<List<IGrouping<string, InputAttributeDTO>>> RecieveMessageEventAttribures(Guid blockId, uint order, Guid poolId)
+        {
+            return (await _recieveMessageEvens.Include(x => x.Attributes)
                                           .ThenInclude(x => x.MappedBlocks)
                                        .Where(x => x.PoolId == poolId && x.Order < order)
                                        .SelectMany(x => x.Attributes)

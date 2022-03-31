@@ -206,7 +206,7 @@ namespace BPMS_DAL.Repositories
             return _dbSet.AnyAsync(x => x.WorkflowId == workflowId && x.BlockModelId == blockModelId);
         }
 
-        public Task<List<RecieveMessageEventWorkflowEntity>> RecieveEvents(Guid blockId)
+        public Task<List<RecieveMessageEventWorkflowEntity>> RecieveMessageEvents(Guid blockId)
         {
             return _context.Set<RecieveMessageEventWorkflowEntity>()
                            .Include(x => x.Workflow)
@@ -216,7 +216,17 @@ namespace BPMS_DAL.Repositories
                            .ToListAsync();
         }
 
-        public Task<List<RecieveMessageEventWorkflowEntity>> RecieveEvents(Guid workflowId, Guid blockId)
+        public Task<List<RecieveSignalEventWorkflowEntity>> RecieveSignalEvents(Guid blockId)
+        {
+            return _context.Set<RecieveSignalEventWorkflowEntity>()
+                           .Include(x => x.Workflow)
+                           .Include(x => x.BlockModel)
+                                .ThenInclude(x => x.Pool)
+                           .Where(x => x.Workflow.State == WorkflowStateEnum.Active && x.BlockModelId == blockId)
+                           .ToListAsync();
+        }
+
+        public Task<List<RecieveMessageEventWorkflowEntity>> RecieveMessageEvents(Guid workflowId, Guid blockId)
         {
             return _context.Set<RecieveMessageEventWorkflowEntity>()
                            .Include(x => x.BlockModel)

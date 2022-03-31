@@ -518,7 +518,8 @@ namespace BPMS_BL.Facades
             UserTaskModelConfigDTO dto = new UserTaskModelConfigDTO();
             dto.OutputAttributes = await _attributeRepository.OutputAttributes(userTask.Id);
             dto.InputAttributes = await _blockModelRepository.TaskInputAttributes(userTask.Id, userTask.Order, userTask.PoolId);
-            dto.InputAttributes.AddRange(await _blockModelRepository.RecieveEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
+            dto.InputAttributes.AddRange(await _blockModelRepository.RecieveSignalEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
+            dto.InputAttributes.AddRange(await _blockModelRepository.RecieveMessageEventAttribures(userTask.Id, userTask.Order, userTask.PoolId));
             
             IRoleConfig roleConfig = dto as IRoleConfig;
             roleConfig.CurrentRole = userTask.RoleId;

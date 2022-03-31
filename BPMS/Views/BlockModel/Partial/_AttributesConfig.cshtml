@@ -70,7 +70,7 @@
 }
 @if (Model is IOutputAttributesConfig)
 {   
-    @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IOutputAttributesConfig, Model is IRecieveMessageEventModelConfig))
+    @await Html.PartialAsync("Partial/_OutputAttributesConfig", (Model as IOutputAttributesConfig, Model is IRecieveMessageEventModelConfig || Model is IRecieveSignalEventModelConfig))
 }
 @if (Model is IServiceInputAttributes)
 {
