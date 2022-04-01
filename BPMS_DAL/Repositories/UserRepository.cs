@@ -34,7 +34,7 @@ namespace BPMS_DAL.Repositories
         {
             return _dbSet.Include(x => x.UserRoles)
                             .ThenInclude(x => x.AgendaRole)
-                         .Where(x => x.UserRoles.All(y => y.AgendaRole.RoleId != roleId || y.AgendaRole.AgendaId != agendaId))
+                         .Where(x => x.UserRoles.All(y => y.AgendaRole.Id != roleId))
                          .Select(x => new UserIdNameDTO
                          {
                              FullName = $"{x.Title} {x.Name} {x.Surname}",
