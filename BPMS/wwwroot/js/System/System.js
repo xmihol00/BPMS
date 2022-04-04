@@ -17,7 +17,7 @@ function SystemReactivate(result)
     buttonDiv.innerHTML = `<button class="butn btn-s" disabled title="Žádost o navázání spojení již byla odeslána.">Aktivovat</button>` + buttonDiv.innerHTML;
 }
 
-function Deactive()
+function Deactive(buttons)
 {
     $.ajax(
     {
@@ -32,6 +32,10 @@ function Deactive()
 
         let buttonDiv = document.getElementById("SystemBtnsId");
         buttonDiv.children[0].remove();
+        if (buttons)
+        {
+            buttonDiv.children[0].remove();
+        }
         buttonDiv.innerHTML = `<button class="butn btn-s" onclick="ShowModal('ReactivateFormId')">Aktivovat</button>` + buttonDiv.innerHTML;
     })
     .fail(() => 
