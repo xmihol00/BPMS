@@ -140,11 +140,11 @@ namespace BPMS.Controllers
             try
             {
                 (ModelDetailDTO? detail, Guid workflowId) = await _modelFacade.Run(dto);
-                Task<string> info = this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true);
-                Task<string> card = this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true);
-                Task<string> header = this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true);
                 if (detail != null)
                 {
+                    Task<string> info = this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true);
+                    Task<string> card = this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true);
+                    Task<string> header = this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true);
                     return Ok(new { info = await info, card = await card, header = await header }); 
                 }
                 else
