@@ -153,11 +153,11 @@ namespace BPMS_BL.Helpers
             headers.Add("Accept", "application/json, text/xml, application/xml");
             if (_service.AuthType == ServiceAuthEnum.Basic)
             {
-                headers.Add("Authorization", $"Basic {SymetricCipherHelper.DecryptSecret(_service.AppId)}:{SymetricCipherHelper.DecryptSecret(_service.AppSecret)}");
+                headers.Add("Authorization", $"Basic {SymetricCryptoHelper.DecryptSecret(_service.AppId)}:{SymetricCryptoHelper.DecryptSecret(_service.AppSecret)}");
             }
             else
             {
-                headers.Add("Authorization", $"Bearer {SymetricCipherHelper.DecryptSecret(_service.AppSecret)}");
+                headers.Add("Authorization", $"Bearer {SymetricCryptoHelper.DecryptSecret(_service.AppSecret)}");
             }
 
             foreach(HeaderRequestDTO header in _service.Headers)

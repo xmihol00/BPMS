@@ -239,12 +239,12 @@ namespace BPMS_BL.Facades
             {
                 if (dto.AppSecret != null)
                 {
-                    entity.AppSecret = await SymetricCipherHelper.EncryptSecret(dto.AppSecret);
+                    entity.AppSecret = await SymetricCryptoHelper.EncryptSecret(dto.AppSecret);
                 }
 
                 if (dto.AppId != null)
                 {
-                    entity.AppId = await SymetricCipherHelper.EncryptSecret(dto.AppId);
+                    entity.AppId = await SymetricCryptoHelper.EncryptSecret(dto.AppId);
                 }
             }
             _mapper.Map<ServiceCreateEditDTO, ServiceEntity>(dto, entity);

@@ -197,7 +197,7 @@ namespace BPMS_BL.Facades
             {
                 URL = StaticData.ThisSystemURL,
                 State = SystemStateEnum.Inactive,
-                Key = await SymetricCipherHelper.NewKey(),
+                Key = await SymetricCryptoHelper.NewKey(),
                 ConnectionRequests = new List<ConnectionRequestEntity>
                 {
                     new ConnectionRequestEntity

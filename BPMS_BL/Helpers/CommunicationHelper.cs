@@ -208,12 +208,12 @@ namespace BPMS_BL.Helpers
 
             if (addressAuth.Encryption >= EncryptionLevelEnum.Hash)
             {
-                addressAuth.PayloadHash = SymetricCipherHelper.HashMessage(body, addressAuth.MessageId);
+                addressAuth.PayloadHash = SymetricCryptoHelper.HashMessage(body, addressAuth.MessageId);
             }
 
             if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)
             {
-                body = await SymetricCipherHelper.EncryptMessage(body, addressAuth);
+                body = await SymetricCryptoHelper.EncryptMessage(body, addressAuth);
             }
 
             using HttpClient client = new HttpClient(httpClientHandler);
@@ -223,7 +223,7 @@ namespace BPMS_BL.Helpers
                 RequestUri = new Uri(addressAuth.DestinationURL + path), 
                 Content = new StringContent(body)
             };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await SymetricCipherHelper.AuthEncrypt(addressAuth));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await SymetricCryptoHelper.AuthEncrypt(addressAuth));
 
             return await client.SendAsync(request);
         }
@@ -262,8 +262,8 @@ namespace BPMS_BL.Helpers
             string auth = response.Headers.First(x => x.Key == "Authorization").Value.First()["Bearer ".Length..];
             string data = await response.Content.ReadAsStringAsync();
 
-            (Guid _, byte[] byteAuth) = SymetricCipherHelper.ExtractGuid(auth);
-            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, addressAuth.Key);
+            (Guid _, byte[] byteAuth) = SymetricCryptoHelper.ExtractGuid(auth);
+            SystemAuthorizationDTO authSystem = await SymetricCryptoHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, addressAuth.Key);
 
             if (authSystem.MessageId != addressAuth.MessageId)
             {
@@ -272,12 +272,12 @@ namespace BPMS_BL.Helpers
 
             if (addressAuth.Encryption == EncryptionLevelEnum.Encrypted)
             {
-                data = await SymetricCipherHelper.DecryptMessage(data, authSystem.PayloadKey, authSystem.PayloadIV);
+                data = await SymetricCryptoHelper.DecryptMessage(data, authSystem.PayloadKey, authSystem.PayloadIV);
             }
 
             if (addressAuth.Encryption >= EncryptionLevelEnum.Hash)
             {
-                if (!SymetricCipherHelper.ArraysMatch(authSystem.PayloadHash, SymetricCipherHelper.HashMessage(data, addressAuth.MessageId)))
+                if (!SymetricCryptoHelper.ArraysMatch(authSystem.PayloadHash, SymetricCryptoHelper.HashMessage(data, addressAuth.MessageId)))
                 {
                     throw new UnauthorizedAccessException();
                 }

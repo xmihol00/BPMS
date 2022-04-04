@@ -587,9 +587,9 @@ namespace BPMS_BL.Facades
         {
             _response = response;
             auth = auth["Bearer ".Length..];
-            (Guid id, byte[] byteAuth) = SymetricCipherHelper.ExtractGuid(auth);
+            (Guid id, byte[] byteAuth) = SymetricCryptoHelper.ExtractGuid(auth);
             _system = _systemRepository.Bare(action == "CreateSystem" ? StaticData.ThisSystemId : id);
-            SystemAuthorizationDTO authSystem = await SymetricCipherHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, _system.Key);
+            SystemAuthorizationDTO authSystem = await SymetricCryptoHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, _system.Key);
 
             bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
             if (_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem && active)
@@ -601,12 +601,12 @@ namespace BPMS_BL.Facades
             string data = await stream.ReadToEndAsync();
             if (_system.Encryption == EncryptionLevelEnum.Encrypted || _system.ForeignEncryption == EncryptionLevelEnum.Encrypted)
             {
-                data = await SymetricCipherHelper.DecryptMessage(data, authSystem.PayloadKey, authSystem.PayloadIV);
+                data = await SymetricCryptoHelper.DecryptMessage(data, authSystem.PayloadKey, authSystem.PayloadIV);
             }
 
             if (_system.Encryption >= EncryptionLevelEnum.Hash || _system.ForeignEncryption >= EncryptionLevelEnum.Hash)
             {
-                if (!SymetricCipherHelper.ArraysMatch(authSystem.PayloadHash, SymetricCipherHelper.HashMessage(data, authSystem.MessageId)))
+                if (!SymetricCryptoHelper.ArraysMatch(authSystem.PayloadHash, SymetricCryptoHelper.HashMessage(data, authSystem.MessageId)))
                 {
                     throw new UnauthorizedAccessException();    
                 }
@@ -640,15 +640,15 @@ namespace BPMS_BL.Facades
 
             if (address.Encryption >= EncryptionLevelEnum.Hash)
             {
-                address.PayloadHash = SymetricCipherHelper.HashMessage(body, address.MessageId);
+                address.PayloadHash = SymetricCryptoHelper.HashMessage(body, address.MessageId);
             }
 
             if (address.Encryption == EncryptionLevelEnum.Encrypted)
             {
-                body = await SymetricCipherHelper.EncryptMessage(body, address);
+                body = await SymetricCryptoHelper.EncryptMessage(body, address);
             }
 
-            _response.Headers.Authorization = $"Bearer {await SymetricCipherHelper.AuthEncrypt(address)}";
+            _response.Headers.Authorization = $"Bearer {await SymetricCryptoHelper.AuthEncrypt(address)}";
 
             return new FileStreamResult(new MemoryStream(Encoding.UTF8.GetBytes(body)), "application/json");
         }

@@ -1,13 +1,14 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using Blake2Fast;
 using BPMS_Common;
 using BPMS_Common.Interfaces;
 using Newtonsoft.Json;
 
 namespace BPMS_Common.Helpers
 {
-    public static class SymetricCipherHelper
+    public static class SymetricCryptoHelper
     {
         private const int _keyBitSize = 256;
         private const int _keyByteSize = 32;
@@ -195,7 +196,7 @@ namespace BPMS_Common.Helpers
 
         public static byte[] HashMessage(string message, Guid id)
         {
-            return new Rfc2898DeriveBytes(message, id.ToByteArray(), _hashCycleCount).GetBytes(_keyByteSize);
+            return Blake2b.ComputeHash(_keyByteSize, Encoding.UTF8.GetBytes(message).Concat(id.ToByteArray()).ToArray());   
         }
 
         public static bool ArraysMatch(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
