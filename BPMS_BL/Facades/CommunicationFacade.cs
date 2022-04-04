@@ -591,7 +591,7 @@ namespace BPMS_BL.Facades
             _system = _systemRepository.Bare(action == "CreateSystem" ? StaticData.ThisSystemId : id);
             SystemAuthorizationDTO authSystem = await SymetricCryptoHelper.AuthDecrypt<SystemAuthorizationDTO>(byteAuth, _system.Key);
 
-            bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem";
+            bool active = action != "ReactivateSystem" && action != "ActivateSystem" && action != "CreateSystem" && action != "DeactivateSystem";
             if (_system.State != SystemStateEnum.Active && _system.State != SystemStateEnum.ThisSystem && active)
             {
                 throw new UnauthorizedAccessException();
