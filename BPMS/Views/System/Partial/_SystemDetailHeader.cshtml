@@ -13,6 +13,7 @@
         {
             case SystemStateEnum.Inactive:
             case SystemStateEnum.Reactivated:
+                <button class="butn btn-d" onclick="Deactive()">Odmítnout</button>
                 <button class="butn btn-s" onclick="ShowModal('ActivateFormId', '/System/ConnectionRequest/@Model.Id', 'ConnectionRequestId')">Povolit a aktivovat</button>
                 break;
             
