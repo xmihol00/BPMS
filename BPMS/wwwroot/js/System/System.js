@@ -5,6 +5,10 @@ function SystemActivate(result)
 
     let buttonDiv = document.getElementById("SystemBtnsId");
     buttonDiv.children[0].remove();
+    if (buttonDiv.children.length > 1)
+    {
+        buttonDiv.children[0].remove();
+    }
     buttonDiv.innerHTML = `<button class="butn btn-d" onclick="Deactive()">Deaktivovat</button>` + buttonDiv.innerHTML;
 }
 
@@ -32,7 +36,7 @@ function Deactive(buttons)
 
         let buttonDiv = document.getElementById("SystemBtnsId");
         buttonDiv.children[0].remove();
-        if (buttons)
+        if (buttonDiv.children.length > 1)
         {
             buttonDiv.children[0].remove();
         }
