@@ -104,6 +104,12 @@ namespace BPMS_BL.Facades
             entity.URL = dto.URL;
 
             await _systemRepository.Save();
+
+            if (entity.Id == StaticData.ThisSystemId)
+            {
+                StaticData.ThisSystemURL = entity.URL;
+            }
+
             return await _systemRepository.InfoCard(dto.Id);
         }
 
