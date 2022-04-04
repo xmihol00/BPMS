@@ -866,7 +866,7 @@ namespace BPMS_DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7ca31816-1ab4-4dfc-bd28-31d82c0a35d3"),
+                            Id = new Guid("21577083-1403-471d-aa40-8add3b4a1c84"),
                             Encryption = 3,
                             ForeignEncryption = 3,
                             Key = new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 },
@@ -991,7 +991,7 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "I7AL/HPGPrP6/bg7QGUSn+H9tA7njynJi/46JHE/XbWxQSYwvtEEtuDooU0qPw6Qf7aUlN5+L0DmFVmMhnxIMhEi",
+                            Password = "wx/rx1msAyEJSXxsu14xuN539Kqp90lL/DrCJsEV5qOEO3irX6e0mcON3oRRBvpdhSisBq5PuHyBGpafvnnWA5L3",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"

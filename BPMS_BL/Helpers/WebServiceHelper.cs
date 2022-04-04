@@ -155,7 +155,7 @@ namespace BPMS_BL.Helpers
             {
                 headers.Add("Authorization", $"Basic {SymetricCryptoHelper.DecryptSecret(_service.AppId)}:{SymetricCryptoHelper.DecryptSecret(_service.AppSecret)}");
             }
-            else
+            else if (_service.AuthType == ServiceAuthEnum.Bearer)
             {
                 headers.Add("Authorization", $"Bearer {SymetricCryptoHelper.DecryptSecret(_service.AppSecret)}");
             }

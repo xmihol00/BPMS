@@ -1246,12 +1246,12 @@ namespace BPMS_DAL.Migrations
             migrationBuilder.InsertData(
                 table: "Systems",
                 columns: new[] { "Id", "Description", "Encryption", "ForeignEncryption", "Key", "Name", "State", "URL" },
-                values: new object[] { new Guid("7ca31816-1ab4-4dfc-bd28-31d82c0a35d3"), null, 3, 3, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
+                values: new object[] { new Guid("21577083-1403-471d-aa40-8add3b4a1c84"), null, 3, 3, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "I7AL/HPGPrP6/bg7QGUSn+H9tA7njynJi/46JHE/XbWxQSYwvtEEtuDooU0qPw6Qf7aUlN5+L0DmFVmMhnxIMhEi", null, "System", "Ing.", "admin" });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "wx/rx1msAyEJSXxsu14xuN539Kqp90lL/DrCJsEV5qOEO3irX6e0mcON3oRRBvpdhSisBq5PuHyBGpafvnnWA5L3", null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "DataSchemas",
