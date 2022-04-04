@@ -38,11 +38,9 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> OverviewPartial()
         {
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_WorkflowOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Workflow", true)
-            });
+            Task<string> header = this.RenderViewAsync("Partial/_WorkflowOverviewHeader", true);
+            Task<string> filters = this.RenderViewAsync("Partial/_OverviewFilters", "Workflow", true);
+            return Ok(new { header = await header, filters = await filters });
         }
 
         [HttpGet]
@@ -54,39 +52,60 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            WorkflowDetailPartialDTO dto = await _workflowFacade.DetailPartial(id);
-            dto.Editable |= (bool)ViewData[SystemRoleEnum.Admin.ToString()];
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_WorkflowDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_WorkflowDetailHeader", dto, true),
-                activeBlock = dto.ActiveBlock,
-                editable = dto.Editable
-            });
+                WorkflowDetailPartialDTO dto = await _workflowFacade.DetailPartial(id);
+                dto.Editable |= (bool)ViewData[SystemRoleEnum.Admin.ToString()];
+                Task<string> detail = this.RenderViewAsync("Partial/_WorkflowDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_WorkflowDetailHeader", dto, true);
+                return Ok(new
+                {
+                    detail = await detail,
+                    header = await header,
+                    activeBlock = dto.ActiveBlock,
+                    editable = dto.Editable
+                });
+            }
+            catch
+            {
+                return BadRequest("Workflow nebylo nalezeno.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            WorkflowOverviewDTO overview = await _workflowFacade.Filter(dto);
-            return Ok(new
+            try
             {
-                overview = await this.RenderViewAsync("Partial/_WorkflowOverview", overview.Workflows, true),
-                activeBlocks = overview.ActiveBlocks,
-            });
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                WorkflowOverviewDTO overview = await _workflowFacade.Filter(dto);
+                return Ok(new
+                {
+                    overview = await this.RenderViewAsync("Partial/_WorkflowOverview", overview.Workflows, true),
+                    activeBlocks = overview.ActiveBlocks,
+                });
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, WorkflowKeeper")]
         public async Task<IActionResult> Edit(WorkflowEditDTO dto)
         {
-            WorkflowInfoCardDTO infoCard = await _workflowFacade.Edit(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_WorkflowDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_WorkflowCard", (infoCard.SelectedWorkflow, true), true),
-            });
+                WorkflowInfoCardDTO infoCard = await _workflowFacade.Edit(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_WorkflowDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_WorkflowCard", (infoCard.SelectedWorkflow, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Editace workflow selhala.");
+            }
         }
 
         [HttpGet]

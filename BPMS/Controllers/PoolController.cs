@@ -29,14 +29,25 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(PoolEditDTO dto)
         {
-            ModelDetailDTO detail = await _PoolFacade.Edit(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("../Model/Partial/_ModelDetailInfo", detail, true),
-                model = await this.RenderViewAsync("../Model/Partial/_ModelSvg", detail.SVG, true),
-                card = await this.RenderViewAsync("../Model/Partial/_ModelCard", (detail.SelectedModel, true), true),
-                header = await this.RenderViewAsync("../Model/Partial/_ModelDetailHeader", detail, true)
-            });
+                ModelDetailDTO detail = await _PoolFacade.Edit(dto);
+                Task<string> info = this.RenderViewAsync("../Model/Partial/_ModelDetailInfo", detail, true);
+                Task<string> model = this.RenderViewAsync("../Model/Partial/_ModelSvg", detail.SVG, true);
+                Task<string> card = this.RenderViewAsync("../Model/Partial/_ModelCard", (detail.SelectedModel, true), true);
+                Task<string> header = this.RenderViewAsync("../Model/Partial/_ModelDetailHeader", detail, true);
+                return Ok(new
+                {
+                    info = await info,
+                    model = await model,
+                    card = await card,
+                    header = await header
+                });
+            }
+            catch
+            {
+                return BadRequest("Editace bazénu selhala.");
+            }
         }
     }
 }

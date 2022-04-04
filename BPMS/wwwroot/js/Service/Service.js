@@ -223,9 +223,9 @@ function RemoveAttribute(btn)
     {
         btn.parentNode.parentNode.parentNode.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     }); 
 }
 
@@ -269,9 +269,9 @@ function GenerateOutAttributes(btn)
         document.getElementById("OutputSchemaId").innerHTML = result;
         document.getElementById("InputSchemaId").scrollIntoView({ behavior: "smooth", block: "end" });
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });    
 }
 
@@ -312,9 +312,9 @@ function RemoveHeader(btn)
     {
         btn.parentNode.parentNode.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     }); 
 }
 

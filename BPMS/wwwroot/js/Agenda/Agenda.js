@@ -61,9 +61,9 @@ function EditRole(btn)
             div.innerHTML = result;
             target.appendChild(div);
         })
-        .fail(() => 
+        .fail((result) => 
         {
-            ConnectionAlert();
+            ErrorAlert(result);
         });
     
         for (let ele of target.getElementsByClassName("role-remove-btn"))
@@ -103,9 +103,9 @@ function AddUserToRole(btn)
             btn.disabled = true;
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -122,9 +122,9 @@ function RemoveRole(btn)
     {
         btn.parentNode.parentNode.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -154,9 +154,9 @@ function RemoveUser(btn)
         }
         btn.parentNode.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -191,8 +191,8 @@ function RemoveSystem(btn, event)
     {
         btn.parentNode.parentNode.parentNode.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }

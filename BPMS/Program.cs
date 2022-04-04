@@ -51,6 +51,7 @@ services.AddScoped<ConnectionRequestRepository>();
 services.AddScoped<AuditMessageRepository>();
 services.AddScoped<LaneRepository>();
 
+services.AddScoped<BaseFacade>();
 services.AddScoped<AgendaFacade>();
 services.AddScoped<ModelUploadFacade>();
 services.AddScoped<ModelFacade>();
@@ -80,9 +81,11 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithRedirects("/Error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

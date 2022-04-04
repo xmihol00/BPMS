@@ -29,15 +29,29 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> EditUserTask(UserTaskEditDTO dto)
         {
-            await _blockWorkflowFacade.EditUserTask(dto);
-            return Ok();
+            try
+            {
+                await _blockWorkflowFacade.EditUserTask(dto);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Editace bloku selhala.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> EditServiceTask(ServiceTaskEditDTO dto)
         {
-            await _blockWorkflowFacade.EditServiceTask(dto);
-            return Ok();
+            try
+            {
+                await _blockWorkflowFacade.EditServiceTask(dto);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Editace bloku selhala.");
+            }
         }
     }
 }

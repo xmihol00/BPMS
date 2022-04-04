@@ -32,8 +32,15 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_SystemOverview", await _systemFacade.Filter(dto));
+            try
+            {
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                return PartialView("Partial/_SystemOverview", await _systemFacade.Filter(dto));
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpGet]
@@ -45,11 +52,9 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> OverviewPartial()
         {
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_SystemOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "System", true)
-            });
+            Task<string> header = this.RenderViewAsync("Partial/_SystemOverviewHeader", true);
+            Task<string> filters = this.RenderViewAsync("Partial/_OverviewFilters", "System", true);
+            return Ok(new { header = await header, filters = await filters });
         }
 
         [HttpGet]
@@ -61,13 +66,17 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            SystemDetailPartialDTO dto = await _systemFacade.DetailPartial(id);
-
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_SystemDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_SystemDetailHeader", dto, true),
-            });
+                SystemDetailPartialDTO dto = await _systemFacade.DetailPartial(id);
+                Task<string> detail = this.RenderViewAsync("Partial/_SystemDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_SystemDetailHeader", dto, true);
+                return Ok(new { detail = await detail, header = await header });
+            }
+            catch
+            {
+                return BadRequest("Systém nenalezen.");
+            }
         }
 
         [HttpPost]
@@ -79,23 +88,33 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(SystemEditDTO dto)
         {
-            SystemInfoCardDTO infoCard = await _systemFacade.Edit(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
-            });
+                SystemInfoCardDTO infoCard = await _systemFacade.Edit(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Editace systému selhala.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> AddActivate(SystemActivateDTO dto)
         {
-            SystemInfoCardDTO infoCard = await _systemFacade.Activate(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
-            });
+                SystemInfoCardDTO infoCard = await _systemFacade.Activate(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Aktivace systému selhala");
+            }
         }
 
         [HttpGet]
@@ -107,23 +126,33 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Deactivate(Guid id)
         {
-            SystemInfoCardDTO infoCard = await _systemFacade.Deactivate(id);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
-            });
+                SystemInfoCardDTO infoCard = await _systemFacade.Deactivate(id);
+                Task<string> info = this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Deaktivace systému selhala.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Reactivate(SystemReactivateDTO dto)
         {
-            SystemInfoCardDTO infoCard = await _systemFacade.Reactivate(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true),
-            });
+                SystemInfoCardDTO infoCard = await _systemFacade.Reactivate(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_SystemDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_SystemCard", (infoCard.SelectedSystem, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Reaktivace systmu selhala.");
+            }
         }
     }
 }

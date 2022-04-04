@@ -290,9 +290,9 @@ function ToggleTaskMap(attribId, button)
             button.classList.remove("bg-secondary");
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -323,9 +323,9 @@ function ToggleSendMap(attribId, button)
             }
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -353,9 +353,9 @@ function ToggleServiceMap(button, dataSchemaId, serviceTaskId)
             button.classList.remove("bg-secondary");
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -374,9 +374,9 @@ function RemoveAttribute(element)
     {
         attrib.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -396,9 +396,9 @@ function ShareModel()
         InfoCardUpdate(result);
         document.getElementById("PageNavId").innerHTML = result.header;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -429,9 +429,9 @@ function RemoveModel()
     {
         window.location.replace(`/Model/Overview/`);
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });    
 }
 
@@ -464,9 +464,9 @@ function ChangeSender(id)
         form.classList.remove("d-none");
         ShowSenderChange();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -484,9 +484,9 @@ function SystemChange(select)
     {
         document.getElementById("AgendaPickerId").innerHTML = result;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });   
 }   
 
@@ -504,9 +504,9 @@ function AgendaChange(select)
     {
         document.getElementById("ModelPickerId").innerHTML = result;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -524,9 +524,9 @@ function ModelChange(select)
     {
         document.getElementById("PoolPickerId").innerHTML = result;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });  
 }
 
@@ -544,9 +544,9 @@ function PoolChange(select)
     {
         document.getElementById("BlockPickerId").innerHTML = result;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -610,9 +610,9 @@ function SchemaDragDrop(event)
     {
         document.getElementById("ServiceMapConfigId").innerHTML = result;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -631,9 +631,9 @@ function RemoveMap(btn, serviceTaskId)
     {
         document.getElementById("ServiceMapConfigId").innerHTML = result;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 

@@ -50,9 +50,9 @@ function SaveServiceTask()
         document.getElementById("DetailDivId").innerHTML = result;
         ShowAlert("Data úkolu byla úspěšně uložena.")
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -103,9 +103,9 @@ function AddArrayInput(btn, type)
         tmp.children[0].children[0].children[1].innerText += ` - ${target.children.length + 1}. hodnota`;
         target.appendChild(tmp.children[0]);
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     }); 
 }
 

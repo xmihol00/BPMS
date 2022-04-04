@@ -468,7 +468,14 @@ namespace BPMS_BL.Helpers
             }
             dto.BlockId = address.BlockId;
 
-            recieved &= await CommunicationHelper.Message(address, dto);
+            try
+            {
+                recieved &= await CommunicationHelper.Message(address, dto);
+            }
+            catch
+            {
+                recieved = false;
+            }
 
             if (recieved)
             {
@@ -929,7 +936,14 @@ namespace BPMS_BL.Helpers
 
             foreach (DstAddressDTO address in await _poolRepository.Addresses(modelId))
             {
-                await CommunicationHelper.BlockActivity(address, activeBlocks);
+                try
+                {
+                    await CommunicationHelper.BlockActivity(address, activeBlocks);
+                }
+                catch
+                {
+                    
+                }
             }
         }
 

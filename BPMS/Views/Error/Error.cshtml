@@ -1,0 +1,24 @@
+@model string
+@{
+    ViewData["Title"] = "Chyba";
+}
+
+<div id="PageNavId" class="page-navbar">
+    <div class="d-flex justify-content-between px-4 page-navbar-content">
+        <div class="my-auto">   
+            <button type="button" class="btn my-auto" onclick="history.back()">
+                <i class="fas fa-chevron-circle-left"></i>
+            </button>
+        </div>
+        <h1 class="my-auto text-font">Chyba</h1>
+        <div class="ms-5"></div>
+    </div>
+</div>
+<div id="PageContentId" class="d-flex justify-content-center pt-3">
+    <div>
+        <h1>@Model</h1>
+        <div class="d-flex justify-content-around mt-1">
+            <button class="butn btn-p err-btn-w" onclick="history.back()"><i class="fas fa-arrow-circle-left"></i> Zpět</button>
+        </div>
+    </div>
+</div>

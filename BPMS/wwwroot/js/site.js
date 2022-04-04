@@ -83,10 +83,17 @@ function ShowAlert(message, error = false)
     AlertTimeout = setTimeout(() => HideStart(alertDiv), error ? 6000 : 3000);
 }
 
-function ConnectionAlert()
+function ErrorAlert(result)
 {
     HideModal();
-    ShowAlert("Operaci se nepodařilo provést, zkontrolujte připojení k internetu.", true);
+    if (result.responseText)
+    {
+        ShowAlert(result.responseText, true);    
+    }
+    else
+    {
+        ShowAlert("Operaci se nepodařilo provést, zkontrolujte připojení k internetu.", true);
+    }
 }
 
 function HideStart(element)
@@ -180,11 +187,6 @@ function HandleRedirect()
     window.location.href = `/Account/SignIn?ReturnUrl=${encodeURIComponent(window.location.pathname)}`;
 }
 
-function HandleError(result, statusCode)
-{
-    console.log(result, statusCode);
-}
-
 function KeyDownHandler(event)
 {
     if (event.key == "Escape")
@@ -250,9 +252,9 @@ function ShowModal(contentId, url = null, targetId = null, remember = true, hide
                     succesCallback();
                 }
             })
-            .fail(() => 
+            .fail((result) => 
             {
-                ConnectionAlert();
+                ErrorAlert(result);
             });
         }
     }
@@ -349,7 +351,7 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
             successCallback(result);
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
         if (failCallback)
         {
@@ -357,7 +359,7 @@ function AjaxFormSubmit(event, targetId = null, hide = false, delay = false, cal
         }
         else
         {
-            ConnectionAlert();
+            ErrorAlert(result);
         }
     });        
 }
@@ -471,9 +473,9 @@ function GetAjaxRequest(url, targetId)
         target.innerHTML = result;
         ResizeTextAreas(target);
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     }); 
 }
 
@@ -511,9 +513,9 @@ function OverviewTransition(path)
         window.history.pushState({}, '', path.replace("Partial", ""));
         ActivateIcons();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -573,9 +575,9 @@ function DetailTransition(element, path, blocks = false, succesCallback = null, 
 
         ActivateIcons();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -635,9 +637,9 @@ function FilterChanges(event, path, blocks = false)
                 target.classList.add("filter-div-sel");
             }
         })
-        .fail(() => 
+        .fail((result) => 
         {
-            ConnectionAlert();
+            ErrorAlert(result);
         });
     }
 }
@@ -662,9 +664,9 @@ function ShowNotifications(event)
             div.classList.add("message-div-active");
         } 
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -686,9 +688,9 @@ function NotificationSeen(btn)
             div.classList.add("message-div-active");
         } 
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -720,9 +722,9 @@ function NotificationMark(btn)
             }
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -762,9 +764,9 @@ function NotifFilterChange(btn)
             messages.classList.add("message-div-active");
         }
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }
 
@@ -782,8 +784,8 @@ function NotificationRemove(btn)
     {
         parent.parentNode.remove();
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }

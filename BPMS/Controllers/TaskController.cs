@@ -33,8 +33,15 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_TaskOverview", await _taskFacade.Filter(dto));
+            try
+            {
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                return PartialView("Partial/_TaskOverview", await _taskFacade.Filter(dto));
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpGet]
@@ -46,11 +53,9 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> OverviewPartial()
         {
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_TaskOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Task", true)
-            });
+            Task<string> header = this.RenderViewAsync("Partial/_TaskOverviewHeader", true);
+            Task<string> filters = this.RenderViewAsync("Partial/_OverviewFilters", "Task", true);
+            return Ok(new { header = await header, filters = await filters });
         }
 
         [HttpGet]
@@ -62,12 +67,17 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> UserDetailPartial(Guid id)
         {
-            UserTaskDetailPartialDTO dto = await _taskFacade.UserTaskDetailPartial(id);
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_UserTaskDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_UserTaskDetailHeader", dto, true),
-            });
+                UserTaskDetailPartialDTO dto = await _taskFacade.UserTaskDetailPartial(id);
+                Task<string> detail = this.RenderViewAsync("Partial/_UserTaskDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_UserTaskDetailHeader", dto, true);
+                return Ok(new { detail = await detail, header = await header });
+            }
+            catch
+            {
+                return BadRequest("Úkol se nepodařilo najít.");
+            }
         }
 
         [HttpGet]
@@ -79,12 +89,17 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> ServiceDetailPartial(Guid id)
         {
-            ServiceTaskDetailPartialDTO dto = await _taskFacade.ServiceTaskDetailPartial(id);
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_ServiceTaskDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_ServiceTaskDetailHeader", dto, true),
-            });
+                ServiceTaskDetailPartialDTO dto = await _taskFacade.ServiceTaskDetailPartial(id);
+                Task<string> detail = this.RenderViewAsync("Partial/_ServiceTaskDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_ServiceTaskDetailHeader", dto, true);
+                return Ok(new { detail = await detail, header = await header });
+            }
+            catch
+            {
+                return BadRequest("Úkol se nepodařilo najít.");
+            }
         }
 
         [HttpPost]
@@ -102,8 +117,15 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> SolveUserTask(IFormCollection data)
         {
-            await _taskFacade.SolveTask(data, Request.Form.Files);
-            return Ok();
+            try
+            {
+                await _taskFacade.SolveTask(data, Request.Form.Files);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Úkol se nepodařilo vyřešit.");
+            }
         }
 
         [HttpPost]
@@ -116,7 +138,14 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> CallService(IFormCollection data)
         {
-            return PartialView("Partial/_ServiceTaskDetail", await _taskFacade.CallService(data, Request.Form.Files));
+            try
+            {
+                return PartialView("Partial/_ServiceTaskDetail", await _taskFacade.CallService(data, Request.Form.Files));
+            }
+            catch
+            {
+                return BadRequest("Volání webové služby selhalo.");
+            }
         }
 
         [HttpGet]
@@ -130,7 +159,14 @@ namespace BPMS.Controllers
         [Route("/Task/AddToArray/{taskDataId}/{type}")]
         public async Task<IActionResult> AddToArray(Guid taskDataId, DataTypeEnum type)
         {
-            return PartialView($"Partial/_TaskData{type}", await _taskFacade.AddToArray(taskDataId, type));
+            try
+            {
+                return PartialView($"Partial/_TaskData{type}", await _taskFacade.AddToArray(taskDataId, type));
+            }
+            catch
+            {
+                return BadRequest("Do pole se nepodařilo přidat další element.");
+            }
         }
 
 
@@ -138,8 +174,15 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, WorkflowKeeper")]
         public async Task<IActionResult> Resend(Guid id)
         {
-            await _taskFacade.Resend(id);
-            return Ok();
+            try
+            {
+                await _taskFacade.Resend(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Znovu odeslání zprávy selhalo.");
+            }
         }
     }
 }

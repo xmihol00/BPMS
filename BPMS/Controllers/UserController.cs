@@ -32,8 +32,15 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_UserOverview", await _userFacade.FilterUsers(dto));
+            try
+            {
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                return PartialView("Partial/_UserOverview", await _userFacade.FilterUsers(dto));
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpGet]
@@ -47,11 +54,9 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> OverviewPartial()
         {
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_UserOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "User", true)
-            });
+            Task<string> header = this.RenderViewAsync("Partial/_UserOverviewHeader", true);
+            Task<string> filters = this.RenderViewAsync("Partial/_OverviewFilters", "User", true);
+            return Ok(new { header = await header, filters = await filters });
         }
 
         [HttpGet]
@@ -65,26 +70,34 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            UserDetailPartialDTO dto = await _userFacade.DetailPartial(id);
-
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_UserDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_UserDetailHeader", dto, true),
-                activeBlocks = dto.ActiveBlocks
-            });
+                UserDetailPartialDTO dto = await _userFacade.DetailPartial(id);
+                Task<string> detail = this.RenderViewAsync("Partial/_UserDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_UserDetailHeader", dto, true);
+                return Ok(new { detail = await detail, header = await header, activeBlocks = dto.ActiveBlocks });
+            }
+            catch
+            {
+                return BadRequest("Uživatel nebyl nalezen.");
+            }
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(UserCreateEditDTO dto)
         {
-            UserInfoCardDTO infoCard = await _userFacade.Edit(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_UserDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_UserCard", (infoCard.SelectedUser, true), true),
-            });
+                UserInfoCardDTO infoCard = await _userFacade.Edit(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_UserDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_UserCard", (infoCard.SelectedUser, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Editace uživatele selhala.");
+            }
         }
 
         [HttpPost]
@@ -103,8 +116,15 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> PwdChange(UserPasswordChangeDTO dto)
         {
-            await _userFacade.ChangePassword(dto);
-            return Ok();
+            try
+            {
+                await _userFacade.ChangePassword(dto);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Změna hesla selhala.");
+            }
         }
     }
 }

@@ -40,18 +40,23 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> OverviewPartial()
         {
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_AgendaOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Agenda", true)
-            });
+            Task<string> header = this.RenderViewAsync("Partial/_AgendaOverviewHeader", true);
+            Task<string> filters = this.RenderViewAsync("Partial/_OverviewFilters", "Agenda", true);
+            return Ok(new { header = await header, filters = await filters });
         }
 
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_AgendaOverview", await _agendaFacade.Filter(dto));
+            try
+            {
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                return PartialView("Partial/_AgendaOverview", await _agendaFacade.Filter(dto));
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpGet]
@@ -63,14 +68,17 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            AgendaDetailPartialDTO dto = await _agendaFacade.DetailPartial(id);
-
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_AgendaDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_AgendaDetailHeader", dto, true),
-                activeBlocks = dto.ActiveBlocks
-            });
+                AgendaDetailPartialDTO dto = await _agendaFacade.DetailPartial(id);
+                Task<string> detail = this.RenderViewAsync("Partial/_AgendaDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_AgendaDetailHeader", dto, true);
+                return Ok(new { detail = await detail, header = await header, activeBlocks = dto.ActiveBlocks });
+            }
+            catch
+            {
+                return BadRequest("Agendu se nepodařilo nalézt.");
+            }
         }
 
         [HttpGet]
@@ -91,12 +99,17 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> Edit(AgendaEditDTO dto)
         {
-            AgendaInfoCardDTO infoCard = await _agendaFacade.Edit(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_AgendaDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_AgendaCard", (infoCard.SelectedAgenda, true), true),
-            });
+                AgendaInfoCardDTO infoCard = await _agendaFacade.Edit(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_AgendaDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_AgendaCard", (infoCard.SelectedAgenda, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Editace agendy selhala.");
+            }
         }
 
         [HttpGet]
@@ -110,7 +123,14 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddRole(RoleAddDTO dto)
         {
-            return PartialView("Partial/_AgendaRoles", await _agendaFacade.AddRole(dto));
+            try
+            {
+                return PartialView("Partial/_AgendaRoles", await _agendaFacade.AddRole(dto));
+            }
+            catch
+            {
+                return BadRequest("Přidání role do agendy selhalo.");
+            }
         }
 
         [HttpGet]
@@ -126,16 +146,30 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddUserRole(Guid userId, Guid agendaRoleId)
         {
-            await _agendaFacade.AddUserRole(userId, agendaRoleId);
-            return Ok();
+            try
+            {
+                await _agendaFacade.AddUserRole(userId, agendaRoleId);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Přiřazení řešitelské roli uživateli selhalo.");
+            }
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> RemoveAgendaRole(Guid id)
         {
-            await _agendaFacade.RemoveAgendaRole(id);
-            return Ok();
+            try
+            {
+                await _agendaFacade.RemoveAgendaRole(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Odebrání role z agendy selhalo.");
+            }
         }
 
         [HttpPost]
@@ -143,8 +177,15 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> RemoveUserRole(Guid userId, Guid agendaRoleId)
         {
-            await _agendaFacade.RemoveUserRole(userId, agendaRoleId);
-            return Ok();
+            try
+            {
+                await _agendaFacade.RemoveUserRole(userId, agendaRoleId);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Odebrání řešitelské role uživateli selhalo.");
+            }
         }
 
         [HttpGet]
@@ -158,7 +199,14 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> AddSystem(SystemAddDTO dto)
         {            
-            return PartialView("Partial/_AgendaSystems", await _agendaFacade.AddSystem(dto));
+            try
+            {
+                return PartialView("Partial/_AgendaSystems", await _agendaFacade.AddSystem(dto));
+            }
+            catch
+            {
+                return BadRequest("Přidání spolupracujícího systému do agendy selhalo.");
+            }
         }
 
         [HttpPost]
@@ -166,8 +214,15 @@ namespace BPMS.Controllers
         [Route("/Agenda/RemoveSystem/{agendaId}/{systemId}")]
         public async Task<IActionResult> RemoveSystem(Guid agendaId, Guid systemId)
         {    
-            await _agendaFacade.RemoveSystem(agendaId, systemId);
-            return Ok();
+            try
+            {
+                await _agendaFacade.RemoveSystem(agendaId, systemId);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Odebrání spolupracujícího systému z agendy selhalo.");
+            }
         }
 
 

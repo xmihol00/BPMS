@@ -34,8 +34,15 @@ namespace BPMS.Controllers
         [Route("/BlockModel/ToggleTaskMap/{blockId}/{attributeId}")]
         public async Task<IActionResult> ToggleTaskMap(Guid blockId, Guid attributeId)
         {
-            await _blockModelFacade.ToggleTaskMap(blockId, attributeId);
-            return Ok();
+            try
+            {
+                await _blockModelFacade.ToggleTaskMap(blockId, attributeId);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Namapování atributu úkolu selhalo.");
+            }
         }
 
         [HttpPost]
@@ -49,15 +56,29 @@ namespace BPMS.Controllers
         [Route("/BlockModel/ToggleServiceMap/{blockId}/{dataSchemaId}/{serviceTaskId}")]
         public async Task<IActionResult> ToggleServicekMap(Guid blockId, Guid dataSchemaId, Guid serviceTaskId)
         {
-            await _blockModelFacade.ToggleServiceMap(blockId, dataSchemaId, serviceTaskId);
-            return Ok();
+            try
+            {
+                await _blockModelFacade.ToggleServiceMap(blockId, dataSchemaId, serviceTaskId);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Namapování atributu služby selhalo.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(BlockModelEditDTO dto)
         {
-            await _blockModelFacade.Edit(dto);
-            return Ok();
+            try
+            {
+                await _blockModelFacade.Edit(dto);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Editace bloku selhala.");
+            }
         }
 
         [HttpPost]

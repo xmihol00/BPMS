@@ -42,8 +42,8 @@ function Deactive(buttons)
         }
         buttonDiv.innerHTML = `<button class="butn btn-s" onclick="ShowModal('ReactivateFormId')">Aktivovat</button>` + buttonDiv.innerHTML;
     })
-    .fail(() => 
+    .fail((result) => 
     {
-        ConnectionAlert();
+        ErrorAlert(result);
     });
 }

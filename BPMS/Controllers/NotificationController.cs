@@ -28,8 +28,15 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_NotificationAll", await _notificationFacade.Filter(dto));
+            try
+            {
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                return PartialView("Partial/_NotificationAll", await _notificationFacade.Filter(dto));
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpGet]
@@ -48,15 +55,29 @@ namespace BPMS.Controllers
         [Route("/Notification/Mark/{id}/{marked}")]
         public async Task<IActionResult> Mark(Guid id, bool marked)
         {
-            await _notificationFacade.Mark(id, marked);
-            return Ok();
+            try
+            {
+                await _notificationFacade.Mark(id, marked);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Nepodařilo se změnit označení u upozornění.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Remove(Guid id)
         {
-            await _notificationFacade.Remove(id);
-            return Ok();
+            try
+            {
+                await _notificationFacade.Remove(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Smazání upozornění selhalo.");
+            }
         }
     }
 }

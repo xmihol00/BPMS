@@ -30,8 +30,15 @@ namespace BPMS.Controllers
         [HttpPost]
         public async Task<IActionResult> Filter(FilterDTO dto)
         {
-            CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
-            return PartialView("Partial/_ModelOverview", await _modelFacade.Filter(dto));
+            try
+            {
+                CookieHelper.SetCookie(dto.Filter, dto.Removed, HttpContext.Response);
+                return PartialView("Partial/_ModelOverview", await _modelFacade.Filter(dto));
+            }
+            catch
+            {
+                return BadRequest("Filtrování selhalo.");
+            }
         }
 
         [HttpGet]
@@ -44,11 +51,9 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> OverviewPartial()
         {
-            return Ok(new
-            {
-                header = await this.RenderViewAsync("Partial/_ModelOverviewHeader", true),
-                filters = await this.RenderViewAsync("Partial/_OverviewFilters", "Model", true)
-            });
+            Task<string> header = this.RenderViewAsync("Partial/_ModelOverviewHeader", true);
+            Task<string> filters = this.RenderViewAsync("Partial/_OverviewFilters", "Model", true);
+            return Ok(new { header = await header, filters = await filters });
         }
 
         [HttpGet]
@@ -60,40 +65,65 @@ namespace BPMS.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailPartial(Guid id)
         {
-            ModelDetailPartialDTO dto = await _modelFacade.DetailPartial(id);
-            return Ok(new
+            try
             {
-                detail = await this.RenderViewAsync("Partial/_ModelDetail", dto, true),
-                header = await this.RenderViewAsync("Partial/_ModelDetailHeader", dto, true),
-                activePools = dto.ActivePools,
-                activeBlocks = dto.ActiveBlocks
-            });
+                ModelDetailPartialDTO dto = await _modelFacade.DetailPartial(id);
+                Task<string> detail = this.RenderViewAsync("Partial/_ModelDetail", dto, true);
+                Task<string> header = this.RenderViewAsync("Partial/_ModelDetailHeader", dto, true);
+                return Ok(new
+                {
+                    detail = await detail,
+                    header = await header,
+                    activePools = dto.ActivePools,
+                    activeBlocks = dto.ActiveBlocks
+                });
+            }
+            catch
+            {
+                return BadRequest("Model se nepodařilo nalézt.");
+            }
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, ModelKeeper")]
         public async Task<IActionResult> Edit(ModelEditDTO dto)
         {
-            ModelInfoCardDTO infoCard = await _modelFacade.Edit(dto);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_ModelDetailInfo", infoCard, true),
-                card = await this.RenderViewAsync("Partial/_ModelCard", (infoCard.SelectedModel, true), true),
-            });
+                ModelInfoCardDTO infoCard = await _modelFacade.Edit(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_ModelDetailInfo", infoCard, true);
+                Task<string> card = this.RenderViewAsync("Partial/_ModelCard", (infoCard.SelectedModel, true), true);
+                return Ok(new { info = await info, card = await card });
+            }
+            catch
+            {
+                return BadRequest("Editace modelu selhala.");
+            }
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> Share(Guid id)
         {
-            ModelDetailDTO detail = await _modelFacade.Share(id);
-            return Ok(new
+            try
             {
-                info = await this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true),
-                model = await this.RenderViewAsync("Partial/_ModelSvg", detail.SVG, true),
-                card = await this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true),
-                header = await this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true)
-            });
+                ModelDetailDTO detail = await _modelFacade.Share(id);
+                Task<string> info = this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true);
+                Task<string> model = this.RenderViewAsync("Partial/_ModelSvg", detail.SVG, true);
+                Task<string> card = this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true);
+                Task<string> header = this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true);
+                return Ok(new
+                {
+                    info = await info,
+                    model = await model,
+                    card = await card,
+                    header = await header
+                });
+            }
+            catch
+            {
+                return BadRequest("Sdílení modelu selhalo.");
+            }
         }
 
         [HttpGet]
@@ -107,19 +137,24 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, AgendaKeeper")]
         public async Task<IActionResult> Run(ModelRunDTO dto)
         {
-            (ModelDetailDTO? detail, Guid workflowId) = await _modelFacade.Run(dto);
-            if (detail != null)
+            try
             {
-                return Ok(new
+                (ModelDetailDTO? detail, Guid workflowId) = await _modelFacade.Run(dto);
+                Task<string> info = this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true);
+                Task<string> card = this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true);
+                Task<string> header = this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true);
+                if (detail != null)
                 {
-                    info = await this.RenderViewAsync("Partial/_ModelDetailInfo", detail, true),
-                    card = await this.RenderViewAsync("Partial/_ModelCard", (detail.SelectedModel, true), true),
-                    header = await this.RenderViewAsync("Partial/_ModelDetailHeader", detail, true)
-                }); 
+                    return Ok(new { info = await info, card = await card, header = await header }); 
+                }
+                else
+                {
+                    return Ok(workflowId);
+                }
             }
-            else
+            catch
             {
-                return Ok(workflowId);
+                return BadRequest("Spuštění workflow selhalo.");
             }
         }
 
@@ -142,8 +177,15 @@ namespace BPMS.Controllers
         [Authorize(Roles = "Admin, ModelKeeper")]
         public async Task<IActionResult> LaneEdit(LaneEditDTO dto)
         {
-            await _modelFacade.LaneEdit(dto);
-            return Ok();
+            try
+            {
+                await _modelFacade.LaneEdit(dto);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Editace dráhy modelu selhala.");
+            }
         }
     }
 }
