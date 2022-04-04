@@ -91,7 +91,7 @@ namespace BPMS_BL.Facades
 
             if (entity.Encryption != dto.Encryption)
             {
-                address.Encryption = dto.Encryption > entity.Encryption ? dto.Encryption : entity.Encryption;
+                address.Encryption = entity.Encryption;
                 if (!await CommunicationHelper.ChangeEncryption(address, dto.Encryption, entity.ForeignEncryption))
                 {
                     throw new Exception();
