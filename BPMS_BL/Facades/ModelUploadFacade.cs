@@ -56,19 +56,18 @@ namespace BPMS_BL.Facades
             XDocument bpmn = new XDocument();
             if (dto.BPMN is not null)
             {
-                bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()), LoadOptions.PreserveWhitespace);   
-                /*try
-                }
+                try
                 {
+                    bpmn = XDocument.Load(new StreamReader(dto.BPMN.OpenReadStream()), LoadOptions.PreserveWhitespace);   
+                }
                 catch
                 {
-                    return ("BPMN soubor je ve špatném formátu.", null);    
-                }*/
+                    throw new ParsingException("BPMN soubor je ve špatném formátu.");
+                }
             }
             else
             {
-                //return ("BPMN soubor nebyl nahrán.", null);
-                throw new NotImplementedException();
+                throw new ParsingException("BPMN soubor nebyl nahrán.");
             }
 
             if (dto.SVG is not null)
@@ -79,42 +78,40 @@ namespace BPMS_BL.Facades
                 }
                 catch
                 {
-                    //return ("SVG soubor je ve špatném formátu.", null);
-                    throw new NotImplementedException();
+                    throw new ParsingException("SVG soubor je ve špatném formátu.");
                 }
             }
             else
             {
-                //return ("SVG soubor nebyl nahrán.", null);
-                throw new NotImplementedException();
+                throw new ParsingException("SVG soubor nebyl nahrán.");
             }
 
-                (XElement? collaboration, IEnumerable<XElement> processes) = ParseRoot(bpmn.Root);
+            (XElement? collaboration, IEnumerable<XElement> processes) = ParseRoot(bpmn.Root);
 
-                ParseCollaboration(collaboration);
+            ParseCollaboration(collaboration);
 
-                foreach (XElement process in processes)
+            foreach (XElement process in processes)
+            {
+                (IEnumerable<XElement> blocks, IEnumerable<XElement> flows) = ParseProcess(process);
+                foreach (XElement block in blocks)
                 {
-                    (IEnumerable<XElement> blocks, IEnumerable<XElement> flows) = ParseProcess(process);
-                    foreach (XElement block in blocks)
-                    {
-                        ParseBlock(block);
-                    }
-
-                    foreach (XElement flow in flows)
-                    {
-                        ParseFlow(flow);
-                    }
-
-                    await ParseLane(process, dto.AgendaId);
+                    ParseBlock(block);
                 }
 
-                foreach (var messageFlow in _messageFlows)
+                foreach (XElement flow in flows)
                 {
-                    ParseMessageFlow(messageFlow.source, messageFlow.destination);
+                    ParseFlow(flow);
                 }
-                
-                CheckExecutability();
+
+                await ParseLane(process, dto.AgendaId);
+            }
+
+            foreach (var messageFlow in _messageFlows)
+            {
+                ParseMessageFlow(messageFlow.source, messageFlow.destination);
+            }
+            
+            CheckExecutability();
 
             _svg.Root?.Attribute("width")?.Remove();
             _svg.Root?.Attribute("height")?.Remove();

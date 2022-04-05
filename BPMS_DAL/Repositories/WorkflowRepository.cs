@@ -119,6 +119,7 @@ namespace BPMS_DAL.Repositories
                              ExpectedEnd = x.ExpectedEnd,
                              AdministratorEmail = x.Administrator.Email,
                              AdministratorName = $"{x.Administrator.Title} {x.Administrator.Name} {x.Administrator.Surname}",
+                             End = x.End
                          })
                          .FirstAsync(x => x.Id == id);
         }

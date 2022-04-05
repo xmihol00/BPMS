@@ -12,5 +12,6 @@ namespace BPMS_DTOs.Workflow
     {
         public string AdministratorName { get; set; } = string.Empty;
         public string AdministratorEmail { get; set; } = string.Empty;
+        public DateTime End { get; set; }
     }
 }

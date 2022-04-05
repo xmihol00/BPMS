@@ -21,13 +21,20 @@
         </div>
     </div>
     <div class="col-12 col-md-6 col-lg-4">
+        @if (Model.State == WorkflowStateEnum.Finished)
+        {
+            <h4 class="text-center text-font my-1">Datum dokončení</h4>
+            <div class="d-flex justify-content-center mb-2">
+                <b class="text-success">@Model.End.ToLongDateString()</b>
+            </div>
+        }
         <h4 class="text-center text-font my-1">Očekávané datum dokončení</h4>
         <div class="d-flex justify-content-center">
-            @if (Model.ExpectedEnd < DateTime.Now)
+            @if (Model.ExpectedEnd < DateTime.Now && Model.State < WorkflowStateEnum.Finished)
             {
                 <b class="text-danger">@Model.ExpectedEnd.ToLongDateString()</b>
             }
-            else if (Model.ExpectedEnd < DateTime.Now.AddDays(3))
+            else if (Model.ExpectedEnd < DateTime.Now.AddDays(3) && Model.State < WorkflowStateEnum.Finished)
             {
                 <b class="text-alert">@Model.ExpectedEnd.ToLongDateString()</b>
             }

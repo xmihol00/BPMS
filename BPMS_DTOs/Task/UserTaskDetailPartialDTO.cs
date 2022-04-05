@@ -18,6 +18,7 @@ namespace BPMS_DTOs.Task
         public string AgendaName { get; set; } = string.Empty;
         public TaskPriorityEnum Priority { get; set; }
         public DateTime SolveDate { get; set; }
+        public DateTime SolvedDate { get; set; }
         public IEnumerable<IGrouping<string, TaskDataDTO>> InputData { get; set; } = new List<IGrouping<string, TaskDataDTO>>();
         public IEnumerable<IGrouping<string, TaskDataDTO>> OutputData { get; set; } = new List<IGrouping<string, TaskDataDTO>>();
         public IEnumerable<IGrouping<string, TaskDataDTO>> InputServiceData { get; set; } = new List<IGrouping<string, TaskDataDTO>>();

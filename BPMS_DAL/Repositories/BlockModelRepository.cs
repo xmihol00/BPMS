@@ -61,6 +61,7 @@ namespace BPMS_DAL.Repositories
                          .Where(x => x.AgendaId == agendaId)
                          .SelectMany(x => x.UserRoles)
                          .Select(x => x.User)
+                         .Distinct()
                          .Select(x => new UserIdNameDTO
                          {
                              Id = x.Id,

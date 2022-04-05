@@ -80,6 +80,11 @@ namespace BPMS_BL.Facades
 
         public async Task<SystemInfoCardDTO> Edit(SystemEditDTO dto)
         {
+            if (dto.URL.Last() != '/')
+            {
+                dto.URL += '/';
+            }
+            
             SystemEntity entity = await _systemRepository.BareAsync(dto.Id);
             DstAddressDTO address = new DstAddressDTO
             {
@@ -198,6 +203,11 @@ namespace BPMS_BL.Facades
 
         public async Task<Guid> Create(SystemCreateDTO dto)
         {
+            if (dto.URL.Last() != '/')
+            {
+                dto.URL += '/';
+            }
+
             UserEntity user = await _userRepository.Bare();
             SystemEntity entity = new SystemEntity
             {

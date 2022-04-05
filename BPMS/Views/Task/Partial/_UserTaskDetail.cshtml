@@ -15,6 +15,10 @@
         <div class="d-flex justify-content-center">
             <div class="me-2 text-right">
                 Dokončit do:<br>
+                @if (Model.State == BlockWorkflowStateEnum.Solved)
+                {
+                    <text>Dokončeno:</text><br>
+                }
                 Typ úkolu:
             </div>
             <b class="d-block">
@@ -30,6 +34,10 @@
                 {
                     <b>@Model.SolveDate.ToLongDateString()</b>
                 }<br>
+                @if (Model.State == BlockWorkflowStateEnum.Solved)
+                {
+                    <b class="text-success">@Model.SolvedDate.ToLongDateString()</b><br>
+                }
                 @TaskTypeEnum.UserTask.ToLabel()
             </b>
         </div>

@@ -339,7 +339,8 @@ namespace BPMS_DAL.Repositories
                                  WorkflowName = x.Workflow.Name,
                                  SolveDate = x.SolveDate,
                                  TaskName = x.BlockModel.Name,
-                                 State = x.State
+                                 State = x.State,
+                                 SolvedDate = x.SolvedDate
                              })
                              .FirstAsync(x => x.Id == id);
         }
