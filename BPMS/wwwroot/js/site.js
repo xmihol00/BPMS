@@ -789,3 +789,8 @@ function NotificationRemove(btn)
         ErrorAlert(result);
     });
 }
+
+function ModelRedirect(id)
+{
+    window.location.href = `/Model/Detail/${id}`;
+}

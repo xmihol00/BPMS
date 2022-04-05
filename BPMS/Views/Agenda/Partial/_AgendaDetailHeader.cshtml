@@ -23,8 +23,8 @@
 </div>
 @if (show)
 {
-    <form id="UploadModelFormId" class="mx-4 mt-4 mb-3 d-none" method="POST" action="/ModelUpload/Upload" enctype="multipart/form-data"
-        oninput="InputValidator(this)">
+    <form id="UploadModelFormId" class="mx-4 mt-4 mb-3 d-none" action="/ModelUpload/Upload" oninput="InputValidator(this)"
+        onsubmit="AjaxFormSubmit(event, null, true, false, null, ModelRedirect)" >
         <input id="AgendaIdId" type="hidden" name="AgendaId" value="@Model.Id">
         <div class="d-flex justify-content-between align-content-center py-2 px-3 shadow-box mb-3 bg-ddd">
             <h2 class="mb-0">Nahrání modelu</h2>

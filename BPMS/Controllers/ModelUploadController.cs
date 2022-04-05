@@ -20,7 +20,18 @@ namespace BPMS.Controllers
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Upload(ModelCreateDTO dto)
         {
-            return Redirect($"/Model/Detail/{await _modelUploadFacade.Upload(dto)}");
+            try
+            {
+                return Ok(await _modelUploadFacade.Upload(dto));
+            }
+            catch (ParsingException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch
+            {
+                return BadRequest("Model se nepodařilo nahrát.");
+            }
         }
     }
 }
