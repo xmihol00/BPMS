@@ -77,31 +77,25 @@ namespace BPMS_BL.Facades
 
         public async Task RemoveSchema(Guid id)
         {
-            List<Guid?> removedIds = new List<Guid?> () { id };
+            List<DataSchemaEntity> removed = new List<DataSchemaEntity> () { await _dataSchemaRepository.ForRemoval(id) };
             foreach (DataSchemaEntity schema in await _dataSchemaRepository.SchemasForRemoval(id))
             {
-                if (removedIds.Contains(schema.ParentId))
+                if (removed.Any(x => x.Id == schema.ParentId))
                 {
-                    removedIds.Add(schema.Id);
-                    if (schema.Data.Count == 0)
-                    {
-                        _dataSchemaRepository.Remove(schema);
-                    }
-                    else
-                    {
-                        schema.Disabled = true;
-                    }
+                    removed.Add(schema);
                 }
             }
 
-            DataSchemaEntity topSchema = await _dataSchemaRepository.ForRemoval(id);
-            if (topSchema.Data.Count == 0)
+            foreach (DataSchemaEntity schema in removed)
             {
-                _dataSchemaRepository.Remove(topSchema);
-            }
-            else
-            {
-                topSchema.Disabled = true;
+                if (schema.Data.Count == 0)
+                {
+                    _dataSchemaRepository.Remove(schema);
+                }
+                else
+                {
+                    schema.Disabled = true;
+                }
             }
 
             await _dataSchemaRepository.Save();
