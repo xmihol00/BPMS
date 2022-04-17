@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_06t9n11" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="9.0.1">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_06t9n11" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="9.0.3">
   <bpmn:collaboration id="Collaboration_0ooqx81">
-    <bpmn:participant id="Participant_0q8s1pa" name="bazoš" processRef="Process_1b3gtyd" />
+    <bpmn:participant id="Participant_0q8s1pa" name="Bazén" processRef="Process_1b3gtyd" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1b3gtyd" isExecutable="false">
-    <bpmn:startEvent id="StartEvent_171t29r" name="start">
+    <bpmn:startEvent id="StartEvent_171t29r" name="Start">
       <bpmn:outgoing>Flow_1kqr4v4</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="Activity_0pa7mv2" name="U1">
@@ -27,7 +27,7 @@
       <bpmn:incoming>Flow_1cm6t34</bpmn:incoming>
       <bpmn:outgoing>Flow_0sr532y</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:endEvent id="Event_11ghl94" name="cíl">
+    <bpmn:endEvent id="Event_11ghl94" name="Cíl">
       <bpmn:incoming>Flow_0sr532y</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1kqr4v4" sourceRef="StartEvent_171t29r" targetRef="Activity_0pa7mv2" />
@@ -70,7 +70,7 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_171t29r">
         <dc:Bounds x="202" y="192" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="209" y="235" width="22" height="14" />
+          <dc:Bounds x="208" y="235" width="24" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0sjzikd_di" bpmnElement="Activity_0pa7mv2">
@@ -95,7 +95,7 @@
       <bpmndi:BPMNShape id="Event_11ghl94_di" bpmnElement="Event_11ghl94">
         <dc:Bounds x="1092" y="192" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1105" y="235" width="11" height="14" />
+          <dc:Bounds x="1104" y="235" width="14" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPMS_Common", "BPMS_Common\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPMS_DTOs", "BPMS_DTOs\BPMS_DTOs.csproj", "{1278B35E-DF25-4F2E-86EE-51C19194ED77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BPMS_Tests", "BPMS_Tests\BPMS_Tests.csproj", "{2389C35E-DF25-4F2E-86EE-51C19112ED77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -54,7 +54,7 @@ namespace BPMS_BL.Facades
         public async Task<Guid> Upload(ModelCreateDTO dto)
         {
             XDocument bpmn = new XDocument();
-            if (dto.BPMN is not null)
+            if (dto.BPMN != null)
             {
                 try
                 {
@@ -70,7 +70,7 @@ namespace BPMS_BL.Facades
                 throw new ParsingException("BPMN soubor nebyl nahrán.");
             }
 
-            if (dto.SVG is not null)
+            if (dto.SVG != null)
             {
                 try
                 {
@@ -145,9 +145,16 @@ namespace BPMS_BL.Facades
 
             if (_model.State == ModelStateEnum.Executable)
             {
-                XElement svgPool = _svg.Descendants().First(x => x.Attribute("id")?.Value == _currentPool.Id.ToString());
-                XAttribute attribute = svgPool.Attribute("class");
-                attribute.SetValue("djs-group bpmn-pool bpmn-this-sys");
+                try
+                {
+                    XElement svgPool = _svg.Descendants().First(x => x.Attribute("id")?.Value == _currentPool.Id.ToString());
+                    XAttribute attribute = svgPool.Attribute("class");
+                    attribute.SetValue("djs-group bpmn-pool bpmn-this-sys");
+                }
+                catch
+                {
+                    throw new ParsingException("Model obsahuje elementy mimo element 'Pool'.");
+                }
             }
             _model.Name = dto.Name;
             _model.SVG = _svg.ToString(SaveOptions.DisableFormatting);
@@ -231,10 +238,10 @@ namespace BPMS_BL.Facades
                 {
                     LaneEntity lane = new LaneEntity();
                     lane.PoolId = _currentPool.Id;
-                    lane.Name = xLane.Attribute("name").Value;
+                    lane.Name = xLane.Attribute("name")?.Value;
                     if (lane.Name == null)
                     {
-                        throw new ParsingException("Nepojmenovaná dráha.");
+                        throw new ParsingException("Model obsahuje nepojmenovanou dráhu.");
                     }
                     await RoleHelper.AssignRole(lane, agendaId, _currentPool.Name, _agendaRepository, _solvingRoleRepository, _agendaRoleRepository);
 
@@ -266,7 +273,7 @@ namespace BPMS_BL.Facades
                 pool.Name = element.Attribute("name")?.Value;
                 if (pool.Name == null)
                 {
-                    throw new ParsingException("Nepojmenovaný bazén.");
+                    throw new ParsingException("Model obsahuje nepojmenovaný bazén.");
                 }
                 ChangeSvg(element.Attribute("id")?.Value, pool.Id, "bpmn-pool bpmn-not-config", true);
                 _poolsDict[element.Attribute("processRef")?.Value] = pool;
@@ -302,6 +309,10 @@ namespace BPMS_BL.Facades
                     {
                         throw new ParsingException("Blok typu 'Start Event' musí mít právě jeden odchozí řídící tok a žadné jiné.");
                     }
+                    if (block.Elements().Any(x => x.Name.LocalName.Contains("Definition")))
+                    {
+                        throw new ParsingException("Nepodporaovaný BPMN prvek.");
+                    }
                     blockModel = new StartEventModelEntity(_currentPool);
                     _startEvents = _startEvents.Append(blockModel);
                     break;
@@ -310,6 +321,10 @@ namespace BPMS_BL.Facades
                     if (!ParseSingleIncomingBlock(block))
                     {
                         throw new ParsingException("Blok typu 'End Event' musí mít právě jeden příchozí řídící tok a žadné jiné.");
+                    }
+                    if (block.Elements().Any(x => x.Name.LocalName.Contains("Definition")))
+                    {
+                        throw new ParsingException("Nepodporaovaný BPMN prvek.");
                     }
                     blockModel = new EndEventModelEntity(_currentPool);
                     break;
@@ -396,7 +411,7 @@ namespace BPMS_BL.Facades
             blockModel.Name = block.Attribute("name")?.Value;
             if (blockModel.Name == null)
             {
-                throw new ParsingException("Nepojmenovaný blok.");
+                throw new ParsingException("Model obsahuje nepojmenovaný blok.");
             }
             string? id = block.Attribute("id")?.Value;
             ChangeSvg(id, blockModel.Id, "bpmn-block");
@@ -471,7 +486,14 @@ namespace BPMS_BL.Facades
         }
 
         private void CheckExecutability()
-        {
+        {   
+            if (_blocksDict.Any(x => x.Value is ISendMessageEventModelEntity && (x.Value as ISendMessageEventModelEntity).RecieverId == Guid.Empty) ||
+                !_blocksDict.Where(x => x.Value is IRecieveMessageEventModelEntity)
+                            .All(x => _blocksDict.Any(y => y.Value is ISendMessageEventModelEntity && (y.Value as ISendMessageEventModelEntity).RecieverId == x.Value.Id)))
+            {
+                throw new ParsingException("Události typu 'Message Event' musí být spojeny elementem 'Message Flow'.");
+            }
+
             foreach (BlockModelEntity branch in _startEvents)
             {
                 if (CheckBranchExecutability(branch) != ExecutabilityStateEnum.Executable)
