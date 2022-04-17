@@ -139,7 +139,7 @@ namespace BPMS_BL.Facades
 
             if (!await CommunicationHelper.ActivateSystem(address))
             {
-                throw new Exception(); // TODO
+                throw new Exception();
             }
 
             await _systemRepository.Save();
@@ -168,7 +168,7 @@ namespace BPMS_BL.Facades
 
             if (!await CommunicationHelper.ReactivateSystem(address, request))
             {
-                throw new Exception(); // TODO
+                throw new Exception();
             }
 
             await _systemRepository.Save();
@@ -189,7 +189,7 @@ namespace BPMS_BL.Facades
 
             if (!await CommunicationHelper.DeactivateSystem(address))
             {
-                throw new Exception(); // TODO
+                throw new Exception();
             }
 
             await _systemRepository.Save();
@@ -239,7 +239,7 @@ namespace BPMS_BL.Facades
 
             if (!await CommunicationHelper.CreateSystem(address, entity))
             {
-                throw new Exception(); // TODO
+                throw new Exception();
             }
 
             entity.Name = dto.Name;

@@ -397,7 +397,6 @@ namespace BPMS_BL.Facades
                         await CreateOutputDataSchema(name, DataTypeEnum.ArrayBool, parentId, array);
                         break;
 
-                    // TODO
                     /*case JTokenType.Object: 
                         await ParseJObject(property.Value.Children(), await CreateOutputDataSchema(null, DataTypeEnum.ArrayObject, parentId, array), true);
                         break;

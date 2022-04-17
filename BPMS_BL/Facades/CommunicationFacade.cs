@@ -560,7 +560,7 @@ namespace BPMS_BL.Facades
 
             if (model.State != ModelStateEnum.Waiting)
             {
-                throw new Exception(); // TODO
+                throw new Exception();
             }
 
             return await CreateResult();

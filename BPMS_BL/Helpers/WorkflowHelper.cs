@@ -834,7 +834,6 @@ namespace BPMS_BL.Helpers
                             break;
 
                         case JTokenType.Array:
-                            // TODO
                             continue;
                     }
                 }
@@ -884,7 +883,7 @@ namespace BPMS_BL.Helpers
 
                 if (node.Data == null && node.Compulsory && node.Type != DataTypeEnum.Object)
                 {
-                    throw new Exception(); // TODO
+                    throw new Exception();
                 }
             }
 

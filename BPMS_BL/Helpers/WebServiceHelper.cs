@@ -337,11 +337,6 @@ namespace BPMS_BL.Helpers
                     case DataTypeEnum.String:
                         _builder.Append($"<{name}>{schema.Data}</{name}>");
                         break;
-                    
-                    //case DataTypeEnum.ArrayObject:
-                    //case DataTypeEnum.ArrayArray:
-                        // TODO
-                        //break;
                 }
             }
         }
