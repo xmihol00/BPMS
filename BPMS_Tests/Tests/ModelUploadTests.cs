@@ -25,7 +25,7 @@ namespace BPMS_Tests.Tests
                                             new AgendaRoleRepository(context), new FilterRepository(context));
         }
 
-        /*[Fact]
+        [Fact]
         public async Task CorrectUpload1()
         {
             ModelCreateDTO dto = ModelCreateDTOFactory.Create(Guid.NewGuid(), "test1", "test1", "single_message.bpmn", "single_message.svg");
@@ -119,6 +119,16 @@ namespace BPMS_Tests.Tests
         public async Task CorrectUpload10()
         {
             ModelCreateDTO dto = ModelCreateDTOFactory.Create(Guid.NewGuid(), "test10", "test10", "message_and_signal.bpmn", "message_and_signal.svg");
+            Guid result = await _facade.Upload(dto);
+            
+            Assert.NotEqual(result, Guid.Empty);
+            Assert.True(await _modelRepository.Any(result));
+        }
+
+        [Fact]
+        public async Task CorrectUpload11()
+        {
+            ModelCreateDTO dto = ModelCreateDTOFactory.Create(Guid.NewGuid(), "test11", "test11", "user_testing.bpmn", "user_testing.svg");
             Guid result = await _facade.Upload(dto);
             
             Assert.NotEqual(result, Guid.Empty);
@@ -380,6 +390,6 @@ namespace BPMS_Tests.Tests
             }
             
             Assert.True(false);
-        }*/
+        }
     }
 }
