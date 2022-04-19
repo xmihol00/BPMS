@@ -32,24 +32,24 @@ namespace BPMS_BL.Helpers
             _url = new Uri(service.URL);
         }
 
-        public string GenerateRequest()
+        public async Task<string> GenerateRequest()
         {
             switch (_service.HttpMethod)
             {
                 case HttpMethodEnum.GET:
-                    return CreateGetRequest();
+                    return await CreateGetRequest();
                 
                 case HttpMethodEnum.POST:
-                    return CreateBodyRequest("POST ");
+                    return await CreateBodyRequest("POST ");
                 
                 case HttpMethodEnum.PATCH:
-                    return CreateBodyRequest("PATCH ");
+                    return await CreateBodyRequest("PATCH ");
                 
                 case HttpMethodEnum.PUT:
-                    return CreateBodyRequest("PUT ");
+                    return await CreateBodyRequest("PUT ");
                 
                 case HttpMethodEnum.DELETE:
-                    return CreateBodyRequest("DELETE ");
+                    return await CreateBodyRequest("DELETE ");
 
                 default:
                     throw new NotImplementedException();
@@ -80,7 +80,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private string CreateGetRequest()
+        private async Task<string> CreateGetRequest()
         {
             if (_service.Serialization == SerializationEnum.Replace)
             {
@@ -89,8 +89,12 @@ namespace BPMS_BL.Helpers
                 Uri url = new Uri(_service.URL);
                 _builder.Append(url.PathAndQuery);
                 _builder.Append(" HTTP/1.1\r\nHost: ");
-                _builder.Append(url.DnsSafeHost);
-                GenerateHeaders();
+                _builder.Append(url.Host);
+                if (!_url.IsDefaultPort)
+                {
+                    _builder.Append(":" + _url.Port);
+                }
+                await GenerateHeaders();
                 _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n");
                 return _builder.ToString();
             }
@@ -100,14 +104,18 @@ namespace BPMS_BL.Helpers
                 result += SerilizeData(true);
                 _builder.Clear();
                 _builder.Append(" HTTP/1.1\r\nHost: ");
-                _builder.Append(_url.DnsSafeHost);
+                _builder.Append(_url.Host);
+                if (!_url.IsDefaultPort)
+                {
+                    _builder.Append(":" + _url.Port);
+                }
                 _builder.Append("\r\nContent-Type: ");
                 _builder.Append(_service.Serialization.ToMIME());
                 return result + _builder.ToString();
             }
         }
 
-        private string CreateBodyRequest(string method)
+        private async Task<string> CreateBodyRequest(string method)
         {
             _builder.Append(method);
             if (_service.Serialization == SerializationEnum.Replace)
@@ -116,8 +124,12 @@ namespace BPMS_BL.Helpers
                 Uri url = new Uri(_service.URL);
                 _builder.Append(url.PathAndQuery);
                 _builder.Append(" HTTP/1.1\r\nHost: ");
-                _builder.Append(url.DnsSafeHost);
-                GenerateHeaders();
+                _builder.Append(url.Host);
+                if (!_url.IsDefaultPort)
+                {
+                    _builder.Append(":" + _url.Port);
+                }
+                await GenerateHeaders();
                 _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
                 return _builder.ToString();
             }
@@ -125,10 +137,14 @@ namespace BPMS_BL.Helpers
             {
                 _builder.Append(_url.AbsolutePath);
                 _builder.Append(" HTTP/1.1\r\nHost: ");
-                _builder.Append(_url.DnsSafeHost);
+                _builder.Append(_url.Host);
+                if (!_url.IsDefaultPort)
+                {
+                    _builder.Append(":" + _url.Port);
+                }
                 _builder.Append("\r\nContent-Type: ");
                 _builder.Append(_service.Serialization.ToMIME());
-                GenerateHeaders();
+                await GenerateHeaders();
                 _builder.Append("\r\nAccept: application/json, text/xml, application/xml\r\n\r\n");
                 string header = _builder.ToString();
 
@@ -137,7 +153,7 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private void GenerateHeaders()
+        private async Task GenerateHeaders()
         {
             foreach(HeaderRequestDTO header in _service.Headers)
             {
@@ -146,18 +162,27 @@ namespace BPMS_BL.Helpers
                 _builder.Append(": ");
                 _builder.Append(header.Value);
             }
+
+            if (_service.AuthType == ServiceAuthEnum.Basic)
+            {
+                _builder.Append($"\r\nAuthorization: Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(await SymetricCryptoHelper.DecryptSecret(_service.AppId) + ":" + await SymetricCryptoHelper.DecryptSecret(_service.AppSecret)))}");
+            }
+            else if (_service.AuthType == ServiceAuthEnum.Bearer)
+            {
+                _builder.Append($"\r\nAuthorization: Bearer {Convert.ToBase64String(Encoding.UTF8.GetBytes(await SymetricCryptoHelper.DecryptSecret(_service.AppSecret)))}");
+            }
         }
 
-        private void GenerateHeaders(HttpRequestHeaders headers)
+        private async Task GenerateHeaders(HttpRequestHeaders headers)
         {
             headers.Add("Accept", "application/json, text/xml, application/xml");
             if (_service.AuthType == ServiceAuthEnum.Basic)
             {
-                headers.Add("Authorization", $"Basic {SymetricCryptoHelper.DecryptSecret(_service.AppId)}:{SymetricCryptoHelper.DecryptSecret(_service.AppSecret)}");
+                headers.Add("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(await SymetricCryptoHelper.DecryptSecret(_service.AppId) + ":" + await SymetricCryptoHelper.DecryptSecret(_service.AppSecret)))}");
             }
             else if (_service.AuthType == ServiceAuthEnum.Bearer)
             {
-                headers.Add("Authorization", $"Bearer {SymetricCryptoHelper.DecryptSecret(_service.AppSecret)}");
+                headers.Add("Authorization", $"Bearer {Convert.ToBase64String(Encoding.UTF8.GetBytes(await SymetricCryptoHelper.DecryptSecret(_service.AppSecret)))}");
             }
 
             foreach(HeaderRequestDTO header in _service.Headers)
@@ -182,7 +207,7 @@ namespace BPMS_BL.Helpers
             {
                 request.RequestUri = new Uri(_url.ToString() + _builder.ToString());
             }
-            GenerateHeaders(request.Headers);
+            await GenerateHeaders(request.Headers);
 
             return await CreateResult(await client.SendAsync(request));
         }
@@ -202,7 +227,7 @@ namespace BPMS_BL.Helpers
                     }
                 }
             };
-            GenerateHeaders(request.Headers);
+            await GenerateHeaders(request.Headers);
 
             return await CreateResult(await client.SendAsync(request));
         }

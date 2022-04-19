@@ -200,7 +200,7 @@ namespace BPMS_BL.Facades
             ServiceRequestDTO service = await _serviceRepository.ForRequest(Guid.Parse(data["ServiceId"].First()));
             service.Nodes = await CreateRequestTree(service.Id, data);
 
-            return new WebServiceHelper(service).GenerateRequest();
+            return await new WebServiceHelper(service).GenerateRequest();
         }
 
         public async Task<DataSchemaTestDTO> Test(Guid id)
