@@ -10,8 +10,8 @@
             else
             {
                 <span>@Model.FileName</span>
+                <i class="fas fa-download my-auto text-prim-edit pointer" onclick="window.location.href = '/Task/DownloadFile/@Model.Id'"></i>
             }
-            <i class="fas fa-download my-auto text-prim-edit pointer" onclick="window.location.href = '/Task/DownloadFile/@Model.Id'"></i>
         </div>
         <span class="input-label">@Model.Name</span>
     </label>

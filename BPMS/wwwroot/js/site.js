@@ -60,6 +60,10 @@ function ShowAlert(message, error = false)
     alertDiv.style.opacity = "1";
     
     let alert = alertDiv.firstChild;
+    if (message && message.length > 250)
+    {
+        message = "Operaci se nepodařilo provést, zkontrolujte připojení k internetu.";
+    }
     alert.firstChild.innerHTML = message;
 
     if (AlertTimeout != null)
