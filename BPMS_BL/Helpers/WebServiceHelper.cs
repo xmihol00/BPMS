@@ -277,16 +277,16 @@ namespace BPMS_BL.Helpers
                     }
                     break;
                 
-                case SerializationEnum.XMLMarks:
-                    SerilizeXMLMarks();
+                case SerializationEnum.XMLAttributes:
+                    SerilizeXMLAttributes();
                     if (indented)
                     {
                         return XDocument.Parse(_builder.ToString()).ToString();
                     }
                     break;
                 
-                case SerializationEnum.XMLAttributes:
-                    SerilizeXMLAttributes();
+                case SerializationEnum.XMLMarks:
+                    SerilizeXMLMarks();
                     if (indented)
                     {
                         return XDocument.Parse(_builder.ToString()).ToString();
@@ -318,21 +318,21 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private void SerilizeXMLAttributes()
+        private void SerilizeXMLMarks()
         {
             if (_service.Nodes.Count() == 1 && _service.Nodes.First().Type == DataTypeEnum.Object)
             {
-                SerilizeXMLAttributes(_service.Nodes);
+                SerilizeXMLMarks(_service.Nodes);
             }
             else
             {
                 _builder.Append("<root>");
-                SerilizeXMLAttributes(_service.Nodes);
+                SerilizeXMLMarks(_service.Nodes);
                 _builder.Append("</root>");
             }
         }
 
-        private void SerilizeXMLAttributes(IEnumerable<IDataSchemaData> data, bool array = false)
+        private void SerilizeXMLMarks(IEnumerable<IDataSchemaData> data, bool array = false)
         {
             foreach (DataSchemaDataDTO schema in data)
             {
@@ -353,7 +353,7 @@ namespace BPMS_BL.Helpers
                     case DataTypeEnum.ArrayBool:
                     case DataTypeEnum.Object:
                         _builder.Append($"<{name}>");
-                        SerilizeXMLAttributes(schema.Children as IEnumerable<IDataSchemaData>, schema.Type != DataTypeEnum.Object);
+                        SerilizeXMLMarks(schema.Children as IEnumerable<IDataSchemaData>, schema.Type != DataTypeEnum.Object);
                         _builder.Append($"</{name}>");            
                         break;
 
@@ -366,21 +366,21 @@ namespace BPMS_BL.Helpers
             }
         }
 
-        private void SerilizeXMLMarks()
+        private void SerilizeXMLAttributes()
         {
             if (_service.Nodes.Count() == 1 && _service.Nodes.First().Type == DataTypeEnum.Object)
             {
-                SerilizeXMLMarks(_service.Nodes, false);
+                SerilizeXMLAttributes(_service.Nodes, false);
             }
             else
             {
                 _builder.Append("<root ");
-                SerilizeXMLMarks(_service.Nodes, false);
+                SerilizeXMLAttributes(_service.Nodes, false);
                 _builder.Append("</root>");
             }
         }
 
-        private void SerilizeXMLMarks(IEnumerable<IDataSchemaData> data, bool array = false)
+        private void SerilizeXMLAttributes(IEnumerable<IDataSchemaData> data, bool array = false)
         {
             List<(string, DataSchemaDataDTO)> objects = new List<(string, DataSchemaDataDTO)>();
             foreach (DataSchemaDataDTO schema in data)
@@ -434,12 +434,12 @@ namespace BPMS_BL.Helpers
                 if (obj.schema.Type != DataTypeEnum.Object)
                 {
                     _builder.Append($"<{obj.name}>");
-                    SerilizeXMLMarks(obj.schema.Children as IEnumerable<IDataSchemaData>, true);
+                    SerilizeXMLAttributes(obj.schema.Children as IEnumerable<IDataSchemaData>, true);
                 }
                 else
                 {
                     _builder.Append($"<{obj.name} ");
-                    SerilizeXMLMarks(obj.schema.Children as IEnumerable<IDataSchemaData>, false);
+                    SerilizeXMLAttributes(obj.schema.Children as IEnumerable<IDataSchemaData>, false);
                 }
                 _builder.Append($"</{obj.name}>");
             }
