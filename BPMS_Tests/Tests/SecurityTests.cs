@@ -68,5 +68,78 @@ namespace BPMS_Tests.Tests
             string result = await SymetricCryptoHelper.DecryptMessage(encrypted, dto.PayloadKey ?? new byte[0], dto.PayloadIV ?? new byte[0]);
             Assert.Equal(message, result);
         }
+
+        [Fact]
+        public async Task EncryptSecret()
+        {
+            byte[] secret = await SymetricCryptoHelper.EncryptSecret("my secret");
+            Assert.NotNull(secret);
+        }
+
+        [Fact]
+        public async Task DecryptSecret()
+        {
+            AddressDTO dto = new AddressDTO();
+            string secret = "my secret";
+            byte[] encrypted = await SymetricCryptoHelper.EncryptSecret(secret);
+            string result = await SymetricCryptoHelper.DecryptSecret(encrypted);
+            Assert.Equal(secret, result);
+        }
+
+        [Fact]
+        public async Task EncryptAuth()
+        {
+            AddressDTO dto = new AddressDTO()
+            {
+                Encryption = EncryptionLevelEnum.Audit,
+                MessageId = Guid.NewGuid(),
+                Key = await SymetricCryptoHelper.NewKey(),
+                SystemId = Guid.NewGuid()
+            };
+            string auth = await SymetricCryptoHelper.AuthEncrypt(dto);
+            Assert.NotEmpty(auth);
+        }
+
+        [Fact]
+        public async Task DecryptAuth()
+        {
+            AddressDTO dto = new AddressDTO()
+            {
+                Encryption = EncryptionLevelEnum.Audit,
+                MessageId = Guid.NewGuid(),
+                Key = await SymetricCryptoHelper.NewKey(),
+                SystemId = Guid.NewGuid(),
+            };
+            
+            
+            string auth = await SymetricCryptoHelper.AuthEncrypt(dto);
+            AddressDTO? result = await SymetricCryptoHelper.AuthDecrypt<AddressDTO>(SymetricCryptoHelper.ExtractGuid(auth).Item2, dto.Key);
+            Assert.Equal(dto.MessageId, result?.MessageId);
+        }
+
+        [Fact]
+        public void HashMessage()
+        {
+            byte[] hash = SymetricCryptoHelper.HashMessage("test", Guid.NewGuid());
+            Assert.NotEmpty(hash);
+        }
+
+        [Fact]
+        public void HashCompareSame()
+        {
+            Guid id = Guid.NewGuid();
+            byte[] hash1 = SymetricCryptoHelper.HashMessage("test message", id);
+            byte[] hash2 = SymetricCryptoHelper.HashMessage("test message", id);
+            Assert.True(SymetricCryptoHelper.ArraysMatch(hash1, hash2));
+        }
+
+        [Fact]
+        public void HashCompareDifferent()
+        {
+            Guid id = Guid.NewGuid();
+            byte[] hash1 = SymetricCryptoHelper.HashMessage("test message1", id);
+            byte[] hash2 = SymetricCryptoHelper.HashMessage("test message2", id);
+            Assert.False(SymetricCryptoHelper.ArraysMatch(hash1, hash2));
+        }
     }
 }
