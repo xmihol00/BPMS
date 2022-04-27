@@ -265,7 +265,14 @@ namespace BPMS_BL.Helpers
                     SerilizeJson();
                     if (indented)
                     {
-                        return JObject.Parse(_builder.ToString()).ToString(Newtonsoft.Json.Formatting.Indented);
+                        if (_service.HttpMethod != HttpMethodEnum.GET)
+                        {
+                            return JObject.Parse(_builder.ToString()).ToString(Newtonsoft.Json.Formatting.Indented);
+                        }
+                        else
+                        {
+                            return _builder.ToString();
+                        }
                     }
                     break;
 
@@ -281,7 +288,14 @@ namespace BPMS_BL.Helpers
                     SerilizeXMLAttributes();
                     if (indented)
                     {
-                        return XDocument.Parse(_builder.ToString()).ToString();
+                        if (_service.HttpMethod != HttpMethodEnum.GET)
+                        {
+                            return XDocument.Parse(_builder.ToString()).ToString();
+                        }
+                        else
+                        {
+                            return _builder.ToString();
+                        }
                     }
                     break;
                 
@@ -289,7 +303,14 @@ namespace BPMS_BL.Helpers
                     SerilizeXMLMarks();
                     if (indented)
                     {
-                        return XDocument.Parse(_builder.ToString()).ToString();
+                        if (_service.HttpMethod != HttpMethodEnum.GET)
+                        {
+                            return XDocument.Parse(_builder.ToString()).ToString();
+                        }
+                        else
+                        {
+                            return _builder.ToString();
+                        }
                     }
                     break;
                 

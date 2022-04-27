@@ -255,17 +255,17 @@ namespace BPMS_Tests.Tests
         [Fact]
         public async Task Serilization21()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
-            Assert.Contains("<alias1>Hello</alias1>", result);
+            Assert.Contains("<root alias1=\"Hello\" alias2=\"25\" alias3=\"3šč*)!\">", result);
         }
 
         [Fact]
         public async Task Serilization22()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
@@ -275,27 +275,27 @@ namespace BPMS_Tests.Tests
         [Fact]
         public async Task Serilization23()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
-            Assert.Contains("\n  <object2>\n    <integer>42</integer>\n  </object2>", result);
+            Assert.Contains("\n  <object2 integer=\"42\"></object2>", result);
         }
         
         [Fact]
         public async Task Serilization24()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
-            Assert.Contains("\n  <obj3>\n    <boolean>true</boolean>\n    <double>85.36</double>\n  </obj3>", result);
+            Assert.Contains("\n  <obj3 boolean=\"true\" double=\"85.36\"></obj3>", result);
         }
         
         [Fact]
         public async Task Serilization25()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
@@ -305,7 +305,7 @@ namespace BPMS_Tests.Tests
         [Fact]
         public async Task Serilization26()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
@@ -315,7 +315,7 @@ namespace BPMS_Tests.Tests
         [Fact]
         public async Task Serilization27()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
@@ -325,7 +325,7 @@ namespace BPMS_Tests.Tests
         [Fact]
         public async Task Serilization28()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15/");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
@@ -335,11 +335,81 @@ namespace BPMS_Tests.Tests
         [Fact]
         public async Task Serilization29()
         {
-            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
             WebServiceHelper serviceHelper = new WebServiceHelper(service);
             string result = await serviceHelper.GenerateRequest();
 
-            Assert.Contains("\n  <objLevel1>\n    <objLevel2>\n      <num>255</num>\n    </objLevel2>\n  </objLevel1>", result);
+            Assert.Contains("\n  <objLevel1>\n    <objLevel2 num=\"255\"></objLevel2>\n  </objLevel1>", result);
+        }
+
+        [Fact]
+        public async Task Serilization30()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15:12345/Path");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("<objLevel1 ><objLevel2 num=\"255\" ></objLevel2></objLevel1>", result);
+        }
+
+        [Fact]
+        public async Task Serilization31()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15:12345/");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("<objLevel1><objLevel2><num>255</num></objLevel2></objLevel1>", result);
+        }
+
+        [Fact]
+        public async Task Serilization32()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.JSON, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15:12345/");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("\"objLevel1\":{\"objLevel2\":{\"num\":255}}", result);
+        }
+
+        [Fact]
+        public async Task Serilization33()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLAttributes, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15:12345/");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("<obj3 boolean=\"true\" double=\"85.36\" ></obj3>", result);
+        }
+
+        [Fact]
+        public async Task Serilization34()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.XMLMarks, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15:12345/");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("<obj3><boolean>true</boolean><double>85.36</double></obj3>", result);
+        }
+
+        [Fact]
+        public async Task Serilization35()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.JSON, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15:12345/");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("\"obj3\":{\"boolean\":true,\"double\":85.36}", result);
+        }
+
+        [Fact]
+        public async Task Serilization36()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.URL, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains("?alias1=Hello&alias2=25&alias3=3%c5%a1%c4%8d*)! ", result);
         }
     }
 }

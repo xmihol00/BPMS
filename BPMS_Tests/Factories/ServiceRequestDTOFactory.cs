@@ -46,6 +46,21 @@ namespace BPMS_Tests.Factories
                 },
                 new DataSchemaDataDTO
                 {
+                    Alias = "alias2",
+                    Compulsory = true,
+                    Data = "25",
+                    Name = "name",
+                    Type = DataTypeEnum.Number
+                },
+                new DataSchemaDataDTO
+                {
+                    Alias = "alias3",
+                    Compulsory = true,
+                    Data = "3šč*)!",
+                    Type = DataTypeEnum.String
+                },
+                new DataSchemaDataDTO
+                {
                     Name = "Object1",
                     Compulsory = true,
                     Type = DataTypeEnum.Object,
