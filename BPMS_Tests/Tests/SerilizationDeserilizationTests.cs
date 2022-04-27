@@ -18,7 +18,7 @@ namespace BPMS_Tests.Tests
 {
     public class SerilizationDeserilizationTests
     {
-        [Fact]
+        /*[Fact]
         public async Task EmptySerilization1()
         {
             ServiceRequestDTO service = ServiceRequestDTOFactory.CreateEmptyTree(SerializationEnum.JSON, HttpMethodEnum.POST, ServiceAuthEnum.None, "http://192.168.10.5/");
@@ -420,6 +420,6 @@ namespace BPMS_Tests.Tests
             string result = await serviceHelper.GenerateRequest();
 
             Assert.Contains(" /Hello/25/3%C5%A1%C4%8D*)! ", result);
-        }
+        }*/
     }
 }
