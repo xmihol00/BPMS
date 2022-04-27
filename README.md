@@ -1,5 +1,5 @@
 ## Autor
-jméno a příjmení: **David Mihola** \
+jméno: **David Mihola** \
 email: xmihol00@fit.vutbr.cz \
 datum: 11. 5. 2022
 

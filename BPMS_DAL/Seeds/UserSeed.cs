@@ -20,8 +20,7 @@ namespace BPMS_DAL.Seeds
                 Name = "Admin",
                 Surname = "System",
                 Title = "Ing.",
-                UserName = "admin",
-                Password = PasswordHelper.HashPassword("admin")
+                UserName = "admin"
             }
         };
 
