@@ -411,5 +411,15 @@ namespace BPMS_Tests.Tests
 
             Assert.Contains("?alias1=Hello&alias2=25&alias3=3%c5%a1%c4%8d*)! ", result);
         }
+
+        [Fact]
+        public async Task Serilization37()
+        {
+            ServiceRequestDTO service = ServiceRequestDTOFactory.CreateTree(SerializationEnum.Replace, HttpMethodEnum.GET, ServiceAuthEnum.None, "http://192.168.10.15/{{alias1}}/{{alias2}}/{{alias3}}");
+            WebServiceHelper serviceHelper = new WebServiceHelper(service);
+            string result = await serviceHelper.GenerateRequest();
+
+            Assert.Contains(" /Hello/25/3%C5%A1%C4%8D*)! ", result);
+        }
     }
 }
