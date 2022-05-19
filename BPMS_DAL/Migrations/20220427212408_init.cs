@@ -1232,53 +1232,29 @@ namespace BPMS_DAL.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Services",
-                columns: new[] { "Id", "AppId", "AppSecret", "AuthType", "Description", "HttpMethod", "Name", "Serialization", "Type", "URL" },
-                values: new object[,]
-                {
-                    { new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, null, 0, "Počasí zadávané názvem města. Sereializace odpovědi v JSON.", 0, "Počasí - město (JSON)", 3, 0, "http://api.openweathermap.org/data/2.5/weather" },
-                    { new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, null, 0, "Počasí zadávané názvem města. Sereializace odpovědi v XML.", 0, "Počasí - město (XML)", 3, 0, "http://api.openweathermap.org/data/2.5/weather" },
-                    { new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"), null, null, 0, "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí IČO.", 0, "ARES - IČO", 3, 0, "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi" },
-                    { new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"), null, null, 0, "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí názvu obchodní firmy.", 0, "ARES - Obchodní firma", 3, 0, "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi" },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, null, 0, "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou. Sereializace odpovědi v JSON.", 0, "Počasí - zeměpisná délka a šířka", 3, 0, "http://api.openweathermap.org/data/2.5/weather" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Systems",
                 columns: new[] { "Id", "Description", "Encryption", "ForeignEncryption", "Key", "Name", "State", "URL" },
-                values: new object[] { new Guid("21577083-1403-471d-aa40-8add3b4a1c84"), null, 3, 3, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
+                values: new object[] { new Guid("eef5b551-ea28-4439-9e6f-df4f45055e48"), null, 3, 3, new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 }, "Tento systém", 5, "https://localhost:5001/" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "PhoneNumber", "Surname", "Title", "UserName" },
-                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", "wx/rx1msAyEJSXxsu14xuN539Kqp90lL/DrCJsEV5qOEO3irX6e0mcON3oRRBvpdhSisBq5PuHyBGpafvnnWA5L3", null, "System", "Ing.", "admin" });
-
-            migrationBuilder.InsertData(
-                table: "DataSchemas",
-                columns: new[] { "Id", "Alias", "Array", "Compulsory", "Description", "Direction", "Disabled", "Name", "ParentId", "ServiceId", "StaticData", "Type" },
-                values: new object[,]
-                {
-                    { new Guid("aab873d3-4806-40f6-b454-b35380eb5566"), "ico", false, true, null, 0, false, "IČO", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"), null, 0 },
-                    { new Guid("aab873d3-4806-40f6-b454-b35380eb6677"), "obchodni_firma", false, true, null, 0, false, "Obchodní firma", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"), null, 0 },
-                    { new Guid("aab873d3-4806-40f6-b454-b35380ebd838"), "mode", false, true, null, 0, false, "Mód", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "xml", 0 },
-                    { new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, null, 0, false, "Město", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), null, 0 },
-                    { new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, null, 0, false, "Klíč", null, new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b454-b35380ebd838"), "appid", false, true, null, 0, false, "Klíč", null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-a35380ebd838"), "q", false, true, null, 0, false, "Město", null, new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"), null, 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd838"), "appid", false, true, null, 0, false, "Klíč", null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), "7622a0a6b0f63a523986e6021e727f81", 0 },
-                    { new Guid("ec2873d3-4806-40f6-b4a4-b45380ebd838"), "lat", false, true, null, 0, false, "Zeměpisná šířka", null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 },
-                    { new Guid("ec2873d3-4877-40f6-b4a4-b35380ebd838"), "lon", false, true, null, 0, false, "Zeměpisná délka", null, new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"), null, 1 }
-                });
+                values: new object[] { new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"), "admin.system@test.cz", "Admin", null, null, "System", "Ing.", "admin" });
 
             migrationBuilder.InsertData(
                 table: "SystemRoles",
                 columns: new[] { "Role", "UserId" },
-                values: new object[,]
-                {
-                    { 0, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") },
-                    { 1, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") },
-                    { 2, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") }
-                });
+                values: new object[] { 0, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") });
+
+            migrationBuilder.InsertData(
+                table: "SystemRoles",
+                columns: new[] { "Role", "UserId" },
+                values: new object[] { 1, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") });
+
+            migrationBuilder.InsertData(
+                table: "SystemRoles",
+                columns: new[] { "Role", "UserId" },
+                values: new object[] { 2, new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AgendaRoles_AgendaId",

@@ -213,8 +213,8 @@ namespace BPMS_DAL
             modelBuilder.SeedUsers();
             modelBuilder.SeedSystemRoles();
             modelBuilder.SeedSystems();
-            modelBuilder.SeedServices();
-            modelBuilder.SeedDataSchemas();
+            //modelBuilder.SeedServices();
+            //modelBuilder.SeedDataSchemas();
         }
     }
 }

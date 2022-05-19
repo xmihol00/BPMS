@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BPMS_DAL.Migrations
 {
     [DbContext(typeof(BpmsDbContext))]
-    [Migration("20220404193835_init")]
+    [Migration("20220427212408_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -326,132 +326,6 @@ namespace BPMS_DAL.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("DataSchemas");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ec2873d3-4806-40f6-b4a4-a35380ebd838"),
-                            Alias = "q",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Město",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2873d3-4806-40f6-b454-b35380ebd838"),
-                            Alias = "appid",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Klíč",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
-                            StaticData = "7622a0a6b0f63a523986e6021e727f81",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2873d3-4877-40f6-b4a4-b35380ebd838"),
-                            Alias = "lon",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Zeměpisná délka",
-                            ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2873d3-4806-40f6-b4a4-b45380ebd838"),
-                            Alias = "lat",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Zeměpisná šířka",
-                            ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd838"),
-                            Alias = "appid",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Klíč",
-                            ServiceId = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
-                            StaticData = "7622a0a6b0f63a523986e6021e727f81",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("ab2873d3-4806-40f6-b4a4-a35380ebd838"),
-                            Alias = "q",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Město",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("ba2873d3-4806-40f6-b454-b35380ebd838"),
-                            Alias = "appid",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Klíč",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
-                            StaticData = "7622a0a6b0f63a523986e6021e727f81",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("aab873d3-4806-40f6-b454-b35380ebd838"),
-                            Alias = "mode",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Mód",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
-                            StaticData = "xml",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("aab873d3-4806-40f6-b454-b35380eb5566"),
-                            Alias = "ico",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "IČO",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"),
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("aab873d3-4806-40f6-b454-b35380eb6677"),
-                            Alias = "obchodni_firma",
-                            Array = false,
-                            Compulsory = true,
-                            Direction = 0,
-                            Disabled = false,
-                            Name = "Obchodní firma",
-                            ServiceId = new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"),
-                            Type = 0
-                        });
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.DataSchemaMapEntity", b =>
@@ -717,63 +591,6 @@ namespace BPMS_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("23bdf847-0e87-4eeb-92c3-58513ade014a"),
-                            AuthType = 0,
-                            Description = "Počasí zadávané názvem města. Sereializace odpovědi v JSON.",
-                            HttpMethod = 0,
-                            Name = "Počasí - město (JSON)",
-                            Serialization = 3,
-                            Type = 0,
-                            URL = "http://api.openweathermap.org/data/2.5/weather"
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2873d3-4806-40f6-b4a4-b35380ebd828"),
-                            AuthType = 0,
-                            Description = "Počasí zadávané názvem zeměpisnou délkou a zeměpisnou šířkou. Sereializace odpovědi v JSON.",
-                            HttpMethod = 0,
-                            Name = "Počasí - zeměpisná délka a šířka",
-                            Serialization = 3,
-                            Type = 0,
-                            URL = "http://api.openweathermap.org/data/2.5/weather"
-                        },
-                        new
-                        {
-                            Id = new Guid("23bdf847-0e87-4eeb-92c3-66513ade014a"),
-                            AuthType = 0,
-                            Description = "Počasí zadávané názvem města. Sereializace odpovědi v XML.",
-                            HttpMethod = 0,
-                            Name = "Počasí - město (XML)",
-                            Serialization = 3,
-                            Type = 0,
-                            URL = "http://api.openweathermap.org/data/2.5/weather"
-                        },
-                        new
-                        {
-                            Id = new Guid("23bdf847-0e87-4eeb-92c3-66513ade1234"),
-                            AuthType = 0,
-                            Description = "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí IČO.",
-                            HttpMethod = 0,
-                            Name = "ARES - IČO",
-                            Serialization = 3,
-                            Type = 0,
-                            URL = "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi"
-                        },
-                        new
-                        {
-                            Id = new Guid("23bdf847-0e87-4eeb-92c3-66513ade4567"),
-                            AuthType = 0,
-                            Description = "Administrativní registr ekonomických subjektů - XML API. Vyhledávání pomocí názvu obchodní firmy.",
-                            HttpMethod = 0,
-                            Name = "ARES - Obchodní firma",
-                            Serialization = 3,
-                            Type = 0,
-                            URL = "http://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi"
-                        });
                 });
 
             modelBuilder.Entity("BPMS_DAL.Entities.ServiceHeaderEntity", b =>
@@ -868,7 +685,7 @@ namespace BPMS_DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("21577083-1403-471d-aa40-8add3b4a1c84"),
+                            Id = new Guid("eef5b551-ea28-4439-9e6f-df4f45055e48"),
                             Encryption = 3,
                             ForeignEncryption = 3,
                             Key = new byte[] { 51, 255, 78, 181, 34, 125, 218, 30, 175, 231, 117, 17, 64, 175, 245, 163, 230, 97, 5, 161, 118, 34, 29, 135, 52, 187, 82, 147, 172, 241, 123, 255, 248, 59, 64, 11, 31, 29, 245, 61, 145, 141, 225, 140, 225, 181, 47, 117 },
@@ -993,7 +810,6 @@ namespace BPMS_DAL.Migrations
                             Id = new Guid("5e250b64-ea22-4880-86d2-94d547b2e1b4"),
                             Email = "admin.system@test.cz",
                             Name = "Admin",
-                            Password = "wx/rx1msAyEJSXxsu14xuN539Kqp90lL/DrCJsEV5qOEO3irX6e0mcON3oRRBvpdhSisBq5PuHyBGpafvnnWA5L3",
                             Surname = "System",
                             Title = "Ing.",
                             UserName = "admin"

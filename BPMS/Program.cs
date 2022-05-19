@@ -14,7 +14,6 @@ services.AddControllersWithViews()
         .AddRazorRuntimeCompilation();
 
 services.AddDbContext<BpmsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
-StaticData.ThisSystemURL = builder.Configuration.GetValue<string>("SystemURL");
 StaticData.FileStore = builder.Configuration.GetValue<string>("FileStore");
 
 services.AddScoped<AgendaRepository>();
